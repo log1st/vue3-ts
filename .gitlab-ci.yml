@@ -7,8 +7,8 @@ stages:
 step-deploy-prod:
   stage: deploy
   script:
-    #- docker stop node-server
-    #- docker rm node-server
+    - docker stop node-server
+    - docker rm node-server
     - docker build -t app/node-web-app .
     - docker run --name node-server -p 49162:8080 -p 49164:8081 -d app/node-web-app:latest sh -c 'npm run serve'
   only:
