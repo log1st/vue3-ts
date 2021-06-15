@@ -13,7 +13,6 @@
             </div>
 
             <div class="col-12 row justify-content-center">
-                                                <!-- старое значение 'open' -->
                 <div class="print__item"  @click="printSetOfCharges('print')"> 
                     <icon-base :hasStroke="false" :width="24" :height="24" iconColor="#818181" :viewBox="'0 0 20 20'">
                         <icon-eye />
@@ -44,7 +43,10 @@
 <script>
   import { mapGetters } from 'vuex'
   import cloneDeep from 'lodash/cloneDeep';
-
+  /**
+   * Вообще эту модалку нужно сделать универсальной для всех видов одиночной печати
+   * @todo Модернизировать модальное окно
+   */
   export default {
     props: {
       params: {
@@ -65,14 +67,15 @@
                   dismissible: true,
                   position: 'top-right'
         })
+        let debtorArr = this.params.checkedDebtors.map( debt => debt.debtor.pk )
         this.$http({
           command: '/constructor/render',
-          method: 'GET',
-          params: {
+          method: 'POST',
+          data: {
             company_id: companyId,
             production_type: 'judicial',
             template_type_id: 3,
-            debtor_id: this.params.checkedDebtors[0].debtor.pk
+            debtor_ids: debtorArr
           }
         })
         .then (resp => {
