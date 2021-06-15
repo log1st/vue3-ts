@@ -1,9 +1,9 @@
 <template>
     <div class="row">
-        <div class="col-12">
+        <!-- <div class="col-12">
             <p class="m-0 print-modal-service-type" style="padding: 12px 6px">Выбор печатной формы</p>
-        </div>
-        <div class="col-12 row justify-content-center">
+        </div> -->
+        <div class="print-actions-btn-wrapper">
             <div 
                 v-for="(item, index) in actions"
                 :key="index"
@@ -11,10 +11,12 @@
                 :class="{ 'disabled-epc' : bool }"
                 @click="item.action.func(item.action.type)"
             >
-            <!-- <icon-base :hasStroke="false" :width="40" :height="30" iconColor="#818181" :viewBox="'0 0 40 30'">
+            <div>
+        <icon-base :hasStroke="false" :width="item.w" :height="item.h" iconColor="#ffffff"  :viewBox="item.vB">
                 <component :is="item.icon" />
-            </icon-base> -->
-                <span v-html="item.title"></span>
+            </icon-base>
+            </div>
+                <div class="print-actions-btn-text" v-html="item.title"></div>
             </div>
         </div>
     </div>
@@ -50,8 +52,8 @@ export default {
             token: false,
             actions: [
                 // { title: 'Запустить склейку', action: { func: this.compileAttachment } },
-                { title: 'Формирование и печать документа', icon: 'icon-print', action: { func: this.compileAttachment, type: 'print' } },
-                // { title: 'Подписать и отправить <br> по ЭЦП', icon: 'icon-ecp', action: { func: this.printDocument, type: 'ecp'} },
+                { title: 'Формирование и печать документа', icon: 'icon-print', w: '20', h:'20', vB: '0 0 40 30', action: { func: this.compileAttachment, type: 'print' } },
+                { title: 'Подписать и отправить <br> по ЭЦП', icon: 'icon-edit', w: '20', h:'20', vB: '', action: { func: this.printDocument, type: 'ecp'} },
             ]
         }
     },

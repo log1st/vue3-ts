@@ -65,14 +65,15 @@
                   dismissible: true,
                   position: 'top-right'
         })
+        let debtorArr = this.params.checkedDebtors.map( dabtorData => dabtorData.debtor.pk )
+        console.log(debtorArr)
         this.$http({
-          command: '/constructor/render',
-          method: 'GET',
-          params: {
+          command: '/constructor/debtors-data',
+          method: 'POST',
+          data: {
             company_id: companyId,
             production_type: 'judicial',
-            template_type_id: 7,
-            debtor_id: this.params.checkedDebtors[0].debtor.pk
+            debtor_ids: debtorArr
           }
         })
         .then (resp => {
@@ -84,7 +85,7 @@
                   position: 'top-right'
         })
         setTimeout(() => {
-          window.open(resp.document.file, '_blank')
+          window.open(resp.link, '_blank')
         }, 1000)
           // console.log(resp)
         })

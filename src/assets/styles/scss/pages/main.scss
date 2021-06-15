@@ -457,3 +457,31 @@
     cursor: pointer;
     padding-left: 30px;
   }
+  .print-icons-wrapper {
+      padding-left: 10px;
+  }
+  .print {
+  &-actions-btn-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      .btn-accept-outline {
+          width: 200px;
+          height: 70px;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+      } 
+      .btn-accept-outline + .btn-accept-outline {
+        margin-top: 20px;
+    }
+}
+&-actions-btn-text {
+    text-align: center;
+}
+
+  }

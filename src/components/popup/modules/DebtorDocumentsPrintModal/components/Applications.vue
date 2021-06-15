@@ -3,26 +3,26 @@
         <div class="col-12">
             <p class="m-0 print-modal-service-type p-2">Список документов в Приложении</p>
 
-            <div class=" px-3">
-                <div class="d-flex justify-content-end align-items-center">
+            <div class="print-icons-wrapper">
+                <div class="d-flex justify-content-start align-items-center">
                     <!-- <span style="font-size: 12px" class="mr-2">настройка печати:</span> -->
 
                     <div class="mr-2"  v-tooltip.top-center="{ content: 'Документ будет добавлен в список приложений без печати'}"
                         style="cursor: pointer"
                         @click="toggleAllDocuments(false)"
                     >
-                        <!-- <icon-base :hasStroke="false" :width="18" :height="18" iconColor="#818181" viewBox="0 0 16 16">
+                        <icon-base :hasStroke="false" :width="20" :height="20" iconColor="#818181" viewBox="0 0 20 20">
                             <icon-eye />
-                        </icon-base> -->
+                        </icon-base>
                     </div>
                     
                     <div class="mr-2" v-tooltip.top-center="{ content: 'Документ будет добавлен в список на печать и в приложение'}"
                         style="cursor: pointer"
                         @click="toggleAllDocuments(true)"
                     >
-                        <!-- <icon-base :hasStroke="false" :width="30" :height="20" iconColor="#818181" viewBox="0 0 30 20">
+                        <icon-base :hasStroke="false" :width="30" :height="30" iconColor="#818181" viewBox="0 0 40 30">
                             <icon-print />
-                        </icon-base> -->
+                        </icon-base>
                     </div>
                       
                 </div>
