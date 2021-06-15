@@ -1,0 +1,140 @@
+.is-active-open-btn {
+    background-color: #fff !important;
+    svg {
+        transform: rotate(0deg);
+    }
+}
+
+.sidebar {
+    display: block;
+    width: 275px;
+    max-width: 70px;
+    height: 100%;
+    min-height: 100vh;
+    transition: max-width .3s linear;
+    background-color: $sideBarColor;
+    z-index: 1;
+    box-shadow: 0px 9px 18px rgba(0, 0, 0, 0.18), 0px 5.5px 5px rgba(0, 0, 0, 0.23);
+    // transition: background-color 0.1s linear, width 0.19s linear, padding 0.2s linear;
+
+    &.is-open {
+        max-width: 275px;
+
+        .sidebar__header {
+
+            a {
+                transform: scale(1) translate3d(32px, 1px, 0);
+            }
+        }
+
+        .sidebar__nav {
+            padding: 24px 0 0 28px;
+        }
+    }
+
+    &__header {
+        @extend %dffs;
+        height: 90px;
+        padding: 0;
+        background-color: $colorBlueDark;
+        // border-right: 1px solid $colorBlueDark;
+
+        a {
+            transform: scale(1) translate3d(11px, 1px, 0);
+            transition: transform 0.3s linear;
+        }
+    }
+
+    &__content {
+        position: relative;
+        // height: calc(100% - 70px);
+        padding: 0 0 100px;
+        background-color: $sideBarColor;
+        // border-right: 1px solid $colorGray22;
+    }
+
+    &__nav {
+        width: 100%;
+        margin: 0 0 auto;
+        padding: 24px 0 0 21px;
+        transition: padding 0.3s linear;
+    }
+
+    &__item {
+        height: 28px;
+        padding: 4px 0 0;
+        list-style: none;
+        margin: 0 0 18px;
+
+        a {
+            @extend %dffs;
+            flex-wrap: nowrap;
+            width: 225px;
+            height: 100%;
+            font-size: rem(12px);
+            font-weight: 500;
+            line-height: rem(21px);
+            color: $colorGray2;
+            text-decoration: none;
+            transition: color .3s linear;
+        }
+        // Анимация иконки
+        // svg g {
+        //     transition: fill .3s linear, stroke .3s linear;
+        // }
+
+        &.active {
+            position: relative;
+
+            &:after {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 2px;
+                height: 100%;
+                background-color: $colorBlue3;
+            }
+
+            a {
+                pointer-events: none;
+            }
+        }
+
+        &.active,
+        &:hover {
+            a {
+                color: $colorGrayDark;
+            }
+
+            svg g {
+                fill: $colorBlue3;
+                stroke: $colorBlue3;
+            }
+        }
+    }
+
+    &__item-icon {
+        @extend %dfc;
+        width: 23px;
+        margin: 4px 8px 0 0;
+        transform: translate3d(0, -4px, 0);
+    }
+
+    &__footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        // width: 100%;
+        padding: 20px 0 34px 33px;
+
+        p {
+            font-size: rem(12px);
+            font-weight: 500;
+            line-height: rem(21px);
+            opacity: 0.4;
+            color: $colorGray3;
+            margin: 0;
+        }
+    }
+}

@@ -1,0 +1,25 @@
+.status-label {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0 0 0 14px;
+    color: #687189;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 21px;
+
+    &:before {
+        content: '';
+        position: absolute;
+        top: calc(50% - 5px);
+        left: 0;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #4cdb7d;
+    }
+
+    &--error::before {
+        background-color: #db4c4c;
+    }
+}

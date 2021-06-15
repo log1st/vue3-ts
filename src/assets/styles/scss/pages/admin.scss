@@ -1,0 +1,227 @@
+.config-data {
+    &__list {
+        list-style: none;
+        color: #687189;
+        padding: 0.5em;
+        display: flex;
+        flex-direction: column;
+        transition: all .4s ease-in-out;
+        justify-content: space-between;
+        min-width: 12em;
+
+        .application {
+        &__index {
+            font-size: 14px;
+            padding: 0.5em 0;
+        }
+
+        &__var {
+            padding: 0.5em 0;
+
+            input {
+                padding: 0.5em 0.5em;
+                width: 100%;
+                font-size: 14px;
+            }
+        }  
+    } 
+    }
+    &__list:hover {
+        background-color: #f2f6fc;
+        cursor: move;
+    }
+    &__list:active {
+        cursor: move;
+    }
+    &__list-wrapper {
+        flex-wrap:nowrap; 
+        overflow-y: auto; 
+        padding-inline-end: 40px;
+        div {
+            display: flex;
+            width: 100%;
+            overflow: auto;
+        }
+        div::-webkit-scrollbar {
+            height: 1em;
+        }
+    }
+    
+}
+
+.admin__wrapper {
+    .search__result table tr:nth-child(odd) {
+        background-color: #f6faff;
+    }
+    .icon__wrapper{
+      display: flex;
+      flex-direction: row;
+    }
+    #compiledocs{
+      width: 14px;
+      position: relative;
+      margin-left: 53px;
+      margin-right: 7px;
+      top: 1em;
+    }
+  .searchdata{
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 500;
+        padding: 5px 10px;
+        line-height: 18px;
+        color: #687189;
+  }
+  .admin__wrapper{
+      height: 100%;
+      padding: 30px 0;
+      &-company{
+          border-radius: 6px;
+          background-color: #ffffff;
+          .admin__controls{
+              padding: 12px;
+              .placeholder{
+                font-size: 12px;
+                color: #949baf;
+              }
+          }
+          .admin__content{
+              padding: 0 0 43px;
+              .main-container__body{ 
+               display: flex;
+               justify-content: space-between;
+                .inputs__wrapper{
+                  width: 80%;
+                }
+              }
+          }
+      }
+  }
+  .selected__company{
+    margin-bottom: 0.5em;
+  }
+  .selected__company-header{
+    padding: 2em 10px;
+    background-color: #f6faff;
+    font-weight: 500;
+    color: #687189;
+    font-size: 11px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+    span{
+      margin-right: 1.5em;
+      display: flex;
+      align-items: center;
+    }
+      #name1{
+        max-width: 50%;
+      }
+      #inn1{
+        max-width: 15%;
+      }
+      #debtcount1{
+        max-width: 15%;
+      }
+      #balance1{
+        max-width: 15%;
+      }
+  }
+  .draft__create{
+    a{
+      color: #fff;
+      text-decoration: none;
+    }
+    a:hover{
+      text-decoration: none;
+    }
+  }
+  .application__wrapper{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .col__half{
+      width: 49.5%;
+    }
+  }
+  .container-content{
+    ul{
+      list-style: none;
+      color: #687189;
+      max-height: 207px;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      li{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0.5em 0;
+        span{
+          margin-right: 0.5em;
+        }
+      }
+    }
+    .content__btn-wrapper{
+      margin-left: 40px;
+    }
+  }
+  .set-moderation-mod{
+    display:flex;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21px;
+    color: #5e6476;
+  }
+  .application__index{
+    font-size: 13px;
+  }
+  .edit__application-icon {
+    display: flex;
+    align-items: center;
+    margin: 0 0.5em;
+    cursor:pointer;
+  }
+  .search-input__select {
+    overflow: auto;
+    max-height: 12em;
+  }
+}
+.add-balance {
+    &__code {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+    }
+    &__item:not(.is-changed) {
+        position: relative;
+          .add-balance__item_inner {
+              border-bottom: 1px solid #c3cbdb;
+          }
+    }
+    &__item_inner {
+       height: 100%;
+    }
+    &__item {
+      margin: 1em 0.5em;
+      width: 50px;
+      height: 57px;
+      padding: 7px 9px;
+      border-radius: 4px;
+      border: 1px solid #e0e3ea;
+       input {
+        width: 100%;
+        padding: 0;
+        color: #313234;
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 21px;
+        text-align: center;
+        border: none;
+        outline: none;
+        background-color: rgba(255, 255, 255, 0);
+       }
+    }
+  }

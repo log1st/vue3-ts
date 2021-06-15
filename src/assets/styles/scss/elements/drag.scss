@@ -1,0 +1,26 @@
+.drag {
+    margin: 0 16px 23px;
+
+    &__file-upload {
+        @extend %dfc;
+        flex-direction: column;
+        height: 260px;
+        border-radius: 4px;
+        border: 1px dashed rgba($colorGray20, .3);
+    }
+
+    &__icon {
+        margin: 0 0 11px;
+    }
+
+    &__input {
+        display: none;
+    }
+
+    &__title {
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 21px;
+        color: $colorGray21;
+    }
+}

@@ -1,0 +1,192 @@
+.signers {
+    &__data-wrapper {
+        margin-top: 40px;
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+    }
+
+    &__data-perosnal-info {
+        margin-top: 0.5em;
+        &-input {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: 3em;
+            margin-bottom: 20px;
+
+            &-field {
+                border: none;
+                min-width: 300px;
+                border-radius: 10px;
+                padding: 13px 10px;
+                background-color: #E0E0E0;
+            }
+            &-title {
+                font-weight: 500;
+                font-size: 12px;
+                line-height: 15px;
+                color: $textColor;
+            }
+        }
+    }
+
+    &__data-document {
+        padding: 1em;
+        &-title {
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 15px;
+            color: $textColor;
+        }
+        
+        input {
+            display: none;
+        }
+    }
+}
+.custom-file-upload {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    cursor: pointer;
+}
+.custom-file-info {
+    width: 74px;
+    height: 74px;
+    text-align: center;
+    border-radius: 10px;
+    background-color: #E0E0E0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+    color: #828282;
+    margin-right: 20px;
+}
+
+.edit-icon {
+    transform: translateX();
+}
+
+
+.loaded-placeholder {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.document {
+    &__data-wrapper {
+        margin-top: 30px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        
+        /* Add */
+        .add{
+            position: relative;
+            width: 31px;
+            height: 31px;
+            margin-left: 4.5em;
+            top: 3.5em;
+
+            &-vertical {
+                position: relative;
+                width: 1px;
+                height: 31px;
+                top: -1.9em;
+
+                background: #21317A;
+            }
+            
+            &-horizontal{
+                position: relative;
+                width: 1px;
+                height: 31px;
+
+                background: #21317A;
+                transform: rotate(-90deg);}
+        }
+    }
+    &__add_new {
+        margin-top: 60px;
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+
+            &-decline {
+                display: flex;
+                align-items: flex-end;
+                justify-content: space-evenly;
+                flex-direction: column;
+                padding-right: 0.5em;
+            }
+
+        &-docs-data {
+            &-title {
+                font-weight: 500;
+                font-size: 12px;
+                color: $textColor;
+            }
+            &-file {
+                width: 120px;
+            }
+            &-input {
+                margin-top: 20px;
+                margin-bottom: 28px;
+
+                input {
+                    border: none;
+                    min-width: 429px;
+                    border-radius: 10px;
+                    padding: 13px 10px;
+                    background-color: #E0E0E0;
+                }
+            }
+        }
+    }
+
+    &__data-add-docs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        margin-top: 30px;
+        grid-row-gap: 30px;
+    }
+    
+    &__doc-wrapper {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+
+        &-view {
+            width: 150px;
+            height: 150px;
+            background-color: #E0E0E0;
+            transition: .4s all ease-in-out;
+            cursor: pointer;
+            border-radius: 10px;
+
+            input{
+                display: none;
+            }
+        }
+        &-view:hover {
+            background-color: #828282;
+        }
+
+        &-title {
+            margin-top: 0.5em;
+            input {
+                border: none;
+                width: 150px;
+                display: flex;
+                justify-content: center;
+            }
+        }
+    }
+}

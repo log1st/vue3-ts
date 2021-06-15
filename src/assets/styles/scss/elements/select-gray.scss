@@ -1,0 +1,118 @@
+.select-gray {
+    position: relative;
+    height: 40px;
+    border-radius: 3px 3px 0 0;
+    background-color: #f5f5f7;
+    cursor: pointer;
+
+    span {
+        font-size: 16px;
+        font-weight: 500;
+        color: #5e6476;
+    }
+
+    &.fs-12 {
+        height: 30px;
+
+        span {
+            font-size: 12px;
+        }
+
+        .select-gray__head {
+            padding: 0 28px 0 8px;
+
+            &:after {
+                right: 4px;
+            }
+        }
+
+        .select-gray__body {
+            top: 30px;
+        }
+
+        .select-gray__item {
+            height: 30px;
+            padding: 8px;
+        }
+    }
+
+    &__head {
+        position: relative;
+        @extend %dffs;
+        height: 100%;
+        width: 100%;
+        padding: 0 32px 0 12px;
+
+        &:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            width: 0;
+            height: 0;
+            border-top: 6px solid #5e6476;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            transform: translate3d(-50%, -50%, 0);
+            transition: transform .3s ease-in-out;
+        }
+
+        &.is-open:after {
+            transform: translate3d(-50%, -50%, 0) scale(1, -1);
+        }
+    }
+
+    &__body {
+        position: absolute;
+        z-index: 10;
+        top: 40px;
+        left: 0;
+        width: 100%;
+        background-color: #f5f5f7;
+
+        &--scrollable {
+            height: 220px;
+            overflow-y: scroll;
+        }
+    }
+
+    &__item {
+        @extend %dffs;
+        height: 40px;
+        padding: 10px 12px 11px;
+        transition: background-color .3s linear;
+
+        &:hover {
+            background-color: #bdc8d9;
+        }
+    }
+
+    &__input {
+        outline: none;
+        background: transparent;
+        border: none;
+        font-size: 12px;
+        font-weight: 500;
+        color: #5e6476;
+        width: 100%;
+    }
+
+    &__head-icon,
+    &__item-icon {
+        width: 30px;
+    }
+
+    &.is-error {
+        border: 1px solid red;
+    }
+
+    &__error {
+        position: absolute;
+        z-index: 10;
+        top: 28px;
+        span {
+            color: red;
+        }
+    }
+
+}

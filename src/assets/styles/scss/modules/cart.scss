@@ -1,0 +1,186 @@
+.cart {
+    width: 1200px;
+    max-width: 100%;
+    background-color: $colorWhite;
+    border-radius: 10px;
+
+    &__head {
+        @extend %dfsb;
+        padding: 18px;
+        // border-bottom: 1px solid rgba(#d8d8d8, 0.4);
+    }
+
+    &__head-text {
+        font-size: 11px;
+        font-weight: 500;
+        opacity: .5;
+        color: #5e6476;
+    }
+
+    &__title {
+        padding: 0 0 3px;
+        color: #5e6476;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 21px;
+    }
+
+    &__body {
+        padding: 20px 0 0 0;
+        margin: 0 30px;
+    }
+
+    &__tabs {
+        position: relative;
+        @extend %dffs;
+        padding: 0 10px;
+        display: flex;
+        border-bottom: 1px solid #CBD0E7;
+        justify-content: flex-start;
+    }
+
+    &__tabs-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        @extend %dffe;
+        height: 40px;
+        padding: 0 5px 0 0;
+    }
+
+    &__tab {
+        position: relative;
+        z-index: 4;
+        @extend %dfc;
+        height: 41px;
+        padding: 10px 23px;
+        margin: 0 0 0 1em;
+        // border-radius: 5px 5px 0 0;
+        // background-color: $colorLight;
+        cursor: pointer;
+        transition: color .3s linear, background-color .3s linear;
+
+        span {
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 21px;
+            color: $colorGray16;
+        }
+
+        &.is-active {
+            z-index: 6;
+            transition: all .4s ease-in-out;
+            border-bottom: 3px solid $colorBlue3;
+
+            span {
+                color: $colorBlue3;
+            }
+
+            .cart__tab-decor {
+                display: none;
+                bottom: -3px;
+            }
+        }
+    }
+
+    &__tab-decor {
+        display: none;
+        position: absolute;
+        bottom: -2px;
+
+        &.is-left {
+            left: -6px;
+            transform: scale(-1, 1);
+        }
+
+        &.is-right {
+            right: -6px;
+        }
+
+        svg g {
+            transition: fill .3s linear;
+        }
+    }
+
+    &__content {
+        // border-radius: 5px;
+        // border: 1px solid $colorGray19;
+        overflow: hidden;
+    }
+
+    &__content-wrapp {
+        @extend %dfsb;
+        flex-wrap: wrap;
+        padding: 14px 10px;
+    }
+
+    &__content-item_head {
+        @extend %dfsb;
+        padding: 22px 16px;
+
+        span {
+            @extend %dib;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 21px;
+            color: $colorGray20;
+        }
+    }
+
+    &__table-row {
+        @extend %dfsb;
+        min-height: 40px;
+        padding: 0 16px;
+    }
+
+    &__table-col {
+        @extend %dfsb;
+
+        span {
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 21px;
+            color: $colorGray16;
+        }
+
+        &:nth-child(1) {
+            width: 34%;
+        }
+
+        &:nth-child(2) {
+            width: 16%;
+        }
+
+        &:nth-child(3) {
+            width: 16%;
+        }
+
+        &:nth-child(4) {
+            width: 26%;
+        }
+    }
+
+    &__table-body {
+
+        .cart__table-row {
+            position: relative;
+
+            &:nth-child(odd) {
+                background-color: $colorLight;
+            }
+
+            .companies__actions {
+                right: 17px;
+                width: 59px;
+
+                &.is-dark {
+                    background-color: $colorLight;
+                }
+            }
+        }
+    }
+
+    &__footer {
+        padding: 0 38px 20px;
+    }
+}

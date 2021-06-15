@@ -1,0 +1,407 @@
+.home {
+
+    &__title {
+        padding: 10px 0 18px;
+        font-size: 24px;
+        font-weight: 400;
+        line-height: 21px;
+        color: #5e6476;
+
+        b {
+            font-weight: 500;
+        }
+    }
+
+    &__row {
+        display: flex;
+        margin: 0 0 20px;
+    }
+
+    &__col {
+        display: flex;
+        flex: 1;
+
+        &--376 {
+            width: 376px;
+            max-width: 376px;
+            margin: 0 20px 0 0;
+        }
+
+        &--665 {
+            width: 665px;
+            max-width: 665px;
+        }
+
+        &--614 {
+            width: 614px;
+            max-width: 614px;
+            margin: 0 20px 0 0;
+        }
+
+        &--427 {
+            width: 427px;
+            max-width: 427px;
+        }
+
+        &--1061 {
+            width: 1061px;
+            max-width: 1061px;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 100%;
+        }
+
+    }
+
+    &__container {
+        width: 100%;
+        height: 100%;
+        padding: 16px 20px;
+        border-radius: 6px;
+        background-color: #ffffff;
+    }
+
+    &__container-head {
+        @extend %dfsb;
+        height: 24px;
+    }
+
+    &__container-title {
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 21px;
+        opacity: 0.5;
+        color: #5e6476;
+    }
+
+    // &__container-body {
+
+    // }
+
+    &__diagram {
+        position: relative;
+        width: 260px;
+        height: 260px;
+        margin: auto;
+    }
+
+    &__diagram-outer {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        margin: auto;
+
+        svg {
+            transform: rotate(-45deg);
+        }
+    }
+
+    &__diagram-inner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    &__diagram-title {
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 21px;
+        color: #5e6476;
+        margin: 0 0 10px;
+    }
+
+    &__diagram-subtitle {
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 21px;
+        color: #b0b3bc;
+    }
+
+    &__growth {
+        display: flex;
+        padding: 22px 0 14px;
+    }
+
+    &__growth-icon {
+        @extend %dfc;
+        width: 55px;
+        height: 55px;
+        border-radius: 10px;
+        background-color: #f2f6fc;
+        margin: 0 15px 0 0;
+    }
+
+    &__growth-title {
+        padding: 4px 0 3px;
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 21px;
+        color: #5e6476;
+    }
+
+    &__growth-subtitle {
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 21px;
+        opacity: 0.5;
+        color: #5e6476;
+
+        b {
+            font-weight: 500;
+        }
+    }
+
+    &__totaldebt {
+        width: 100%;
+        padding: 22px 0 14px;
+    }
+
+    &__totaldebt-head {
+        @extend %dfsb;
+    }
+
+    &__totaldebt-title {
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 21px;
+        color: #5e6476;
+        margin: 0 0 18px;
+    }
+
+    &__totaldebt-subtitle {
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 21px;
+        opacity: 0.4;
+        color: #5e6476;
+    }
+
+    &__totaldebt-diagram {
+        height: 15px;
+        border-radius: 10px;
+        background-color: #f2f6fc;
+    }
+
+    &__totaldebt-diagram_data {
+        width: var(--tddw, 147px);
+        height: 15px;
+        border-radius: 10px;
+        background-color: #495cff;
+    }
+
+    &__bigdiagram {
+        @extend %dfsb;
+        width: 100%;
+        padding: 44px 0 86px;
+    }
+
+    &__bigdiagram-image {
+        position: relative;
+        width: 450px;
+    }
+
+    &__bigdiagram-image_outer {
+        @extend %dfc;
+        width: 100%;
+        height: 100%;
+    }
+
+    &__bigdiagram-image_inner {
+        @extend %posa;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__bigdiagram-image_title {
+        color: #5e6476;
+        font-size: 42px;
+        font-weight: 500;
+        line-height: 21px;
+        margin: 0 0 9px;
+    }
+
+    &__bigdiagram-image_subtitle {
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 21px;
+        opacity: 0.5;
+        color: #5e6476;
+    }
+
+    &__bigdiagram-legends {
+        margin: 0 107px 0 0;
+    }
+
+    &__bigdiagram-legend {
+        position: relative;
+        @extend %dffs;
+        width: 100%;
+        padding: 0 0 0 26px;
+        margin: 10px 0;
+
+        &:before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 0;
+            width: 12px;
+            height: 16px;
+            border-radius: 4px;
+            background-color: #78c158;
+        }
+
+        &:first-child:before {
+            background-color: #5564f5;
+        }
+
+        &:last-child:before {
+            background-color: #5eb3f7;
+        }
+    }
+
+    &__bigdiagram-legend_name {
+        width: 182px;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 21px;
+        color: #5e6476;
+    }
+
+    &__bigdiagram-legend_data {
+        width: 41px;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 21px;
+        color: #5e6476;
+        margin: 0 15px 0 0;
+    }
+
+    &__bigdiagram-legend_percent {
+        width: 30px;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 21px;
+        opacity: 0.8;
+        color: #5e6476;
+        text-align: right;
+    }
+
+
+    &__list-items {
+        padding: 15px 10px 0 20px;
+        margin: 0;
+        counter-reset: myCounter;
+    }
+
+    &__list-item {
+        list-style: none;
+        color: #687189;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 21px;
+
+        &:not(:last-child) {
+            margin: 0 0 19px;
+        }
+
+        b {
+            font-weight: 500;
+        }
+
+        &:before {
+            counter-increment: myCounter;
+            content: counter(myCounter);
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 24px;
+            color: #495cff;
+            text-align: center;
+            border: 1px solid #d2dbe8;
+            border-radius: 50%;
+            margin: 5px 10px 5px -5px;
+        }
+    }
+
+    &__support {
+        padding: 15px 0 0;
+    }
+
+    &__support-title {
+        color: #687189;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 21px;
+    }
+
+    &__support-subtitle {
+        opacity: 0.5;
+        color: #687189;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 21px;
+        margin: 0 0 15px;
+    }
+
+    &__support-item {
+        @extend %dffs;
+        margin: 0 0 12px;
+    }
+
+    &__support-item_icon {
+        @extend %dfc;
+        width: 27px;
+        height: 27px;
+        border-radius: 6px;
+        background-color: #e6edf8;
+        margin: 0 11px 0 0;
+
+        svg {
+            transform: translate3d(0, -2px, 0);
+        }
+    }
+
+    &__support-item_phone,
+    &__support-item_mail {
+        margin: 0 14px 0 0;
+
+        a {
+            color: #687189;
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 21px;
+            text-decoration: none;
+        }
+    }
+
+    &__support-item_text {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 21px;
+        opacity: 0.5;
+        color: #687189;
+    }
+
+    &__support-separator {
+        width: 298px;
+        height: 1px;
+        background-color: #aaadc8;
+        opacity: 0.3;
+        margin: 26px 0 15px;
+    }
+}

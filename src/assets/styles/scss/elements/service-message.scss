@@ -1,0 +1,19 @@
+.service-message {
+    position: fixed;
+    z-index: 30;
+    top: 80px;
+    right: 40px;
+    min-width: 180px;
+    height: 48px;
+    border-radius: 8px;
+    background-color: #55b960;
+    text-align: center;
+    padding: 14px 20px 16px 14px;
+
+    span {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 18px;
+        color: $colorWhite;
+    }
+}
