@@ -80,10 +80,10 @@
         Показаны {{ shownDebtors }} из {{ allDebtors }}
       </span>
         
-        <div class="main__user-panel__search-link" @click="toggleSearchPanel">
+        <!-- <div class="main__user-panel__search-link" @click="toggleSearchPanel">
           <i class="material-icons" style="color: #21317a; font-size: 28px" v-if="!searchPanelState">search</i>
           <i class="material-icons" style="color: #848aa1" v-else>close</i>
-        </div>
+        </div> -->
       </template>
 
       <template v-slot:tableInner>
@@ -383,7 +383,7 @@
         }
       },
       rowActionHandler({ row, i}) {
-        this.openDebtorData({data:row, type: 'judicial'})
+        // this.openDebtorData({data:row, type: 'judicial'}) ВЕРНУТЬ позже модалка должника
         // this.setPopupComponent({ component: 'debtor-data', params: row });
       },
       /**
@@ -443,12 +443,12 @@
       changeStatus({ row = null }) {
         const checkedDebtors = this.checkedDebtors && this.checkedDebtors.length > 1 && cloneDeep(this.checkedDebtors) || [];
         const debtors = (checkedDebtors.length > 0 && checkedDebtors) || ( !isEmpty(row) && [row]);
-        this.setPopupComponent ({
-          component: 'popupChangeStatusDebtor',
-          one: true,
-          debtors: debtors,
-          overflow: false,
-        })
+        // this.setPopupComponent ({
+        //   component: 'popupChangeStatusDebtor',
+        //   one: true,
+        //   debtors: debtors,
+        //   overflow: false,
+        // })
       },
       /**
        * Сортировка

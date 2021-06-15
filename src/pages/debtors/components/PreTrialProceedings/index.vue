@@ -84,10 +84,10 @@
           <i class="material-icons" style="color: #21317a; font-size: 28px" v-if="!searchPanelState">search</i>
           <i class="material-icons" style="color: #848aa1" v-else>close</i>
         </div> -->
-        <div class="main__user-panel__search-link" @click="toggleSearchPanel">
+        <!-- <div class="main__user-panel__search-link" @click="toggleSearchPanel">
           <i class="material-icons" style="color: #21317a; font-size: 28px" v-if="!searchPanelState">search</i>
           <i class="material-icons" style="color: #848aa1" v-else>close</i>
-        </div>
+        </div> -->
       </template>
 
       <template v-slot:tableInner>
@@ -372,7 +372,8 @@
         }
       },
       rowActionHandler({ row, i}) {
-        this.openDebtorData({data:row, type: 'pretrial'})
+        // ПОТОМ ВЕРНУТЬ
+        // this.openDebtorData({data:row, type: 'pretrial'})
         // this.setPopupComponent({ component: 'debtor-data', params: row });
       },
       /**

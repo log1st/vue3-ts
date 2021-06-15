@@ -1,13 +1,13 @@
 <template>
   <header class="header">
     <div class="header__info">
-      <div class="header__info-data" v-for="(item, index) in judicialPracticeHeader" v-show="item.show" :key="index">
+      <!-- <div class="header__info-data" v-for="(item, index) in judicialPracticeHeader" v-show="item.show" :key="index">
         <div class="header__info-data-count">{{ item.count }}</div>
-         <div class="header__info-data-title">{{ item.title }}</div>
+         <div class="header__info-data-title">{{ item.title }}</div> -->
       </div>
     </div>
 
-    <div class="header__messages" @mouseleave="dropdownMessageOpen = false; eventMessage = null">
+    <!-- <div class="header__messages" @mouseleave="dropdownMessageOpen = false; eventMessage = null">
       <div class="header__message">
         <div class="header__mail-icon" :class="{ 'has-new' : newEmails, 'empty-data': !newEmails }" @mouseover="messageMenuOpen('email')" @click="openPopup('email')">
           <icon-base
@@ -76,7 +76,7 @@
           </div>
         </div>
       </transition>
-    </div>
+    </div> -->
 
     <div class="header__user">
       <!-- <div class="header__user-avatar" :style="{ backgroundImage: 'url(' + user.img + ')' }"></div> -->
