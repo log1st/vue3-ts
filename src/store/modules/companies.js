@@ -24,6 +24,7 @@ export default {
       ListPenaltyCalculation: null,
       ListGroundsPowersSignatory: null
     },
+    positions: [],
     InfoINNSharedData: {
       ContractNumberDate: '',
       FullNameOrganization: '',
@@ -191,6 +192,9 @@ export default {
         attach.order_number = data 
       }
     },
+    setPositionEmployee (state, payload) {
+      state.positions = payload
+    }
    },
   actions: {
     clearCompanies ({ commit }) {
@@ -524,13 +528,14 @@ export default {
     /**
      * Получение списка должностей
      */
-    getPositionForEmployee () {
-      return $http({
-        command: '/api/account/position/',
+    getPositionForEmployee ( {commit} ) {
+      return axios({
+        url: baseURL+'/api/account/position/',
         method: 'GET'
       })
       .then( resp => {
         // console.log(resp)
+        commit('setPositionEmployee', resp.data)
       })
       .catch( err => {
         //
@@ -870,6 +875,7 @@ export default {
         id: d.id
       }
     }),
+    employeePosition: state => state.positions,
     applicationUserList: state => state.applicationLists,
     getCompanies: state => state.companies, 
     getCompaniesFullNames: state => state.companies.map(el => el.name_full),

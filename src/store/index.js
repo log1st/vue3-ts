@@ -57,7 +57,7 @@ return new Vuex.Store({
         // dispatch ('getDebtorsCourtProceedingsList',  null, { root: true }), // запрос задолжников "судебная практика"
         // dispatch ('getListsOfStatusesDebtors',       null, { root: true }), // загрузить список статусов
         // dispatch ('getAllSumsDebtors',               null, { root: true }), // загрузка данных по задолжникам
-        // dispatch ('getPositionForEmployee',          null, { root: true }), // Получение должностей
+        dispatch ('getPositionForEmployee',          null, { root: true }), // Получение должностей
         dispatch ('combinedRequests',                {module: 'judicial'}, { root: true }), // загрузка совмещенных запросов
         dispatch ('combinedRequests',                {module: 'pretrial'}, { root: true }), // загрузка совмещенных запросов
         // dispatch ('getCompanyUserApplication',       null, { root: true }),    // Приложения пользователя
