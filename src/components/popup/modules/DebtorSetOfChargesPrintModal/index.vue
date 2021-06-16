@@ -79,16 +79,28 @@
           }
         })
         .then (resp => {
-          this.$toast.open({
-          message: `Свод начилений готов!`,
-                  type: 'success',
-                  duration: 5000,
-                  dismissible: true,
-                  position: 'top-right'
+         
+        if (this.params.checkedDebtors.length <= 50) {
+           this.$toast.open({
+            message: `Свод начилений готов!`,
+            type: 'success',
+            duration: 5000,
+            dismissible: true,
+            position: 'top-right'
         })
-        setTimeout(() => {
+          setTimeout(() => {
           window.open(resp.document.file, '_blank')
-        }, 1000)
+          }, 1000)
+        } else {
+           this.$toast.open({
+            message: `Свод начилений готов и отправлен вам на почту!`,
+            type: 'success',
+            duration: 5000,
+            dismissible: true,
+            position: 'top-right'
+        })
+        }
+        
           console.log(resp)
         })
         console.log(this.params.checkedDebtors.id)

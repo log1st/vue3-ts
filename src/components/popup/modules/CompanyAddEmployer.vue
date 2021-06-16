@@ -5,18 +5,37 @@
         </template>
         <div class="employer__modal-wrapper">
             <div class="employer__personal-data">
-                <div class="employer__data-input" v-for="(item, index) in personalData" :key="index">
+                <div class="employer__data-input" 
+                v-for="(item, index) in personalData" 
+                :key="index"
+               >
                     <label :for="'input'+index">
                         {{item.label}}
                     </label>
                     <ur-input
+                     v-show="!item.isSelect"
                     :rules="item.rules"
                     :readonly="false"
                     :type="item.input"
                     :placeholder="item.placeholder"
                     v-model="item.value"
                     :id="'input'+index"/>
+                    <v-select
+                      v-show="item.isSelect && item.model != 'position'"
+                      :placeholder="item.placeholder"
+                      label="name"
+                      v-model="item.value"
+                      :options="item.options"
+                    />
+                    <v-select
+                      v-show="item.isSelect && item.model == 'position'"
+                      :placeholder="item.placeholder"
+                      label="name"
+                      v-model="item.value"
+                      :options="employeePosition"
+                    />
                 </div>
+                    
                 <div class="employer__data-input">
                     <label for="select-company">Установка компании сотруднику</label>
                     <v-select
@@ -45,7 +64,7 @@
 <script>
 import axios from 'axios'
 import { baseURL } from '@/settings/config'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import findIndex from 'lodash/findIndex'
 
 export default {
@@ -62,6 +81,7 @@ export default {
                     placeholder: 'Введите имя',
                     model: 'first_name',
                     value: '',
+                    isSelect: false,
                     required: true,
                     rules: [
                         value => !!value || 'Поле обязательно к заполнению',
@@ -76,6 +96,7 @@ export default {
                     placeholder: 'Введите фамилию',
                     model: 'last_name',
                     value: '',
+                    isSelect: false,
                     required: true,
                     rules: [
                         value => !!value || 'Поле обязательно к заполнению',
@@ -89,15 +110,17 @@ export default {
                     label: 'Должность',
                     input: 'text',
                     placeholder: 'Введите должность',
-                    model: 'employee_role',
+                    model: 'position',
                     value: '',
-                    required: true,
-                    rules: [
-                        value => !!value || 'Поле обязательно к заполнению',
-                        value => {
-                            return /^[а-яА-ЯёЁa]+$/.test(value) || 'Используйте только кириллицу'
-                        }
-                    ]
+                    isSelect: true,
+                    required: false,
+                    options: this.employeePosition
+                    // rules: [
+                    //     value => !!value || 'Поле обязательно к заполнению',
+                    //     value => {
+                    //         return /^[а-яА-ЯёЁa]+$/.test(value) || 'Используйте только кириллицу'
+                    //     }
+                    // ]
                 },
                 {
                     label: 'Телефон',
@@ -105,6 +128,7 @@ export default {
                     placeholder: '+7 ### ### ## ##',
                     model: 'user_phone',
                     value: '',
+                    isSelect: false,
                     required: false,
                     rules: [
                         value => !!value || 'Поле обязательно к заполнению',
@@ -124,6 +148,7 @@ export default {
                     placeholder: 'Введите почту',
                     model: 'email',
                     value: '',
+                    isSelect: false,
                     required: true,
                     rules: [
                         value => !!value || 'Поле обязательно к заполнению',
@@ -134,13 +159,16 @@ export default {
                     ]
 
                 },
-                // {
-                //     label: 'Пароль',
-                //     input: 'password',
-                //     placeholder: 'Введите пароль',
-                //     model: 'password',
-                //     value: ''
-                // },
+                {
+                    label: 'Роль сотрудника',
+                    input: 'emplyee_role',
+                    placeholder: 'Выберите роль',
+                    model: 'employee_role',
+                    value: '',
+                    options: [ "manager", "employee", "guest" ],
+                    isSelect: true,
+                    required: false
+                },
                 // {
                 //     label: 'ИНН',
                 //     input: 'number',
@@ -152,28 +180,8 @@ export default {
             ]
         }
     },
-    watch: {
-        // employeePhone: {
-        //     handler (val) {
-        //         let phone; 
-        //         if (val.length === 12) {
-        //             phone = cloneDeep(val)
-        //         }
-        //         if (val.length > 12) {
-        //             this.personalData[2].value = phone
-        //             this.$toast.open({
-        //                 message: `Номер телефона не должен превышать 11 символов`,
-        //                 type: 'error',
-        //                 duration: 5000,
-        //                 dismissible: true,
-        //                 position: 'top-right'
-        //             })
-        //         }
-        //     },
-        //     immediate: true
-        // }
-    },
     computed: {
+        ...mapGetters(['employeePosition']),
         employeePhone () {
             return this.personalData[2].value
         },
@@ -199,6 +207,10 @@ export default {
                 })
         },
 
+        /**
+         * Валидация полей сотрудника
+         * @todo вместо `let result`, сделать промис
+         */
         validationEmployeer (type) {
             let result = false
             this.personalData.forEach( per => {
@@ -223,6 +235,10 @@ export default {
             } 
             
         },
+
+        /**
+         * Редактирование сотрудника
+         */
         editEmployeer () {
             let companyArr = this.employeeCompanies.map( c => c.id) 
 
@@ -230,7 +246,11 @@ export default {
                 linked_companies: companyArr
             }
             this.personalData.forEach( per => {
-                data[per.model] = per.value
+                if (per.model === 'position') {
+                    data[per.model] = per.value.id
+                } else {
+                    data[per.model] = per.value
+                }
             }) 
 
             // Удаляем из номера пробелы, скобки и знак +
@@ -258,6 +278,10 @@ export default {
                 this.setPopupComponent({ component: 'company-data', params: { mode: 'view', index: indexCompany } })
             })
         },
+
+        /**
+         * Создание сотрудника
+         */
         saveNewEmployeer () {
             let companyArr = this.employeeCompanies.map( c => c.id) 
             let data = {
@@ -265,8 +289,12 @@ export default {
             }
 
             this.personalData.forEach( per => {
-                data[per.model] = per.value
-            }) 
+                if (per.model === 'position') {
+                    data[per.model] = per.value.id
+                } else {
+                    data[per.model] = per.value
+                }
+            })
 
              let parsePhone = data.user_phone.toString();
                  parsePhone = parsePhone.replace(/\s+/g, '');
@@ -322,5 +350,11 @@ export default {
         .ur-input--outlined {
             border: none
         }
+    }
+    .vs__search {
+        display: none;
+    }
+    .vs__dropdown-toggle {
+        min-height: 28px;
     }
 </style>

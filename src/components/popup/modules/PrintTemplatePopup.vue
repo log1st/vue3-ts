@@ -77,8 +77,9 @@
           }
         })
         .then (resp => {
+        if (this.params.checkedDebtors.length <= 50) {
           this.$toast.open({
-          message: `Бланк готов!`,
+                  message: `Бланк готов!`,
                   type: 'success',
                   duration: 5000,
                   dismissible: true,
@@ -87,6 +88,15 @@
         setTimeout(() => {
           window.open(resp.link, '_blank')
         }, 1000)
+        } else {
+          this.$toast.open({
+                  message: `Бланк готов и отправлен вам на почту!`,
+                  type: 'success',
+                  duration: 5000,
+                  dismissible: true,
+                  position: 'top-right'
+        })
+        }
           // console.log(resp)
         })
         console.log(this.params.checkedDebtors.id)
