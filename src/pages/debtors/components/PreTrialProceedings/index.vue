@@ -698,6 +698,7 @@
           return {
             title: i.alias,
             key: i.name,
+            serverKey: i.serverName,
             sortable: i.isSum
           }
         });

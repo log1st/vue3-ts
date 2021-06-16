@@ -30,9 +30,10 @@
               <th v-for="(item, index) in displayColumnsInner" :key="index" >
                 <div class="table__head-cell">
                   <div v-if="item.key === 'checked'" style="position: absolute;
-    right: 33px;
-    font-size: 10px;
-    width: 80px;">{{item.title}}</div>
+                    right: 33px;
+                    font-size: 10px;
+                    width: 80px;"
+                    >{{item.title}}</div>
                   <slot v-bind="item" :name="'head(' + item.key + ')'">
                     <span 
                       @click.stop="item.sortable ? sort(item) : null"
@@ -309,10 +310,10 @@
       sort(e) {
         // console.log(e)
         const index = this.sortDirections.findIndex(i => i === e.sortDirection);
-        const item = this.displayColumnsInner.find(i => i.key === e.key);
+        const item = this.displayColumnsInner.find(i => i.serverKey === e.serverKey);
         item.sortDirection = index === 2 ? this.sortDirections[0] : this.sortDirections[index + 1];
         this.sortData(e)
-        this.$emit('sort', { key: e.key, sortDirection: e.sortDirection });
+        this.$emit('sort', { key: e.serverKey, sortDirection: e.sortDirection });
       },
       /**
        * Search button handler

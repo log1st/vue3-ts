@@ -60,7 +60,7 @@ export default {
       mainRoutes: [
         // { name: 'Рабочий стол', rout: '/desktop', iconname: 'desktop', width: 26, height: 26, viewBox: '0 0 26 26', hasStroke: true },
         // { name: 'Моя организация', rout: '/main', iconname: 'home', width: 15, height: 14 },
-        { name: 'Организации', rout: '/companies', iconname: 'affiliate', width: 28, height: 20, viewBox: '0 0 28 20' },
+        // { name: 'Организации', rout: '/companies', iconname: 'affiliate', width: 28, height: 20, viewBox: '0 0 28 20' },
         { name: 'Работа с должниками', rout: '/debtors', iconname: 'debtors', width: 30, height: 30, viewBox: '0 0 30 30'},
         { name: 'Обмен данными', rout: '/exchange/import/upload?action=1', iconname: 'exchange', width: 30, height: 30, viewBox:"0 0 30 30" },
         // { name: 'Справочник судов', rout: '/courts', iconname: 'courts', width: 19, height: 19, viewBox: '0 0 32 32' },
@@ -68,7 +68,6 @@ export default {
         // { name: 'Отчеты', rout: '/documents', iconname: 'doc', width: 18, height: 20 },
         // { name: 'Панель управления', rout: '/panel', iconname: 'panel', width: 30, height: 30, viewBox:"0 0 30 30" },
         // { name: 'Настройки', rout: '/settings', iconname: 'settings', width: 20, height: 20 }, // Переходит в панель управления
-        
       ]
     }
   },

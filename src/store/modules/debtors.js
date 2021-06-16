@@ -17,10 +17,10 @@ export default {
       { serverName: 'full_name',        name: 'FIO',        alias: 'ФИО',           views: { current: true, view: true, fixed: false, default: true, select: false }, width: '240px' },
       { serverName: 'address_debtor',   name: 'Adres',      alias: 'Адрес',         views: { current: true, view: true, fixed: false, default: true, select: false }, width: '180px' }, // Adres - эта дичь не моя, это такое апи
       { serverName: 'opening_balance',  name: 'AccruedCsv', alias: 'Начислено',     views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
-      { serverName: 'paid',             name: 'PaidCsv',    alias: 'Оплачено',      views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
-      { serverName: 'debt_calculation', name: 'TotalDebt',  alias: 'Задолженность', views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
-      { serverName: 'peni_calc_155',    name: 'PeniCsv',    alias: 'Пеня',          views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
-      { serverName: 'peni_calc_395',    name: 'StateDuty',  alias: 'Пошлина',       views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true }
+      { serverName: 'paid_up',          name: 'PaidCsv',    alias: 'Оплачено',      views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
+      { serverName: 'debt',             name: 'TotalDebt',  alias: 'Задолженность', views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
+      { serverName: 'penalty',          name: 'PeniCsv',    alias: 'Пеня',          views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
+      { serverName: 'fee.individual_order', name: 'StateDuty',  alias: 'Пошлина',       views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true }
     ],
 
     /**
@@ -32,11 +32,11 @@ export default {
       { serverName: 'personal_account', name: 'RashSchet',  alias: '№ ЛС',          views: { current: true, view: false, fixed: true }, width: '90px' },
       // { name: 'bussines', alias: '№ Дела', views: { current: false, view: false, default: true, select: false } },
       { serverName: 'full_name',        name: 'FIO',        alias: 'ФИО',           views: { current: true, view: true, fixed: false, default: true, select: false }, width: '240px' },
-      { serverName: 'address_debtor',   name: 'Adres',      alias: 'Адрес',         views: { current: true, view: true, fixed: false, default: true, select: false }, width: '180px' }, // Adres - эта дичь не моя, это такое апи
+      { serverName: 'address_debtor',   name: 'Adres',      alias: 'Адрес',         views: { current: true, view: true, fixed: false, default: true, select: false }, width: '180px' },
       { serverName: 'opening_balance',  name: 'AccruedCsv', alias: 'Начислено',     views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
-      { serverName: 'paid',             name: 'PaidCsv',    alias: 'Оплачено',      views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
-      { serverName: 'debt_calculation', name: 'TotalDebt',  alias: 'Задолженность', views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
-      { serverName: 'peni_calc_155',    name: 'PeniCsv',    alias: 'Пеня',          views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
+      { serverName: 'paid_up',          name: 'PaidCsv',    alias: 'Оплачено',      views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
+      { serverName: 'debt',             name: 'TotalDebt',  alias: 'Задолженность', views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
+      { serverName: 'penalty',          name: 'PeniCsv',    alias: 'Пеня',          views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
       // { serverName: 'peni_calc_395',    name: 'StateDuty',  alias: 'Пошлина',       views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true }
     ],
     /**

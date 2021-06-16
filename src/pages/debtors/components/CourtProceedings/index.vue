@@ -407,9 +407,9 @@
       async handlerCellCheckbox (item, index) {
        await this.checkDebtor({id: item._id, module: 1});
        
-       if (this.$store.state.debtors.sortValue != null) {
+       if (!this.$store.state.debtors.sortValue) {
          let sortValue = cloneDeep(this.$store.state.debtors.sortValue)
-        events.$emit('reActiveSort', sortValue);
+         events.$emit('reActiveSort', sortValue);
        }
       //  console.log(this.$store.state.debtors.sortValue)  
       },
@@ -458,11 +458,13 @@
         switch (e.sortDirection) {
           case 'desc':
             items = this.debtorsCourtProceedingsInner.sort((a, b) => {
+              // console.log(e)
               return (b[e.key] - a[e.key]);
             })
             break;
 
           case 'asc':
+            // console.log(e)
             items = this.debtorsCourtProceedingsInner.sort((a, b) => {
               return (a[e.key] - b[e.key]);
             })
@@ -711,6 +713,7 @@
           return {
             title: i.alias,
             key: i.name,
+            serverKey: i.serverName,
             sortable: i.isSum
           }
         });
