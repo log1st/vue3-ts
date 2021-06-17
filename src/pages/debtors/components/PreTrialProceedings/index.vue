@@ -50,7 +50,7 @@
             class="table__nav-action"
             @click="openPopupForChangeStatus('all')"
           >
-            <span>Изменить статус выбранных должников</span>
+            <!-- <span>Изменить статус выбранных должников</span> -->
           </div>
         </transition>
         <!-- <transition name="fade">
