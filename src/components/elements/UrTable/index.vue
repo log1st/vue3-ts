@@ -82,9 +82,9 @@
               <tbody class="table__body" ref="tbody">
               <tr style="background: transparent">
                 <td v-for="(item, index) in displayColumnsInner" :key="index" :ref="`${item.key}Total`">
-                  <span class="table__col-user table__col-total" v-if="index === 0">Итого:</span>
+                  <!-- <span class="table__col-user table__col-total" v-if="index === 0">Итого:</span> -->
                   <span class="table__col-total-item" style="white-space: nowrap">
-                    {{ debtorsData[item.key] | sepnum(2) }} {{ debtorsData[item.key] ? '₽' : '' }}
+                    <!-- {{ debtorsData[item.key] | sepnum(2) }} {{ debtorsData[item.key] ? '₽' : '' }} -->
                    </span>
                 </td>
               </tr>
