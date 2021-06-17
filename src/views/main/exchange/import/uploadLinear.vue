@@ -6,7 +6,7 @@
                       <!-- <div class="efb__name">{{ name }}</div> -->
                       <div class="efb__input" style="width: 100%" :class="{ 'is-changed' : fileArray.fileName }" ref="efbInput">
                         <label class="download__just" :for="'efb-input-01'" 
-                        @change="changeFile($event, true)"
+                        @change="changeFile($event)"
                         v-bind:class="{ 'disabled' : false }">
                           <icon-base
                             v-if="fileArray.fileName"

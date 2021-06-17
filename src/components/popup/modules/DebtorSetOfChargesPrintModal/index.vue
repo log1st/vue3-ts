@@ -2,7 +2,7 @@
   <popup-wrapper :popupWidth="600">
     <template v-slot:header>
       <div class="align-items-center justify-content-between">
-        <p class="m-0 print-modal__header">Работа с печатной формой.</p>
+        <p class="m-0 print-modal__header">Работа с печатной формой свода начислений.</p>
       </div>
     </template>
 
@@ -79,6 +79,7 @@
           }
         })
         .then (resp => {
+         // не совсем понял зачем условие на 50 и более должников на печать если все равно выводим всех
          
         if (this.params.checkedDebtors.length <= 50) {
            this.$toast.open({
@@ -99,6 +100,7 @@
             dismissible: true,
             position: 'top-right'
         })
+          window.open(resp.document.file, '_blank')
         }
         
           console.log(resp)

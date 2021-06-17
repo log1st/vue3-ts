@@ -2,7 +2,7 @@
   <popup-wrapper :popupWidth="600">
     <template v-slot:header>
       <div class="align-items-center justify-content-between">
-        <p class="m-0 print-modal__header">Работа с печатной формой.</p>
+        <p class="m-0 print-modal__header">Работа с печатной формой пошлины.</p>
       </div>
     </template>
 
@@ -96,6 +96,7 @@
                   dismissible: true,
                   position: 'top-right'
         })
+          window.open(resp.link, '_blank')
         }
           // console.log(resp)
         })
