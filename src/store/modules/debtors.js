@@ -17,7 +17,7 @@ export default {
       // { serverName: 'debtor_main_profile.phone_number',     name: 'phone',          alias: 'Телефон',           views: { current: true, view: true, fixed: false, default: true, select: false }, width: '140px' },
       { serverName: 'full_name',        name: 'FIO',        alias: 'ФИО',           views: { current: true, view: true, fixed: false, default: true, select: false }, width: '240px' },
       { serverName: 'address_debtor',   name: 'Adres',      alias: 'Адрес',         views: { current: true, view: true, fixed: false, default: true, select: false }, width: '180px' }, // Adres - эта дичь не моя, это такое апи
-      { serverName: 'opening_balance',  name: 'AccruedCsv', alias: 'Начислено',     views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
+      { serverName: 'accrual',  name: 'AccruedCsv', alias: 'Начислено',     views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
       { serverName: 'paid_up',          name: 'PaidCsv',    alias: 'Оплачено',      views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
       { serverName: 'debt',             name: 'TotalDebt',  alias: 'Задолженность', views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
       { serverName: 'penalty',          name: 'PeniCsv',    alias: 'Пеня',          views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
@@ -35,7 +35,7 @@ export default {
       { serverName: 'debtor_main_profile.phone_number',        name: 'phone',        alias: 'Телефон',           views: { current: true, view: true, fixed: false, default: true, select: false }, width: '140px' },
       { serverName: 'full_name',        name: 'FIO',        alias: 'ФИО',           views: { current: true, view: true, fixed: false, default: true, select: false }, width: '240px' },
       { serverName: 'address_debtor',   name: 'Adres',      alias: 'Адрес',         views: { current: true, view: true, fixed: false, default: true, select: false }, width: '180px' },
-      { serverName: 'opening_balance',  name: 'AccruedCsv', alias: 'Начислено',     views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
+      { serverName: 'accrual',  name: 'AccruedCsv', alias: 'Начислено',     views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
       { serverName: 'paid_up',          name: 'PaidCsv',    alias: 'Оплачено',      views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
       { serverName: 'debt',             name: 'TotalDebt',  alias: 'Задолженность', views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
       { serverName: 'penalty',          name: 'PeniCsv',    alias: 'Пеня',          views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
