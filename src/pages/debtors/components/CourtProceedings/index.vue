@@ -458,13 +458,13 @@
         switch (e.sortDirection) {
           case 'desc':
             items = this.debtorsCourtProceedingsInner.sort((a, b) => {
-              console.log(e)
+              // console.log(e)
               return (b[e.key] - a[e.key]);
             })
             break;
 
           case 'asc':
-            console.log(e)
+            // console.log(e)
             items = this.debtorsCourtProceedingsInner.sort((a, b) => {
               return (a[e.key] - b[e.key]);
             })
