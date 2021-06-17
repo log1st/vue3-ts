@@ -49,7 +49,9 @@
                 <div class="companies__col" @click="runActions(0)"><span>{{ item.legal_address }}</span></div>
                 <div class="companies__col" @click="runActions(0)"><span>{{ item.physical_address }}</span></div>
                 <transition name="fade">
-                <row-hover-actions v-if="currentRowHovered == i" :icons="['view', 'edit', 'close']" :elClass="i % 2 == 1 ? 'is-dark' : null" @setRowHoverAction="runActions($event)" />
+                    <!-- Просмотр и редактирование организации -->
+                    <!-- 'view', 'edit',  -->
+                <row-hover-actions v-if="currentRowHovered == i" :icons="[ 'close']" :elClass="i % 2 == 1 ? 'is-dark' : null" @setRowHoverAction="runActions($event)" />
                 </transition>
             </div>
             </div>
@@ -104,10 +106,10 @@ export default {
             // debugger
             if (j !== 2) {
                 
-                this.$store.dispatch('getCompanyById', {id: this.currentRowHovered})
-                .then ( () => {
-                this.setPopupComponent({ component: 'company-data', params: { mode: j === 0 ? 'view' : 'edit', index: this.currentRowHovered } })
-                })
+                // this.$store.dispatch('getCompanyById', {id: this.currentRowHovered})
+                // .then ( () => {
+                // this.setPopupComponent({ component: 'company-data', params: { mode: j === 0 ? 'view' : 'edit', index: this.currentRowHovered } })
+                // })
 
             } else if (this.getCompanies.length === 1) {
                 this.setPopupComponent({ component: 'popupAlert', params: { title: 'Дейстивие запрещено', text: 'Невозможно удалить единственную компанию. Создайте новую компанию и после этого попробуйте еще раз.' } })

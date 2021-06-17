@@ -154,20 +154,29 @@ export default {
     },
 
     importDebtors({ dispatch, commit }, payload) {
-      dispatch('appLoadingChange', true, { root: true })
-      const { mode } = payload
-      commit('generateUUID')
-      if (mode === 'table') {
-        dispatch('importDebtorsCascad', payload)
-      } else {
-        dispatch('importDebtorsLinear', payload)
-      }
+      return new Promise ((resolve, reject) => {
+        dispatch('appLoadingChange', true, { root: true })
+        const { mode } = payload
+        commit('generateUUID')
+        if (mode === 'table') {
+          dispatch('importDebtorsCascad', payload)
+        } else {
+          dispatch('importDebtorsLinear', payload)
+          .catch( (err) => {
+            reject({status: false, msg: err})
+          })
+          .finally ( () => {
+            resolve({status: true})
+          })
+        }
+      })
+      
     },
 
     setSelectedRegion ({commit}, payload) {
       const { region, exchangedCompanyData } = payload
       commit('setSelectedRegion', region)
-      console.log(payload)
+      // console.log(payload)
       $http({
         command: `/api/account/company-settings/${exchangedCompanyData.id}/`,
         method: 'PATCH',
@@ -224,7 +233,7 @@ export default {
         month: 0,
         ...payload
       }
-      $http({
+     return $http({
         command: '/api/datafile/upload/',
         data: data,
         method: 'POST'

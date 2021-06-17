@@ -287,15 +287,26 @@ export default {
           dispatch('uploadCompanies');
       })
     },
-    getCompanySettings ({commit}) {
+    getCompanySettings ({commit}, payload) {
       return new Promise ((resolve, reject) => {
-        let id = localStorage.getItem('defaultCompany')
+        let id;
+
+        if (!payload) {
+          id = localStorage.getItem('defaultCompany')
+        } else {
+          id = payload
+        }
+
         $http({
           command: `/api/account/company-settings/${id}/`,
           method: 'GET',
         })
         .then (resp => {
+          resolve({status: true, response: resp})
           commit('setCompanySetting', resp)
+        })
+        .catch( err => {
+          reject({status: false, response: err})
         })
       })
     },

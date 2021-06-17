@@ -185,8 +185,6 @@
       </template> -->
 
       <template v-slot:footer>
-
-
         <pagination :pages="preTrialPages" @changeCurrentPage="changePageHandler($event)" :currentPage="currentPage" />
       </template>
 

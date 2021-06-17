@@ -60,7 +60,7 @@ export default {
       mainRoutes: [
         // { name: 'Рабочий стол', rout: '/desktop', iconname: 'desktop', width: 26, height: 26, viewBox: '0 0 26 26', hasStroke: true },
         // { name: 'Моя организация', rout: '/main', iconname: 'home', width: 15, height: 14 },
-        // { name: 'Организации', rout: '/companies', iconname: 'affiliate', width: 28, height: 20, viewBox: '0 0 28 20' },
+        { name: 'Организации', rout: '/companies', iconname: 'affiliate', width: 28, height: 20, viewBox: '0 0 28 20' },
         { name: 'Работа с должниками', rout: '/debtors', iconname: 'debtors', width: 30, height: 30, viewBox: '0 0 30 30'},
         { name: 'Обмен данными', rout: '/exchange/import/upload?action=1', iconname: 'exchange', width: 30, height: 30, viewBox:"0 0 30 30" },
         // { name: 'Справочник судов', rout: '/courts', iconname: 'courts', width: 19, height: 19, viewBox: '0 0 32 32' },
@@ -76,15 +76,6 @@ export default {
       return this.$route.path.split('/')[1] === rout.split('/')[1]
     }
   },
-  mounted () {
-    let user = localStorage.getItem('user')
-    if (user) {
-      user = JSON.parse(user)
-      if (user.id === 79) {
-        this.mainRoutes.push({ name: 'Организации', rout: '/companies', iconname: 'affiliate', width: 28, height: 20, viewBox: '0 0 28 20' },)
-      }
-    }
-  },  
   watch: {
     $route (to, from) {
       setTimeout(() => {
