@@ -134,11 +134,11 @@
         <app-rating :rating="1"></app-rating>
       </template>
 
-      <template v-slot:cell(phone)="{ row, i }">
+      <!-- <template v-slot:cell(phone)="{ row, i }">
         <span class="table__col-user">
           {{ row.debtor_main_profile.phone_number }}
         </span>
-      </template>
+      </template> -->
 
       <template v-slot:cell(FIO)="{ row, i }">
         <span class="table__col-user">
