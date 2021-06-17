@@ -18,8 +18,8 @@
             value: getCompaniesFullNames[0], 
             class: error ? 'is-error' : null 
             }" 
-          @changeInputValue="currentOrg = $event" 
-          @noerror="error = false" 
+            @changeInputValue="currentOrg = $event" 
+            @noerror="error = false" 
           :key="updateContent" />
 
           <search-input class="dropdown"
@@ -27,7 +27,7 @@
           :params="{
             isSelect: true, 
             items: regions,
-            placeholder: 'Выберите регион', 
+            placeholder: currentRegionName || 'Выберите регион', 
             value: currentRegionName,
             class: regionError ? 'is-error' : null 
             }"
@@ -80,22 +80,22 @@ export default {
           height:"24",
           viewBox:"0 0 25 24"
         },
-        {
-          name: 'Выгрузка данных',
-          rout: '/exchange/export',
-          icon: 'icon-export',
-          width:"25",
-          height:"26",
-          viewBox:"0 0 25 26"
-        },
-        {
-          name: 'Интеграция',
-          rout: '/exchange/gis',
-          icon: 'icon-integration',
-          width:"25",
-          height:"25",
-          viewBox:"0 0 25 25"
-        }
+        // {
+        //   name: 'Выгрузка данных',
+        //   rout: '/exchange/export',
+        //   icon: 'icon-export',
+        //   width:"25",
+        //   height:"26",
+        //   viewBox:"0 0 25 26"
+        // },
+        // {
+        //   name: 'Интеграция',
+        //   rout: '/exchange/gis',
+        //   icon: 'icon-integration',
+        //   width:"25",
+        //   height:"25",
+        //   viewBox:"0 0 25 25"
+        // }
       ]
     }
   },
@@ -104,7 +104,6 @@ export default {
       let alreadyActiveLink = this.exchangeLinklLists.find( aAL => aAL.isActive === true )
       if (activeLink.id !== alreadyActiveLink.id) {
         this.getExchangeActiveLink(activeLink)
-        console.log(true)
       }
 
   },
@@ -127,6 +126,7 @@ export default {
 
     currentRegionName: {
       immediate: true,
+      deep: true,
       handler (val) {
         let regionObject = this.regionsList.find( r => val === r.name)
         // console.log(regionObject, this.exchangedCompanyData)
@@ -135,7 +135,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getExchangeActiveLink', 'getExchengeCompany', 'getRegionsList', 'setSelectedRegion']),
+    ...mapActions(['getExchangeActiveLink', 'getExchengeCompany', 'getRegionsList', 'getCompanySettings', 'setSelectedRegion']),
     /**
      * @param item: `Object`, выбранная категория из сайдбара
      * @param index: `Integer`, порядковый номер в массиве `lists`, возможно понадобиться когда данные в массив будут приходить с бэка
@@ -150,10 +150,24 @@ export default {
   },
   created () {
      this.getRegionsList()
-     if ( this.companySettings.default_region ) {
-       let region = this.regionsList.find(rg => rg.id === this.companySettings.default_region )
-       this.currentRegionName = region.name
-     }
+     .then( async () => {
+      if ( this.companySettings.default_region ) {
+         let region = await this.regionsList.find(rg => rg.id === this.companySettings.default_region )
+         this.currentRegionName = region.name
+      } else {
+        setTimeout(() => {
+          this.getCompanySettings(this.exchangedCompanyData.id)
+          .then( async result => {
+            if ( result.status ) {
+              let region = await this.regionsList.find(rg => rg.id === this.companySettings.default_region )
+              this.currentRegionName = region.name
+            }
+          })
+        }, 1000)
+        
+      }
+     })
+     
   },
   computed: {
     ...mapGetters([

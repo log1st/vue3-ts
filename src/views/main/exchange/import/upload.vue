@@ -17,7 +17,7 @@
             Загрузить файлы
           </div>
           <div class="exchange-upload-btn">
-            Интеграция по апи
+            <!-- Интеграция по апи -->
           </div>
         </div>
         <div class="exchange-inner-content">

@@ -47,17 +47,17 @@ export default {
     methods: {
         ...mapActions(['appLoadingChange', 'getLinearFile', 'setPopupComponent', 'importDebtors', 'toBase64']),
         validationLinearForm ( payload ) {
+          console.log(payload)
           return new Promise ((resolve, reject) => {
              if (!this.selectedRegion) {
                 this.setPopupComponent({ component: 'popupAlert', params: { title: 'Загрузка невозможна', text: 'Выберите регион' } })
                 reject({status: false, id: 1})
-              } else if ( !payload ) {
-                if (!this.fileArray.file) {
+              } else if (!this.fileArray.file) {
                   this.setPopupComponent({ component: 'popupAlert', params: { title: 'Загрузка невозможна', text: 'Загрузите файл' } })
                   reject({status: false, id: 2})
-                } else {
-                  resolve({status: true})
-                }
+                // } else {
+                //   resolve({status: true})
+                // }
               }
                else {
                 resolve({status: true})
@@ -97,6 +97,15 @@ export default {
               company: parseInt(companyId),
             }
             this.importDebtors (data)
+            .then( result => {
+              if (result.status) {
+                  this.clearFile()
+              } 
+            })
+            .catch( error => {
+              console.log(error.msg)
+              this.clearFile()
+            })
           }
         }) 
         .catch ( err => {
