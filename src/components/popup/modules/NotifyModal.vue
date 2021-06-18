@@ -44,7 +44,8 @@ export default {
                 method: 'POST',
                 data: {
                     company: companyId,
-                    payload: this.debtorsId
+                    payload: this.debtorsId,
+                    production_type: 'pretrial'
                 }
             })
             .then( resp => {

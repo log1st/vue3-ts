@@ -54,7 +54,7 @@
         <li class="btn btn-icon btn-title" @click="toggleTableDisplaySettings">
           <icon-base width="30" height="30" iconColor="#848aa1"><icon-panel/></icon-base>
         </li>
-      <li class="btn btn-icon btn-title" @click="openButtonsManager">
+      <li v-if="debtorsModuleActive !== 0" class="btn btn-icon btn-title" @click="openButtonsManager">
         <icon-base
           width="30"
           height="30"

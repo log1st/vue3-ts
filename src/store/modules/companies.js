@@ -390,7 +390,7 @@ export default {
           method: 'PUT'
         })
         .then( response => {
-          console.log(response)
+          // console.log(response)
         })
       } else if ( type === 'move' ) {
         await commit('setEditApplicationDocument', {type: type, data: data, id: id})
@@ -401,7 +401,8 @@ export default {
           method: 'PUT'
         })
         .then( response => {
-          console.log(response)
+          // console.log(response)
+          
         })
       }
     },
