@@ -1,0 +1,191 @@
+.container {
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  padding-left: 120px;
+  padding-right: 20px;
+
+  + .table {
+    margin-top: 10px;
+  }
+}
+
+.actions {
+  &:not(:first-child) {
+    margin-left: 25px;
+  }
+}
+
+.linedActions {
+  margin-left: 40px;
+
+  display: flex;
+  align-items: center;
+}
+
+.linedAction {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  text-align: center;
+  letter-spacing: 0.04em;
+  color: #828282;
+  padding-bottom: 1px;
+  border-bottom: 1px solid #a1a1a1;
+
+  cursor: pointer;
+
+  &:not(:first-child) {
+    margin-left: 20px;
+  }
+}
+
+.stats {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.stat {
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 139.34%;
+  text-align: right;
+  letter-spacing: 0.03em;
+  color: #4F4F4F;
+
+  &:not(:first-child) {
+    margin-left: 30px;
+  }
+}
+
+.table {
+  height: 0;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.grid {
+  display: grid;
+  grid-gap: 14px;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  background: #B8D7EB;
+  box-shadow: inset -30px -30px 30px rgba(255, 255, 255, 0.1);
+  padding: 0 16px 0 10px;
+
+  .cell {
+    height: 60px;
+
+    &.sortable {
+      cursor: pointer;
+    }
+
+  }
+
+  .cellSort {
+    height: 24px;
+    width: 24px;
+    flex-shrink: 0;
+
+    user-select: none;
+  }
+
+  .cellLabel {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.04em;
+    color: #4F4F4F;
+  }
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.selectAll {
+  justify-content: flex-end;
+}
+
+.footer {
+  position: sticky;
+  bottom: 0;
+  background: #455159;
+  padding: 0 16px 0 10px;
+
+  .cell {
+    height: 45px;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    text-align: right;
+    letter-spacing: 0.02em;
+
+    color: #FFFFFF;
+  }
+}
+
+.summaryLabel {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 22px;
+}
+
+.pagination {
+  height: 36px;
+
+  background: white;
+}
+
+.body {
+  height: 0;
+  flex-grow: 1;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.contextMenu {
+  position: fixed;
+  z-index: 2;
+}
+
+.scroller {
+  height: 100%;
+  overflow-y: scroll !important;
+}
+
+.record{
+}
+
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  height: 60px;
+  width: 60px;
+
+  z-index: 1;
+
+  fill: none;
+}
+
+.filters {
+  margin-left: 24px;
+}

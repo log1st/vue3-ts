@@ -1,0 +1,23 @@
+.menu {
+  background: #FFFFFF;
+  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 10px 10px;
+  padding-top: 3px;
+  overflow: hidden;
+}
+
+.action {
+  padding: 7px 10px 8px;
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+  color: #4F4F4F;
+
+  cursor: pointer;
+
+  &:hover {
+    background: #CAE3F3;
+  }
+}

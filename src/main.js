@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import 'normalize.css'
+import CompositionApi from '@vue/composition-api'
 import App from './App.vue'
 import { createRouter } from './router'
 import createStore from './store'
@@ -8,16 +9,20 @@ import sepnum from '@/filters/sepnum.js'
 import formatdate from '@/filters/formatdate.js'
 import '@/filters';
 import '@/mixins';
+import {installOutsideClick} from "@/direcvites/outsideClick";
 
 import CabinetLayout from './layouts/CabinetLayout.vue'
 import AuthLayout from './layouts/AuthLayout.vue'
 import AccrualsLayout from './layouts/AccrualsLayout.vue'
 import AdminLayout from './layouts/AdminLayout.vue'
 
+installOutsideClick(Vue);
+
 // const window = {}
 import Calendar from 'v-calendar/lib/components/calendar.umd'
 import DatePicker from 'v-calendar/lib/components/date-picker.umd'
 
+Vue.use(CompositionApi);
 Vue.component('calendar', Calendar)
 Vue.component('date-picker', DatePicker)
 
@@ -265,8 +270,8 @@ Vue.component('line-chart', {
 
   })
 
-// lodash 
-import groupBy from 'lodash/groupBy'; 
+// lodash
+import groupBy from 'lodash/groupBy';
 if (typeof window !== 'undefined') {
 	window.groupBy = groupBy;
 }
@@ -288,7 +293,7 @@ if (typeof document !== 'undefined') {
 	Vue.prototype.document = document;
 }
 
-	
+
 
 //Use the window object to make it available globally.
 
@@ -307,7 +312,7 @@ export function createApp() {
 	if (typeof window !== 'undefined') {
 		window.axios.interceptors.response.use(response => {
 			// Если пользователь не авторизован
-			if (response.data[0] && response.data[0].Errors && response.data[0].Errors[1007]) {	
+			if (response.data[0] && response.data[0].Errors && response.data[0].Errors[1007]) {
 				router.push('/login').catch(err => { err });
 			}
 			return response

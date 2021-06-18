@@ -1,0 +1,40 @@
+.record {
+  position: relative;
+  cursor: pointer;
+  padding: 0 10px;
+
+  &:not(active):not(:hover) {
+    .selector {
+      display: none;
+    }
+  }
+}
+
+.selector {
+  position: absolute;
+  right: 20px;
+  top: 0;
+  bottom: 0;
+
+  background: #B8D7EB;
+  border-radius: 10px;
+
+  transform: translateX(15px);
+}
+
+.content {
+  flex-grow: 1;
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+
+  color: #333333;
+
+  position: relative;
+}
+
+.select {
+  margin-left: 10px;
+}

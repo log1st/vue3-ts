@@ -1,0 +1,29 @@
+.icon {
+  display: block;
+  height: 100%;
+  width: 100%;
+
+  position: relative;
+}
+
+@keyframes icon-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: icon-spin 1s linear infinite;
+}
+
+.source {
+  display: block;
+  pointer-events: none;
+  fill: currentColor;
+  transition: none !important;
+  height: 100%;
+  width: 100%;
+}

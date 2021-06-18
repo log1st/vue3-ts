@@ -27,7 +27,7 @@ import services from '../services'
 
 Vue.use(Vuex)
 
-function createStore () { 
+function createStore () {
 return new Vuex.Store({
   // plugins: [
   //   createPersistedState({
@@ -58,8 +58,8 @@ return new Vuex.Store({
         // dispatch ('getListsOfStatusesDebtors',       null, { root: true }), // загрузить список статусов
         // dispatch ('getAllSumsDebtors',               null, { root: true }), // загрузка данных по задолжникам
         dispatch ('getPositionForEmployee',          null, { root: true }), // Получение должностей
-        dispatch ('combinedRequests',                {module: 'judicial'}, { root: true }), // загрузка совмещенных запросов
-        dispatch ('combinedRequests',                {module: 'pretrial'}, { root: true }), // загрузка совмещенных запросов
+        // dispatch ('combinedRequests',                {module: 'judicial'}, { root: true }), // загрузка совмещенных запросов
+        // dispatch ('combinedRequests',                {module: 'pretrial'}, { root: true }), // загрузка совмещенных запросов
         // dispatch ('getCompanyUserApplication',       null, { root: true }),    // Приложения пользователя
         // dispatch ('loadInfoINNContracts',            null, { root: true }),
         // dispatch ('loadInfoINNSharedData',           null, { root: true }),

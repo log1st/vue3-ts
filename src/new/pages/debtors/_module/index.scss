@@ -1,0 +1,63 @@
+.module {
+    display: flex;
+    flex-direction: column;
+}
+
+.table {
+    flex-grow: 1;
+}
+
+.status {
+    cursor: pointer;
+}
+
+.account {
+    display: flex;
+    align-items: center;
+}
+
+.accountInfo {
+    flex-grow: 1;
+}
+
+.accountNumber {
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.04em;
+    color: #5080CD;
+}
+
+.accountStars {
+    margin-top: 10px;
+}
+
+.accountIcons {
+    display: flex;
+    align-items: center;
+    width: 60px;
+}
+
+.accountIcon {
+    height: 24px;
+    width: 24px;
+}
+
+.accountIconTooltip {
+    white-space: nowrap;
+    z-index: 1;
+}
+
+.accountIconsDense {
+    .accountIcon {
+        height: 20px;
+        width: 20px;
+    }
+}
+
+.accountIconGreen {
+    color: #009688;
+}
+
+.accountIconBlue {
+    color: #5080CD;
+}

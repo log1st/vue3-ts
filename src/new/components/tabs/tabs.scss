@@ -1,0 +1,31 @@
+.tabs {
+  display: flex;
+}
+
+.tab {
+  padding: 13px 24px;
+  border-radius: 10px;
+
+  white-space: pre-line;
+
+  color: #4F4F4F;
+  background: #F9FBFD;
+
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  text-align: center;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+
+
+  &.active {
+    background: #21317A;
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.15);
+    color: #F2F2F2;
+  }
+
+  &:not(:first-child) {
+    margin-left: 10px;
+  }
+}

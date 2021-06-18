@@ -56,7 +56,7 @@ const routes = [
   //   }
   // },
   {
-    path: '/debtors',
+    path: '/old-debtors',
     name: 'Debtors',
     component: () => import('../pages/debtors'),
     meta: {
@@ -66,6 +66,28 @@ const routes = [
       // getServicesList();
       next();
     }
+  },
+  {
+    path: '/debtors',
+    name: 'debtors',
+    redirect: {
+      name: 'debtors-module',
+      params: {
+        module: 'judicial'
+      }
+    },
+    component: () => import('@/new/pages/debtors/index.vue'),
+    children: [
+      {
+        path: ':module',
+        name: 'debtors-module',
+        component: () => import('@/new/pages/debtors/_module/index.vue'),
+        props: true,
+      }
+    ],
+    meta: {
+      requiresAuth: true
+    },
   },
   {
     path: '/exchange/manual',

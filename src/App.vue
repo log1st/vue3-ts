@@ -3,13 +3,16 @@
     <component :is="layout">
       <router-view/>
     </component>
+    <IconsMap :style="{visibility: 'hidden', position: 'fixed', top: '200vh', left: '200vw'}"/>
   </div>
 </template>
 
 <script>
 import 'normalize.css'
+import IconsMap from "@/new/components/icon/IconsMap";
 
 export default {
+  components: {IconsMap},
   computed: {
     layout () {
       return this.$route.meta.layout || 'cabinet-layout'
@@ -22,7 +25,7 @@ export default {
         document.documentElement.setAttribute('data-theme', 'night');
       }
   },
-  
+
 }
 </script>
 

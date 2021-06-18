@@ -66,6 +66,8 @@
         list-style: none;
         margin: 0 0 18px;
 
+        overflow: hidden;
+
         a {
             @extend %dffs;
             flex-wrap: nowrap;

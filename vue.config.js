@@ -16,14 +16,14 @@ const target = TARGET_NODE
 module.exports = {
   devServer: {
     historyApiFallback: true,
-      hot: true,
-      inline: true,
-      stats: true,
-      noInfo: true,
-      quiet: true,
-      stats: 'errors-only',
-      compress: true,
-      disableHostCheck: true,
+    hot: true,
+    inline: true,
+    stats: true,
+    noInfo: true,
+    quiet: true,
+    stats: 'errors-only',
+    compress: true,
+    disableHostCheck: true,
     headers: {
       'Access-Control-Allow-Origin': '*'
     }
@@ -44,7 +44,7 @@ module.exports = {
       whitelist: /\.css$/
     }) : undefined,
     output: {
-      filename: process.env.production ? `bundle-[chunkHash].js` : `bundle-[hash].js`,
+      filename: process.env.production ? 'bundle-[chunkHash].js' : 'bundle-[hash].js',
       libraryTarget: TARGET_NODE
         ? 'commonjs2'
         : undefined
@@ -71,5 +71,29 @@ module.exports = {
           optimizeSSR: false
         })
       )
+
+    config.module.rule('svg')
+      .exclude.add(/\.inline\./)
+
+    config.module.rule('vue-svg')
+      .test(/\.inline\.svg/)
+      .use('vue-loader')
+      .loader('vue-loader')
+      .end()
+      .use('svg-to-vue-component')
+      .loader('svg-to-vue-component/loader')
+
+    config.module.rule('scss')
+      .oneOf('vue-modules')
+      .use('css-loader')
+      .tap((options) => ({
+        ...options,
+        modules: {
+          localIdentName:
+            process.env.NODE_ENV === 'development'
+              ? options.modules.localIdentName
+              : '[hash:base64:5]'
+        }
+      }))
   }
 }

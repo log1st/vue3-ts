@@ -1,0 +1,54 @@
+.pagination {
+  display: flex;
+}
+
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 24px;
+  padding: 0 4px;
+
+  cursor: pointer;
+
+  user-select: none;
+
+  color: rgba(black, .3);
+  font-weight: bold;
+}
+
+.icon {
+  height: 16px;
+  width: 16px;
+}
+
+.isDisabled {
+  opacity: .5;
+  cursor: default;
+}
+
+.isActive {
+  color: black;
+}
+
+.spacer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  div {
+    content: '';
+    display: block;
+    background: rgba(black, .3);
+    height: 2px;
+    width: 2px;
+    border-radius: 100%;
+
+    &:not(:first-child) {
+      margin-left: 2px;
+    }
+  }
+
+  margin: 0 2px;
+}
