@@ -1,5 +1,34 @@
 <template>
-    <div class="config-data__wrapper">
+    <div class="config-data__wrapper template__wrapper">
+        <div class="config-data__actions-btn-wrapper">
+            <div class="btn btn-primary"
+            @click="openAddCol = !openAddCol">
+                Добавить столбец
+            </div>
+        </div>
+        <div class="config-data__form" v-show="openAddCol">
+            <div class="config-data__form-row">
+                <label for="">Наименование
+                    <input type="text" v-model="newVars.variable_name">
+                </label>
+            </div>
+            <div class="config-data__form-row">
+                <label for="">Активировано
+                    <input type="checkbox" v-model="newVars.is_active">
+                </label>
+            </div>
+            <div class="config-data__form-row">
+                <label for="">Обязательность
+                    <input type="checkbox" v-model="newVars.required">
+                </label>
+            </div>
+            <div class="config-data__form-row">
+                <div class="btn btn-white"
+                @click="addNewWars">
+                    Добавить столбец
+                </div>
+            </div>
+        </div>
         <div>
             <ul class="config-data__list-wrapper">
                  <draggable
@@ -9,9 +38,9 @@
                    @start="dragging = true"
                    @end="dragging = false"
                  >
-                    <li class="config-data__list" v-for="(list, index) in configList" :key="list.index">
-                      <div class="application__index">{{index + 1}}. {{list.name}}</div>
-                      <div class="application__var"> <input type="text" v-model="list.variable" :placeholder="list.placeholder"> </div>  
+                    <li class="config-data__list" v-for="(list, index) in variablesList" :key="index">
+                      <div class="application__index">{{index + 1}}. <input class="config-data__var-title" type="text" v-model="list.variable_name"></div>
+                      <div class="application__var"> <input type="text" v-model="list.variable" :placeholder="list.placeholder"></div>  
                     </li>
                  </draggable>
             </ul>
@@ -96,13 +125,63 @@ export default {
                     placeholder: 'Ввeдите переменную'
                 },
             ],
+            openAddCol: false,
+            variablesList: [],
+            newVars: {
+                variable_name: '',
+                is_active: true,
+                required: true,
+                position: 0,
+                column_id: 0
+            }
         }
     },
     methods: {
         checkMove (e) {
             this.configList[e.draggedContext.index].sortNumber = e.draggedContext.futureIndex
             // console.log(e)
+        },
+        addNewWars () {
+            this.variablesList.push(this.newVars)
+            this.newVars = {
+                variable_name: '',
+                is_active: true,
+                required: true,
+                position: 0,
+                column_id: 0
+            }
+        },
+        deleteVars () {
+
+        },
+        /**
+         * Сохранение шаблона
+         */
+        saveColTemplate () {
+
         }
+
     }
 }
 </script>
+<style lang="scss">
+    .config-data {
+        &__form {
+            padding: 15px;
+            &-row {
+                width: 50%;
+            }
+            &-row + &-row {
+                margin: 0.5em 0;
+            }
+        }
+        &__wrapper{
+            &.template__wrapper {
+                padding: 0 22px;
+            }
+        }
+        &__var-title {
+            border: none;
+        }
+    }
+</style>

@@ -434,7 +434,7 @@ export default {
         }
       }).then(res => {
               if (typeof window !== 'undefined') {
-                localStorage.setItem('perPage', itemsPerPage)
+                localStorage.setItem('debtorsPerPage', itemsPerPage)
               } 
       }).catch(e => {
         console.error('ошибка запроса колонок таблицы', e);
@@ -445,16 +445,11 @@ export default {
     async savePreTrialProceedingsTableColumns ({state, dispatch}, {items, itemsPerPage}) {
       dispatch('appLoadingChange', true, { root: true });
       dispatch('setDebtorsPreTrialInPage', itemsPerPage);
-      let companyId = localStorage.getItem('defaultCompany')
-      axios({
-        url: baseURL + `/api/companies/${companyId}/`,
-        method: 'PATCH',
-        data: {
-          debtor_per_page: itemsPerPage,
-        }
-      }).then(res => {
+      // let companyId = localStorage.getItem('defaultCompany')
+      dispatch('updateUserSetting', {records_numbers: itemsPerPage})
+      .then(res => {
               if (typeof window !== 'undefined') {
-                localStorage.setItem('perPage', itemsPerPage)
+                localStorage.setItem('debtorsPerPage', itemsPerPage)
               } 
       }).catch(e => {
         console.error('ошибка запроса колонок таблицы', e);
@@ -573,7 +568,7 @@ export default {
       }) 
     },
     /**
-    *  Полечение настроек организации
+    *  Получение настроек организации пользователя
     */
     getUserSetting ( { commit } ) {
       return new Promise ((resolve, reject) => {
@@ -583,6 +578,8 @@ export default {
         })
         .then ( resp => {
           commit('setUserSettings', resp)
+          let total = !resp.records_numbers ? 100 : resp.records_numbers
+          localStorage.setItem('debtorsPerPage', total)
           resolve({status: true})
         })
         .catch( err => {
@@ -590,6 +587,15 @@ export default {
           reject({status: false})
         })
       })
+    },
+
+    /**
+     * Обновление настроек организации пользователя
+     * @param commit 
+     * @param {Object} payload новые данные настроек
+     */
+    updateUserSetting ( { commit }, payload ) {
+
     },
 
     /*
