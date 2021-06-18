@@ -56,7 +56,7 @@ const routes = [
   //   }
   // },
   {
-    path: '/old-debtors',
+    path: '/debtors',
     name: 'Debtors',
     component: () => import('../pages/debtors'),
     meta: {
@@ -68,7 +68,7 @@ const routes = [
     }
   },
   {
-    path: '/debtors',
+    path: '/new-debtors',
     name: 'debtors',
     redirect: {
       name: 'debtors-module',
