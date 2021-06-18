@@ -95,6 +95,10 @@ export default {
     debtorFiltered: false,
 
     /**
+     * Настройки таблицы пользователя
+     */
+    userSettings: false,
+    /**
      * Объект формы поиска
      */
     searchForm: {
@@ -395,6 +399,9 @@ export default {
     },
     setApplicationList(state, payload) {
       state.applicationList = payload;
+    },
+    setUserSettings (state, payload) {
+      state.userSettings = payload
     }
   },
 
@@ -528,7 +535,7 @@ export default {
           company_id: companyId,
           production_type: module,
           limit: 100,
-          offset: `${1}`
+          offset: `${0}`
         },
         url: baseURL + '/api/debtors-data/'
       })
@@ -562,27 +569,20 @@ export default {
         }
       })
       .finally(() => {
-        // this._vm.$toast.open({
-        //   message: 'Список должников обновлен',
-        //   type: 'success',
-        //   duration: 5000,
-        //   dismissible: true,
-        //   position: 'top-right'
-        // })
         dispatch('appLoadingChange', false, { root: true });
       }) 
     },
     /**
     *  Полечение настроек организации
     */
-    getUserSetting ( { dispatch } ) {
+    getUserSetting ( { commit } ) {
       return new Promise ((resolve, reject) => {
         $http({
           command: '/user_settings/main_setting/',
           method: 'GET'
         })
         .then ( resp => {
-          // console.log(resp)
+          commit('setUserSettings', resp)
           resolve({status: true})
         })
         .catch( err => {
@@ -1432,12 +1432,15 @@ export default {
      */
     shownDebtors(state) {
       let result = ''
-      state.currentPage * state.debtorsCourtProceedingsInPage >= state.allDebtors ? result += state.allDebtors : result += (state.currentPage * state.debtorsCourtProceedingsInPage)
+      result = state.currentPage === 1 ? state.debtorsCourtProceedings.length : state.currentPage * state.debtorsCourtProceedings.length 
+      // state.currentPage * state.debtorsCourtProceedingsInPage >= state.allDebtors ? result += state.allDebtors : result += (state.currentPage * state.debtorsCourtProceedingsInPage)
       return result
     },
     shownPreTrialDebtors: state => {
       let result = ''
-      state.currentPage * state.debtorsPreTrialProceedingsInPage >= state.allDebtors ? result += state.allDebtors : result += (state.currentPage * state.debtorsPreTrialProceedingsInPage)
+      result = state.currentPage === 1 ? state.debtorsPreTrialProceedings.length : state.currentPage * state.debtorsPreTrialProceedings.length 
+
+      // state.currentPage * state.debtorsPreTrialProceedingsInPage >= state.allDebtors ? result += state.allDebtors : result += (state.currentPage * state.debtorsPreTrialProceedingsInPage)
       return result
     },
     // listFamilyRelations: state => state.listFamilyRelations,
