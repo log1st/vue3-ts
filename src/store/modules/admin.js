@@ -263,11 +263,20 @@ export default {
               const applicationKeys = Object.keys(response.attachments)
               let arr = []
               applicationKeys.forEach( d => {
-                attachment[d].isSelect = false
-                arr.push(attachment[d])
+                if (d !== 'court_order') {
+                  attachment[d].is_active = true
+                  attachment[d].is_show = true
+                  attachment[d].type = d
+                  attachment[d].company = id
+                  attachment[d].production_type = 'judicial'
+                  arr.push(attachment[d])
+                }
               })
               commit('setCompanyApplication', arr)
               resolve({status: true})
+            })
+            .catch ( err => {
+              reject({status: false, msg: err})
             })
           })
         },
@@ -286,24 +295,16 @@ export default {
               },
               method: 'GET'
             })
-            .then( resp => {
+            .then( async resp => {
               let items = resp.data
-              // items.push(items)
-
-              items.forEach( el => {
-                el.isSelect = false
-              })
-              console.log(items)
-
-              if (resp.data.length <= 2) {
+               if ( resp.data.length > 0) {
                 commit('setCompanyApplication', items)
-                dispatch('addDefaultApplicationToArray', type)
                 resolve({applications: items, status: true})
-              } else if ( resp.data.length > 2) {
-                commit('setCompanyApplication', items)
               }
-              if (resp.data.length === 0) {
-                dispatch('getDefaultApplicationAdmin')
+             else if (resp.data.length === 0) {
+               await dispatch('getDefaultApplicationAdmin')
+               await dispatch('addDefaultApplicationToArray', type)
+                resolve({applications: items, status: true})
               }
               // console.log(resp)
             })

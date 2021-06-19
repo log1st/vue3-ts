@@ -120,12 +120,12 @@
                                <div class="container-content">
                                  <div class="icon__wrapper">
                                   <span style="position: relative; top: 1em; margin-right: 3px; margin-left: 52px;">
-                                   <icon-base width="19" height="19" iconColor="#848aa1">
+                                   <icon-base width="30" height="20" iconColor="#848aa1">
                                     <icon-print />
                                   </icon-base>
                                   </span>
                                  <span style="position: relative; top:1em">
-                                   <icon-base width="15" height="15" iconColor="#848aa1">
+                                   <icon-base width="20" height="20" iconColor="#848aa1">
                                     <icon-eye />
                                   </icon-base>
                                   </span>
