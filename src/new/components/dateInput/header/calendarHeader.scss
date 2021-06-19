@@ -1,0 +1,38 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control {
+  height: 15px;
+  width: 15px;
+
+  flex-shrink: 0;
+
+  cursor: pointer;
+
+  user-select: none;
+
+  color: #828282;
+}
+
+.previousControl {
+}
+
+.nextControl {
+}
+
+.label {
+  width: 160px;
+  text-align: center;
+
+  cursor: pointer;
+
+  margin: 0 10px;
+
+  font-size: 14px;
+  line-height: 17px;
+  letter-spacing: 0.04em;
+  color: rgba(0, 0, 0, 0.872566);
+}

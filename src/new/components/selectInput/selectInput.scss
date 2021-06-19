@@ -46,6 +46,19 @@
 }
 
 .primary {
+  .label {
+    padding-left: 3px;
+
+    + * {
+      margin-top: 5px;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 15px;
+      letter-spacing: 0.04em;
+      color: #4F4F4F;
+    }
+  }
+
   .trigger {
     height: 45px;
     background: #FFFFFF;

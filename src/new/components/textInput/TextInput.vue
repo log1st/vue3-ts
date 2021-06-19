@@ -6,12 +6,16 @@
       isDisabled && $style.isDisabled,
     ]"
   >
-
-    <input
-      :class="$style.input"
-      v-model="value"
-      :placeholder="placeholder"
-    />
+    <div :class="$style.label" v-if="label">
+      {{label}}
+    </div>
+    <div :class="$style.trigger">
+      <input
+        :class="$style.input"
+        v-model="value"
+        :placeholder="placeholder"
+      />
+    </div>
   </div>
 </template>
 
@@ -34,6 +38,7 @@ export default defineComponent({
     modelValue: [String, Number],
 
     placeholder: String,
+    label: String,
 
     isDisabled: Boolean,
 

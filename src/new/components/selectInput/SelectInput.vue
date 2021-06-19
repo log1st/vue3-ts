@@ -8,6 +8,9 @@
     ]"
     v-outside-click="hide"
   >
+    <div :class="$style.label" v-if="label">
+      {{label}}
+    </div>
     <div
       :class="$style.trigger"
       @click="toggle"
@@ -58,6 +61,7 @@ export default defineComponent({
     modelValue: [String, Number, Array],
 
     placeholder: String,
+    label: String,
 
     isDisabled: Boolean,
     isMultiple: Boolean,

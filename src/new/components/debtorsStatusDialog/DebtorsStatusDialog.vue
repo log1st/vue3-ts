@@ -27,7 +27,12 @@
       />
       <TextInput
         v-model="model.caseNumber"
-        placeholder="Номер дела"
+        label="Номер дела"
+        :class="$style.field"
+      />
+      <DateInput
+        v-model="model.registerDate"
+        label="Дата регистрация"
         :class="$style.field"
       />
     </form>
@@ -39,10 +44,11 @@ import {defineComponent, ref} from '@vue/composition-api';
 import SelectInput from "@/new/components/selectInput/SelectInput";
 import {useDicts} from "@/new/hooks/useDicts";
 import TextInput from "@/new/components/textInput/TextInput";
+import DateInput from "@/new/components/dateInput/DateInput";
 
 export default defineComponent({
   name: "DebtorsStatusDialog",
-  components: {TextInput, SelectInput},
+  components: {DateInput, TextInput, SelectInput},
   props: {
     allSelected: Boolean,
     selectedItems: Array,
@@ -57,6 +63,8 @@ export default defineComponent({
       status: null,
       subStatus: null,
       subStatus2: null,
+      caseNumber: '',
+      registerDate: [null, null],
     })
 
     const submit = async () => {

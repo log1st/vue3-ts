@@ -280,6 +280,7 @@ if (typeof window !== 'undefined') {
 	window.events = new Vue();
 }
 import download from 'downloadjs'
+import DebtorsStatusDialog from "@/new/components/debtorsStatusDialog/DebtorsStatusDialog";
 if (typeof window !== 'undefined') {
 	window.download = download;
 }
@@ -321,7 +322,11 @@ export function createApp() {
 	const app = new Vue({
 	  router,
 	  store,
-	  render: h => h(App),
+	  render: h => (
+	    h('div', { style: 'height: 100vh; display: flex; align-items: center; justify-content: center;' }, [
+        h(DebtorsStatusDialog)
+      ])
+    ),
     setup() {
 	    provide('store', store);
     }

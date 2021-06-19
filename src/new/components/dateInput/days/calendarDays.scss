@@ -1,0 +1,132 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.weekday {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: percentage(1/7);
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  text-align: center;
+  letter-spacing: 0.04em;
+  color: rgba(0, 0, 0, 0.543337);
+
+  margin-bottom: 17px;
+}
+
+.day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+
+  width: percentage(1/7);
+
+  height: 45px;
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  text-align: center;
+  letter-spacing: 0.04em;
+  color: rgba(0, 0, 0, 0.867782);
+
+  &:not(.selectedDay) {
+    cursor: pointer;
+  }
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+  }
+
+  span {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.today {
+  color: #009688;
+}
+
+.fromDay {
+  color: #fff;
+  &:after {
+    border-radius: 100% 0 0 100%;
+    background: #495CFF;
+  }
+
+  &:not(.n0) {
+    &:after {
+    }
+  }
+}
+
+.toDay {
+  color: #fff;
+  &:after {
+    border-radius: 0 100% 100% 0;
+    background: #495CFF;
+  }
+
+  &:not(.n1) {
+    &:after {
+    }
+  }
+}
+
+.selectedDay {
+  color: #fff;
+  &:after {
+    border-radius: 100%;
+    background: #495CFF;
+  }
+}
+
+.betweenDay {
+  color: rgba(#fff, .7);
+  &:after {
+    border-radius: 0;
+
+    background: #495CFF;
+  }
+
+  &.n0 {
+    &:after {
+      right: 0;
+      border-top-right-radius: 15px;
+      border-bottom-right-radius: 15px;
+    }
+  }
+  &.n1 {
+    &:after {
+      left: 0;
+      border-top-left-radius: 15px;
+      border-bottom-left-radius: 15px;
+    }
+  }
+}
+
+.disabledDay {
+
+  &.betweenDay,
+  &.selectedDay,
+  &.toDay,
+  &.fromDay {
+    &:after {
+      opacity: .4;
+    }
+  }
+}

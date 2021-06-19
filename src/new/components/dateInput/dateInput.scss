@@ -1,23 +1,40 @@
 .container {
+
+  &.isActive {
+    z-index: 1;
+  }
 }
 
 .trigger {
   display: flex;
   align-items: center;
+
+  cursor: pointer;
 }
 
-.input {
-  appearance: none;
-  border: none;
-  outline: none;
-  padding: 0;
-  background: none;
-
+.value,
+.placeholder {
   align-self: normal;
+
+  display: flex;
+  align-items: center;
+}
+
+.placeholder {
+}
+
+.caret {
 }
 
 .isDisabled {
   cursor: default;
+}
+
+.picker {
+  position: absolute;
+  top: calc(100% - 8px);
+  left: 0;
+  right: 0;
 }
 
 .primary {
@@ -44,19 +61,30 @@
     padding: 0 10px;
   }
 
-  .input {
+  .value,
+  .placeholder {
     font-size: 14px;
     line-height: 17px;
     letter-spacing: 0.04em;
     color: #4F4F4F;
     flex-grow: 1;
-
-    margin: 1px 0;
   }
 
-  .input::placeholder {
-    color: inherit;
+  .placeholder {
     opacity: .6;
+  }
+
+  .caret {
+    height: 20px;
+    width: 20px;
+    color: #333333;
+  }
+
+  &.isActive {
+    position: relative;
+    .caret {
+      transform: rotate(180deg);
+    }
   }
 
   &.isDisabled {
@@ -64,6 +92,8 @@
   }
 
   &.dark {
-    background: #E0E0E0;
+    .trigger {
+      background: #E0E0E0;
+    }
   }
 }
