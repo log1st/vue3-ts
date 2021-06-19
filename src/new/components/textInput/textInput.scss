@@ -64,6 +64,8 @@
   }
 
   &.dark {
-    background: #E0E0E0;
+    .trigger {
+      background: #E0E0E0;
+    }
   }
 }
