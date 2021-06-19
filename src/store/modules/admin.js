@@ -318,21 +318,24 @@ export default {
         /**
          * Получение баланса компании
          */
-        getCompanyBalance ({ state, commit }) {
+        getCompanyBalance ({ state, commit }, payload) {
           return new Promise ((res, rej) => {
+            const { company_id } = payload
             let checkedCompany = state.UsersList.find( c => c.checked === true) 
             $http({
               command: `/api/finance/balance/${checkedCompany.owner}/`,
-              method: 'GET'
+              method: 'GET',
+              requestCode: 'none'
             })
             .then ( result => {
-              if (result.RequestStatusCode === 200) {
-                let calc = result[0].income - result[0].outcome
+              let calc;
+              let company = result.find( c => c.id === company_id)
+              calc = company.income - company.outcome
+              console.log(calc)
+
+                // let calc = result[0].income - result[0].outcome
                 commit('setCompanyBalance', calc)
                 res(true)
-              } else {
-                rej(false)
-              }
             })
           })
         },
@@ -371,11 +374,11 @@ export default {
                 command: `/api/account/company/${elem.id}/`,
                 method: 'GET'
               })
-              .then ( result => {
+              .then ( async result => {
                 if (result.RequestStatusCode === 200) {
                   result.checked = true
                   commit('checkCompany', result)
-                  dispatch('getCompanyBalance')
+                  await dispatch('getCompanyBalance', {company_id: elem.id})
                   .then( resp => {
                     if (resp) {
                       res(true)

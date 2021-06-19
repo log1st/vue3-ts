@@ -19,7 +19,7 @@ const renameProperty = function (obj, oldName, newName) {
  * Обертка над axios для работы с приватным api
  * @param {*} param
  */
-export const http = async ({ url = baseURL, command, method, data, formData, params, timeout = 0 }) => {
+export const http = async ({ url = baseURL, command, method, data, formData, params, timeout = 0, requestCode }) => {
     // использовалось для обработки данных в camelCase
   
     let payload = {
@@ -31,7 +31,7 @@ export const http = async ({ url = baseURL, command, method, data, formData, par
     let paramsData = {
         ...params
     }
-
+    let getRequestCode = requestCode === 'none' ? false : true
     if (command != '') {
         url = url + command
     }
@@ -64,7 +64,9 @@ export const http = async ({ url = baseURL, command, method, data, formData, par
             return rej(serverResponse);
         } else if (!isEmpty(serverResponse.data)) {
             let resp = serverResponse.data
-            resp.RequestStatusCode = serverResponse.status 
+            if (getRequestCode) {
+                resp.RequestStatusCode = serverResponse.status 
+            }
             return res(resp);
         } else if (isEmpty(serverResponse.data)) {
             if (serverResponse.status === 204) {

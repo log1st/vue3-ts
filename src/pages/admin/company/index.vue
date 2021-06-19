@@ -731,7 +731,7 @@ export default {
       })
 
       events.$on('newBalance', data => {
-         this.selectedCompany.Balance = data.balance
+         this.selectedCompany.balance = data.balance
       })
     }
 
