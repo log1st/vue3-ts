@@ -3,9 +3,11 @@ $offset: 5px;
 .wrapper {
   position: relative;
 
-  &:not(:hover) {
-    .tooltip {
-      display: none;
+  &.hoverTrigger {
+    &:not(:hover) {
+      > .tooltip {
+        display: none;
+      }
     }
   }
 }

@@ -58,61 +58,11 @@ export default {
      * Установка организации по умолчанию
      * @param state
      */
-    setCompanyDefault ( state ) {
-      let user = localStorage.getItem('user')
-      user = JSON.parse(user)
-      let defaultCompanyGlobal;
-      axios({
-        method: 'GET',
-        url: `${baseURL}/api/account/user/active-company/${user.id}/`
-      })
-      .then ( result => {
-        if (result.data.default_company !== null) {
-          defaultCompanyGlobal = state.companies.find(el => el.id === result.data.default_company)
-        }
-          // Устанавливаем компанию по умолчанию (индекс из массива)
-          state.defaultCompany = state.companies.findIndex(el => el.checked)
-
-          // поиск выбранной компании из списка (по чек боксу)
-          let defultCompanyLocal = state.companies.find(el => el.checked)
-          
-          if (!defultCompanyLocal) {
-            if (state.companies.length === 1) {
-              defultCompanyLocal = state.companies[0]
-            }
-            else {
-              defultCompanyLocal = defaultCompanyGlobal
-            }
-          }
-            if (!defaultCompanyGlobal) {
-              defaultCompanyGlobal = defultCompanyLocal
-            }
-            let defaultCompany;
-            // 
-            if (defultCompanyLocal.id != defaultCompanyGlobal.id) {
-              defaultCompany = defultCompanyLocal
-            } else {
-              defaultCompany = defaultCompanyGlobal
-            }
-            state.defaultCompanyData = defaultCompany
-            axios({
-              url: `${baseURL}/api/account/user/active-company/${user.id}/`,
-              method: 'PATCH',
-              data: {
-                default_company: defaultCompany.id
-              },
-            })
-            .then( () => {
-              localStorage.removeItem('defaultCompany');
-              localStorage.removeItem('debtorsPerPage');
-              localStorage.setItem('debtorsPerPage', defaultCompany.debtor_per_page);
-              localStorage.setItem('defaultCompany', defaultCompany.id)
-            }) 
-          
-      })
-      
-
-      
+    setCompanyDefault ( state , index) {
+      state.defaultCompany = index
+    },
+    setCompanyDefaultData ( state , data) {
+      state.defaultCompanyData = data
     },
     removeCompany (state, id) {
       state.companies.splice(id, 1)
@@ -123,7 +73,7 @@ export default {
       state.companies.push(newObj)
     },
     editCompanyGeneralData (state, { id, data }) {
-      
+
       let editedCompany = find(state.companies, ec => {
         return ec.id == data.id
       })
@@ -189,7 +139,7 @@ export default {
       if ( type === 'select') {
         attach.is_active = !attach.is_active
       } else if (type === 'move') {
-        attach.order_number = data 
+        attach.order_number = data
       }
     },
     setPositionEmployee (state, payload) {
@@ -200,8 +150,59 @@ export default {
     clearCompanies ({ commit }) {
       commit('clearCompanies')
     },
-    setCompanyDefault ({ commit }) {
-      commit('setCompanyDefault');
+    setCompanyDefault ({ commit, state }) {
+      let user = localStorage.getItem('user')
+      user = JSON.parse(user)
+      let defaultCompanyGlobal;
+      axios({
+        method: 'GET',
+        url: `${baseURL}/api/account/user/active-company/${user.id}/`
+      })
+        .then ( result => {
+          if (result.data.default_company !== null) {
+            defaultCompanyGlobal = state.companies.find(el => el.id === result.data.default_company)
+          }
+
+          // Устанавливаем компанию по умолчанию (индекс из массива)
+          commit('setCompanyDefault', state.companies.findIndex(el => el.checked))
+
+          // поиск выбранной компании из списка (по чек боксу)
+          let defultCompanyLocal = state.companies.find(el => el.checked)
+
+          if (!defultCompanyLocal) {
+            if (state.companies.length === 1) {
+              defultCompanyLocal = state.companies[0]
+            }
+            else {
+              defultCompanyLocal = defaultCompanyGlobal
+            }
+          }
+          if (!defaultCompanyGlobal) {
+            defaultCompanyGlobal = defultCompanyLocal
+          }
+          let defaultCompany;
+          //
+          if (defultCompanyLocal.id != defaultCompanyGlobal.id) {
+            defaultCompany = defultCompanyLocal
+          } else {
+            defaultCompany = defaultCompanyGlobal
+          }
+          commit('setCompanyDefaultData', defaultCompany)
+          axios({
+            url: `${baseURL}/api/account/user/active-company/${user.id}/`,
+            method: 'PATCH',
+            data: {
+              default_company: defaultCompany.id
+            },
+          })
+            .then( () => {
+              localStorage.removeItem('defaultCompany');
+              localStorage.removeItem('debtorsPerPage');
+              localStorage.setItem('debtorsPerPage', defaultCompany.debtor_per_page);
+              localStorage.setItem('defaultCompany', defaultCompany.id)
+            })
+
+        })
     },
     setCompanyChecked ({ commit }, payload) {
       commit('setCompanyChecked', payload)
@@ -217,14 +218,14 @@ export default {
     },
     /**
      * Получение данных банка по БИК и вызов функции сохранения данных банка в организацию
-     * @param {*} payload БИК банка 
+     * @param {*} payload БИК банка
      */
     getDataByBIC ({dispatch}, payload) {
       return new Promise ((resolve, reject) => {
         const {bic, id} = payload
         $http({
           command: '/api/dadata/bank/',
-          data:{ 
+          data:{
             bik: bic
           },
           method: 'POST'
@@ -238,7 +239,7 @@ export default {
               id: id
             }
             // Получился паравозик из ожидайний методов нужно будет оптимизировать данный процесс в некой уникальный функции обновдения данных
-            // отправляем PATCH на редактирование данных БИК и полного наименования банка 
+            // отправляем PATCH на редактирование данных БИК и полного наименования банка
             dispatch('editCompanyGeneralData', {data: data})
             .then( result => {
               if (result.status) {
@@ -351,7 +352,7 @@ export default {
       })
     },
     /**
-     * Получение баланса компании 
+     * Получение баланса компании
      * @param commit
      * @returns {Promise<unknown>}
      */
@@ -402,14 +403,14 @@ export default {
         })
         .then( response => {
           // console.log(response)
-          
+
         })
       }
     },
     /**
      * Получение документов организации
-     * @param commit 
-     * @returns 
+     * @param commit
+     * @returns
      */
     getCompanyDocuments ( {commit} ) {
       return new Promise ((resolve, reject) => {
@@ -481,9 +482,9 @@ export default {
     },
     /**
      * Обновляем Стнадартные приложения как кастомные для полного управления ими
-     * @param {*} state 
-     * @param {*} payload 
-     * @returns 
+     * @param {*} state
+     * @param {*} payload
+     * @returns
      */
     refreshApplication ({commit, state}, payload) {
       return new Promise ((resolve, reject) => {
@@ -562,14 +563,14 @@ export default {
      */
      uploadCompanies ({ commit, dispatch }) {
       let user = localStorage.getItem('user')
-      user = JSON.parse(user)
+      user = JSON.parse(user);
       return axios({
           method: 'GET',
           url: baseURL+'/api/account/company/',
       }).then(( info ) => {
         let resultData = info.data;
           commit('uploadCompanies', resultData);
-          commit('setCompanyDefault')
+          dispatch('setCompanyDefault')
           dispatch('getCompanyUserBalance')
           setTimeout( () => {
             dispatch('getCompanySettings')
@@ -581,7 +582,7 @@ export default {
         if (e.response.status === 403) {
           dispatch('logout')
         }
-        
+
         dispatch('appLoadingChange', false, { root: true });
       })
     },
@@ -627,8 +628,8 @@ export default {
     },
     /**
      * Редактировать контракт
-     * @param {*} param0 
-     * @param {*} payload 
+     * @param {*} param0
+     * @param {*} payload
      */
     companyContractsEdit ({ commit, dispatch }, payload) {
       dispatch('appLoadingChange', true, { root: true });
@@ -649,11 +650,11 @@ export default {
     },
     /**
      * Создание организации по инн через фнс
-     * @param {*} Inn инн компании, для запроса данных по фнс и добавления ее в пулл организаций пользователя 
-     * @returns 
+     * @param {*} Inn инн компании, для запроса данных по фнс и добавления ее в пулл организаций пользователя
+     * @returns
      */
     uploadNewCompanyDataOnINN ({ dispatch, getters }, Inn) {
-      
+
       return new Promise((resolve, reject) => {
         let user = localStorage.getItem('user')
         user = JSON.parse(user)
@@ -667,7 +668,7 @@ export default {
         })
           .then(resp => {
             if (!resp.data.error) {
-              if (resp.data.data_response === "Компания с указанным ИНН уже есть в базе!") { 
+              if (resp.data.data_response === "Компания с указанным ИНН уже есть в базе!") {
                 this._vm.$toast.open({
                     message: `Компания с указанным ИНН уже есть в базе!`,
                     type: 'error',
@@ -691,7 +692,7 @@ export default {
               reject(resp.data.error)
             }
           }).catch(err => {
-            
+
             const errorKeys = Object.keys(err.response.data)
             errorKeys.forEach( e => {
               this._vm.$toast.open({
@@ -702,7 +703,7 @@ export default {
                 position: 'top-right'
               });
             })
-            
+
             dispatch('uploadCompanies');
             reject(err)
           })
@@ -726,7 +727,7 @@ export default {
             if(!res.data.error) {
               const employees = res.data
               commit('setCompanyEmployees', employees);
-            } 
+            }
         }).catch(e => {
             console.log(e)
             // debugger
@@ -734,7 +735,7 @@ export default {
           dispatch('appLoadingChange', false, { root: true });
         })
     },
-    
+
     /**
      * Удалить сотрудника
      */
@@ -767,7 +768,7 @@ export default {
       $http({
         data: {
           command: 'AddFileRegulation',
-          files: Files, 
+          files: Files,
           type: Type,
           OrganizationId: 0
         }
@@ -776,7 +777,7 @@ export default {
           console.log('успешно добавлено')
           // const employees = Object.values(res.data[1].return.Result)
           // commit('setCompanyEmployees', employees);
-        } 
+        }
       }).catch(e => {
         console.log(e)
       }).finally(() => {
@@ -784,17 +785,17 @@ export default {
         dispatch('appLoadingChange', false, { root: true });
       })
     },
-    
+
     /**
      * =================================================
      *  Кастомные функции по запросу данных организации
-     * ================================================= 
+     * =================================================
      */
 
 
     /**
      * Получение организации для блока обмена данными
-     * @param {String} payload Краткое имя организации 
+     * @param {String} payload Краткое имя организации
      */
     getExchengeCompany ( { state ,commit }, payload ) {
       let exchangedCompany = find(state.companies, c => {
@@ -842,7 +843,7 @@ export default {
 
     /**
      * Получениие всех данных о компаниипо по id
-     * @param {Int} payload index компании в массиве  
+     * @param {Int} payload index компании в массиве
      */
     getCompanyById({state, commit}, payload) {
       const { id } = payload
@@ -889,7 +890,7 @@ export default {
     }),
     employeePosition: state => state.positions,
     applicationUserList: state => state.applicationLists,
-    getCompanies: state => state.companies, 
+    getCompanies: state => state.companies,
     getCompaniesFullNames: state => state.companies.map(el => el.name_full),
     getDefaultCompanyFullName: state => state.companies.length > 0 && state.defaultCompanyData.name_full || 'Компания',
     getDefaultCompany: state => state.defaultCompanyData,

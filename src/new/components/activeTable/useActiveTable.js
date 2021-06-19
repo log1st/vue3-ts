@@ -37,7 +37,7 @@ export const useActiveTable = ({
       try {
         cancelRequest()
       } catch (e) {
-        console.log('blya', e);
+        console.log('Unable to fetch', e);
       }
     }
     isFetching.value = true;

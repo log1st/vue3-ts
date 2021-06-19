@@ -22,7 +22,24 @@
         </div>
       </div>
       <div :class="$style.filters">
-        <Actions :actions="[{key: 'filters', icon: 'magnifier', label: 'Фильтрация', onClick: toggleFilters}]"/>
+        <Actions
+          v-model="model.filters"
+          :actions="[{
+            key: 'filters',
+            icon: 'magnifier',
+            label: 'Фильтрация',
+            onClick: toggleFilters,
+            align: 'end',
+          }]"
+        >
+          <template #filters="{isActive}">
+            <Filters
+              v-if="isActive"
+              v-model="localFilters"
+              :filters="filters"
+            />
+          </template>
+        </Actions>
       </div>
     </div>
     <div :class="$style.table">
@@ -142,10 +159,12 @@ import Pagination from "@/new/components/pagination/Pagination";
 import {getDeepField} from "@/new/utils/object";
 import {useLocalProp} from "@/new/hooks/useLocalProp";
 import Actions from "@/new/components/actions/Actions";
+import Filters from "@/new/components/filters/Filters";
 
 export default defineComponent({
   name: "ActiveTable",
   components: {
+    Filters,
     Actions,
     ContextMenu,
     Checkbox,
@@ -177,6 +196,8 @@ export default defineComponent({
     total: Number,
     page: Number,
     limit: Number,
+    filters: Array,
+    filtersModel: Object,
   },
   setup(props, {emit}) {
     const gridTemplate = computed(() => (
@@ -300,6 +321,7 @@ export default defineComponent({
 
     const localLimit = useLocalProp(props, emit, 'limit');
     const localPage = useLocalProp(props, emit, 'page');
+    const localFilters = useLocalProp(props, emit, 'filtersModel');
 
     watch(localPage, () => {
       setAllSelected(false);
@@ -353,7 +375,13 @@ export default defineComponent({
         }
       }
     ].filter(Boolean)));
-    const controlActions = computed(() => actions.value.filter(({asControl}) => asControl));
+    const controlActions = computed(() => actions.value.filter(
+      ({asControl}) => asControl
+    ).map(action => ({
+      ...action,
+      position: 'right',
+      align: 'start',
+    })));
 
     const isFilterDialogVisible = ref(false);
     const toggleFilters = () => {
@@ -361,9 +389,15 @@ export default defineComponent({
     }
     const hideFilters = () => {
       isFilterDialogVisible.value = false;
-    }
+    };
+
+    const model = ref({
+      filters: null,
+    })
 
     return {
+      model,
+
       gridTemplate,
       sortsMap,
 
@@ -396,6 +430,8 @@ export default defineComponent({
       isFilterDialogVisible,
       toggleFilters,
       hideFilters,
+
+      localFilters,
     }
   }
 })

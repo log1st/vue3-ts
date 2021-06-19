@@ -238,8 +238,6 @@ if (typeof window !== 'undefined') {
 	window.axios = axios.create();
 }
 
-Vue.use(axios)
-
 import { VueMaskDirective } from 'v-mask'
 Vue.directive('mask', function(el, binding) {
 	if(!binding.value) {

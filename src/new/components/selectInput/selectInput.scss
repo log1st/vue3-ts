@@ -1,4 +1,8 @@
 .container {
+
+  &.isActive {
+    z-index: 1;
+  }
 }
 
 .trigger {

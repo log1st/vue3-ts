@@ -33,6 +33,7 @@ export default defineComponent({
   props: {
     allSelected: Boolean,
     selectedItems: Array,
+    selectedItem: Object,
   },
   setup() {
     const statuses = [

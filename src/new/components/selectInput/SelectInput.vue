@@ -40,6 +40,7 @@
 import {defineComponent, ref, computed} from '@vue/composition-api';
 import Icon from "@/new/components/icon/Icon";
 import ContextMenu from "@/new/components/contextMenu/ContextMenu";
+import {useLocalProp} from "@/new/hooks/useLocalProp";
 
 export default defineComponent({
   name: "SelectInput",
@@ -87,14 +88,7 @@ export default defineComponent({
       isActive.value = false;
     };
 
-    const value = computed({
-      get() {
-        return props.modelValue;
-      },
-      set(value) {
-        emit('update:modelValue', value);
-      }
-    });
+    const value = useLocalProp(props, emit, 'modelValue');
 
     const optionsMap = computed(() => (
       props.options.reduce((acc, cur) => ({

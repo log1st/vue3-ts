@@ -1,5 +1,8 @@
 <template>
-  <div :class="[$style.status, $style[color]]">
+  <div
+    :class="[$style.status, $style[color]]"
+    @click="$emit('click', $event)"
+  >
     <div :class="$style.label">
       {{status}}
     </div>

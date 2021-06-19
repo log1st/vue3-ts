@@ -16,9 +16,14 @@
       :total="total"
       :limit.sync="limit"
       :page.sync="page"
+      :filters="filters"
+      :filters-model.sync="filtersModel"
     >
       <template #cell(status)="{record, index}">
-        <DebtorStatus :class="$style.status" @click="showStatusDialog({selectedItems: [index]})"/>
+        <DebtorStatus
+          :class="$style.status"
+          @click="showStatusDialog({ selectedItem: records[index] })"
+        />
       </template>
       <template #cell(personal_account)="{record, index}">
         <div :class="$style.account">
@@ -63,8 +68,11 @@
       <template #cell(debt)="{record}">
         {{formatMoney(record.debt)}}
       </template>
-      <template #cell(fee.individual_order)="{record}">
-        {{formatMoney(+record.fee.individual_order)}}
+      <template #cell(penalty)="{record}">
+        {{formatMoney(record.penalty)}}
+      </template>
+      <template #cell(fee)="{record}">
+        {{formatMoney(record.fee)}}
       </template>
       <template v-for="field in summariesFields" :slot="`summary(${field})`" slot-scope="{value}">
         {{formatMoney(value)}}
@@ -96,19 +104,16 @@ export default defineComponent({
   setup(props) {
     const type = computed(() => props.module);
 
-    const summariesFields = ['accrual', 'paid_up', 'debt', 'penalty', 'fee.individual_order'];
+    const summariesFields = ['accrual', 'paid_up', 'debt', 'penalty', 'fee'];
 
     const {
       showDialog,
     } = useDialog();
 
-    const showStatusDialog = async ({allSelected, selectedItems}) => {
+    const showStatusDialog = async (payload) => {
       await showDialog({
         component: 'debtorsStatus',
-        payload: {
-          allSelected,
-          selectedItems: selectedItems.map(index => records.value[index].pk),
-        }
+        payload,
       })
     }
 
@@ -157,7 +162,47 @@ export default defineComponent({
           field: 'production_type',
           defaultValue: type.value,
           isHidden: true,
-        }
+        },
+        {
+          field: 'full_name',
+          type: 'text',
+          width: 2,
+          props: {
+            placeholder: 'ФИО',
+          }
+        },
+        {
+          field: 'address',
+          type: 'text',
+          width: 2,
+          props: {
+            placeholder: 'Адрес',
+          },
+        },
+        {
+          field: 'personal_account',
+          type: 'text',
+          width: 2,
+          props: {
+            placeholder: '№ ЛС'
+          }
+        },
+        {
+          field: 'debtor_debt_min',
+          type: 'text',
+          props: {
+            placeholder: 'Сумма долга от',
+            type: 'number',
+          },
+        },
+        {
+          field: 'debtor_debt_max',
+          type: 'text',
+          props: {
+            placeholder: 'Сумма долга до',
+            type: 'number',
+          },
+        },
       ])),
       columns: ref([
         {
@@ -204,7 +249,7 @@ export default defineComponent({
           width: 132,
         },
         {
-          field: 'fee.individual_order',
+          field: 'fee',
           label: 'Пошлина',
           isSortable: true,
           width: 127,
@@ -259,7 +304,12 @@ export default defineComponent({
         {
           key: 'status',
           label: 'Изменить статус выбранных должников',
-          handler: showStatusDialog,
+          handler: ({allSelected, selectedItems}) => {
+            showStatusDialog({
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].pk),
+            });
+          },
           asLined: true,
         },
         {
