@@ -182,7 +182,7 @@
 
       <template v-slot:cell(StateDuty)="{ row, i }">
         <span class="table__col-user">
-         {{ row.fee.individual_order || 0 }} ₽
+         {{ row.fee || 0 }} ₽
         </span>
       </template>
 

@@ -21,7 +21,7 @@ export default {
       { serverName: 'paid_up',          name: 'PaidCsv',    alias: 'Оплачено',      views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
       { serverName: 'debt',             name: 'TotalDebt',  alias: 'Задолженность', views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
       { serverName: 'penalty',          name: 'PeniCsv',    alias: 'Пеня',          views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
-      { serverName: 'fee.individual_order', name: 'StateDuty',  alias: 'Пошлина',       views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true }
+      { serverName: 'fee', name: 'StateDuty',  alias: 'Пошлина',       views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true }
     ],
 
     /**

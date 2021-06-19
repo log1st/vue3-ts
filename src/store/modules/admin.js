@@ -263,11 +263,20 @@ export default {
               const applicationKeys = Object.keys(response.attachments)
               let arr = []
               applicationKeys.forEach( d => {
-                attachment[d].isSelect = false
-                arr.push(attachment[d])
+                if (d !== 'court_order') {
+                  attachment[d].is_active = true
+                  attachment[d].is_show = true
+                  attachment[d].type = d
+                  attachment[d].company = id
+                  attachment[d].production_type = 'judicial'
+                  arr.push(attachment[d])
+                }
               })
               commit('setCompanyApplication', arr)
               resolve({status: true})
+            })
+            .catch ( err => {
+              reject({status: false, msg: err})
             })
           })
         },
@@ -286,24 +295,16 @@ export default {
               },
               method: 'GET'
             })
-            .then( resp => {
+            .then( async resp => {
               let items = resp.data
-              // items.push(items)
-
-              items.forEach( el => {
-                el.isSelect = false
-              })
-              console.log(items)
-
-              if (resp.data.length <= 2) {
+               if ( resp.data.length > 0) {
                 commit('setCompanyApplication', items)
-                dispatch('addDefaultApplicationToArray', type)
                 resolve({applications: items, status: true})
-              } else if ( resp.data.length > 2) {
-                commit('setCompanyApplication', items)
               }
-              if (resp.data.length === 0) {
-                dispatch('getDefaultApplicationAdmin')
+             else if (resp.data.length === 0) {
+               await dispatch('getDefaultApplicationAdmin')
+               await dispatch('addDefaultApplicationToArray', type)
+                resolve({applications: items, status: true})
               }
               // console.log(resp)
             })
@@ -317,21 +318,24 @@ export default {
         /**
          * Получение баланса компании
          */
-        getCompanyBalance ({ state, commit }) {
+        getCompanyBalance ({ state, commit }, payload) {
           return new Promise ((res, rej) => {
+            const { company_id } = payload
             let checkedCompany = state.UsersList.find( c => c.checked === true) 
             $http({
               command: `/api/finance/balance/${checkedCompany.owner}/`,
-              method: 'GET'
+              method: 'GET',
+              requestCode: 'none'
             })
             .then ( result => {
-              if (result.RequestStatusCode === 200) {
-                let calc = result[0].income - result[0].outcome
+              let calc;
+              let company = result.find( c => c.id === company_id)
+              calc = company.income - company.outcome
+              console.log(calc)
+
+                // let calc = result[0].income - result[0].outcome
                 commit('setCompanyBalance', calc)
                 res(true)
-              } else {
-                rej(false)
-              }
             })
           })
         },
@@ -370,11 +374,11 @@ export default {
                 command: `/api/account/company/${elem.id}/`,
                 method: 'GET'
               })
-              .then ( result => {
+              .then ( async result => {
                 if (result.RequestStatusCode === 200) {
                   result.checked = true
                   commit('checkCompany', result)
-                  dispatch('getCompanyBalance')
+                  await dispatch('getCompanyBalance', {company_id: elem.id})
                   .then( resp => {
                     if (resp) {
                       res(true)
