@@ -17,8 +17,8 @@
       :limit.sync="limit"
       :page.sync="page"
     >
-      <template #cell(status)="{record}">
-        <DebtorStatus :class="$style.status"/>
+      <template #cell(status)="{record, index}">
+        <DebtorStatus :class="$style.status" @click="showStatusDialog({selectedItems: [index]})"/>
       </template>
       <template #cell(personal_account)="{record, index}">
         <div :class="$style.account">
@@ -85,6 +85,7 @@ import Rating from "@/new/components/rating/Rating";
 import Icon from "@/new/components/icon/Icon";
 import Tooltip from "@/new/components/tooltip/Tooltip";
 import TooltipWrapper from "@/new/components/tooltip/TooltipWrapper";
+import {useDialog} from "@/new/hooks/useDialog";
 
 export default defineComponent({
   name: "index",
@@ -96,6 +97,20 @@ export default defineComponent({
     const type = computed(() => props.module);
 
     const summariesFields = ['accrual', 'paid_up', 'debt', 'penalty', 'fee.individual_order'];
+
+    const {
+      showDialog,
+    } = useDialog();
+
+    const showStatusDialog = async ({allSelected, selectedItems}) => {
+      await showDialog({
+        component: 'debtorsStatus',
+        payload: {
+          allSelected,
+          selectedItems: selectedItems.map(index => records.value[index].pk),
+        }
+      })
+    }
 
     const {
       fetchData,
@@ -244,9 +259,7 @@ export default defineComponent({
         {
           key: 'status',
           label: 'Изменить статус выбранных должников',
-          handler: () => {
-            alert('statuses');
-          },
+          handler: showStatusDialog,
           asLined: true,
         },
         {
@@ -280,6 +293,8 @@ export default defineComponent({
       total,
       limit,
       page,
+
+      showStatusDialog,
     }
   }
 })

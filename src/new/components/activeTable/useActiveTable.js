@@ -13,7 +13,7 @@ export const useActiveTable = ({
   let cancelRequest = null;
 
   const total = ref(null);
-  const limit = ref(50);
+  const limit = ref(1000);
   const page = ref(1);
 
   const records = ref([]);

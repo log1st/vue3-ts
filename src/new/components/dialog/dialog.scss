@@ -1,0 +1,48 @@
+.dialog {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  z-index: 100;
+
+  background: rgba(0, 8, 47, 0.4);
+
+  display: flex;
+  flex-direction: row;
+
+  align-items: flex-start;
+  justify-content: center;
+
+  max-height: 100vh;
+  overflow: auto;
+}
+
+.container {
+  margin: auto 0;
+  padding: 20px 0;
+}
+
+.body {
+  background: #FFFFFF;
+  box-shadow: 0px 0px 14px rgba(0, 0, 0, 0.12), 0px 14px 14px rgba(0, 0, 0, 0.237602);
+  border-radius: 10px;
+
+  position: relative;
+
+  padding: 30px 40px 23px;
+}
+
+.close {
+  height: 15px;
+  width: 15px;
+
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  color: #333333;
+
+  cursor: pointer;
+}
