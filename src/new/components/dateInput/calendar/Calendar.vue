@@ -70,7 +70,6 @@ export default defineComponent({
     });
 
     watch(localValue, newValue => {
-      console.log('go blya');
       emit('update:modelValue', newValue)
     }, {
       deep: true,

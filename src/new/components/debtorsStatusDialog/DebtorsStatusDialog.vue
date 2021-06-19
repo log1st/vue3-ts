@@ -64,7 +64,7 @@ export default defineComponent({
       subStatus: null,
       subStatus2: null,
       caseNumber: '',
-      registerDate: [null, null],
+      registerDate: null,
     })
 
     const submit = async () => {

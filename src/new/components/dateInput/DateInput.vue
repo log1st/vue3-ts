@@ -18,7 +18,7 @@
       <div :class="$style.value" v-if="displayValue">
         {{displayValue}}
       </div>
-      <div :class="$style.placeholder" v-else-if="placeholder">
+      <div :class="$style.placeholder" v-else>
         {{placeholder}}
       </div>
       <Icon :class="$style.caret" icon="chevron-down"/>
@@ -82,8 +82,8 @@ export default defineComponent({
 
     const displayValue = computed(() => (
       Array.isArray(value.value)
-        ? value.value.map(i => formatDate(i)).join(' - ')
-        : formatDate(value.value)
+        ? value.value.filter(Boolean).map(i => formatDate(i)).join(' - ')
+        : (value.value ? formatDate(value.value) : null)
     ));
 
     return {
