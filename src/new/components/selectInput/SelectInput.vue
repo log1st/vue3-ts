@@ -2,7 +2,7 @@
   <div
     :class="[
       $style.container,
-      $style[state],
+      ...(Array.isArray(state) ? state : [state]).map(i => $style[i]),
       isDisabled && $style.isDisabled,
       isActive && $style.isActive,
     ]"
@@ -17,6 +17,7 @@
         :class="$style.search"
         v-model="query"
         :placeholder="searchPlaceholder"
+        ref="queryRef"
       />
       <div :class="$style.value" v-else-if="displayValue">
         {{displayValue}}
@@ -27,7 +28,7 @@
       <Icon :class="$style.caret" icon="chevron-down"/>
     </div>
     <ContextMenu
-      v-if="isActive"
+      v-if="isActive && computedOptions.length"
       :actions="computedOptions"
       :class="$style.options"
       v-model="value"
@@ -37,7 +38,7 @@
 </template>
 
 <script>
-import {defineComponent, ref, computed} from '@vue/composition-api';
+import {defineComponent, ref, computed, watch} from '@vue/composition-api';
 import Icon from "@/new/components/icon/Icon";
 import ContextMenu from "@/new/components/contextMenu/ContextMenu";
 import {useLocalProp} from "@/new/hooks/useLocalProp";
@@ -51,10 +52,10 @@ export default defineComponent({
   },
   props: {
     state: {
-      type: String,
+      type: [String, Array],
       default: 'primary',
     },
-    modelValue: [String, Number],
+    modelValue: [String, Number, Array],
 
     placeholder: String,
 
@@ -65,7 +66,10 @@ export default defineComponent({
 
     isSearchable: Boolean,
     searchPlaceholder: String,
-    searchDelay: Number,
+    searchDelay: {
+      type: Number,
+      default: 250,
+    },
 
     valueProp: {
       type: String,
@@ -77,12 +81,22 @@ export default defineComponent({
     }
   },
   setup(props, {emit}) {
+    const queryRef = ref();
+
     const isActive = ref(false);
-    const toggle = () => {
+    const toggle = async ({target}) => {
       if(props.isDisabled) {
         return;
       }
+      if(target === queryRef.value) {
+        return;
+      }
+      await new Promise(requestAnimationFrame);
       isActive.value = !isActive.value;
+      if(isActive.value) {
+        await new Promise(requestAnimationFrame);
+        queryRef.value?.focus();
+      }
     };
     const hide = () => {
       isActive.value = false;
@@ -105,6 +119,21 @@ export default defineComponent({
 
     const query = ref('');
 
+    watch(value, () => {
+      query.value = '';
+    })
+
+    let queryTimeout;
+    watch(query, newQuery => {
+      clearTimeout(queryTimeout);
+      if(!newQuery) {
+        return;
+      }
+      queryTimeout = setTimeout(() => {
+        emit('query', {query: newQuery});
+      }, props.searchDelay);
+    })
+
     const computedOptions = computed(() => (
       props.options.map(option => ({
         key: option[props.valueProp],
@@ -121,9 +150,11 @@ export default defineComponent({
 
       displayValue,
 
+      queryRef,
       query,
 
       computedOptions,
+
     }
   }
 });

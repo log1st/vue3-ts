@@ -27,7 +27,7 @@
       </TooltipWrapper>
       <template #tooltip>
         <div :class="$style.content">
-          <slot :name="action.key" :is-active="modelValue === action.key"/>
+          <slot :name="action.key" :is-active="modelValue === action.key" :close="hide"/>
         </div>
       </template>
     </TooltipWrapper>

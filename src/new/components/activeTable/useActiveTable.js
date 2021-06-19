@@ -1,5 +1,6 @@
 import {ref, watch} from "@vue/composition-api";
 import axios from 'axios';
+import {isSameObject} from "@/new/utils/object";
 
 export const useActiveTable = ({
   filters = ref([]),
@@ -8,6 +9,7 @@ export const useActiveTable = ({
   contextActions = ref([]),
   columns = ref([]),
   fetch,
+  isImmediate = true,
 } = {}) => {
   const isFetching = ref(false);
   let cancelRequest = null;
@@ -19,13 +21,16 @@ export const useActiveTable = ({
   const records = ref([]);
   const summaries = ref({});
 
-  const filtersModel = ref({});
+  const filtersModel = ref();
 
   watch(filters, (newFilters) => {
-    filtersModel.value = newFilters.reduce((acc, cur) => ({
+    const newModel = newFilters.reduce((acc, cur) => ({
       ...acc,
       [cur.field]: cur.defaultValue || null
-    }), {})
+    }), {});
+    if(!isSameObject(newModel, filtersModel.value)) {
+      filtersModel.value = newModel;
+    }
   }, {
     immediate: true,
     deep: true,
@@ -62,7 +67,7 @@ export const useActiveTable = ({
   }
 
   watch(filtersModel, fetchData, {
-    immediate: true,
+    immediate: isImmediate,
     deep: true,
   });
   watch(page, fetchData);

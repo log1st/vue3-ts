@@ -3,7 +3,11 @@
     <div
       :class="[
         $style.action,
-        modelValue === action.key && $style.isActive,
+        (
+          Array.isArray(modelValue)
+            ? modelValue.includes(action.key)
+            : modelValue === action.key
+        ) && $style.isActive,
       ]"
       v-for="action in actions"
       :key="action.key"
@@ -34,7 +38,19 @@ export default defineComponent({
 
     const onClick = ({onClick, key}) => {
       onClick && onClick();
-      emit('update:modelValue', key);
+
+      if(Array.isArray(props.modelValue)) {
+        const localValue = [...props.modelValue];
+        const index = localValue.indexOf(key);
+        if(index === -1) {
+          localValue.push(key)
+        } else {
+          localValue.splice(index, 1)
+        }
+        emit('update:modelValue', localValue);
+      } else {
+        emit('update:modelValue', key);
+      }
       requestAnimationFrame(close);
     }
 

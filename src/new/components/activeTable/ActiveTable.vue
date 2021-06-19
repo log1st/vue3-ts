@@ -28,15 +28,15 @@
             key: 'filters',
             icon: 'magnifier',
             label: 'Фильтрация',
-            onClick: toggleFilters,
-            align: 'end',
+            align: 'end'
           }]"
         >
-          <template #filters="{isActive}">
+          <template #filters="{isActive, close}">
             <Filters
               v-if="isActive"
               v-model="localFilters"
               :filters="filters"
+              @close="close"
             />
           </template>
         </Actions>
@@ -86,7 +86,7 @@
       <div :class="$style.body">
         <DynamicScroller
           :items="records"
-          key-field="pk"
+          key-field="index"
           :class="$style.scroller"
           :min-item-size="60"
         >
@@ -153,7 +153,7 @@ import ActiveTableRecord from "@/new/components/activeTable/record/ActiveTableRe
 import Icon from "@/new/components/icon/Icon";
 import Checkbox from "@/new/components/checkbox/Checkbox";
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
-import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import { DynamicScroller, DynamicScrollerItem, RecycleScroller } from 'vue-virtual-scroller'
 import ContextMenu from "@/new/components/contextMenu/ContextMenu";
 import Pagination from "@/new/components/pagination/Pagination";
 import {getDeepField} from "@/new/utils/object";
@@ -173,6 +173,7 @@ export default defineComponent({
     DynamicScroller,
     DynamicScrollerItem,
     Pagination,
+    RecycleScroller,
   },
   props: {
     columns: Array,
@@ -383,17 +384,9 @@ export default defineComponent({
       align: 'start',
     })));
 
-    const isFilterDialogVisible = ref(false);
-    const toggleFilters = () => {
-      isFilterDialogVisible.value = !isFilterDialogVisible.value;
-    }
-    const hideFilters = () => {
-      isFilterDialogVisible.value = false;
-    };
-
     const model = ref({
       filters: null,
-    })
+    });
 
     return {
       model,
@@ -426,10 +419,6 @@ export default defineComponent({
       controlActions,
 
       wholeSelected,
-
-      isFilterDialogVisible,
-      toggleFilters,
-      hideFilters,
 
       localFilters,
     }

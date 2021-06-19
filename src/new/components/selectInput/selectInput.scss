@@ -12,6 +12,14 @@
   cursor: pointer;
 }
 
+.search {
+  appearance: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  background: none;
+}
+
 .value,
 .placeholder {
   align-self: normal;
@@ -48,6 +56,7 @@
     padding: 0 10px;
   }
 
+  .search,
   .value,
   .placeholder {
     font-size: 14px;
@@ -55,6 +64,13 @@
     letter-spacing: 0.04em;
     color: #4F4F4F;
     flex-grow: 1;
+  }
+
+  .search {
+    &::placeholder {
+      color: inherit;
+      opacity: .4;
+    }
   }
 
   .placeholder {
@@ -76,5 +92,11 @@
 
   &.isDisabled {
     opacity: .7;
+  }
+
+  &.dark {
+    .trigger {
+      background: #E0E0E0;
+    }
   }
 }

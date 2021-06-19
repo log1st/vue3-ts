@@ -15,8 +15,19 @@
       />
       <SelectInput
         v-model="model.subStatus"
-        placeholder="Подстатус"
+        placeholder="Подстатус 1"
         :options="statuses"
+        :class="$style.field"
+      />
+      <SelectInput
+        v-model="model.subStatus2"
+        placeholder="Подстатус 2"
+        :options="statuses"
+        :class="$style.field"
+      />
+      <TextInput
+        v-model="model.caseNumber"
+        placeholder="Номер дела"
         :class="$style.field"
       />
     </form>
@@ -26,38 +37,26 @@
 <script>
 import {defineComponent, ref} from '@vue/composition-api';
 import SelectInput from "@/new/components/selectInput/SelectInput";
+import {useDicts} from "@/new/hooks/useDicts";
+import TextInput from "@/new/components/textInput/TextInput";
 
 export default defineComponent({
   name: "DebtorsStatusDialog",
-  components: {SelectInput},
+  components: {TextInput, SelectInput},
   props: {
     allSelected: Boolean,
     selectedItems: Array,
     selectedItem: Object,
   },
   setup() {
-    const statuses = [
-      {
-        value: 'new',
-        label: 'Новый',
-      },
-      {
-        value: 'posted',
-        label: 'Подано в суд',
-      },
-      {
-        value: 'decision',
-        label: 'Вынесено решение',
-      },
-      {
-        value: 'inWork',
-        label: 'В работе',
-      },
-    ];
+    const {
+      judicialStatuses,
+    } = useDicts();
 
     const model = ref({
       status: null,
       subStatus: null,
+      subStatus2: null,
     })
 
     const submit = async () => {
@@ -66,7 +65,7 @@ export default defineComponent({
 
     return {
       model,
-      statuses,
+      statuses: judicialStatuses,
 
       submit,
     }

@@ -94,6 +94,7 @@ import Icon from "@/new/components/icon/Icon";
 import Tooltip from "@/new/components/tooltip/Tooltip";
 import TooltipWrapper from "@/new/components/tooltip/TooltipWrapper";
 import {useDialog} from "@/new/hooks/useDialog";
+import {useDicts} from "@/new/hooks/useDicts";
 
 export default defineComponent({
   name: "index",
@@ -116,6 +117,37 @@ export default defineComponent({
         payload,
       })
     }
+
+    const {
+      judicialStatuses,
+      judicialEgrnStatuses,
+      judicialFeeStatuses,
+    } = useDicts();
+
+    const {
+      records: judicialSectors,
+      filtersModel: judicialSectorsFiltersModel,
+    } = useActiveTable({
+      isImmediate: false,
+      filters: ref([{
+        field: 'query',
+        type: 'text',
+        isHidden: true,
+      }]),
+      async fetch() {
+        return new Promise(resolve => {
+          resolve({
+            data: {
+              count: 10,
+              results: Array(10).fill(null).map((_, index ) => ({
+                value: index + 1,
+                label: `Суд #${index + 1}`
+              }))
+            }
+          })
+        })
+      }
+    });
 
     const {
       fetchData,
@@ -142,8 +174,9 @@ export default defineComponent({
           params,
           cancelToken,
         });
-        response.data.results = response.data.results.map(record => ({
+        response.data.results = response.data.results.map((record, index) => ({
           ...record,
+          index,
           tmp: {
             rating: Math.floor(Math.random() * 5),
             documentReady: Math.floor(Math.random() * 3) % 3 === 0,
@@ -201,6 +234,43 @@ export default defineComponent({
           props: {
             placeholder: 'Сумма долга до',
             type: 'number',
+          },
+        },
+        {
+          field: 'status',
+          type: 'select',
+          props: {
+            placeholder: 'Статус',
+            options: judicialStatuses.value,
+          },
+        },
+        {
+          field: 'judicial_sector',
+          type: 'select',
+          props: {
+            placeholder: 'Выбор судебного участка',
+            isSearchable: true,
+            searchPlaceholder: 'Начните ввод',
+            options: judicialSectors.value,
+            async onQuery({query}) {
+              judicialSectorsFiltersModel.value.query = query;
+            }
+          },
+        },
+        {
+          field: 'egrn_status',
+          type: 'select',
+          props: {
+            placeholder: 'Статус выписки ЕГРН',
+            options: judicialEgrnStatuses.value,
+          },
+        },
+        {
+          field: 'fee_status',
+          type: 'select',
+          props: {
+            placeholder: 'Статус оплаты пошлины от',
+            options: judicialFeeStatuses.value,
           },
         },
       ])),
