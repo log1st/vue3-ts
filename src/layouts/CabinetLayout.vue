@@ -5,14 +5,15 @@
       </div>
     <sidebar :sidebarOpen="sidebarOpen" />
     <div class="root-content">
+      <Dialogs/>
       <cabinet-header />
       <div class="header__menu" @click="sidebarOpen = !sidebarOpen">
         <div class="header__menu-icon" :class="{'is-active-open-btn': sidebarOpen}">
-          <svg width="6" height="10" viewBox="0 0 6 10" 
+          <svg width="6" height="10" viewBox="0 0 6 10"
           :style="{'transform': sidebarOpen ? 'rotate(180deg)' : 'rotate(0deg)' }"
           fill="#333333"
           xmlns="http://www.w3.org/2000/svg">
-          <path d="M5.55956 4.80065L0.842218 0.0833028C0.731147 -0.0277676 0.553016 -0.0277676 0.441945 0.0833028C0.330875 0.194373 0.330875 0.372505 0.441945 0.483575L4.95811 4.99974L0.441945 9.5159C0.330875 9.62697 0.330875 9.8051 0.441945 9.91617C0.496433 9.97066 0.569781 10 0.641034 10C0.712286 10 0.785635 9.97276 0.840122 9.91617L5.55747 5.19883C5.66854 5.08985 5.66854 4.90962 5.55956 4.80065Z" 
+          <path d="M5.55956 4.80065L0.842218 0.0833028C0.731147 -0.0277676 0.553016 -0.0277676 0.441945 0.0833028C0.330875 0.194373 0.330875 0.372505 0.441945 0.483575L4.95811 4.99974L0.441945 9.5159C0.330875 9.62697 0.330875 9.8051 0.441945 9.91617C0.496433 9.97066 0.569781 10 0.641034 10C0.712286 10 0.785635 9.97276 0.840122 9.91617L5.55747 5.19883C5.66854 5.08985 5.66854 4.90962 5.55956 4.80065Z"
           :fill="sidebarOpen ? '#333333' : '#ffffff'"/>
           </svg>
         </div>
@@ -20,7 +21,7 @@
       <div v-if="appLoading && !percentLoader.status" class="root-content__loading">
         <app-loading-placeholder />
       </div>
-      
+
       <slot />
     </div>
     <transition name="fade">
@@ -41,17 +42,19 @@ import appLoadingPlaceholder from '@/components/elements/AppLoadingPlaceholder.v
 import globalPercentLoader   from '@/components/elements/globalPercentLoader'
 import serviceMessage from '@/components/elements/ServiceMessage.vue'
 import { getDocumentsOrderList, getServicesList } from '../store/modules/documents/statementsJudical';
- 
+import Dialogs from "@/new/components/dialogs/Dialogs";
+
 
 export default {
   name: 'CabinetLayout',
-  components: { 
-    'cabinet-header': CabinetHeader, 
+  components: {
+    Dialogs,
+    'cabinet-header': CabinetHeader,
     'global-percent-loader': globalPercentLoader,
-    sidebar, 
+    sidebar,
     popup,
     appLoadingPlaceholder,
-    serviceMessage 
+    serviceMessage
   },
   data () {
     return {
@@ -135,7 +138,7 @@ export default {
       'getDefaultCompany'
     ]),
     item () {
-      
+
       return null
     }
   }

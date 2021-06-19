@@ -349,6 +349,7 @@ export default defineComponent({
         onClick: () => {
           wholeSelected.value = false;
           allSelected.value = false;
+          selectedItems.value = [];
         }
       }
     ].filter(Boolean)));

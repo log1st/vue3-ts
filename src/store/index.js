@@ -22,6 +22,7 @@ import documents from './modules/documents' // обмен данными
 import penalty from './modules/penalty' // обмен данными
 import auth from './modules/auth' // авторизация
 import admin from './modules/admin' // админ панель
+import dialogs from './modules/dialogs' // админ панель
 import statementsJudical from './modules/documents/statementsJudical';
 import services from '../services'
 
@@ -107,7 +108,8 @@ return new Vuex.Store({
     auth,
     desktop,
     services, // Сервисы
-    statementsJudical // модуль заявления
+    statementsJudical, // модуль заявления
+    dialogs,
   },
   strict: true
 })

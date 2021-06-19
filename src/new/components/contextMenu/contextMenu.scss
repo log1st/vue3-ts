@@ -20,4 +20,8 @@
   &:hover {
     background: #CAE3F3;
   }
+
+  &.isActive {
+    font-weight: bold;
+  }
 }

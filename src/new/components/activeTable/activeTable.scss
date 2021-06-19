@@ -39,6 +39,8 @@
   padding-bottom: 1px;
   border-bottom: 1px solid #a1a1a1;
 
+  user-select: none;
+
   cursor: pointer;
 
   &:not(:first-child) {

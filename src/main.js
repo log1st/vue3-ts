@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import 'normalize.css'
-import CompositionApi from '@vue/composition-api'
+import CompositionApi, {provide} from '@vue/composition-api'
 import App from './App.vue'
 import { createRouter } from './router'
 import createStore from './store'
@@ -324,6 +324,9 @@ export function createApp() {
 	  router,
 	  store,
 	  render: h => h(App),
+    setup() {
+	    provide('store', store);
+    }
 	})
 	return {app, router, store}
 }

@@ -1,10 +1,13 @@
 <template>
   <div :class="$style.menu">
     <div
-      :class="$style.action"
+      :class="[
+        $style.action,
+        modelValue === action.key && $style.isActive,
+      ]"
       v-for="action in actions"
       :key="action.key"
-      @click="onClick(action.onClick)"
+      @click="onClick(action)"
     >
       {{action.label}}
     </div>
@@ -16,13 +19,23 @@ import {defineComponent} from "@vue/composition-api";
 
 export default defineComponent({
   name: "ContextMenu",
+  model: {
+    prop: 'modelValue',
+    event: 'update:modelValue'
+  },
   props: {
     actions: Array,
+    modelValue: [String, Number],
   },
   setup(props, {emit}) {
-    const onClick = (handler) => {
-      handler && handler();
+    const close = () => {
       emit('close');
+    }
+
+    const onClick = ({onClick, key}) => {
+      onClick && onClick();
+      emit('update:modelValue', key);
+      requestAnimationFrame(close);
     }
 
     return {
