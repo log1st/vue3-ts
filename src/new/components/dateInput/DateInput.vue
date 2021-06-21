@@ -58,7 +58,6 @@ export default defineComponent({
     label: String,
 
     isDisabled: Boolean,
-    isMultiple: Boolean,
   },
   setup(props, {emit}) {
 

@@ -1,12 +1,16 @@
 import {computed, watch, ref} from "@vue/composition-api";
+import {getDeepField} from "@/new/utils/object";
+import {cloneDeep} from "lodash";
 
-export const useLocalProp = (props, emit, propName, asRef = false) => {
+export const useLocalProp = (props, emit, propName, asRef = false, watchRef = false) => {
   if(asRef) {
-    const localValue = ref((typeof props[propName] === 'object' && props[propName] !== null) ? (
-      Array.isArray(props[propName]) ? [...props[propName]] : {...props[propName]}
-    ) : props[propName]);
-    watch(computed(() => props[propName]), newValue => {
-      // localValue.value = newValue
+    const localValue = ref(
+      cloneDeep(getDeepField(props, propName))
+    );
+    watch(computed(() => getDeepField(props, propName)), newValue => {
+      if(watchRef) {
+        localValue.value = cloneDeep(newValue)
+      }
     }, {
       immediate: true,
       deep: true,
@@ -16,7 +20,7 @@ export const useLocalProp = (props, emit, propName, asRef = false) => {
 
   return computed({
     get() {
-      return props[propName]
+      return getDeepField(props, propName)
     },
     set(value) {
       emit(`update:${propName}`, value)

@@ -30,28 +30,5 @@
   margin: 0 32.5px;
   width: 140px;
   height: 60px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 17px;
-  letter-spacing: 0.02em;
-
-  border-radius: 10px;
-
-  cursor: pointer;
-  user-select: none;
 }
 
-.secondaryAction {
-  color: #BDBDBD;
-  border: 1px solid #BDBDBD;
-}
-
-.primaryAction {
-  background: #21317A;
-  color: #FFFFFF;
-}

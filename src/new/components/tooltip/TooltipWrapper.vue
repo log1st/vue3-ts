@@ -23,7 +23,8 @@
 
 <script>
 import Tooltip from "@/new/components/tooltip/Tooltip";
-export default {
+import {defineComponent} from "@vue/composition-api";
+export default defineComponent({
   name: "TooltipWrapper",
   components: {Tooltip},
   props: {
@@ -41,7 +42,7 @@ export default {
     },
     text: String,
   }
-}
+})
 </script>
 
 <style lang="scss" module>

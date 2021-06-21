@@ -9,9 +9,9 @@
             : modelValue === action.key
         ) && $style.isActive,
       ]"
-      v-for="action in actions"
+      v-for="(action, index) in actions"
       :key="action.key"
-      @click="onClick(action)"
+      @click="onClick({...action, index})"
     >
       {{action.label}}
     </div>
@@ -29,15 +29,15 @@ export default defineComponent({
   },
   props: {
     actions: Array,
-    modelValue: [String, Number],
+    modelValue: [String, Number, Boolean, Array],
   },
   setup(props, {emit}) {
     const close = () => {
       emit('close');
     }
 
-    const onClick = ({onClick, key}) => {
-      onClick && onClick();
+    const onClick = ({onClick, key, index}) => {
+      onClick && onClick({key, index});
 
       if(Array.isArray(props.modelValue)) {
         const localValue = [...props.modelValue];

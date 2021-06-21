@@ -322,6 +322,9 @@ export function createApp() {
 	  router,
 	  store,
 	  render: h => h(App),
+    created() {
+	    this.$store.$toast = this.$toast;
+    },
     setup() {
 	    provide('store', store);
     }

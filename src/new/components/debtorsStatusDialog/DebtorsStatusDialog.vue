@@ -1,9 +1,12 @@
 <template>
   <div :class="$style.dialog">
     <div :class="$style.title">
-      Статус работы с должником
+      Статус работы с {{
+        allSelected || (selectedItems ? selectedItems.length : false) ? 'должниками' : 'должником'
+      }}
     </div>
     <form
+      v-if="isActive"
       @submit.prevent="submit"
       :class="$style.form"
     >
@@ -13,62 +16,92 @@
         :options="statuses"
         :class="$style.field"
       />
-      <SelectInput
-        v-model="model.subStatus"
-        placeholder="Подстатус 1"
-        :options="statuses"
-        :class="$style.field"
-      />
-      <SelectInput
-        v-model="model.subStatus2"
-        placeholder="Подстатус 2"
-        :options="statuses"
-        :class="$style.field"
-      />
-      <TextInput
-        v-model="model.caseNumber"
-        label="Номер дела"
-        :class="$style.field"
-      />
-      <DateInput
-        v-model="model.registerDate"
-        label="Дата регистрация"
-        :class="$style.field"
-      />
+      <Btn
+        state="primary"
+        type="submit"
+        :class="$style.submit"
+      >
+        Применить
+      </Btn>
     </form>
+    <div :class="$style.hint" v-else>
+      Выберите должника
+    </div>
   </div>
 </template>
 
 <script>
-import {defineComponent, ref} from '@vue/composition-api';
+import {computed, defineComponent, ref, watch} from '@vue/composition-api';
 import SelectInput from "@/new/components/selectInput/SelectInput";
 import {useDicts} from "@/new/hooks/useDicts";
-import TextInput from "@/new/components/textInput/TextInput";
-import DateInput from "@/new/components/dateInput/DateInput";
+import Btn from "@/new/components/btn/Btn";
+import {baseURL} from "@/settings/config";
 
 export default defineComponent({
   name: "DebtorsStatusDialog",
-  components: {DateInput, TextInput, SelectInput},
+  components: {Btn, SelectInput},
   props: {
     allSelected: Boolean,
     selectedItems: Array,
-    selectedItem: Object,
+    selectedItem: Number,
+    type: String,
   },
-  setup() {
+  setup(props, {emit}) {
     const {
       judicialStatuses,
     } = useDicts();
 
     const model = ref({
       status: null,
-      subStatus: null,
-      subStatus2: null,
-      caseNumber: '',
-      registerDate: null,
-    })
+    });
+
+
+    watch(computed(() => props.selectedItem), async id => {
+      if(!id) {
+        return;
+      }
+      const {data} = await axios({
+        method: 'GET',
+        url: `${baseURL}/debtor_status/${id}/`,
+      })
+      model.value.status = data.status;
+    }, {
+      immediate: true,
+    });
+
+    const isActive = computed(() => (
+      props.allSelected
+      || props.selectedItems?.length
+      || props.selectedItem > -1
+    ))
 
     const submit = async () => {
-      console.log(model.value)
+      if(!isActive.value) {
+        return;
+      }
+
+      if(props.allSelected || props.selectedItems?.length) {
+        await axios({
+          method: 'put',
+          url: `${baseURL}/debtor_status/`,
+          data: {
+            production_type: props.type,
+            status: model.status,
+
+            ids: props.selectedItems || [],
+            all: props.allSelected,
+          }
+        })
+      } else {
+        await axios({
+          method: 'patch',
+          url: `${baseURL}/debtor_status/${props.selectedItem}/`,
+          data: {
+            status: model.value.status,
+          }
+        })
+      }
+      emit('close')
     }
 
     return {
@@ -76,6 +109,8 @@ export default defineComponent({
       statuses: judicialStatuses,
 
       submit,
+
+      isActive,
     }
   }
 });

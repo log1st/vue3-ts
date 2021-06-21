@@ -10,13 +10,15 @@ export const useActiveTable = ({
   columns = ref([]),
   fetch,
   isImmediate = true,
+  defaultLimit = ref(5),
+  defaultPage = ref(1),
 } = {}) => {
   const isFetching = ref(false);
   let cancelRequest = null;
 
   const total = ref(null);
-  const limit = ref(1000);
-  const page = ref(1);
+  const limit = ref(defaultLimit.value);
+  const page = ref(defaultPage.value);
 
   const records = ref([]);
   const summaries = ref({});
@@ -26,7 +28,7 @@ export const useActiveTable = ({
   watch(filters, (newFilters) => {
     const newModel = newFilters.reduce((acc, cur) => ({
       ...acc,
-      [cur.field]: cur.defaultValue || null
+      [cur.field]: JSON.parse(JSON.stringify(cur.defaultValue || null))
     }), {});
     if(!isSameObject(newModel, filtersModel.value)) {
       filtersModel.value = newModel;

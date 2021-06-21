@@ -1,0 +1,189 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  user-select: none;
+
+  border: none;
+  outline: none;
+  appearance: none;
+
+  text-decoration: none;
+}
+
+.prepend {
+  flex-shrink: 0;
+
+  height: 24px;
+  width: 24px;
+
+  + * {
+    margin-left: 18px;
+  }
+}
+
+.content {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.primary {
+  background: #21317A;
+  border-radius: 10px;
+
+  .content {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.02em;
+    color: #FFFFFF;
+  }
+
+  &:not(.isDisabled) {
+    &:hover,
+    &:focus {
+    }
+  }
+
+  &.isDisabled {
+  }
+}
+
+.secondary {
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px #BDBDBD;
+  border-radius: 10px;
+
+  .content {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.02em;
+    color: #BDBDBD;
+  }
+
+  &:not(.isDisabled) {
+    &:hover,
+    &:focus {
+    }
+  }
+
+  &.isDisabled {
+  }
+}
+
+.tertiary {
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px #21317A;
+  border-radius: 10px;
+
+  &.vertical {
+    flex-direction: column;
+
+    .content {
+      flex-grow: 0;
+      margin-top: 5px;
+      margin-left: 0;
+    }
+  }
+
+  .prepend {
+    color: #21317A;
+  }
+
+  .content {
+    color: #000
+  }
+
+  .content {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.02em;
+  }
+
+  &:not(.isDisabled) {
+    &:hover,
+    &:focus {
+      background: #21317A;
+
+      .prepend,
+      .content {
+        color: #fff;
+      }
+    }
+  }
+
+  &.isDisabled {
+  }
+}
+
+.quaternary {
+  background: #CAE3F3;
+  border-radius: 10px;
+  color: #4F4F4F;
+
+  .content {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.02em;
+  }
+
+  .prepend {
+    height: 15px;
+    width: 15px;
+  }
+
+  &:not(.isDisabled) {
+    &:hover,
+    &:focus {
+
+      .prepend,
+      .content {
+      }
+    }
+  }
+
+  &.isDisabled {
+  }
+}
+
+.quinary {
+  background: #fff;
+  border-radius: 10px;
+  color: #21317A;
+  box-shadow: 0px 15px 15px rgba(0, 0, 0, 0.15);
+
+  .content {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.02em;
+  }
+
+  .prepend {
+    height: 20px;
+    width: 20px;
+  }
+
+  &:not(.isDisabled) {
+    &:hover,
+    &:focus {
+
+      .prepend,
+      .content {
+      }
+    }
+  }
+
+  &.isDisabled {
+  }
+}
+
+.isDisabled {
+  cursor: default;
+}

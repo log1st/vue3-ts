@@ -37,8 +37,8 @@
 <script>
 import TooltipWrapper from "@/new/components/tooltip/TooltipWrapper";
 import Icon from "@/new/components/icon/Icon";
-import {computed} from "@vue/composition-api";
-export default {
+import {computed, defineComponent} from "@vue/composition-api";
+export default defineComponent({
   name: "Actions",
   components: {Icon, TooltipWrapper},
   model: {
@@ -74,7 +74,7 @@ export default {
       hide,
     }
   }
-}
+})
 </script>
 
 <style lang="scss" module>

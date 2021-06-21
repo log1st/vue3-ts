@@ -1,3 +1,5 @@
+import {baseURL} from "@/settings/config";
+
 export const dictsPlugins = [
   store => {
     store.dispatch('dicts/fetchDicts');
@@ -19,44 +21,89 @@ export default {
   namespaced: true,
   state() {
     return {
+      services: [],
       judicialStatuses: [],
+      judicialSubStatuses: [],
       judicialEgrnStatuses: [],
       judicialFeeStatuses: [],
     }
   },
   getters: {
+    services: getList('services'),
+    servicesMap: getMap('services'),
     judicialStatuses: getList('judicialStatuses'),
     judicialStatusesMap: getMap('judicialStatuses'),
+    judicialSubStatuses: getList('judicialSubStatuses'),
+    judicialSubStatusesMap: getMap('judicialSubStatuses'),
     judicialEgrnStatuses: getList('judicialEgrnStatuses'),
     judicialEgrnStatusesMap: getMap('judicialEgrnStatuses'),
     judicialFeeStatuses: getList('judicialFeeStatuses'),
     judicialFeeStatusesMap: getMap('judicialFeeStatuses'),
   },
   mutations: {
+    setServices: setList('services'),
     setJudicialStatuses: setList('judicialStatuses'),
+    setJudicialSubStatuses: setList('judicialSubStatuses'),
     setJudicialEgrnStatuses: setList('judicialEgrnStatuses'),
     setJudicialFeeStatuses: setList('judicialFeeStatuses'),
   },
   actions: {
     async fetchDicts({commit}) {
-      commit('setJudicialStatuses', [
+      const {
+        data: {
+          statuses,
+          substatuses,
+        }
+      } = await axios({
+        method: 'get',
+        url: `${baseURL}/debtor_status/consts`
+      });
+
+      commit('setJudicialStatuses', statuses.map(({value, info}) => ({
+        value,
+        label: info,
+      })));
+
+      commit('setJudicialSubStatuses', substatuses.map(({value, info}) => ({
+        value,
+        label: info,
+      })));
+
+      commit('setServices', [
         {
-          value: 'new',
-          label: 'Новый',
+          value: 'electricity',
+          label: 'Электроснабжение',
         },
         {
-          value: 'posted',
-          label: 'Подано в суд',
+          value: 'gas',
+          label: 'Газоснабжение',
         },
         {
-          value: 'decision',
-          label: 'Вынесено решение',
+          value: 'cold',
+          label: 'Холодное в/с',
         },
         {
-          value: 'inWork',
-          label: 'В работе',
+          value: 'fund',
+          label: 'Содержание ж/ф',
+        },
+        {
+          value: 'water',
+          label: 'Водоотведение',
+        },
+        {
+          value: 'warm',
+          label: 'Отопление',
+        },
+        {
+          value: 'hot',
+          label: 'Горячее в/с',
+        },
+        {
+          value: 'tko',
+          label: 'ТКО',
         },
       ]);
+
       commit('setJudicialEgrnStatuses', [
         {
           value: 'one',

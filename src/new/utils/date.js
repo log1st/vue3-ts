@@ -4,7 +4,7 @@ const dateIntl = new Intl.DateTimeFormat(undefined, {
   day: '2-digit',
 });
 
-export const formatDate = (date) => dateIntl.format(date);
+export const formatDate = (date) => dateIntl.format(new Date(date));
 
 const dateTimeIntl = new Intl.DateTimeFormat(undefined, {
   year: 'numeric',

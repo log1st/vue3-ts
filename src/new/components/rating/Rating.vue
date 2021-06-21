@@ -11,13 +11,14 @@
 
 <script>
 import Icon from "@/new/components/icon/Icon";
-export default {
+import {defineComponent} from "@vue/composition-api";
+export default defineComponent({
   name: "Rating",
   components: {Icon},
   props: {
     modelValue: Number,
   }
-}
+})
 </script>
 
 <style lang="scss" module>

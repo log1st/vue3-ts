@@ -26,12 +26,21 @@
 
   display: flex;
   align-items: center;
+
+  overflow: hidden;
+}
+
+.value > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .placeholder {
 }
 
 .caret {
+  flex-shrink: 0;
 }
 
 .isDisabled {
@@ -43,19 +52,22 @@
   top: calc(100% - 8px);
   left: 0;
   right: 0;
+
+  max-height: 240px;
+  overflow-y: auto;
 }
 
 .primary {
   .label {
     padding-left: 3px;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.04em;
+    color: #4F4F4F;
 
     + * {
       margin-top: 5px;
-      font-weight: 500;
-      font-size: 12px;
-      line-height: 15px;
-      letter-spacing: 0.04em;
-      color: #4F4F4F;
     }
   }
 
@@ -80,6 +92,7 @@
   }
 
   .search {
+    width: 0;
     &::placeholder {
       color: inherit;
       opacity: .4;

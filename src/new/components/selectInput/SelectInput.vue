@@ -22,20 +22,37 @@
         :placeholder="searchPlaceholder"
         ref="queryRef"
       />
+      <input
+        v-else-if="isActive && isFillable"
+        :class="$style.search"
+        v-model="fill"
+        :placeholder="placeholder"
+        @keypress.enter.prevent="addFill"
+        ref="fillRef"
+      />
       <div :class="$style.value" v-else-if="displayValue">
-        {{displayValue}}
+        <span>
+          <slot name="displayValue" :value="value">
+            {{displayValue}}
+          </slot>
+        </span>
       </div>
-      <div :class="$style.placeholder" v-else-if="placeholder">
+      <div :class="$style.placeholder" v-else>
         {{placeholder}}
       </div>
       <Icon :class="$style.caret" icon="chevron-down"/>
     </div>
     <ContextMenu
-      v-if="isActive && computedOptions.length"
+        v-if="isActive && isFillable && value.length"
+        :actions="computedValueOptions"
+        :class="$style.options"
+    />
+    <ContextMenu
+      v-else-if="isActive && computedOptions.length"
       :actions="computedOptions"
       :class="$style.options"
       v-model="value"
-      @close="hide"
+      @close="hideOptions"
     />
   </div>
 </template>
@@ -45,6 +62,8 @@ import {defineComponent, ref, computed, watch} from '@vue/composition-api';
 import Icon from "@/new/components/icon/Icon";
 import ContextMenu from "@/new/components/contextMenu/ContextMenu";
 import {useLocalProp} from "@/new/hooks/useLocalProp";
+import {formatMessage} from "@/new/utils/messageFormat";
+import {arrayFrom} from "@/new/utils/object";
 
 export default defineComponent({
   name: "SelectInput",
@@ -58,7 +77,7 @@ export default defineComponent({
       type: [String, Array],
       default: 'primary',
     },
-    modelValue: [String, Number, Array],
+    modelValue: [String, Number, Array, Boolean],
 
     placeholder: String,
     label: String,
@@ -66,7 +85,12 @@ export default defineComponent({
     isDisabled: Boolean,
     isMultiple: Boolean,
 
-    options: Array,
+    options: {
+      type: Array,
+      default: () => ([]),
+    },
+
+    isFillable: Boolean,
 
     isSearchable: Boolean,
     searchPlaceholder: String,
@@ -80,19 +104,22 @@ export default defineComponent({
       default: 'value'
     },
     displayProp: {
-      type: String,
+      type: [String, Array],
       default: 'label',
-    }
+    },
+
+    displayValueTemplate: String,
   },
   setup(props, {emit}) {
     const queryRef = ref();
+    const fillRef = ref();
 
     const isActive = ref(false);
     const toggle = async ({target}) => {
       if(props.isDisabled) {
         return;
       }
-      if(target === queryRef.value) {
+      if([queryRef.value, fillRef].includes(target)) {
         return;
       }
       await new Promise(requestAnimationFrame);
@@ -100,10 +127,17 @@ export default defineComponent({
       if(isActive.value) {
         await new Promise(requestAnimationFrame);
         queryRef.value?.focus();
+        fillRef.value?.focus();
       }
     };
     const hide = () => {
       isActive.value = false;
+    };
+    const hideOptions = () => {
+      if(props.isMultiple) {
+        return;
+      }
+      hide();
     };
 
     const value = useLocalProp(props, emit, 'modelValue');
@@ -116,15 +150,42 @@ export default defineComponent({
     ));
 
     const displayValue = computed(() => (
-      props.isMultiple
-        ? value.value.map(i => optionsMap.value[i][props.displayProp]).join(', ')
-        : optionsMap.value[value.value]?.[props.displayProp]
+      props.displayValueTemplate ? (
+        (props.isMultiple ? value.value.length : !!value.value)
+          ? formatMessage(props.displayValueTemplate, {n: value.value.length, value: value.value})
+          : null
+      ) : (
+        props.isMultiple
+          ? (
+            props.isFillable ? value.value.join(', ') : (
+              value.value.map(i => arrayFrom(props.displayProp).map(f => optionsMap.value[i][f]).join(' ')).join(', ')
+            )
+          )
+          : arrayFrom(props.displayProp).map(i => optionsMap.value[value.value]?.[i]).join(' ')
+      )
     ));
 
     const query = ref('');
+    const fill = ref('');
+    const addFill = () => {
+      if(!value.value) {
+        return;
+      }
+      if(value.value.includes(fill.value)) {
+        return;
+      }
+      value.value.push(fill.value);
+    }
+    const removeFill = async (index) => {
+      await new Promise(requestAnimationFrame);
+      value.value.splice(index, 1);
+    }
 
     watch(value, () => {
       query.value = '';
+      fill.value = '';
+    }, {
+      deep: true,
     })
 
     let queryTimeout;
@@ -141,7 +202,17 @@ export default defineComponent({
     const computedOptions = computed(() => (
       props.options.map(option => ({
         key: option[props.valueProp],
-        label: option[props.displayProp],
+        label: arrayFrom(props.displayProp).map(i => option[i]).join(' '),
+      }))
+    ))
+
+    const computedValueOptions = computed(() => (
+      arrayFrom(value.value).map(i => ({
+        key: i,
+        label: i,
+        onClick: (index) => {
+          removeFill(index)
+        }
       }))
     ))
 
@@ -150,6 +221,8 @@ export default defineComponent({
       toggle,
       hide,
 
+      hideOptions,
+
       value,
 
       displayValue,
@@ -157,6 +230,12 @@ export default defineComponent({
       queryRef,
       query,
 
+      fillRef,
+      fill,
+      addFill,
+      removeFill,
+
+      computedValueOptions,
       computedOptions,
 
     }

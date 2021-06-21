@@ -1,0 +1,22 @@
+.field {
+
+}
+
+.label {
+  padding-left: 3px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+  color: #4F4F4F;
+
+  + * {
+    margin-top: 12px;
+  }
+}
+
+.option {
+  &:not(:first-child) {
+    margin-top: 16px;
+  }
+}

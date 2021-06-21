@@ -1,11 +1,33 @@
 <template>
   <div :class="$style.container">
     <div :class="$style.controls">
-      <Actions :actions="quickActions" :class="$style.actions"/>
-      <Actions :actions="settingsActions" :class="$style.actions"/>
-      <Actions :actions="controlActions" :class="$style.actions"/>
-      <div :class="$style.linedActions">
-        <div :class="$style.linedAction" v-for="action in linedActions" :key="action.key" @click="action.onClick">
+      <Actions
+        v-if="quickActions.length"
+        :actions="quickActions"
+        :class="$style.actions"
+      />
+      <Actions
+        v-if="settingsActions.length"
+        :actions="settingsActions"
+        :class="$style.actions"
+      />
+      <Actions
+        v-if="controlActions.length"
+        v-model="model.controls"
+        :actions="controlActions"
+        :class="$style.actions"
+      >
+        <template v-for="action in controlActions" :slot="action.key" slot-scope="payload">
+          <slot :name="`action(${action.key})`" v-bind="payload"/>
+        </template>
+      </Actions>
+      <div :class="$style.linedActions" v-if="linedActions.length">
+        <div
+          :class="$style.linedAction"
+          v-for="action in linedActions"
+          :key="action.key"
+          @click="action.onClick"
+        >
           {{action.label}}
         </div>
       </div>
@@ -44,7 +66,7 @@
     </div>
     <div :class="$style.table">
       <div :class="[$style.header, $style.grid]" :style="{gridTemplateColumns: gridTemplate}">
-        <template v-for="column in columns">
+        <template v-for="column in computedColumns">
           <Checkbox
             v-if="isSelectable && selectableColumn === column.field"
             :class="[$style.cell, $style.selectAll]"
@@ -102,7 +124,7 @@
                 :grid-modifier="$style.grid"
                 :cell-modifier="$style.cell"
                 :is-selectable="isSelectable"
-                :columns="columns"
+                :columns="computedColumns"
                 :record="record"
                 :selectable-column="selectableColumn"
                 :is-selected="allSelected || wholeSelected || selectedItems.includes(index)"
@@ -110,6 +132,7 @@
                 :index="index"
                 :class="$style.record"
                 @contextmenu="showContextMenu(index, $event)"
+                @rowClick="$emit('rowClick', {record, index})"
               >
                 <template v-for="(slot, key) in $scopedSlots" :slot="key" slot-scope="data">
                   <slot :name="key" v-bind="data" />
@@ -126,7 +149,7 @@
         />
       </div>
       <div :class="[$style.footer, $style.grid]" :style="{gridTemplateColumns: gridTemplate}">
-        <div :class="$style.cell" v-for="column in columns" :key="column.field">
+        <div :class="$style.cell" v-for="column in computedColumns" :key="column.field">
           <div :class="$style.summaryLabel" v-if="column.field === summariesLabel">
             ИТОГО:
           </div>
@@ -160,6 +183,7 @@ import {getDeepField} from "@/new/utils/object";
 import {useLocalProp} from "@/new/hooks/useLocalProp";
 import Actions from "@/new/components/actions/Actions";
 import Filters from "@/new/components/filters/Filters";
+import {useDialog} from "@/new/hooks/useDialog";
 
 export default defineComponent({
   name: "ActiveTable",
@@ -201,10 +225,6 @@ export default defineComponent({
     filtersModel: Object,
   },
   setup(props, {emit}) {
-    const gridTemplate = computed(() => (
-      props.columns.map(({width}) => typeof width === 'string' ? width: `${width || 1}fr`).join(' ')
-    ));
-
     const sortsMap = computed(() => (
       props.sort.reduce((acc, cur) => ({
         ...acc,
@@ -331,13 +351,58 @@ export default defineComponent({
       setAllSelected(false);
     });
 
+    const {
+      showDialog,
+    } = useDialog();
+
+    const visibleQuickActions = ref([]);
+
+    watch(computed(
+      () => props.actions
+        .filter(({asQuick}) => asQuick)
+        .map(({key}) => key)
+    ), newVisibleActions => {
+      visibleQuickActions.value = newVisibleActions;
+    }, {
+      immediate: true,
+      deep: true,
+    })
+
+    const visibleColumns = ref([]);
+
+    watch(computed(
+      () => props.columns.map(({field}) => field)
+    ), newVisibleColumns => {
+      visibleColumns.value = newVisibleColumns;
+    }, {
+      immediate: true,
+      deep: true,
+    });
+
+    const gridTemplate = computed(() => (
+      visibleColumns.value.map(({width}) => typeof width === 'string' ? width: `${width || 1}fr`).join(' ')
+    ));
+
     const settingsActions = computed(() => ([
       {
         key: 'display',
         icon: 'levels',
         label: 'Настройки отображения',
         onClick() {
-          alert('settings');
+          showDialog({
+            component: 'activeTableSettings',
+            payload: {
+              columns: props.columns,
+              modelValue: {
+                limit: localLimit.value,
+                columns: [...visibleColumns.value],
+              },
+              onSubmit({limit, columns}) {
+                visibleColumns.value = [...columns];
+                localLimit.value = limit;
+              }
+            }
+          })
         }
       },
       {
@@ -345,7 +410,16 @@ export default defineComponent({
         icon: 'ellipsis',
         label: 'Быстрые клавиши',
         onClick() {
-          alert('actions');
+          showDialog({
+            component: 'activeTableActions',
+            payload: {
+              actions: props.actions.filter(({asQuick}) => asQuick),
+              modelValue: visibleQuickActions.value,
+              onSubmit(actions) {
+                visibleQuickActions.value = actions;
+              }
+            }
+          })
         }
       },
     ]));
@@ -356,7 +430,9 @@ export default defineComponent({
         action.handler && action.handler(getActionPayload())
       }
     })))
-    const quickActions = computed(() => actions.value.filter(({asQuick}) => asQuick));
+    const quickActions = computed(() => actions.value.filter(
+      ({key}) => visibleQuickActions.value.includes(key)
+    ));
     const linedActions = computed(() => ([
       ...actions.value.filter(({asLined}) => asLined),
       !wholeSelected.value && {
@@ -384,8 +460,17 @@ export default defineComponent({
       align: 'start',
     })));
 
+    const computedColumns = computed(() => (
+      props.columns
+        .filter(({field}) => visibleColumns.value.includes(field))
+        .sort(({field: a}, {field: b}) => visibleColumns.value.indexOf(a) > visibleColumns.value.indexOf(b) ? 1 : -1)
+    ))
+
     const model = ref({
       filters: null,
+      actions: null,
+      controls: null,
+      lined: null,
     });
 
     return {
@@ -421,6 +506,8 @@ export default defineComponent({
       wholeSelected,
 
       localFilters,
+
+      computedColumns,
     }
   }
 })

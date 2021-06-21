@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.filters">
+  <form @submit.prevent="submit" :class="$style.filters">
     <div :class="$style.list">
       <div
         :class="$style.filter"
@@ -15,30 +15,25 @@
       </div>
     </div>
     <div :class="$style.actions">
-      <div :class="[
-        $style.action,
-        $style.secondaryAction,
-      ]" @click="reset">
+      <Btn state="secondary" @click="reset" :class="$style.action">
         Сбросить
-      </div>
-      <div :class="[
-        $style.action,
-        $style.primaryAction,
-      ]" @click="submit">
+      </Btn>
+      <Btn state="primary" type="submit" :class="$style.action">
         Поиск
-      </div>
+      </Btn>
     </div>
-  </div>
+  </form>
 </template>
 
 <script>
 import {defineComponent, computed} from "@vue/composition-api";
 import {useLocalProp} from "@/new/hooks/useLocalProp";
 import FilterConfig from "@/new/components/filter/FilterConfig";
+import Btn from "@/new/components/btn/Btn";
 
 export default defineComponent({
   name: "Filters",
-  components: {FilterConfig},
+  components: {Btn, FilterConfig},
   model: {
     prop: 'modelValue',
     event: 'update:modelValue',
@@ -57,7 +52,7 @@ export default defineComponent({
     const defaultValue = computed(() => (
       props.filters.reduce((acc, cur) => ({
         ...acc,
-        [cur.field]: cur.defaultValue || null
+        [cur.field]: JSON.parse(JSON.stringify(cur.defaultValue || null))
       }), {})
     ))
 

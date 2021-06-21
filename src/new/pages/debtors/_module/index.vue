@@ -18,11 +18,13 @@
       :page.sync="page"
       :filters="filters"
       :filters-model.sync="filtersModel"
+      @rowClick="showDebtorDialog"
     >
       <template #cell(status)="{record, index}">
         <DebtorStatus
           :class="$style.status"
-          @click="showStatusDialog({ selectedItem: records[index] })"
+          :status="record.debtor.debtor_status[record.debtor.debtor_status.length - 1]"
+          @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[record.debtor.debtor_status.length - 1].id })"
         />
       </template>
       <template #cell(personal_account)="{record, index}">
@@ -68,6 +70,9 @@
       <template #cell(debt)="{record}">
         {{formatMoney(record.debt)}}
       </template>
+      <template #cell(total_debt)="{record}">
+        {{formatMoney(record.total_debt)}}
+      </template>
       <template #cell(penalty)="{record}">
         {{formatMoney(record.penalty)}}
       </template>
@@ -76,6 +81,9 @@
       </template>
       <template v-for="field in summariesFields" :slot="`summary(${field})`" slot-scope="{value}">
         {{formatMoney(value)}}
+      </template>
+      <template #action(settings)="{isActive}">
+        <JudicialDebtorsAutomatizingDialog v-if="isActive"/>
       </template>
     </ActiveTable>
   </div>
@@ -95,17 +103,19 @@ import Tooltip from "@/new/components/tooltip/Tooltip";
 import TooltipWrapper from "@/new/components/tooltip/TooltipWrapper";
 import {useDialog} from "@/new/hooks/useDialog";
 import {useDicts} from "@/new/hooks/useDicts";
+import JudicialDebtorsAutomatizingDialog
+  from "@/new/components/judicialDebtorsAutomatizingDialog/JudicialDebtorsAutomatizingDialog";
 
 export default defineComponent({
   name: "index",
-  components: {TooltipWrapper, Tooltip, Icon, Rating, DebtorStatus, ActiveTable},
+  components: {JudicialDebtorsAutomatizingDialog, TooltipWrapper, Tooltip, Icon, Rating, DebtorStatus, ActiveTable},
   props: {
     module: String
   },
   setup(props) {
     const type = computed(() => props.module);
 
-    const summariesFields = ['accrual', 'paid_up', 'debt', 'penalty', 'fee'];
+    const summariesFields = ['accrual', 'paid_up', 'debt', 'total_debt', 'penalty', 'fee'];
 
     const {
       showDialog,
@@ -114,7 +124,62 @@ export default defineComponent({
     const showStatusDialog = async (payload) => {
       await showDialog({
         component: 'debtorsStatus',
-        payload,
+        payload: {
+          ...payload,
+          type: type.value,
+        },
+        closeHandler: fetchData,
+      })
+    }
+
+    const showPrintDialog = async (payload) => {
+      await showDialog({
+        component: 'printDebtors',
+        payload: {
+          ...payload,
+          type: type.value,
+        },
+      })
+    }
+
+    const showSetOfChargesDialog = async (payload) => {
+      await showDialog({
+        component: 'setOfCharges',
+        payload: {
+          ...payload,
+          type: type.value,
+        },
+      })
+    }
+
+    const showDutyFormDialog = async (payload) => {
+      await showDialog({
+        component: 'dutyForm',
+        payload: {
+          ...payload,
+          type: type.value,
+        },
+      })
+    }
+
+    const showExtractFromEgrnDialog = async (payload) => {
+      await showDialog({
+        component: 'extractFromEgrn',
+        payload: {
+          ...payload,
+          type: type.value,
+        },
+      })
+    }
+
+    const showDebtorDialog = async ({record: {debtor: {pk}}}) => {
+      await showDialog({
+        component: 'debtorDialog',
+        isWide: true,
+        payload: {
+          id: pk,
+          type: type.value,
+        },
       })
     }
 
@@ -125,27 +190,31 @@ export default defineComponent({
     } = useDicts();
 
     const {
-      records: judicialSectors,
-      filtersModel: judicialSectorsFiltersModel,
+      records: magistrateCourts,
+      filtersModel: magistrateCourtsFiltersModel,
     } = useActiveTable({
-      isImmediate: false,
       filters: ref([{
-        field: 'query',
+        field: 'name',
         type: 'text',
         isHidden: true,
       }]),
-      async fetch() {
-        return new Promise(resolve => {
-          resolve({
-            data: {
-              count: 10,
-              results: Array(10).fill(null).map((_, index ) => ({
-                value: index + 1,
-                label: `Суд #${index + 1}`
-              }))
-            }
-          })
-        })
+      defaultLimit: ref(10),
+      async fetch({
+        params,
+        cancelToken,
+      }) {
+        const sectors = await axios({
+          method: 'get',
+          url: `${baseURL}/reference_books/magistrate_court_place/`,
+          params,
+          cancelToken,
+        });
+        return {
+          data: {
+            count: sectors.data.length,
+            results: sectors.data,
+          }
+        };
       }
     });
 
@@ -214,10 +283,14 @@ export default defineComponent({
         },
         {
           field: 'personal_account',
-          type: 'text',
+          type: 'select',
           width: 2,
+          defaultValue: [],
           props: {
-            placeholder: '№ ЛС'
+            placeholder: '№ ЛС',
+            isFillable: true,
+            isMultiple: true,
+            displayValueTemplate: '{n, plural, =1{Один номер} one{# номер} few{# номера} other{# номеров}} ЛС'
           }
         },
         {
@@ -245,15 +318,17 @@ export default defineComponent({
           },
         },
         {
-          field: 'judicial_sector',
+          field: 'magistrate_court',
           type: 'select',
           props: {
             placeholder: 'Выбор судебного участка',
             isSearchable: true,
             searchPlaceholder: 'Начните ввод',
-            options: judicialSectors.value,
+            options: magistrateCourts.value,
+            valueProp: 'id',
+            displayProp: 'name',
             async onQuery({query}) {
-              judicialSectorsFiltersModel.value.query = query;
+              magistrateCourtsFiltersModel.value.name = query;
             }
           },
         },
@@ -282,11 +357,13 @@ export default defineComponent({
         {
           field: 'personal_account',
           label: '№ ЛС',
+          isSortable: true,
           width: '164px',
         },
         {
           field: 'full_name',
           label: 'ФИО',
+          isSortable: true,
           width: 214,
         },
         {
@@ -313,6 +390,12 @@ export default defineComponent({
           width: 237,
         },
         {
+          field: 'total_debt',
+          label: 'Общая задолженность',
+          isSortable: true,
+          width: 237,
+        },
+        {
           field: 'penalty',
           label: 'Пени',
           isSortable: true,
@@ -329,9 +412,13 @@ export default defineComponent({
         {
           key: 'print',
           label: 'Печать',
-          handler(payload) {
-            alert(`print ${payload.index}`)
-          }
+          handler: ({allSelected, selectedItems, index}) => {
+            showPrintDialog({
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            });
+          },
         }
       ])),
       actions: computed(() => ([
@@ -339,8 +426,11 @@ export default defineComponent({
           key: 'print',
           label: 'Подача документов',
           icon: 'printer',
-          handler: () => {
-            alert('print');
+          handler: ({allSelected, selectedItems}) => {
+            showPrintDialog({
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+            });
           },
           asQuick: true,
         },
@@ -348,8 +438,12 @@ export default defineComponent({
           key: 'bill',
           label: 'Свод начислений по ЛС',
           icon: 'bill',
-          handler: () => {
-            alert('bill');
+          handler: ({allSelected, selectedItems, index}) => {
+            showSetOfChargesDialog({
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            });
           },
           asQuick: true,
         },
@@ -357,8 +451,12 @@ export default defineComponent({
           key: 'fee',
           label: 'Бланк пошлины',
           icon: 'clipboard',
-          handler: () => {
-            alert('fee blank');
+          handler: ({allSelected, selectedItems, index}) => {
+            showDutyFormDialog({
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            });
           },
           asQuick: true,
         },
@@ -366,8 +464,12 @@ export default defineComponent({
           key: 'egrn',
           label: 'Выписка ЕГРН',
           icon: 'egrn',
-          handler: () => {
-            alert('egrn');
+          handler: ({allSelected, selectedItems, index}) => {
+            showExtractFromEgrnDialog({
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            });
           },
           asQuick: true,
         },
@@ -377,18 +479,15 @@ export default defineComponent({
           handler: ({allSelected, selectedItems}) => {
             showStatusDialog({
               allSelected,
-              selectedItems: selectedItems.map(index => records.value[index].pk),
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
             });
           },
           asLined: true,
         },
         {
-          key: 'gears',
+          key: 'settings',
           label: 'Настройки',
           icon: 'gears',
-          handler: () => {
-            alert('settings');
-          },
           asControl: true,
         },
       ]))
@@ -415,6 +514,8 @@ export default defineComponent({
       page,
 
       showStatusDialog,
+
+      showDebtorDialog,
     }
   }
 })

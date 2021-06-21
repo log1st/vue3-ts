@@ -1,0 +1,139 @@
+.dialog {
+  width: 960px;
+}
+
+.title {
+  font-size: 14px;
+  line-height: 17px;
+  letter-spacing: 0.04em;
+  color: #000000;
+}
+
+.form {
+  margin-top: 22px;
+  display: grid;
+  grid-template-areas: (
+    'documents documents period'
+    'services services actions'
+  );
+  grid-template-columns: 2fr 1fr 2fr;
+  grid-gap: 55px;
+}
+
+.documents {
+  grid-area: documents;
+
+  .heading {
+    margin-bottom: 25px;
+  }
+}
+
+.documentsHeader {
+  display: flex;
+  align-items: center;
+}
+
+.documentsIcon {
+  height: 20px;
+  width: 20px;
+  color: #828282;
+
+  &:not(:first-child) {
+    margin-left: 15px;
+  }
+}
+
+.documentsLabel {
+  margin-left: 20px;
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+  color: #000000;
+}
+
+.documentsList {
+  margin-top: 15px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.document {
+  display: flex;
+  align-items: center;
+
+  &:not(:first-child) {
+    margin-top: 23px;
+  }
+}
+
+.documentHandle {
+  margin-right: 15px;
+  height: 20px;
+  width: 20px;
+
+  cursor: move;
+}
+
+.period {
+  grid-area: period;
+}
+
+.allPeriod {
+  margin-top: 30px;
+}
+
+.periodFields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 20px;
+  margin-top: 20px;
+}
+
+.moratorium {
+  margin-top: 41px;
+}
+
+.services {
+  grid-area: services
+}
+
+.servicesList {
+  margin-top: 21px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 15px;
+}
+
+.actions {
+  grid-area: actions;
+}
+
+.heading {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 22px;
+  color: #21317A;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.action {
+  height: 70px;
+  width: 200px;
+
+  &:not(:first-child) {
+    margin-top: 20px;
+  }
+}
+
+.hint {
+  margin-top: 20px;
+  font-weight: 300;
+}

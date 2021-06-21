@@ -41,7 +41,7 @@
     >
       <template v-slot:controls>
 
-        
+
 
         <hot-buttons @action-emit="runActionFromIconHandler($event)" />
         <transition name="fade">
@@ -53,7 +53,7 @@
             <!-- <span>Изменить статус выбранных должников</span> -->
           </div>
         </transition>
-        
+
 
         <div style="margin-right: auto"></div>
 
@@ -63,7 +63,7 @@
             class="main__user-panel__span"
             @click="uncheckAllClonesDebtors"
           >
-            Выбрано {{ checkedDebtorsCount }} из {{debtorsCourtProceedingsInner.length}} 
+            Выбрано {{ checkedDebtorsCount }} из {{debtorsCourtProceedingsInner.length}}
           </span>
         </transition>
 
@@ -79,7 +79,7 @@
         <span v-if="allDebtors" class="main__user-panel__span">
         Показаны {{ shownDebtors }} из {{ allDebtors }}
       </span>
-        
+
         <!-- <div class="main__user-panel__search-link" @click="toggleSearchPanel">
           <i class="material-icons" style="color: #21317a; font-size: 28px" v-if="!searchPanelState">search</i>
           <i class="material-icons" style="color: #848aa1" v-else>close</i>
@@ -105,11 +105,11 @@
           <span style="">№ ЛС</span>
         </div>
       </template>
-      
+
       <template v-slot:cell(Status)="{ row, i }">
         <div class="table__col-status">
           <span @click.stop="changeStatus({ row, i })">
-            <!-- {{ 
+            <!-- {{
               row.status.status
             }}  -->
             Новый
@@ -251,7 +251,7 @@
   import cloneDeep from 'lodash/cloneDeep';
 
   import isEmpty from "lodash/isEmpty"
-  
+
   import { progress } from '@/mixins/progress-toaster'
 
   export default {
@@ -302,19 +302,19 @@
         events.$on('egrnrighttransfer', data => {
           this.egrn.Transfer = data.egrnRightsTrasnfer
           this.egrn.Request = data.egrnRequest
-        }) 
+        })
         setTimeout(() => {
           console.log(this.$store.state.debtors.debtorsNull)
             if (this.$store.state.debtors.debtorsNull == true) {
               this.setPopupComponent({component: 'NoneDebtorInfo'})
-            } 
+            }
           }, 1000)
       // this.window.onload = function () {
       //   paradocsWidget.init("77ebd206-9280-4f9c-b8de-f63a7cc5c448").then(function () {
       //     console.log('init paradocs')
       //   });
       // };
-      
+
       if (!this.percentLoader.status) {
         this.combinedRequests({module: 'judicial'})
       }
@@ -325,7 +325,7 @@
         deep: true,
         handler(val) {
           this.debtorsCourtProceedingsInner = this.debtorsCourtProceedings;
-          
+
         }
       },
       printModal: {
@@ -356,7 +356,7 @@
         'checkAllDebtors',
         'checkDebtor',
         'setInitialized'
-      ]), 
+      ]),
        checkAllClonesDebtors () {
          this.checkAllDebtors({module: 1})
       },
@@ -389,8 +389,8 @@
         }
       },
       rowActionHandler({ row, i}) {
-        // this.openDebtorData({data:row, type: 'judicial'}) ВЕРНУТЬ позже модалка должника
-        // this.setPopupComponent({ component: 'debtor-data', params: row });
+        this.openDebtorData({data:row, type: 'judicial'}) //ВЕРНУТЬ позже модалка должника
+        this.setPopupComponent({ component: 'debtor-data', params: row });
       },
       /**
        * Сохранить настройки таблицы
@@ -412,12 +412,12 @@
        */
       async handlerCellCheckbox (item, index) {
        await this.checkDebtor({id: item._id, module: 1});
-       
+
        if (!this.$store.state.debtors.sortValue) {
          let sortValue = cloneDeep(this.$store.state.debtors.sortValue)
          events.$emit('reActiveSort', sortValue);
        }
-      //  console.log(this.$store.state.debtors.sortValue)  
+      //  console.log(this.$store.state.debtors.sortValue)
       },
       /**
        * Обработчик пагинации
@@ -430,8 +430,8 @@
           this.setCurrentPage(e); // установить текущую страницу
           setTimeout(() => {
             this.getDebtorsCourtProceedingsList({debtInPage:this.shownDebtors}); // загрузить список должников
-          }, 1000)                
-          
+          }, 1000)
+
         }
       },
       /**
@@ -505,7 +505,7 @@
       runActionFromIconHandler (e) {
         // console.log('runActionFromIconHandler', e);
         // if(e.action === "printStatementsJudicalModule" && this.$store.getters.getInfoINNSharedData.Balance <= 0) {
-        //   this.$router.push('/panel?tab=2');          
+        //   this.$router.push('/panel?tab=2');
         //   return
         // }
         if(this.checkedDebtors.length <= 0) {
@@ -531,7 +531,7 @@
           } else if(e.action === 'printApplicationDischarge') {
             this.modals.egrnModal = true
           } else if(e.action === 'printStatementsJudicalModule') {
-            
+
             this.setPopupComponent({ component: 'debtor-documents-print-modal', params: { checkedDebtors: this.checkedDebtors } });
             // this.hasServices = true;
             // this.printModal = true;
@@ -561,7 +561,7 @@
      async getApplicationDischarge() {
         let debtors = []
         this.checkedDebtors.forEach( (debtor) => {
-          
+
           if (this.egrn.Request === true && this.egrn.Transfer === true) {
             debtors.push({
               debtor_id: debtor.debtor.pk,
@@ -588,7 +588,7 @@
         this.egrn.Request = false
         await this.$store.dispatch('getApplicationDischange', debtors)
       },
-      
+
 
       /**
        * Печать формы оплаты ПД-4сб ("печать бланков" в интерфейсе)
@@ -629,9 +629,9 @@
         cloned.forEach(d => d.Paid = Object.values(d.Paid));
         cloned.forEach(d => d.Debt = Object.values(d.Debt));
         cloned.forEach(d => d.Peni = Object.values(d.Peni));
-       
+
         cloned.forEach(d => {
-          d.Peni = d.Peni.filter(d => { 
+          d.Peni = d.Peni.filter(d => {
             return !isEmpty(d)
           });
         })
@@ -728,7 +728,7 @@
         return state.courtProceedingsTableColumns.filter(item => item.isSum && item.views.view);
       }
     },
-    
+
   }
 </script>
 

@@ -9,13 +9,16 @@
     <div :class="$style.label" v-if="label">
       {{label}}
     </div>
-    <div :class="$style.trigger">
+    <label :class="$style.trigger">
+      <span :class="$style.prepend" v-if="('prepend' in $scopedSlots || 'prepend' in $slots)">
+        <slot name="prepend"/>
+      </span>
       <input
         :class="$style.input"
         v-model="value"
         :placeholder="placeholder"
       />
-    </div>
+    </label>
   </div>
 </template>
 

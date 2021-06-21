@@ -4,6 +4,7 @@
 .trigger {
   display: flex;
   align-items: center;
+  cursor: text;
 }
 
 .input {
@@ -21,16 +22,25 @@
 }
 
 .primary {
+  .prepend {
+    margin-right: 10px;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.04em;
+    color: #4F4F4F;
+    opacity: .6;
+  }
+
   .label {
     padding-left: 3px;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.04em;
+    color: #4F4F4F;
 
     + * {
       margin-top: 5px;
-      font-weight: 500;
-      font-size: 12px;
-      line-height: 15px;
-      letter-spacing: 0.04em;
-      color: #4F4F4F;
     }
   }
 
@@ -50,6 +60,7 @@
     letter-spacing: 0.04em;
     color: #4F4F4F;
     flex-grow: 1;
+    width: 0;
 
     margin: 1px 0;
   }

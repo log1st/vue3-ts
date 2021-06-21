@@ -3,7 +3,7 @@
   cursor: pointer;
   padding: 0 10px;
 
-  &:not(active):not(:hover) {
+  &:not(.isSelected):not(:hover) {
     .selector {
       display: none;
     }
@@ -12,14 +12,13 @@
 
 .selector {
   position: absolute;
-  right: 20px;
+  right: 0;
+  left: 0;
   top: 0;
   bottom: 0;
 
   background: #B8D7EB;
   border-radius: 10px;
-
-  transform: translateX(15px);
 }
 
 .content {
