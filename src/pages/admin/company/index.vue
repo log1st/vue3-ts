@@ -313,7 +313,8 @@ export default {
         'getCompanyApplication',
         'clearCompanyApplication',
         'setUpdatedApplication',
-        'getRegionsList'
+        'getRegionsList',
+        'getColumnTemplate'
         ]),
 
       ...mapMutations([
@@ -491,6 +492,7 @@ export default {
                 })
                 this.getCompanyBalance()
                 this.updateCompanyData()
+                this.getColumnTemplate({id:this.selectedCompany.id})
               })
               this.getCompanyApplication({id:this.SelectedUserId, type: 'judicial'})
             }
@@ -658,7 +660,7 @@ export default {
       'minCompany', 
       'docsTemplates', 
       'allDocsTypes',
-      'companyApplications'
+      'companyApplications',
       ]),
       companyApplicationsList : {
         set (val) {

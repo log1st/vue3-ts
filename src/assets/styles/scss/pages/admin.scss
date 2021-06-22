@@ -1,4 +1,13 @@
 .config-data {
+      &__add-space {
+        padding: 0 40px;
+        .spacer {
+        border: 1px solid #313234;
+        }
+      }
+    &__actions-btn-wrapper {
+      margin-bottom: 1em;
+    }
     &__list {
         list-style: none;
         color: #687189;
@@ -7,14 +16,31 @@
         flex-direction: column;
         transition: all .4s ease-in-out;
         justify-content: space-between;
-        min-width: 12em;
-
+        width: 140px;
+        min-width: 140px;
+        border: 1px solid #313234;
         .application {
         &__index {
             font-size: 14px;
             padding: 0.5em 0;
         }
-
+        &__spacer{
+          &-left {
+            position: relative;
+            font-size: 1.5em; 
+            color: red; 
+            // padding-left:40px; 
+            cursor: pointer;
+            margin-right: 1em;
+          }
+          &-right {
+            position: relative;
+            font-size: 1.5em;
+            color: red;
+            margin-left:4.5em; 
+            cursor: pointer;
+          }
+        }
         &__var {
             padding: 0.5em 0;
 
@@ -23,8 +49,23 @@
                 width: 100%;
                 font-size: 14px;
             }
-        }  
+        } 
+
     } 
+    }
+    &__table {
+      // border: 1px solid #313234;
+      &-alpha {
+        display: flex;
+        flex-direction: row;
+        padding-left: 40px;
+        &-char {
+          width: 140px;
+          min-width: 140px;
+        border: 1px solid #313234;
+          text-align: center;
+        }
+      }
     }
     &__list:hover {
         background-color: #f2f6fc;

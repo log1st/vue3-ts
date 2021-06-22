@@ -15,7 +15,8 @@ export default {
         docsTypes:[],
         allVars: [],
         companyTemplate:[],
-        applications: []
+        applications: [],
+        columnTemplate: []
     }),
     mutations:{
         checkCompany (state, payload) {
@@ -30,7 +31,14 @@ export default {
         setCompanyTemplate (state, payload) {
 //
         },
-      
+        /**
+         * Установка шаблона колонок
+         * @param {*} state 
+         * @param {*} payload 
+         */
+        setColumnTemplate (state, payload) {
+          state.columnTemplate = payload
+        },
         AdminUserListFilterData(state, payload){
             state.UsersList.forEach(user => {
                 payload.every(cols => cols.data === '' ? true : (!user[cols.key] ? false : user[cols.key].toString().toLowerCase().includes(cols.data.toLowerCase())))
@@ -186,7 +194,40 @@ export default {
           });
           })
         },
-        
+
+        getColumnTemplate ({commit, dispatch}, payload) {
+          const { id } = payload
+          return new Promise ((resolve, reject) => {
+            $http({
+              command: `/api/document-parsing/templates/${id}/`,
+              method: 'GET',
+              requestCode: 'none'
+            }).then (resp => {
+              resolve({status: true, item: resp})
+              commit('setColumnTemplate', resp)
+              console.log(resp)
+            }).catch(err => {
+              console.log(err)
+              reject({status: false})
+              dispatch('getDefautltColumnTemplate') 
+            })
+          }) 
+        },
+        getDefautltColumnTemplate ({commit}) {
+          return new Promise ((resolve, reject) => {
+            $http({
+              command: `/api/document-parsing/templates/default/`,
+              method: 'GET'
+            })
+            .then (resp => {
+              commit('setColumnTemplate', resp)
+              resolve({status: true, items: resp})
+            })
+            .catch (error => {
+              reject({status: false, msg: error})
+            })
+          })
+        },
         /**
          * Изменить админ -настройки организации
          */
@@ -723,6 +764,7 @@ export default {
         /**
          * Все переменные что приходят в обертки групп
          */
-        allGroupsVariables: state => state.allVars
+        allGroupsVariables: state => state.allVars,
+        columnTemplate: state => state.columnTemplate
     }
 }
