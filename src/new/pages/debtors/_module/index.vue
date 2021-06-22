@@ -89,8 +89,8 @@
       <template v-for="field in summariesFields" :slot="`summary(${field})`" slot-scope="{value}">
         {{formatMoney(value)}}
       </template>
-      <template #action(settings)="{isActive}">
-        <JudicialDebtorsAutomatizingDialog v-if="isActive"/>
+      <template #action(settings)="{isActive, close}">
+        <JudicialDebtorsAutomatizingDialog v-if="isActive" @close="close"/>
       </template>
     </ActiveTable>
   </div>

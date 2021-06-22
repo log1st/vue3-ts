@@ -6,16 +6,18 @@
       </div>
       <div :class="$style.amountFields">
         <TextInput
-          v-model.number="model.minAmount"
+          v-model.number="model.amount_from"
           :state="['primary', 'dark']"
+          :error="errorsMap.amount_from"
         >
           <template #prepend>
             от
           </template>
         </TextInput>
         <TextInput
-          v-model.number="model.maxAmount"
+          v-model.number="model.amount_to"
           :state="['primary', 'dark']"
+          :error="errorsMap.amount_to"
         >
           <template #prepend>
             до
@@ -25,45 +27,52 @@
     </div>
     <div :class="$style.claimFilling">
       <RadioGroup
-        v-model="model.claimFilling"
+        v-model="model.auto_filing_claim"
         label="Подача судебного приказа\иска в суд"
         :options="claimFillingOptions"
+        :error="errorsMap.auto_filing_claim"
       />
     </div>
     <div :class="$style.autoExecutive">
       <SelectInput
         label="Автоматически переводить должника в Исполнительное производство при получении судебного приказа?"
-        v-model="model.autoExecutive"
+        v-model="model.auto_transfer"
         :options="yesOrNoOptions"
         :state="['dark', 'primary']"
+        :error="errorsMap.auto_transfer"
       />
     </div>
     <div :class="$style.egrn">
       <SelectInput
         label="Требуется заказ выписки из ЕГРН?"
-        v-model="model.egrn"
+        v-model="model.need_rosreestr_discharge"
         :options="yesOrNoOptions"
         :state="['dark', 'primary']"
+        :error="errorsMap.need_rosreestr_discharge"
       />
     </div>
     <div :class="$style.autoEgrn">
       <SelectInput
         label="Заказ автоматически выписки из ЕГРН?"
-        v-model="model.autoEgrn"
+        v-model="model.auto_discharge"
         :options="yesOrNoOptions"
         :state="['dark', 'primary']"
+        :error="errorsMap.auto_discharge"
       />
     </div>
     <div :class="$style.checks">
-      <Checkbox v-model="model.characteristicsState" label="Выписка о характеристиках" :class="$style.check"/>
-      <Checkbox v-model="model.rightTransfers" label="Выписка о переходе прав" :class="$style.check"/>
+      <Checkbox v-model="model.characteristicsState" label="Выписка о характеристиках" :class="$style.check"
+                :error="errorsMap.characteristicsState"/>
+      <Checkbox v-model="model.rightTransfers" label="Выписка о переходе прав" :class="$style.check"
+                :error="errorsMap.rightTransfers"/>
     </div>
     <div :class="$style.period">
       <SelectInput
-        v-model="model.period"
+        v-model="model.discharge_periodic_month"
         :options="periodOptions"
         :state="['dark', 'primary']"
         label="Период автоматического обновления выписки"
+        :error="errorsMap.discharge_periodic_month"
       />
     </div>
     <div :class="[$style.employeeLabel, $style.label]">
@@ -82,6 +91,7 @@
           :state="['dark', 'primary']"
           :class="$style.employeeField"
           display-value-template="{n, plural, =1{Один сотрудник} one{# сотрудник} few{# сотрудника} other{# сотрудников}}"
+          :error="errorsMap.employees"
         />
         <SelectInput
           v-model="model.employeeAddress"
@@ -92,6 +102,7 @@
           :state="['dark', 'primary']"
           :class="$style.employeeField"
           display-value-template="{n, plural, =1{Один адрес} one{# адрес} few{# адреса} other{# адресов}}"
+          :error="errorsMap.employeeAddress"
         />
       </div>
     </div>
@@ -103,7 +114,7 @@
 </template>
 
 <script>
-import {defineComponent, ref, computed} from "@vue/composition-api";
+import {defineComponent, ref, computed, onMounted} from "@vue/composition-api";
 import RadioGroup from "@/new/components/radioGroup/RadioGroup";
 import SelectInput from "@/new/components/selectInput/SelectInput";
 import Btn from "@/new/components/btn/Btn";
@@ -112,34 +123,49 @@ import {useActiveTable} from "@/new/components/activeTable/useActiveTable";
 import {formatMessage} from "@/new/utils/messageFormat";
 import TextInput from "@/new/components/textInput/TextInput";
 import {baseURL} from "@/settings/config";
+import {useErrors} from "@/new/hooks/useErrors";
 
 export default defineComponent({
   name: "JudicialDebtorsAutomatizingDialog",
   components: {TextInput, Checkbox, Btn, SelectInput, RadioGroup},
-  setup() {
+  setup(props, {emit}) {
     const getDefaultModel = () => ({
-      claimFilling: 'auto',
-      autoExecutive: true,
-      period: 3,
+      auto_filing_claim: true,
+      auto_transfer: true,
+      discharge_periodic_month: 3,
       characteristicsState: true,
       rightTransfers: false,
-      egrn: true,
-      autoEgrn: true,
+      need_rosreestr_discharge: true,
+      auto_discharge: true,
       employees: [],
       employeeAddress: [],
-      minAmount: null,
-      maxAmount: null,
+      amount_from: null,
+      amount_to: null,
     });
 
     const model = ref(getDefaultModel());
 
+    const fetchData = async () => {
+      const response = await axios({
+        method: 'get',
+        url: `${baseURL}/api/account/company-settings/${localStorage.getItem('defaultCompany')}/`
+      });
+
+      model.value = {
+        ...getDefaultModel(),
+        ...response.data,
+      };
+    }
+
+    onMounted(fetchData);
+
     const claimFillingOptions = computed(() => ([
       {
-        value: 'auto',
+        value: true,
         label: 'Автоматически (с использованием ЭЦП)'
       },
       {
-        value: 'manual',
+        value: false,
         label: 'Вручную'
       }
     ]));
@@ -155,10 +181,10 @@ export default defineComponent({
       },
     ]));
 
-    const periodOptions = computed(() => (Array(25 - 3).fill(null).map((i, index) => ({
-      value: index + 3,
+    const periodOptions = computed(() => (Array(24).fill(null).map((i, index) => ({
+      value: index + 1,
       label: formatMessage('{n, plural, =1{Каждый месяц} one{Каждый # месяц} few{Каждые # месяца} other{Каждые # месяцев}}', {
-        n: index + 3,
+        n: index + 1,
       })
     }))))
 
@@ -185,8 +211,30 @@ export default defineComponent({
       model.value = getDefaultModel();
     }
 
-    const submit = () => {
-      console.log(model.value);
+    const {
+      errorsMap,
+      setErrors,
+      clearErrors,
+    } = useErrors();
+
+    const submit = async () => {
+      clearErrors();
+
+      try {
+        await axios({
+          method: 'patch',
+          url: `${baseURL}/api/account/company-settings/${localStorage.getItem('defaultCompany')}/`,
+          data: model.value,
+        })
+        emit('close');
+      } catch (e) {
+        setErrors(
+          Object.entries(e.response.data).reduce((acc, [key, [message]]) => ([
+            ...acc,
+            [key, message]
+          ]), [])
+        )
+      }
     }
 
     return {
@@ -202,6 +250,8 @@ export default defineComponent({
       employees,
 
       formatMessage,
+
+      errorsMap,
     }
   }
 })

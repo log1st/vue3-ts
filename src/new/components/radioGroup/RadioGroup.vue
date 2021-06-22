@@ -29,7 +29,7 @@ export default defineComponent({
     event: 'update:modelValue',
   },
   props: {
-    modelValue: [String, Number],
+    modelValue: [String, Number, Boolean],
     options: Array,
     isDisabled: Boolean,
     label: String,
