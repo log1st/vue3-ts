@@ -82,14 +82,15 @@ export default defineComponent({
 
       if(props.allSelected || props.selectedItems?.length) {
         await axios({
-          method: 'put',
-          url: `${baseURL}/debtor_status/`,
+          method: 'post',
+          url: `${baseURL}/api/debtors-data/${props.type}/status/`,
           data: {
-            production_type: props.type,
-            status: model.status,
+            status: model.value.status,
 
-            ids: props.selectedItems || [],
+            debtor_ids: props.selectedItems || [],
             all: props.allSelected,
+
+            company_id: localStorage.getItem('defaultCompany'),
           }
         })
       } else {

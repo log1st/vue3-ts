@@ -27,18 +27,8 @@ export default {
         id: getRandomString(),
         isCloseable: true,
         duration: 5000,
-        position: 'top',
-        align: 'end',
         ...toast,
       };
-
-      this.$toast.open({
-        dismissible: newToast.isCloseable,
-        duration: newToast.duration,
-        position: `${newToast.position}-${{end: 'right'}[newToast.align]}`,
-        message: newToast.message,
-        type: newToast.type,
-      })
 
       commit('addToast', newToast);
 

@@ -9,6 +9,7 @@
       </div>
     </div>
     <div :class="$style.content">
+      <Icon v-if="isLoading" icon="loader" spin :class="$style.loader"/>
       <table :class="$style.table">
         <thead>
         <tr>
@@ -71,10 +72,11 @@ import {formatDate} from "@/new/utils/date";
 import Btn from "@/new/components/btn/Btn";
 import {downloadFile} from "@/new/utils/file";
 import {formatMoney} from "@/new/utils/money";
+import Icon from "@/new/components/icon/Icon";
 
 export default defineComponent({
   name: "DebtorDocumentsTab",
-  components: {Btn},
+  components: {Icon, Btn},
   setup() {
     const data = inject('data');
 
@@ -135,12 +137,12 @@ export default defineComponent({
         key: 'fee',
         label: 'ПП об оплате госпошлины',
         async fetch() {
-          return data.value.paid_ups_data.map((record, index) => ({
-            id: index + 1,
-            file: null,
-            amount: record.parts.reduce((acc, {value}) => acc + Number(value), 0),
-            status: null,
-          }))
+          const response = await axios({
+            method: 'get',
+            url: `${baseURL}/judicial/debtor/${data.value.debtor.pk}/payments/`,
+          });
+
+          return response.data.results;
         }
       },
       {
@@ -149,10 +151,10 @@ export default defineComponent({
         async fetch() {
           const response = await axios({
             method: 'get',
-            url: `${baseURL}/reference_books/court_cases_history/`,
+            url: `${baseURL}/judicial/debtor/${data.value.debtor.pk}/decisions/`,
           });
 
-          return response.data;
+          return response.data.results;
         }
       },
     ]));
@@ -217,16 +219,20 @@ export default defineComponent({
         label: ''
       }
     ]));
+
+    const isLoading = ref(false);
     const documents = ref([]);
 
     watch(computed(() => activeTab.value.key), async () => {
+      isLoading.value = true;
       await new Promise(requestAnimationFrame);
       try {
         documents.value = [];
         documents.value = await activeTab.value.fetch()
       } catch (e) {
-        console.error('blya', e);
+        //
       }
+      isLoading.value = false;
     }, {
       immediate: true,
     });
@@ -245,6 +251,7 @@ export default defineComponent({
 
       data,
 
+      isLoading,
       columns,
       documents,
 

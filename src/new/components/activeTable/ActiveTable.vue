@@ -76,7 +76,7 @@
             pre-label="Выделить все"
           />
           <div
-            v-else
+            v-else-if="column.withTitle || (typeof column.withTitle === 'undefined')"
             :class="[$style.cell, column.isSortable && $style.sortable]"
             :key="column.field"
             v-on="column.isSortable ? {
@@ -233,6 +233,17 @@ export default defineComponent({
     ));
 
     const updateSort = (field) => {
+      if(props.sort[0]?.field === field) {
+        if(props.sort[0].direction === 'desc') {
+          emit('update:sort', []);
+        } else {
+          emit('update:sort', [{field, direction: 'desc'}])
+        }
+      } else {
+        emit('update:sort', [{field, direction: 'asc'}])
+      }
+      return;
+
       const newSort = [...props.sort];
       const index = props.sort.findIndex((item) => item.field === field);
       if(index === -1) {
@@ -379,9 +390,20 @@ export default defineComponent({
       deep: true,
     });
 
+    const computedVisibleColumns = computed(() => (
+      props.columns.filter(
+        ({field, isRequired}) => visibleColumns.value.includes(field) || isRequired
+      ).map(({field}) => field)
+    ))
+
     const gridTemplate = computed(() => (
-      visibleColumns.value.map(({width}) => typeof width === 'string' ? width: `${width || 1}fr`).join(' ')
+      computedVisibleColumns.value.map(({width}) => typeof width === 'string' ? width: `${width || 1}fr`).join(' ')
     ));
+
+    const resetTableSettings = () => {
+      emit('reset');
+      visibleColumns.value = props.columns.map(({field}) => field);
+    }
 
     const settingsActions = computed(() => ([
       {
@@ -400,6 +422,9 @@ export default defineComponent({
               onSubmit({limit, columns}) {
                 visibleColumns.value = [...columns];
                 localLimit.value = limit;
+              },
+              onReset() {
+                resetTableSettings();
               }
             }
           })
@@ -462,8 +487,8 @@ export default defineComponent({
 
     const computedColumns = computed(() => (
       props.columns
-        .filter(({field}) => visibleColumns.value.includes(field))
-        .sort(({field: a}, {field: b}) => visibleColumns.value.indexOf(a) > visibleColumns.value.indexOf(b) ? 1 : -1)
+        .filter(({field}) => computedVisibleColumns.value.includes(field))
+        .sort(({field: a}, {field: b}) => computedVisibleColumns.value.indexOf(a) > computedVisibleColumns.value.indexOf(b) ? 1 : -1)
     ))
 
     const model = ref({

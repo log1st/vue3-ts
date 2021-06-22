@@ -5,6 +5,7 @@
       ...(Array.isArray(state) ? state : [state]).map(i => $style[i]),
       isDisabled && $style.isDisabled,
       isActive && $style.isActive,
+      !!error && $style.hasError,
     ]"
     v-outside-click="hide"
   >
@@ -41,6 +42,9 @@
         {{placeholder}}
       </div>
       <Icon :class="$style.caret" icon="chevron-down"/>
+    </div>
+    <div v-if="error" :class="$style.error">
+      {{error}}
     </div>
     <ContextMenu
         v-if="isActive && isFillable && value.length"
@@ -109,6 +113,8 @@ export default defineComponent({
     },
 
     displayValueTemplate: String,
+
+    error: String,
   },
   setup(props, {emit}) {
     const queryRef = ref();

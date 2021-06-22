@@ -59,6 +59,8 @@ export default defineComponent({
         type: 'warning',
       });
 
+      emit('close');
+
       const {
         data: {
           document,
@@ -76,7 +78,7 @@ export default defineComponent({
 
       if(document) {
         await showToast({
-          message: 'Свод начилений готов и отправлен вам на почту!',
+          message: 'Документ сформирован и отправлен на почту',
           type: 'success',
         });
         await showDialog({

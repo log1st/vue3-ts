@@ -18,6 +18,7 @@
       :page.sync="page"
       :filters="filters"
       :filters-model.sync="filtersModel"
+      @reset="resetSettings"
       @rowClick="showDebtorDialog"
     >
       <template #cell(status)="{record, index}">
@@ -37,20 +38,26 @@
           </div>
           <div :class="[
             $style.accountIcons,
-            [
-              record.tmp.documentReady,
-              record.tmp.egrnExcerpt,
-              record.tmp.feePaid,
-            ].filter(Boolean).length > 1 && $style.accountIconsDense,
+            record.debtor.debtor_status[record.debtor.debtor_status.length - 1].length > 1 && $style.accountIconsDense
           ]">
-            <TooltipWrapper text="Документ готов к подаче">
-              <Icon :class="[$style.accountIcon, $style.accountIconGreen]" v-if="record.tmp.documentReady" icon="file-check"/>
-            </TooltipWrapper>
-            <TooltipWrapper text="Выписка из ЕГРН заказана">
-              <Icon :class="[$style.accountIcon, $style.accountIconBlue]" v-if="record.tmp.egrnExcerpt" icon="egrn-excerpt"/>
-            </TooltipWrapper>
-            <TooltipWrapper text="Пошлина оплачена">
-              <Icon :class="[$style.accountIcon, $style.accountIconGreen]" v-if="record.tmp.feePaid" icon="coins"/>
+            <TooltipWrapper
+              v-for="substatus in record.debtor.debtor_status[record.debtor.debtor_status.length - 1].substatus"
+              :key="substatus.substatus"
+              :text="{
+                fees_paid: 'Пошлина оплачена'
+              }[substatus.substatus]"
+            >
+              <Icon
+                :class="[
+                  $style.accountIcon,
+                  $style[`accountIcon${{
+                    fees_paid: 'Green',
+                  }[substatus.substatus]}`]
+                ]"
+                :icon="{
+                  fees_paid: 'coins'
+                }[substatus.substatus]"
+              />
             </TooltipWrapper>
           </div>
         </div>
@@ -219,6 +226,35 @@ export default defineComponent({
     });
 
     const {
+      records: regionalCourts,
+      filtersModel: regionalCourtsFiltersModel,
+    } = useActiveTable({
+      filters: ref([{
+        field: 'name',
+        type: 'text',
+        isHidden: true,
+      }]),
+      defaultLimit: ref(10),
+      async fetch({
+        params,
+        cancelToken,
+      }) {
+        const sectors = await axios({
+          method: 'get',
+          url: `${baseURL}/reference_books/regional_court_place/`,
+          params,
+          cancelToken,
+        });
+        return {
+          data: {
+            count: sectors.data.length,
+            results: sectors.data,
+          }
+        };
+      }
+    });
+
+    const {
       fetchData,
       isFetching,
       columns,
@@ -232,6 +268,7 @@ export default defineComponent({
       page,
       contextActions,
       summaries,
+      resetSettings,
     } = useActiveTable({
       async fetch({
         params,
@@ -240,7 +277,10 @@ export default defineComponent({
         const response = await axios({
           method: 'GET',
           url: `${baseURL}/api/debtors-data/`,
-          params,
+          params: {
+            ...params,
+            company_id: localStorage.getItem('defaultCompany'),
+          },
           cancelToken,
         });
         response.data.results = response.data.results.map((record, index) => ({
@@ -248,9 +288,6 @@ export default defineComponent({
           index,
           tmp: {
             rating: Math.floor(Math.random() * 5),
-            documentReady: Math.floor(Math.random() * 3) % 3 === 0,
-            egrnExcerpt: Math.floor(Math.random() * 3) % 3 === 0,
-            feePaid: Math.floor(Math.random() * 3) % 3 === 0,
           }
         }));
         response.data.summaries = summariesFields.reduce((acc, cur) => ({
@@ -310,18 +347,19 @@ export default defineComponent({
           },
         },
         {
-          field: 'status',
+          field: 'status_name',
           type: 'select',
           props: {
             placeholder: 'Статус',
             options: judicialStatuses.value,
           },
+          width: 2,
         },
         {
-          field: 'magistrate_court',
+          field: 'magistrate_court_id',
           type: 'select',
           props: {
-            placeholder: 'Выбор судебного участка',
+            placeholder: 'Выбор мирового суда',
             isSearchable: true,
             searchPlaceholder: 'Начните ввод',
             options: magistrateCourts.value,
@@ -329,6 +367,21 @@ export default defineComponent({
             displayProp: 'name',
             async onQuery({query}) {
               magistrateCourtsFiltersModel.value.name = query;
+            }
+          },
+        },
+        {
+          field: 'regional_court_id',
+          type: 'select',
+          props: {
+            placeholder: 'Выбор районного суда',
+            isSearchable: true,
+            searchPlaceholder: 'Начните ввод',
+            options: regionalCourts.value,
+            valueProp: 'id',
+            displayProp: 'name',
+            async onQuery({query}) {
+              regionalCourtsFiltersModel.value.name = query;
             }
           },
         },
@@ -353,12 +406,16 @@ export default defineComponent({
         {
           field: 'status',
           width: '155px',
+          isRequired: true,
+          label: 'Статус',
+          withTitle: false,
         },
         {
           field: 'personal_account',
           label: '№ ЛС',
           isSortable: true,
           width: '164px',
+          isRequired: true,
         },
         {
           field: 'full_name',
@@ -390,16 +447,16 @@ export default defineComponent({
           width: 237,
         },
         {
-          field: 'total_debt',
-          label: 'Общая задолженность',
-          isSortable: true,
-          width: 237,
-        },
-        {
           field: 'penalty',
           label: 'Пени',
           isSortable: true,
           width: 132,
+        },
+        {
+          field: 'total_debt',
+          label: 'Общая задолженность',
+          isSortable: true,
+          width: 237,
         },
         {
           field: 'fee',
@@ -516,6 +573,8 @@ export default defineComponent({
       showStatusDialog,
 
       showDebtorDialog,
+
+      resetSettings,
     }
   }
 })

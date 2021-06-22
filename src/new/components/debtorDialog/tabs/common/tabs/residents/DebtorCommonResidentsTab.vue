@@ -13,8 +13,9 @@
         v-model="model[index]"
         :columns="columns"
         v-for="(tenant, index) in model"
-        :key="tenant.id"
+        :key="`${tenant.id || `index${index}`}-${isEdit ? '1' : '0'}`"
         @remove="remove(index)"
+        :errors-map="Object.entries(errorsMap).filter(([key]) => key.startsWith(`${index}-`)).reduce((acc, [key, value]) => ({...acc, [key.replace(`${index}-`, '')]: value}), {})"
       />
       </tbody>
       <tfoot>
@@ -45,6 +46,7 @@ import DebtorCommonResidentsTabResident
 import Btn from "@/new/components/btn/Btn";
 import {cloneDeep} from "lodash";
 import {baseURL} from "@/settings/config";
+import {useErrors} from "@/new/hooks/useErrors";
 
 export default defineComponent({
   name: "DebtorCommonResidentsTab",
@@ -82,30 +84,48 @@ export default defineComponent({
       model.value.splice(index, 1);
     }
 
-    const add = async (index) => {
+    const add = async () => {
       model.value.push(columns.value.reduce((acc, {key}) => ({
         ...acc,
-        [key]: key === 'relationships' ? [] : ''
+        [key]: key === 'relationships' ? [] : null
       }), {}));
     }
 
+    const {clearErrors, addErrors, errorsMap} = useErrors();
+
     const submit = async () => {
-      await Promise.all(model.value.map(async profile => {
-        const isNew = !profile.id;
-        await axios({
-          url: `${baseURL}/debtor/tenant/${isNew ? '' : `${profile.id}/`}`,
-          method: isNew ? 'post' : 'put',
-          data: {
-            ...profile,
-            production_type: productionType.value,
-          },
-        })
+      clearErrors();
+      await Promise.all(model.value.map(async (profile, index) => {
+        try {
+          const isNew = !profile.id;
+          await axios({
+            url: `${baseURL}/debtor/tenant/${isNew ? '' : `${profile.id}/`}`,
+            method: isNew ? 'post' : 'put',
+            data: {
+              ...profile,
+              production_type: productionType.value,
+            },
+          })
+        } catch (e) {
+          addErrors(
+            Object.entries(e.response.data).reduce((acc, [key, [message]]) => ([
+              ...acc,
+              [`${index}-${key}`, message]
+            ]), [])
+          )
+        }
       }))
-      await onSave();
+      if(!Object.keys(errorsMap).length) {
+        await onSave();
+      }
     }
 
+    const isEdit = ref(1);
+
     const reset = async () => {
+      clearErrors();
       model.value = cloneDeep(data.value.debtor_tenant_profiles)
+      isEdit.value = +!isEdit.value
     }
 
     return {
@@ -117,6 +137,9 @@ export default defineComponent({
 
       reset,
       submit,
+
+      isEdit,
+      errorsMap,
     }
   }
 })

@@ -18,6 +18,7 @@
             v-if="['full_name', 'birth_place', 'citizenship', 'num_of_passport', 'inn', 'passport_issued_by', 'birth_date', 'registration_date', 'date_of_passport_issue'].includes(column.key)"
             v-model="model[column.key]"
             :placeholder="column.label"
+            :error="errorsMap[column.key]"
           />
           <SelectInput
             :state="['primary', 'dark']"
@@ -26,6 +27,7 @@
             :placeholder="column.label"
             :options="registrations"
             @update:modelValue="partialSubmit('registration')"
+            :error="errorsMap[column.key]"
           />
           <SelectInput
             :state="['primary', 'dark']"
@@ -36,6 +38,7 @@
             :options="relationships"
             display-value-template="{n, plural, =1{Одна связь} one{# связь} few{# связи} other{# связей}}"
             @update:modelValue="partialSubmit('relationships')"
+            :error="errorsMap[column.key]"
           />
         </template>
         <template v-else>
@@ -77,6 +80,7 @@ export default defineComponent({
   props: {
     modelValue: Object,
     columns: Array,
+      errorsMap: Object,
   },
   setup(props, {emit}) {
     const model = useLocalProp(props, emit, 'modelValue', true);

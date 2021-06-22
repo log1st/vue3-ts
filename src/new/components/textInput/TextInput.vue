@@ -4,6 +4,7 @@
       $style.container,
       ...(Array.isArray(state) ? state : [state]).map(i => $style[i]),
       isDisabled && $style.isDisabled,
+      !!error && $style.hasError,
     ]"
   >
     <div :class="$style.label" v-if="label">
@@ -19,6 +20,9 @@
         :placeholder="placeholder"
       />
     </label>
+    <div v-if="error" :class="$style.error">
+      {{error}}
+    </div>
   </div>
 </template>
 
@@ -46,6 +50,8 @@ export default defineComponent({
     isDisabled: Boolean,
 
     modelValueModifiers: String,
+
+    error: String,
   },
   setup(props, {emit}) {
     const value = useLocalProp(props, emit, 'modelValue', true);

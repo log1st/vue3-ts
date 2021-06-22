@@ -142,7 +142,7 @@ export default defineComponent({
         documents.value = [];
         documents.value = await activeTab.value.fetch()
       } catch (e) {
-        console.error('blya', e);
+        //
       }
     }, {
       immediate: true,

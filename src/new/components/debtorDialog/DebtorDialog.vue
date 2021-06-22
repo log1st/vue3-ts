@@ -40,6 +40,7 @@ import Icon from "@/new/components/icon/Icon";
 import DebtorCommonTab from "@/new/components/debtorDialog/tabs/common/DebtorCommonTab";
 import DebtorDocumentsTab from "@/new/components/debtorDialog/tabs/documents/DebtorDocumentsTab";
 import DebtorFinanceTab from "@/new/components/debtorDialog/tabs/finance/DebtorFinanceTab";
+import DebtorCourtsTab from "@/new/components/debtorDialog/tabs/courts/DebtorCourtsTab";
 
 export default defineComponent({
   name: "DebtorDialog",
@@ -109,7 +110,8 @@ export default defineComponent({
       {
         key: 'court',
         label: 'Справочник суда и судебных дел',
-        icon: 'mace'
+        icon: 'mace',
+        component: DebtorCourtsTab,
       },
       /*{
         key: 'history',

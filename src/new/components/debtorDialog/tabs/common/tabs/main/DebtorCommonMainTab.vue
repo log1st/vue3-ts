@@ -4,7 +4,7 @@
       <div :class="$style.fieldLabel">
         {{field.label}}
       </div>
-      <TextInput v-if="isEdit" :class="$style.fieldValue" v-model="model[field.key]" :placeholder="field.label"/>
+      <TextInput :error="errorsMap[field.key]" v-if="isEdit" :class="$style.fieldValue" v-model="model[field.key]" :placeholder="field.label"/>
       <div v-else :class="$style.fieldValue">
         {{model[field.key]}}
       </div>
@@ -24,6 +24,7 @@ import {defineComponent, ref, computed, watch, inject} from "@vue/composition-ap
 import Btn from "@/new/components/btn/Btn";
 import TextInput from "@/new/components/textInput/TextInput";
 import {baseURL} from "@/settings/config";
+import {useErrors} from "@/new/hooks/useErrors";
 
 export default defineComponent({
   name: "DebtorCommonMainTab",
@@ -66,20 +67,37 @@ export default defineComponent({
     }, {
       immediate: true,
       deep: true,
-    })
+    });
+
+    const {
+      errorsMap,
+      clearErrors,
+      setErrors,
+    } = useErrors();
 
     const submit = async () => {
-      const response = await axios({
-        method: 'put',
-        url: `${baseURL}/debtor/main_profile/${data.value.debtor_main_profile.id}/`,
-        data: {
-          ...model.value,
-          production_type: productionType.value,
-        },
-      });
-      if(response.data.id) {
-        isEdit.value = false;
-        await onSave();
+      clearErrors();
+      try {
+        const response = await axios({
+          method: 'put',
+          url: `${baseURL}/debtor/main_profile/${data.value.debtor_main_profile.id}/`,
+          data: {
+            ...model.value,
+            production_type: productionType.value,
+            debtor: data.value.debtor.pk,
+          },
+        });
+        if (response.data.id) {
+          isEdit.value = false;
+          await onSave();
+        }
+      } catch (e) {
+        setErrors(
+          Object.entries(e.response.data).reduce((acc, [key, [message]]) => ([
+            ...acc,
+            [key, message]
+          ]), [])
+        )
       }
     }
 
@@ -108,6 +126,8 @@ export default defineComponent({
       reset,
 
       data,
+
+      errorsMap,
     }
   }
 })

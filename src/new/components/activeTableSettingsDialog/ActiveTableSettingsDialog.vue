@@ -22,23 +22,22 @@
             v-model="value"
             :filter="`.${$style.isDisabled}`"
             :group="{name: 'columns', pull: true}"
-            :handle="`.${$style.itemHandle}`"
             :class="$style.list"
             :drag-class="$style.isDragging"
           >
             <div
               :class="[
                 $style.item,
-                !columnsMap[item] && $style.isDisabled
+                columnsMap[item].isRequired && $style.isDisabled
               ]"
               v-for="item in value"
               :key="item"
             >
-              <div :class="$style.itemHandle" v-if="columnsMap[item]">
+              <div :class="$style.itemHandle" v-if="!columnsMap[item].isRequired">
                 <Icon icon="drag-n-sort"/>
               </div>
               <div :class="$style.itemLabel">
-                {{columnsMap[item] || item}}
+                {{columnsMap[item].label}}
               </div>
               <div :class="[$style.itemStatus, $style.isActive]">
                 <Icon icon="eye"/>
@@ -56,32 +55,40 @@
           <Draggable
             v-model="notSelected"
             :group="{name: 'columns', pull: true}"
-            :handle="`.${$style.itemHandle}`"
             :class="$style.list"
             :drag-class="$style.isDragging"
+            :filter="`.${$style.isDisabled}`"
           >
             <div
-              :class="$style.item"
+              :class="[
+                $style.item,
+                columnsMap[item].isRequired && $style.isDisabled
+              ]"
               v-for="item in notSelected"
               :key="item"
             >
-              <div :class="$style.itemHandle">
+              <div :class="$style.itemHandle" v-if="!columnsMap[item].isRequired">
                 <Icon icon="drag-n-sort"/>
               </div>
               <div :class="$style.itemLabel">
-                {{columnsMap[item] || item}}
+                {{columnsMap[item].label}}
               </div>
               <div :class="$style.itemStatus">
-                <Icon icon="eye"/>
+                <Icon :icon="columnsMap[item].isRequired ? 'office-pin' : 'eye'"/>
               </div>
             </div>
           </Draggable>
         </div>
       </div>
     </div>
-    <Btn state="primary" type="submit" :class="$style.submit">
-      Применить
-    </Btn>
+    <div :class="$style.actions">
+      <Btn state="secondary" :class="$style.action" @click="reset">
+        Сбросить
+      </Btn>
+      <Btn state="primary" type="submit" :class="$style.action">
+        Применить
+      </Btn>
+    </div>
   </form>
 </template>
 
@@ -110,6 +117,7 @@ export default defineComponent({
     columns: Array,
     modelValue: Object,
     onSubmit: Function,
+    onReset: Function,
   },
   setup(props, {emit}) {
     const localLimit = ref(props.modelValue.limit);
@@ -117,15 +125,15 @@ export default defineComponent({
     const notSelected = ref([]);
 
     const availableColumns = computed(() => props.columns.map(({field}) => field));
-    const columnsMap = computed(() => props.columns.reduce((acc, {field, label}) => ({
+    const columnsMap = computed(() => props.columns.reduce((acc, column) => ({
       ...acc,
-      [field]: label,
+      [column.field]: column,
     }), {}));
 
     watch(computed(() => props.modelValue), ({columns, limit}) => {
       localLimit.value = limit;
-      value.value = [...columns];
-      notSelected.value = [...availableColumns.value.filter((field) => !columns.includes(field))];
+      value.value = [...columns.filter(column => (!columnsMap.value[column].isRequired))];
+      notSelected.value = [...availableColumns.value.filter((field) => !columns.includes(field) || columnsMap.value[field].isRequired)];
     }, {
       immediate: true,
       deep: true,
@@ -139,8 +147,14 @@ export default defineComponent({
       emit('close');
     }
 
+    const reset = () => {
+      props.onReset && props.onReset();
+      emit('close');
+    }
+
     return {
       localLimit,
+      reset,
       submit,
 
       value,

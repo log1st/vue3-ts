@@ -59,6 +59,8 @@ export default defineComponent({
         type: 'warning',
       });
 
+      emit('close');
+
       const {
         data: {
           link,
@@ -75,7 +77,7 @@ export default defineComponent({
 
       if(link) {
         await showToast({
-          message: 'Бланк пошлины готов и отправлен вам на почту!',
+          message: 'Документ сформирован и отправлен на почту',
           type: 'success',
         });
         await showDialog({

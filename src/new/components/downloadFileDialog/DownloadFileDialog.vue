@@ -4,7 +4,7 @@
       {{title}}
     </div>
     <div :class="$style.actions">
-      <Btn :class="$style.action" :url="url" target="_blank" :state="['tertiary', 'vertical']" prepend-icon="eye" label="Открыть и посмотреть"/>
+      <Btn :class="$style.action" @click="close" :url="url" target="_blank" :state="['tertiary', 'vertical']" prepend-icon="eye" label="Открыть и посмотреть"/>
       <Btn :class="$style.action" @click="download" :state="['tertiary', 'vertical']" prepend-icon="download" label="Скачать"/>
     </div>
     <div @click="copy" :class="$style.copy">
@@ -18,6 +18,7 @@ import Btn from "@/new/components/btn/Btn";
 import {copyToClipboard} from "@/new/utils/string";
 import {downloadFile} from "@/new/utils/file";
 import {defineComponent} from "@vue/composition-api";
+import {useToast} from "@/new/hooks/useToast";
 
 export default defineComponent({
   name: "DownloadFileDialog",
@@ -26,21 +27,37 @@ export default defineComponent({
     title: String,
     url: String,
   },
-  setup(props) {
+  setup(props, {emit}) {
+    const close = async () => {
+      await new Promise(requestAnimationFrame);
+      emit('close');
+    }
+
     const download = async () => {
       await downloadFile({
         url: props.url,
         name: props.url.split('/').pop(),
       })
+      close();
     }
+
+    const {
+      showToast,
+    } = useToast()
 
     const copy = async () => {
       await copyToClipboard(props.url)
+      await showToast({
+        message: 'Ссылка скопирована',
+        type: 'success',
+      })
+      close();
     }
 
     return {
       download,
       copy,
+      close,
     }
   }
 })

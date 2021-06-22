@@ -1,0 +1,46 @@
+.toasts {
+  z-index: 100;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+
+  padding-top: 100px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+
+  visibility: hidden;
+
+  overflow: hidden;
+}
+
+.toast {
+  visibility: visible;
+
+  display: flex;
+  align-items: center;
+
+  &:not(:first-child) {
+    padding-top: 10px;
+  }
+}
+
+
+.enterActive,
+.leaveActive {
+  transition: .25s ease;
+  transition-property: transform, opacity;
+}
+
+.enter {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.leaveTo {
+  opacity: 0;
+  transform: translateX(100px);
+}

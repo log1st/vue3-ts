@@ -110,10 +110,10 @@ export default defineComponent({
       documents: {},
       documentsOrder: [],
       services: {},
-      allPeriod: false,
+      allPeriod: true,
       from: null,
       to: null,
-      moratorium: false,
+      moratorium: true,
     });
 
     const isActive = computed(() => (
@@ -132,7 +132,7 @@ export default defineComponent({
 
     let printUnsubscribe;
     onBeforeUnmount(() => {
-      printUnsubscribe && printUnsubscribe()
+      // printUnsubscribe && printUnsubscribe()
     });
     const print = async () => {
       if (!isActive.value) {
@@ -150,9 +150,11 @@ export default defineComponent({
       });
 
       await showToast({
-        message: 'Запрос на склейку отправлен, ожидайте',
+        message: 'Формирование данных, ожидайте...',
         type: 'warning',
       });
+
+      emit('close');
 
       const {promise, unsubscribe} = asyncAction(
         async () => (await axios({
@@ -170,7 +172,7 @@ export default defineComponent({
       try {
         const {file_pdf} = await promise;
         await showToast({
-          message: 'Документ готов и отправлен вам на почту',
+          message: 'Документ сформирован и отправлен на почту',
           type: 'success',
         })
         await showDialog({
@@ -180,7 +182,6 @@ export default defineComponent({
             url: file_pdf
           }
         })
-        emit('close');
       } catch (e) {
         await showToast({
           message: 'Ошибка формирования документов',

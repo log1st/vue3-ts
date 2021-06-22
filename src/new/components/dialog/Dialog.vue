@@ -4,7 +4,7 @@
     isWide && $style.isWide,
   ]" data-role="dialog">
     <div :class="$style.container" data-role="dialog-content">
-      <div :class="$style.body" v-outside-click="close">
+      <div :class="$style.body" v-outside-click="closeOutside">
         <Icon :class="$style.close" v-if="isCloseable" icon="close" @click="close"/>
         <component
           :is="componentInstance"
@@ -29,6 +29,7 @@ import SetOfChargesDialog from "@/new/components/setOfChargesDialog/SetOfCharges
 import DutyFormDialog from "@/new/components/dutyFormDialog/DutyFormDialog";
 import ExtractFromEgrnDialog from "@/new/components/extractFromEgrnDialog/ExtractFromEgrnDialog";
 import DebtorDialog from "@/new/components/debtorDialog/DebtorDialog";
+import CourtDialog from "@/new/components/courtDialog/CourtDialog";
 
 export default defineComponent({
   name: "Dialog",
@@ -47,13 +48,18 @@ export default defineComponent({
     };
 
     const rootRef = ref();
-    const closeOutside = ({ target }) => {
+    const closeOutside = async ({ target }) => {
       if (!props.isCloseable) {
         return;
       }
-      if ((target).closest('[data-role="dialog"]') && target !== rootRef.value) {
+      if (
+        (target.dataset.role === 'dialog'
+        || target.closest('[data-role="dialog"]'))
+        && target !== rootRef.value
+      ) {
         return;
       }
+      await new Promise(requestAnimationFrame)
       close();
     };
 
@@ -67,6 +73,7 @@ export default defineComponent({
       dutyForm: DutyFormDialog,
       extractFromEgrn: ExtractFromEgrnDialog,
       debtorDialog: DebtorDialog,
+      court: CourtDialog,
     };
 
     const componentInstance = computed(() => (

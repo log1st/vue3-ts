@@ -117,6 +117,8 @@ export default defineComponent({
         type: 'warning',
       });
 
+      emit('close');
+
       const {promise, unsubscribe} = asyncAction(
         async () => (await axios({
           method: 'get',
@@ -133,7 +135,7 @@ export default defineComponent({
       try {
         const {file_pdf} = await promise;
         await showToast({
-          message: 'Документ готов и отправлен вам на почту',
+          message: 'Документ сформирован и отправлен на почту',
           type: 'success',
         })
         await showDialog({

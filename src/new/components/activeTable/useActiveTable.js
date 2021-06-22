@@ -16,6 +16,10 @@ export const useActiveTable = ({
   const isFetching = ref(false);
   let cancelRequest = null;
 
+  const resetSettings = () => {
+    limit.value = defaultLimit.value;
+  }
+
   const total = ref(null);
   const limit = ref(defaultLimit.value);
   const page = ref(defaultPage.value);
@@ -54,6 +58,7 @@ export const useActiveTable = ({
         ...filtersModel.value,
         limit: limit.value,
         offset: limit.value * (page.value - 1),
+        O: sort.value.length ? `${sort.value[0].direction === 'asc' ? '' : '-'}${sort.value[0].field}` : undefined,
       },
       cancelToken: new axios.CancelToken(token => {
         cancelRequest = token;
@@ -70,6 +75,9 @@ export const useActiveTable = ({
 
   watch(filtersModel, fetchData, {
     immediate: isImmediate,
+    deep: true,
+  });
+  watch(sort, fetchData, {
     deep: true,
   });
   watch(page, fetchData);
@@ -96,5 +104,7 @@ export const useActiveTable = ({
     contextActions,
 
     summaries,
+
+    resetSettings,
   }
 }
