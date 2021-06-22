@@ -233,17 +233,6 @@ export default defineComponent({
     ));
 
     const updateSort = (field) => {
-      if(props.sort[0]?.field === field) {
-        if(props.sort[0].direction === 'desc') {
-          emit('update:sort', []);
-        } else {
-          emit('update:sort', [{field, direction: 'desc'}])
-        }
-      } else {
-        emit('update:sort', [{field, direction: 'asc'}])
-      }
-      return;
-
       const newSort = [...props.sort];
       const index = props.sort.findIndex((item) => item.field === field);
       if(index === -1) {

@@ -15,7 +15,7 @@
       <Btn state="secondary" :label="{
         magistrate: 'Реквизиты участка мирового судьи',
         regional: 'Реквизиты участка регионального суда',
-      }[activeTab.key]" @click="showRequisites" :class="$style.action"/>
+      }[activeTab.key]" @click="showRequisites" :class="$style.action" v-if="requisitesAvailable"/>
     </div>
     <div :class="$style.content">
       <Icon v-if="isLoading" icon="loader" spin :class="$style.loader"/>
@@ -166,6 +166,11 @@ export default {
       })
     }
 
+    const requisitesAvailable = computed(() => !!({
+      magistrate: data.value.debtor_main_profile.magistrate_court_place,
+      regional: data.value.debtor_main_profile.regional_court_place,
+    }[activeTab.value.key]))
+
     return {
       activeTab,
       selectTab,
@@ -182,6 +187,7 @@ export default {
       formatMoney,
 
       showRequisites,
+      requisitesAvailable,
     }
   }
 }

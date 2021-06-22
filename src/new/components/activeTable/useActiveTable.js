@@ -58,7 +58,7 @@ export const useActiveTable = ({
         ...filtersModel.value,
         limit: limit.value,
         offset: limit.value * (page.value - 1),
-        O: sort.value.length ? `${sort.value[0].direction === 'asc' ? '' : '-'}${sort.value[0].field}` : undefined,
+        o: sort.value.map(({field, direction}) => `${direction === 'asc' ? '' : '-'}${field}`).join(','),
       },
       cancelToken: new axios.CancelToken(token => {
         cancelRequest = token;

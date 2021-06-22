@@ -58,16 +58,20 @@
         :options="yesOrNoOptions"
         :state="['dark', 'primary']"
         :error="errorsMap.auto_discharge"
+        :is-disabled="!model.need_rosreestr_discharge"
       />
     </div>
     <div :class="$style.checks">
       <Checkbox v-model="model.characteristicsState" label="Выписка о характеристиках" :class="$style.check"
+                :is-disabled="!model.need_rosreestr_discharge"
                 :error="errorsMap.characteristicsState"/>
       <Checkbox v-model="model.rightTransfers" label="Выписка о переходе прав" :class="$style.check"
+                :is-disabled="!model.need_rosreestr_discharge"
                 :error="errorsMap.rightTransfers"/>
     </div>
     <div :class="$style.period">
       <SelectInput
+        :is-disabled="!model.auto_discharge || !model.need_rosreestr_discharge"
         v-model="model.discharge_periodic_month"
         :options="periodOptions"
         :state="['dark', 'primary']"
@@ -130,16 +134,16 @@ export default defineComponent({
   components: {TextInput, Checkbox, Btn, SelectInput, RadioGroup},
   setup(props, {emit}) {
     const getDefaultModel = () => ({
-      auto_filing_claim: true,
-      auto_transfer: true,
-      discharge_periodic_month: 3,
-      characteristicsState: true,
+      auto_filing_claim: false,
+      auto_transfer: false,
+      discharge_periodic_month: 12,
+      characteristicsState: false,
       rightTransfers: false,
-      need_rosreestr_discharge: true,
-      auto_discharge: true,
+      need_rosreestr_discharge: false,
+      auto_discharge: false,
       employees: [],
       employeeAddress: [],
-      amount_from: null,
+      amount_from: 10000,
       amount_to: null,
     });
 

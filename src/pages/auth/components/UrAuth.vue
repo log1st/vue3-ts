@@ -94,6 +94,7 @@
                 <ur-btn
                 :loading="loading"
                 @click="demologin()"
+                type="button"
                 class="btn btn--demo login-from-btn loader-opener">
                 Демо вход
                 </ur-btn>
@@ -101,6 +102,7 @@
                 <ur-btn
                 :loading="loading"
                 @click="auth()"
+                type="submit"
                 :disabled="disabled"
                 class="btn btn--login login-from-btn loader-opener">
                 {{ activeTab == 0 ? 'Войти' : 'Регистрация' }}

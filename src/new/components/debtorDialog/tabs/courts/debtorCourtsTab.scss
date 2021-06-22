@@ -6,6 +6,7 @@
 }
 
 .header {
+  position: relative;
   margin-top: 22px;
   display: flex;
   align-items: center;
@@ -15,6 +16,11 @@
 .action {
   height: 40px;
   padding: 0 15px;
+
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
 }
 
 .title {

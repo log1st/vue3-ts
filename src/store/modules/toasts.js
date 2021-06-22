@@ -26,7 +26,7 @@ export default {
       const newToast = {
         id: getRandomString(),
         isCloseable: true,
-        duration: 5000,
+        duration: 15000,
         ...toast,
       };
 

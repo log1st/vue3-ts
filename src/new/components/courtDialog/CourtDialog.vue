@@ -43,6 +43,9 @@ export default defineComponent({
     const court = ref({});
 
     const fetchData = async () => {
+      if(!props.id) {
+        return;
+      }
       isLoading.value = true;
       await new Promise(requestAnimationFrame);
 
