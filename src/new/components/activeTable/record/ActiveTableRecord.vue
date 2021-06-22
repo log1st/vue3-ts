@@ -2,19 +2,20 @@
   <div
     :class="[
       $style.record,
+      isSelected && $style.isSelected,
        gridModifier
      ]"
     :style="{gridTemplateColumns: gridTemplate}"
     @contextmenu.prevent="$emit('contextmenu', $event)"
   >
-    <div
-      :class="$style.selector"
-      :style="isSelectable ? {left: columns[0].width || '0px'} : {}"
-    />
+    <div :class="$style.selector" @click="$emit('rowClick')"/>
     <div
       v-for="column in columns"
       :key="column.field"
       :class="[$style.cell, cellModifier]"
+      v-on="selectableColumn !== column.field ? {
+        click: () => $emit('rowClick')
+      } : {}"
     >
       <div :class="$style.content">
         <slot :name="`cell(${column.field})`" :record="record" :index="index">

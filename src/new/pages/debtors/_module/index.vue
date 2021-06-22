@@ -16,9 +16,17 @@
       :total="total"
       :limit.sync="limit"
       :page.sync="page"
+      :filters="filters"
+      :filters-model.sync="filtersModel"
+      @reset="resetSettings"
+      @rowClick="showDebtorDialog"
     >
       <template #cell(status)="{record, index}">
-        <DebtorStatus :class="$style.status" @click="showStatusDialog({selectedItems: [index]})"/>
+        <DebtorStatus
+          :class="$style.status"
+          :status="record.debtor.debtor_status[record.debtor.debtor_status.length - 1]"
+          @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[record.debtor.debtor_status.length - 1].id })"
+        />
       </template>
       <template #cell(personal_account)="{record, index}">
         <div :class="$style.account">
@@ -30,20 +38,26 @@
           </div>
           <div :class="[
             $style.accountIcons,
-            [
-              record.tmp.documentReady,
-              record.tmp.egrnExcerpt,
-              record.tmp.feePaid,
-            ].filter(Boolean).length > 1 && $style.accountIconsDense,
+            record.debtor.debtor_status[record.debtor.debtor_status.length - 1].length > 1 && $style.accountIconsDense
           ]">
-            <TooltipWrapper text="Документ готов к подаче">
-              <Icon :class="[$style.accountIcon, $style.accountIconGreen]" v-if="record.tmp.documentReady" icon="file-check"/>
-            </TooltipWrapper>
-            <TooltipWrapper text="Выписка из ЕГРН заказана">
-              <Icon :class="[$style.accountIcon, $style.accountIconBlue]" v-if="record.tmp.egrnExcerpt" icon="egrn-excerpt"/>
-            </TooltipWrapper>
-            <TooltipWrapper text="Пошлина оплачена">
-              <Icon :class="[$style.accountIcon, $style.accountIconGreen]" v-if="record.tmp.feePaid" icon="coins"/>
+            <TooltipWrapper
+              v-for="substatus in record.debtor.debtor_status[record.debtor.debtor_status.length - 1].substatus"
+              :key="substatus.substatus"
+              :text="{
+                fees_paid: 'Пошлина оплачена'
+              }[substatus.substatus]"
+            >
+              <Icon
+                :class="[
+                  $style.accountIcon,
+                  $style[`accountIcon${{
+                    fees_paid: 'Green',
+                  }[substatus.substatus]}`]
+                ]"
+                :icon="{
+                  fees_paid: 'coins'
+                }[substatus.substatus]"
+              />
             </TooltipWrapper>
           </div>
         </div>
@@ -63,11 +77,20 @@
       <template #cell(debt)="{record}">
         {{formatMoney(record.debt)}}
       </template>
-      <template #cell(fee.individual_order)="{record}">
-        {{formatMoney(+record.fee.individual_order)}}
+      <template #cell(total_debt)="{record}">
+        {{formatMoney(record.total_debt)}}
+      </template>
+      <template #cell(penalty)="{record}">
+        {{formatMoney(record.penalty)}}
+      </template>
+      <template #cell(fee)="{record}">
+        {{formatMoney(record.fee)}}
       </template>
       <template v-for="field in summariesFields" :slot="`summary(${field})`" slot-scope="{value}">
         {{formatMoney(value)}}
+      </template>
+      <template #action(settings)="{isActive, close}">
+        <JudicialDebtorsAutomatizingDialog v-if="isActive" @close="close"/>
       </template>
     </ActiveTable>
   </div>
@@ -86,31 +109,150 @@ import Icon from "@/new/components/icon/Icon";
 import Tooltip from "@/new/components/tooltip/Tooltip";
 import TooltipWrapper from "@/new/components/tooltip/TooltipWrapper";
 import {useDialog} from "@/new/hooks/useDialog";
+import {useDicts} from "@/new/hooks/useDicts";
+import JudicialDebtorsAutomatizingDialog
+  from "@/new/components/judicialDebtorsAutomatizingDialog/JudicialDebtorsAutomatizingDialog";
 
 export default defineComponent({
   name: "index",
-  components: {TooltipWrapper, Tooltip, Icon, Rating, DebtorStatus, ActiveTable},
+  components: {JudicialDebtorsAutomatizingDialog, TooltipWrapper, Tooltip, Icon, Rating, DebtorStatus, ActiveTable},
   props: {
     module: String
   },
   setup(props) {
     const type = computed(() => props.module);
 
-    const summariesFields = ['accrual', 'paid_up', 'debt', 'penalty', 'fee.individual_order'];
+    const summariesFields = ['accrual', 'paid_up', 'debt', 'total_debt', 'penalty', 'fee'];
 
     const {
       showDialog,
     } = useDialog();
 
-    const showStatusDialog = async ({allSelected, selectedItems}) => {
+    const showStatusDialog = async (payload) => {
       await showDialog({
         component: 'debtorsStatus',
         payload: {
-          allSelected,
-          selectedItems: selectedItems.map(index => records.value[index].pk),
-        }
+          ...payload,
+          type: type.value,
+        },
+        closeHandler: fetchData,
       })
     }
+
+    const showPrintDialog = async (payload) => {
+      await showDialog({
+        component: 'printDebtors',
+        payload: {
+          ...payload,
+          type: type.value,
+        },
+      })
+    }
+
+    const showSetOfChargesDialog = async (payload) => {
+      await showDialog({
+        component: 'setOfCharges',
+        payload: {
+          ...payload,
+          type: type.value,
+        },
+      })
+    }
+
+    const showDutyFormDialog = async (payload) => {
+      await showDialog({
+        component: 'dutyForm',
+        payload: {
+          ...payload,
+          type: type.value,
+        },
+      })
+    }
+
+    const showExtractFromEgrnDialog = async (payload) => {
+      await showDialog({
+        component: 'extractFromEgrn',
+        payload: {
+          ...payload,
+          type: type.value,
+        },
+      })
+    }
+
+    const showDebtorDialog = async ({record: {debtor: {pk}}}) => {
+      await showDialog({
+        component: 'debtorDialog',
+        isWide: true,
+        payload: {
+          id: pk,
+          type: type.value,
+        },
+      })
+    }
+
+    const {
+      judicialStatuses,
+      judicialEgrnStatuses,
+      judicialFeeStatuses,
+    } = useDicts();
+
+    const {
+      records: magistrateCourts,
+      filtersModel: magistrateCourtsFiltersModel,
+    } = useActiveTable({
+      filters: ref([{
+        field: 'name',
+        type: 'text',
+        isHidden: true,
+      }]),
+      defaultLimit: ref(10),
+      async fetch({
+        params,
+        cancelToken,
+      }) {
+        const sectors = await axios({
+          method: 'get',
+          url: `${baseURL}/reference_books/magistrate_court_place/`,
+          params,
+          cancelToken,
+        });
+        return {
+          data: {
+            count: sectors.data.length,
+            results: sectors.data,
+          }
+        };
+      }
+    });
+
+    const {
+      records: regionalCourts,
+      filtersModel: regionalCourtsFiltersModel,
+    } = useActiveTable({
+      filters: ref([{
+        field: 'name',
+        type: 'text',
+        isHidden: true,
+      }]),
+      defaultLimit: ref(10),
+      async fetch({
+        params,
+        cancelToken,
+      }) {
+        const sectors = await axios({
+          method: 'get',
+          url: `${baseURL}/reference_books/regional_court_place/`,
+          params,
+          cancelToken,
+        });
+        return {
+          data: {
+            count: sectors.data.length,
+            results: sectors.data,
+          }
+        };
+      }
+    });
 
     const {
       fetchData,
@@ -126,6 +268,7 @@ export default defineComponent({
       page,
       contextActions,
       summaries,
+      resetSettings,
     } = useActiveTable({
       async fetch({
         params,
@@ -134,16 +277,17 @@ export default defineComponent({
         const response = await axios({
           method: 'GET',
           url: `${baseURL}/api/debtors-data/`,
-          params,
+          params: {
+            ...params,
+            company_id: localStorage.getItem('defaultCompany'),
+          },
           cancelToken,
         });
-        response.data.results = response.data.results.map(record => ({
+        response.data.results = response.data.results.map((record, index) => ({
           ...record,
+          index,
           tmp: {
             rating: Math.floor(Math.random() * 5),
-            documentReady: Math.floor(Math.random() * 3) % 3 === 0,
-            egrnExcerpt: Math.floor(Math.random() * 3) % 3 === 0,
-            feePaid: Math.floor(Math.random() * 3) % 3 === 0,
           }
         }));
         response.data.summaries = summariesFields.reduce((acc, cur) => ({
@@ -157,21 +301,126 @@ export default defineComponent({
           field: 'production_type',
           defaultValue: type.value,
           isHidden: true,
-        }
+        },
+        {
+          field: 'full_name',
+          type: 'text',
+          width: 2,
+          props: {
+            placeholder: 'ФИО',
+          }
+        },
+        {
+          field: 'address',
+          type: 'text',
+          width: 2,
+          props: {
+            placeholder: 'Адрес',
+          },
+        },
+        {
+          field: 'personal_account',
+          type: 'select',
+          width: 2,
+          defaultValue: [],
+          props: {
+            placeholder: '№ ЛС',
+            isFillable: true,
+            isMultiple: true,
+            displayValueTemplate: '{n, plural, =1{Один номер} one{# номер} few{# номера} other{# номеров}} ЛС'
+          }
+        },
+        {
+          field: 'debtor_debt_min',
+          type: 'text',
+          props: {
+            placeholder: 'Сумма долга от',
+            type: 'number',
+          },
+        },
+        {
+          field: 'debtor_debt_max',
+          type: 'text',
+          props: {
+            placeholder: 'Сумма долга до',
+            type: 'number',
+          },
+        },
+        {
+          field: 'status_name',
+          type: 'select',
+          props: {
+            placeholder: 'Статус',
+            options: judicialStatuses.value,
+          },
+          width: 2,
+        },
+        {
+          field: 'magistrate_court_id',
+          type: 'select',
+          props: {
+            placeholder: 'Выбор мирового суда',
+            isSearchable: true,
+            searchPlaceholder: 'Начните ввод',
+            options: magistrateCourts.value,
+            valueProp: 'id',
+            displayProp: 'name',
+            async onQuery({query}) {
+              magistrateCourtsFiltersModel.value.name = query;
+            }
+          },
+        },
+        {
+          field: 'regional_court_id',
+          type: 'select',
+          props: {
+            placeholder: 'Выбор районного суда',
+            isSearchable: true,
+            searchPlaceholder: 'Начните ввод',
+            options: regionalCourts.value,
+            valueProp: 'id',
+            displayProp: 'name',
+            async onQuery({query}) {
+              regionalCourtsFiltersModel.value.name = query;
+            }
+          },
+        },
+        {
+          field: 'egrn_status',
+          type: 'select',
+          props: {
+            placeholder: 'Статус выписки ЕГРН',
+            options: judicialEgrnStatuses.value,
+          },
+        },
+        {
+          field: 'fee_status',
+          type: 'select',
+          props: {
+            placeholder: 'Статус оплаты пошлины от',
+            options: judicialFeeStatuses.value,
+          },
+        },
       ])),
       columns: ref([
         {
           field: 'status',
           width: '155px',
+          isRequired: true,
+          label: 'Статус',
+          withTitle: false,
         },
         {
           field: 'personal_account',
           label: '№ ЛС',
+          isSortable: true,
           width: '164px',
+          isRequired: true,
         },
         {
           field: 'full_name',
           label: 'ФИО',
+          isSortable: true,
           width: 214,
         },
         {
@@ -204,7 +453,13 @@ export default defineComponent({
           width: 132,
         },
         {
-          field: 'fee.individual_order',
+          field: 'total_debt',
+          label: 'Общая задолженность',
+          isSortable: true,
+          width: 237,
+        },
+        {
+          field: 'fee',
           label: 'Пошлина',
           isSortable: true,
           width: 127,
@@ -214,9 +469,13 @@ export default defineComponent({
         {
           key: 'print',
           label: 'Печать',
-          handler(payload) {
-            alert(`print ${payload.index}`)
-          }
+          handler: ({allSelected, selectedItems, index}) => {
+            showPrintDialog({
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            });
+          },
         }
       ])),
       actions: computed(() => ([
@@ -224,8 +483,11 @@ export default defineComponent({
           key: 'print',
           label: 'Подача документов',
           icon: 'printer',
-          handler: () => {
-            alert('print');
+          handler: ({allSelected, selectedItems}) => {
+            showPrintDialog({
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+            });
           },
           asQuick: true,
         },
@@ -233,8 +495,12 @@ export default defineComponent({
           key: 'bill',
           label: 'Свод начислений по ЛС',
           icon: 'bill',
-          handler: () => {
-            alert('bill');
+          handler: ({allSelected, selectedItems, index}) => {
+            showSetOfChargesDialog({
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            });
           },
           asQuick: true,
         },
@@ -242,8 +508,12 @@ export default defineComponent({
           key: 'fee',
           label: 'Бланк пошлины',
           icon: 'clipboard',
-          handler: () => {
-            alert('fee blank');
+          handler: ({allSelected, selectedItems, index}) => {
+            showDutyFormDialog({
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            });
           },
           asQuick: true,
         },
@@ -251,24 +521,30 @@ export default defineComponent({
           key: 'egrn',
           label: 'Выписка ЕГРН',
           icon: 'egrn',
-          handler: () => {
-            alert('egrn');
+          handler: ({allSelected, selectedItems, index}) => {
+            showExtractFromEgrnDialog({
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            });
           },
           asQuick: true,
         },
         {
           key: 'status',
           label: 'Изменить статус выбранных должников',
-          handler: showStatusDialog,
+          handler: ({allSelected, selectedItems}) => {
+            showStatusDialog({
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+            });
+          },
           asLined: true,
         },
         {
-          key: 'gears',
+          key: 'settings',
           label: 'Настройки',
           icon: 'gears',
-          handler: () => {
-            alert('settings');
-          },
           asControl: true,
         },
       ]))
@@ -295,6 +571,10 @@ export default defineComponent({
       page,
 
       showStatusDialog,
+
+      showDebtorDialog,
+
+      resetSettings,
     }
   }
 })

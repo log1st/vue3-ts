@@ -2,6 +2,7 @@
   <div
     :class="[
       $style.checkbox,
+      ...(Array.isArray(state) ? state : [state]).map(s => $style[s]),
       isSelected && $style.isSelected
     ]"
     @click="onClick"
@@ -10,8 +11,8 @@
       {{preLabel}}
     </div>
     <div :class="$style.check"/>
-    <div :class="$style.label" v-if="label">
-      {{label}}
+    <div :class="$style.label" v-if="label || ('label' in $scopedSlots || 'label' in $slots)">
+      <slot name="label">{{label}}</slot>
     </div>
   </div>
 </template>
@@ -26,6 +27,10 @@ export default defineComponent({
     event: 'update:modelValue'
   },
   props: {
+    state: {
+      type: [String, Array],
+      default: 'radio',
+    },
     modelValue: [Boolean, String, Number],
     trueValue: {
       type: [Boolean, String, Number],

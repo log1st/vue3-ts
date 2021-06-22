@@ -1,8 +1,8 @@
 .status {
   border-radius: 10px;
 
-  padding: 4px 5px 6px;
-  height: 40px;
+  padding: 4px 25px 6px 5px;
+  min-height: 40px;
 
   display: flex;
   flex-direction: column;
@@ -35,9 +35,9 @@
 .icon {
   position: absolute;
   top: 50%;
-  right: 3px;
-  height: 24px;
-  width: 24px;
+  right: 6px;
+  height: 16px;
+  width: 16px;
   transform: translateY(-50%);
   color: white;
 }

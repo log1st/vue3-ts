@@ -1,0 +1,92 @@
+.residents {
+  display: flex;
+  flex-direction: column;
+}
+
+.table {
+  flex-grow: 1;
+
+  align-self: normal;
+
+  table-layout: fixed;
+
+  th,
+  td {
+    &:first-child {
+      padding-left: 0;
+    }
+    &:last-child {
+      padding-right: 0;
+      width: 35px;
+      min-width: auto;
+    }
+  }
+
+  thead {
+    th {
+      text-align: left;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 15px;
+      letter-spacing: 0.04em;
+      color: #000000;
+      padding: 0 10px 22.5px;
+    }
+  }
+
+  tbody {
+    td {
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 15px;
+      letter-spacing: 0.04em;
+      color: #333333;
+      padding: 22.5px 10px;
+      min-width: 100px;
+    }
+  }
+
+  tfoot {
+    th {
+      padding: 0 10px;
+    }
+  }
+}
+
+.na {
+  font-weight: 300;
+  font-style: italic;
+  opacity: .6;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+}
+
+.control {
+  height: 35px;
+  width: 35px;
+
+  &:not(:first-child) {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  &:not(:last-child) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+.actions {
+  margin: 36px -12.5px 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action {
+  height: 60px;
+  width: 180px;
+  margin: 0 12.5px;
+}

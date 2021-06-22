@@ -23,8 +23,10 @@ import penalty from './modules/penalty' // обмен данными
 import auth from './modules/auth' // авторизация
 import admin from './modules/admin' // админ панель
 import dialogs from './modules/dialogs' // админ панель
+import toasts from './modules/toasts' // админ панель
 import statementsJudical from './modules/documents/statementsJudical';
 import services from '../services'
+import dicts, {dictsPlugins} from "@/store/modules/dicts";
 
 Vue.use(Vuex)
 
@@ -36,6 +38,9 @@ return new Vuex.Store({
   //     paths: ['companies'],
   //   }),
   // ],
+  plugins: [
+    ...dictsPlugins,
+  ],
   actions: {
     setGlobalLoader ({ dispatch }, promises) {
       // dispatch('appLoadingChange', true, { root: true });
@@ -110,6 +115,8 @@ return new Vuex.Store({
     services, // Сервисы
     statementsJudical, // модуль заявления
     dialogs,
+    toasts,
+    dicts,
   },
   strict: true
 })

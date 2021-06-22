@@ -26,6 +26,7 @@ export default {
       const newDialog = {
         id: getRandomString(),
         isCloseable: true,
+        isWide: false,
         ...dialog,
       };
 

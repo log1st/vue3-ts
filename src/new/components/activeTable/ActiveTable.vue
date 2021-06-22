@@ -1,11 +1,33 @@
 <template>
   <div :class="$style.container">
     <div :class="$style.controls">
-      <Actions :actions="quickActions" :class="$style.actions"/>
-      <Actions :actions="settingsActions" :class="$style.actions"/>
-      <Actions :actions="controlActions" :class="$style.actions"/>
-      <div :class="$style.linedActions">
-        <div :class="$style.linedAction" v-for="action in linedActions" :key="action.key" @click="action.onClick">
+      <Actions
+        v-if="quickActions.length"
+        :actions="quickActions"
+        :class="$style.actions"
+      />
+      <Actions
+        v-if="settingsActions.length"
+        :actions="settingsActions"
+        :class="$style.actions"
+      />
+      <Actions
+        v-if="controlActions.length"
+        v-model="model.controls"
+        :actions="controlActions"
+        :class="$style.actions"
+      >
+        <template v-for="action in controlActions" :slot="action.key" slot-scope="payload">
+          <slot :name="`action(${action.key})`" v-bind="payload"/>
+        </template>
+      </Actions>
+      <div :class="$style.linedActions" v-if="linedActions.length">
+        <div
+          :class="$style.linedAction"
+          v-for="action in linedActions"
+          :key="action.key"
+          @click="action.onClick"
+        >
           {{action.label}}
         </div>
       </div>
@@ -22,12 +44,29 @@
         </div>
       </div>
       <div :class="$style.filters">
-        <Actions :actions="[{key: 'filters', icon: 'magnifier', label: 'Фильтрация', onClick: toggleFilters}]"/>
+        <Actions
+          v-model="model.filters"
+          :actions="[{
+            key: 'filters',
+            icon: 'magnifier',
+            label: 'Фильтрация',
+            align: 'end'
+          }]"
+        >
+          <template #filters="{isActive, close}">
+            <Filters
+              v-if="isActive"
+              v-model="localFilters"
+              :filters="filters"
+              @close="close"
+            />
+          </template>
+        </Actions>
       </div>
     </div>
     <div :class="$style.table">
       <div :class="[$style.header, $style.grid]" :style="{gridTemplateColumns: gridTemplate}">
-        <template v-for="column in columns">
+        <template v-for="column in computedColumns">
           <Checkbox
             v-if="isSelectable && selectableColumn === column.field"
             :class="[$style.cell, $style.selectAll]"
@@ -37,7 +76,7 @@
             pre-label="Выделить все"
           />
           <div
-            v-else
+            v-else-if="column.withTitle || (typeof column.withTitle === 'undefined')"
             :class="[$style.cell, column.isSortable && $style.sortable]"
             :key="column.field"
             v-on="column.isSortable ? {
@@ -69,7 +108,7 @@
       <div :class="$style.body">
         <DynamicScroller
           :items="records"
-          key-field="pk"
+          key-field="index"
           :class="$style.scroller"
           :min-item-size="60"
         >
@@ -85,7 +124,7 @@
                 :grid-modifier="$style.grid"
                 :cell-modifier="$style.cell"
                 :is-selectable="isSelectable"
-                :columns="columns"
+                :columns="computedColumns"
                 :record="record"
                 :selectable-column="selectableColumn"
                 :is-selected="allSelected || wholeSelected || selectedItems.includes(index)"
@@ -93,6 +132,7 @@
                 :index="index"
                 :class="$style.record"
                 @contextmenu="showContextMenu(index, $event)"
+                @rowClick="$emit('rowClick', {record, index})"
               >
                 <template v-for="(slot, key) in $scopedSlots" :slot="key" slot-scope="data">
                   <slot :name="key" v-bind="data" />
@@ -109,7 +149,7 @@
         />
       </div>
       <div :class="[$style.footer, $style.grid]" :style="{gridTemplateColumns: gridTemplate}">
-        <div :class="$style.cell" v-for="column in columns" :key="column.field">
+        <div :class="$style.cell" v-for="column in computedColumns" :key="column.field">
           <div :class="$style.summaryLabel" v-if="column.field === summariesLabel">
             ИТОГО:
           </div>
@@ -136,16 +176,19 @@ import ActiveTableRecord from "@/new/components/activeTable/record/ActiveTableRe
 import Icon from "@/new/components/icon/Icon";
 import Checkbox from "@/new/components/checkbox/Checkbox";
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
-import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import { DynamicScroller, DynamicScrollerItem, RecycleScroller } from 'vue-virtual-scroller'
 import ContextMenu from "@/new/components/contextMenu/ContextMenu";
 import Pagination from "@/new/components/pagination/Pagination";
 import {getDeepField} from "@/new/utils/object";
 import {useLocalProp} from "@/new/hooks/useLocalProp";
 import Actions from "@/new/components/actions/Actions";
+import Filters from "@/new/components/filters/Filters";
+import {useDialog} from "@/new/hooks/useDialog";
 
 export default defineComponent({
   name: "ActiveTable",
   components: {
+    Filters,
     Actions,
     ContextMenu,
     Checkbox,
@@ -154,6 +197,7 @@ export default defineComponent({
     DynamicScroller,
     DynamicScrollerItem,
     Pagination,
+    RecycleScroller,
   },
   props: {
     columns: Array,
@@ -177,12 +221,10 @@ export default defineComponent({
     total: Number,
     page: Number,
     limit: Number,
+    filters: Array,
+    filtersModel: Object,
   },
   setup(props, {emit}) {
-    const gridTemplate = computed(() => (
-      props.columns.map(({width}) => typeof width === 'string' ? width: `${width || 1}fr`).join(' ')
-    ));
-
     const sortsMap = computed(() => (
       props.sort.reduce((acc, cur) => ({
         ...acc,
@@ -300,6 +342,7 @@ export default defineComponent({
 
     const localLimit = useLocalProp(props, emit, 'limit');
     const localPage = useLocalProp(props, emit, 'page');
+    const localFilters = useLocalProp(props, emit, 'filtersModel');
 
     watch(localPage, () => {
       setAllSelected(false);
@@ -308,13 +351,72 @@ export default defineComponent({
       setAllSelected(false);
     });
 
+    const {
+      showDialog,
+    } = useDialog();
+
+    const visibleQuickActions = ref([]);
+
+    watch(computed(
+      () => props.actions
+        .filter(({asQuick}) => asQuick)
+        .map(({key}) => key)
+    ), newVisibleActions => {
+      visibleQuickActions.value = newVisibleActions;
+    }, {
+      immediate: true,
+      deep: true,
+    })
+
+    const visibleColumns = ref([]);
+
+    watch(computed(
+      () => props.columns.map(({field}) => field)
+    ), newVisibleColumns => {
+      visibleColumns.value = newVisibleColumns;
+    }, {
+      immediate: true,
+      deep: true,
+    });
+
+    const computedVisibleColumns = computed(() => (
+      props.columns.filter(
+        ({field, isRequired}) => visibleColumns.value.includes(field) || isRequired
+      ).map(({field}) => field)
+    ))
+
+    const gridTemplate = computed(() => (
+      computedVisibleColumns.value.map(({width}) => typeof width === 'string' ? width: `${width || 1}fr`).join(' ')
+    ));
+
+    const resetTableSettings = () => {
+      emit('reset');
+      visibleColumns.value = props.columns.map(({field}) => field);
+    }
+
     const settingsActions = computed(() => ([
       {
         key: 'display',
         icon: 'levels',
         label: 'Настройки отображения',
         onClick() {
-          alert('settings');
+          showDialog({
+            component: 'activeTableSettings',
+            payload: {
+              columns: props.columns,
+              modelValue: {
+                limit: localLimit.value,
+                columns: [...visibleColumns.value],
+              },
+              onSubmit({limit, columns}) {
+                visibleColumns.value = [...columns];
+                localLimit.value = limit;
+              },
+              onReset() {
+                resetTableSettings();
+              }
+            }
+          })
         }
       },
       {
@@ -322,7 +424,16 @@ export default defineComponent({
         icon: 'ellipsis',
         label: 'Быстрые клавиши',
         onClick() {
-          alert('actions');
+          showDialog({
+            component: 'activeTableActions',
+            payload: {
+              actions: props.actions.filter(({asQuick}) => asQuick),
+              modelValue: visibleQuickActions.value,
+              onSubmit(actions) {
+                visibleQuickActions.value = actions;
+              }
+            }
+          })
         }
       },
     ]));
@@ -333,7 +444,9 @@ export default defineComponent({
         action.handler && action.handler(getActionPayload())
       }
     })))
-    const quickActions = computed(() => actions.value.filter(({asQuick}) => asQuick));
+    const quickActions = computed(() => actions.value.filter(
+      ({key}) => visibleQuickActions.value.includes(key)
+    ));
     const linedActions = computed(() => ([
       ...actions.value.filter(({asLined}) => asLined),
       !wholeSelected.value && {
@@ -353,17 +466,30 @@ export default defineComponent({
         }
       }
     ].filter(Boolean)));
-    const controlActions = computed(() => actions.value.filter(({asControl}) => asControl));
+    const controlActions = computed(() => actions.value.filter(
+      ({asControl}) => asControl
+    ).map(action => ({
+      ...action,
+      position: 'right',
+      align: 'start',
+    })));
 
-    const isFilterDialogVisible = ref(false);
-    const toggleFilters = () => {
-      isFilterDialogVisible.value = !isFilterDialogVisible.value;
-    }
-    const hideFilters = () => {
-      isFilterDialogVisible.value = false;
-    }
+    const computedColumns = computed(() => (
+      props.columns
+        .filter(({field}) => computedVisibleColumns.value.includes(field))
+        .sort(({field: a}, {field: b}) => computedVisibleColumns.value.indexOf(a) > computedVisibleColumns.value.indexOf(b) ? 1 : -1)
+    ))
+
+    const model = ref({
+      filters: null,
+      actions: null,
+      controls: null,
+      lined: null,
+    });
 
     return {
+      model,
+
       gridTemplate,
       sortsMap,
 
@@ -393,9 +519,9 @@ export default defineComponent({
 
       wholeSelected,
 
-      isFilterDialogVisible,
-      toggleFilters,
-      hideFilters,
+      localFilters,
+
+      computedColumns,
     }
   }
 })

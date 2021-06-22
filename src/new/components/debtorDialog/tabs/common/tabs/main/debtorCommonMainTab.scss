@@ -1,0 +1,50 @@
+.form {
+
+}
+
+.field {
+  display: flex;
+  align-items: center;
+
+  &:not(:first-child) {
+    margin-top: 25px;
+  }
+}
+
+.fieldLabel {
+  width: 190px;
+  flex-shrink: 0;
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+  color: #000000;
+}
+
+.fieldValue {
+  flex-grow: 1;
+
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+  color: #000000;
+}
+
+.actions {
+  margin: 18px -10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.action {
+  height: 35px;
+  padding: 0 20px;
+  margin: 0 10px;
+
+  &.editAction {
+    width: 35px;
+    padding: 0;
+  }
+}

@@ -238,8 +238,6 @@ if (typeof window !== 'undefined') {
 	window.axios = axios.create();
 }
 
-Vue.use(axios)
-
 import { VueMaskDirective } from 'v-mask'
 Vue.directive('mask', function(el, binding) {
 	if(!binding.value) {
@@ -324,6 +322,9 @@ export function createApp() {
 	  router,
 	  store,
 	  render: h => h(App),
+    created() {
+	    this.$store.$toast = this.$toast;
+    },
     setup() {
 	    provide('store', store);
     }

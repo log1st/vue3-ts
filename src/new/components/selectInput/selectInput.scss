@@ -1,4 +1,8 @@
 .container {
+
+  &.isActive {
+    z-index: 1;
+  }
 }
 
 .trigger {
@@ -8,18 +12,35 @@
   cursor: pointer;
 }
 
+.search {
+  appearance: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  background: none;
+}
+
 .value,
 .placeholder {
   align-self: normal;
 
   display: flex;
   align-items: center;
+
+  overflow: hidden;
+}
+
+.value > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .placeholder {
 }
 
 .caret {
+  flex-shrink: 0;
 }
 
 .isDisabled {
@@ -31,9 +52,25 @@
   top: calc(100% - 8px);
   left: 0;
   right: 0;
+
+  max-height: 240px;
+  overflow-y: auto;
 }
 
 .primary {
+  .label {
+    padding-left: 3px;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.04em;
+    color: #4F4F4F;
+
+    + * {
+      margin-top: 5px;
+    }
+  }
+
   .trigger {
     height: 45px;
     background: #FFFFFF;
@@ -44,6 +81,7 @@
     padding: 0 10px;
   }
 
+  .search,
   .value,
   .placeholder {
     font-size: 14px;
@@ -51,6 +89,14 @@
     letter-spacing: 0.04em;
     color: #4F4F4F;
     flex-grow: 1;
+  }
+
+  .search {
+    width: 0;
+    &::placeholder {
+      color: inherit;
+      opacity: .4;
+    }
   }
 
   .placeholder {
@@ -72,5 +118,16 @@
 
   &.isDisabled {
     opacity: .7;
+  }
+
+  &.dark {
+    .trigger {
+      background: #E0E0E0;
+    }
+  }
+
+  .error {
+    margin-top: 10px;
+    color: red;
   }
 }

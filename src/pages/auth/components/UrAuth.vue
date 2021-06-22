@@ -1,6 +1,6 @@
 <template>
         <form action="#" class="sign-in__form-inner" @submit.prevent>
-            
+
         <div class="sign-in__tab">
             <div class="tab-nav" role="tablist">
                 <div v-for="(item, i) in tabs"
@@ -90,10 +90,11 @@
                 Забыли пароль?
             </div>
             <div class="form-group form-btns">
-                
-                <ur-btn 
+
+                <ur-btn
                 :loading="loading"
                 @click="demologin()"
+                type="button"
                 class="btn btn--demo login-from-btn loader-opener">
                 Демо вход
                 </ur-btn>
@@ -101,12 +102,13 @@
                 <ur-btn
                 :loading="loading"
                 @click="auth()"
+                type="submit"
                 :disabled="disabled"
                 class="btn btn--login login-from-btn loader-opener">
                 {{ activeTab == 0 ? 'Войти' : 'Регистрация' }}
                 </ur-btn>
             </div>
-           
+
              <vue-recaptcha
                 ref="recaptcha"
                 size="invisible"
@@ -118,8 +120,8 @@
                 badge="bottomleft"
               />
 
-             </div>   
-            
+             </div>
+
             </div>
         </div>
 
@@ -182,7 +184,7 @@
                 immediate: true,
                 handler (val) {
                     if (val === true) {
-                        this.$router.push({ path: '/' }).catch(()=>{}); 
+                        this.$router.push({ path: '/' }).catch(()=>{});
                     }
                 }
             }
@@ -217,7 +219,7 @@
         mounted () {
             events.$on('auth', (status) => {
                 if (status) {
-                    this.$router.push({ path: '/' }).catch(()=>{}); 
+                    this.$router.push({ path: '/' }).catch(()=>{});
                 }
             })
             events.$on('restorePass', status => {
@@ -250,7 +252,7 @@
                 this.passwordComputed = e;
                 this.hidePasswordChars();
             },
-             
+
             hidePasswordChars: debounce(
                 function() {
                     if(this.type === 'password') {
@@ -370,7 +372,7 @@
 
                                 await this.defineLoginType();
                                 await this.enter();
-                                
+
                                 this.loading = false;
                                 this.appLoadingChange(false);
                             }

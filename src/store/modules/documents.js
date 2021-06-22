@@ -200,9 +200,9 @@ export default {
         /**
          * Файл из инпута оборачиваем в base64
          * @param {Binary} file это файл думаю и так понятно
-         * @returns 
+         * @returns
          */
-        toBase64 ({state}, file) { 
+        toBase64 ({state}, file) {
             return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -210,23 +210,23 @@ export default {
             reader.onerror = error => reject(error);
             })
         },
-        
+
         /**
-         * Вообще это не совсем обратное из base, и классические atob/btoa и тд не используются 
+         * Вообще это не совсем обратное из base, и классические atob/btoa и тд не используются
          * @param {*} base должен быть base64
-         * @returns 
+         * @returns
          */
         fromBase64 ( {state}, base ) {
                 var arr = base.split(','),
                     mime = arr[0].match(/:(.*?);/)[1],
-                    bstr = atob(arr[1]), 
-                    n = bstr.length, 
+                    bstr = atob(arr[1]),
+                    n = bstr.length,
                     u8arr = new Uint8Array(n);
-                    
+
                 while(n--){
                     u8arr[n] = bstr.charCodeAt(n);
                 }
-                
+
                 return new File([u8arr], filename, {type:mime});
         },
         getEgrnStatus ( {state}, payload ) {
@@ -302,18 +302,18 @@ export default {
         async printCourtOrder ({ commit, dispatch, state, getters }, { debtors, company, format }) {
             if(debtors.length <= 0) return;
 
-            // ниже блок проверок данных для генерации документа. Если нет данных - меня никак не волнует. Обратитесь к поставщикам 
+            // ниже блок проверок данных для генерации документа. Если нет данных - меня никак не волнует. Обратитесь к поставщикам
             debtors = debtors.map(async debtor => {
-                // Проверка ФИО пользователя   
-                const fioNotChecked = !debtor.FIO || debtor.FIO.split(' ').length < 3 || debtor.FIO.split(' ').length > 3  
+                // Проверка ФИО пользователя
+                const fioNotChecked = !debtor.FIO || debtor.FIO.split(' ').length < 3 || debtor.FIO.split(' ').length > 3
                 if(fioNotChecked) {
                     alert(`У должника (${debtor.RashSchet}) не указано ФИО или указано с ошибками. Генерация документа невозможна`);
                     return
                 }
                 // Проверка даты рождения
-                const dateBirthNotChecked = 
-                    !debtor.ListResidents[0].DateBirthDebt || 
-                    debtor.ListResidents[0].DateBirthDebt.split('.').length < 3 || 
+                const dateBirthNotChecked =
+                    !debtor.ListResidents[0].DateBirthDebt ||
+                    debtor.ListResidents[0].DateBirthDebt.split('.').length < 3 ||
                     debtor.ListResidents[0].DateBirthDebt.split('.').length > 3 ||
                     debtor.ListResidents[0].DateBirthDebt.split('.')[0].length !== 2 ||
                     debtor.ListResidents[0].DateBirthDebt.split('.')[1].length !== 2 ||
@@ -323,11 +323,11 @@ export default {
                     return
                 }
                 // Проверка паспортных данных
-                const docnoNotChecked = 
-                    !debtor.ListResidents[0].Docno || 
-                    debtor.ListResidents[0].Docno.length < 10 || 
+                const docnoNotChecked =
+                    !debtor.ListResidents[0].Docno ||
+                    debtor.ListResidents[0].Docno.length < 10 ||
                     debtor.ListResidents[0].Docno.length > 11
-                    
+
                 if(docnoNotChecked) {
                     alert(`У должника (${debtor.RashSchet}) не указаны серия/номер паспорта или указаны с ошибками. Генерация документа невозможна`);
                     return
@@ -362,7 +362,7 @@ export default {
                 alert('Отсутствуют должники с наличием корректных для генерации документа данных');
                 return
             }
-          
+
             // let services = state.services || null
             let templates = [];
 
@@ -426,7 +426,7 @@ export default {
                 };
 
             }).then(async (data) => {
-                return 
+                return
                 const { base64PDF, zipBlob, name } = data;
                 // data:application/x-zip-compressed;base64,
                 // data:application/pdf;base64,
@@ -462,7 +462,7 @@ export default {
             })
         },
         /**
-         * Печать заявления 
+         * Печать заявления
          */
         async printStatementsJudicalModule ({ commit, dispatch, state, getters }, { debtors, company, format }) {
             if(debtors.length <= 0) return;
@@ -476,19 +476,19 @@ export default {
             let templates = [];
             // if(format === 'zip') {
             //     dispatch('zipDocuments', { debtors, company, format })
-            //     return 
+            //     return
             // }
 
             templates = debtors.map(async (debtor, index) => {
                 let listTemplates = [
                     {
-                        template: await judicialOrderStatement.createTemplate({ 
+                        template: await judicialOrderStatement.createTemplate({
                             debtor: debtor,
                             company: company,
                             templateIndex: index,
                             services: services,
                             documentsList: documentsList
-                        }), 
+                        }),
                         type: 'template',
                         paymentAccount: debtor.RashSchet
                     }
@@ -497,8 +497,8 @@ export default {
                 for(const document of documentsForPrint) {
                     if(document.id === 1) {
                     const chargesItem = setOfCharges.getCharges(debtor)
-                        listTemplates.push( { 
-                            template: await setOfCharges.createTemplate({ 
+                        listTemplates.push( {
+                            template: await setOfCharges.createTemplate({
                                 debtor: debtor,
                                 company: company,
                                 services: services,
@@ -511,7 +511,7 @@ export default {
 
                     if(document.id === 2) {
                         listTemplates.push({
-                            template: await calculationPeni.createTemplate({ 
+                            template: await calculationPeni.createTemplate({
                                 debtor: debtor,
                                 company: company,
                                 DateFiltrStart: state.DateFiltrStart,
@@ -521,7 +521,7 @@ export default {
                             paymentAccount: debtor.RashSchet
                         })
                     }
-    
+
                     if(document.id === 5 && getters.getDefaultCompany && getters.getDefaultCompany.FileEGRUL) {
                         listTemplates.push({
                             template: cloneDeep(getters.getDefaultCompany.FileEGRUL),
@@ -532,9 +532,9 @@ export default {
 
                     if(document.id === 0 && debtor.hasOwnProperty('AllFileDebtPassportOffice') && !isEmpty(debtor.AllFileDebtPassportOffice)) {
                         const ergnArray = Object.values(debtor.AllFileDebtPassportOffice)
-                        
+
                         const AllFileDebtPassportOffice = await dispatch('downloadFile', { PaymentAccount: debtor.RashSchet, File: ergnArray[ergnArray.length - 1].FileName, PassportOffice: true });
-                        
+
                         listTemplates.push({
                             template: AllFileDebtPassportOffice,
                             type: 'headerBase64',
@@ -546,7 +546,7 @@ export default {
                     if(document.id === 3 && debtor.hasOwnProperty('AllFileDebtFromEgrn') && !isEmpty(debtor.AllFileDebtFromEgrn)) {
                         const ergnArray = Object.values(debtor.AllFileDebtFromEgrn)
                         const AllFileDebtFromEgrn = await dispatch('downloadFile', { PaymentAccount: debtor.RashSchet, File: ergnArray[ergnArray.length - 1].FileName, FromEgrn: true });
-                        
+
                         listTemplates.push({
                             template: AllFileDebtFromEgrn,
                             type: 'base64',
@@ -559,7 +559,7 @@ export default {
                 // debugger
                 return listTemplates
                 //  = await Promise.all(listTemplates);
-                
+
             });
             // console.log(templates);
             templates = await Promise.all(templates);
@@ -696,19 +696,19 @@ export default {
             let templates = [];
             // if(format === 'zip') {
             //     dispatch('zipDocuments', { debtors, company, format })
-            //     return 
+            //     return
             // }
 
             templates = debtors.map(async (debtor, index) => {
                 let listTemplates = [
                     {
-                        template: await judicialOrderStatementChel.createTemplate({ 
+                        template: await judicialOrderStatementChel.createTemplate({
                             debtor: debtor,
                             company: company,
                             templateIndex: index,
                             services: services,
                             documentsList: documentsList
-                        }), 
+                        }),
                         type: 'template',
                         paymentAccount: debtor.RashSchet
                     }
@@ -717,8 +717,8 @@ export default {
                 for(const document of documentsForPrint) {
                     if(document.id === 1) {
                     const chargesItem = setOfCharges.getCharges(debtor)
-                        listTemplates.push( { 
-                            template: await setOfCharges.createTemplate({ 
+                        listTemplates.push( {
+                            template: await setOfCharges.createTemplate({
                                 debtor: debtor,
                                 company: company,
                                 services: services,
@@ -731,7 +731,7 @@ export default {
 
                     if(document.id === 2) {
                         listTemplates.push({
-                            template: await calculationPeni.createTemplate({ 
+                            template: await calculationPeni.createTemplate({
                                 debtor: debtor,
                                 company: company,
                                 DateFiltrStart: state.DateFiltrStart,
@@ -741,7 +741,7 @@ export default {
                             paymentAccount: debtor.RashSchet
                         })
                     }
-    
+
                     if(document.id === 5 && getters.getDefaultCompany && getters.getDefaultCompany.FileEGRUL) {
                         listTemplates.push({
                             template: cloneDeep(getters.getDefaultCompany.FileEGRUL),
@@ -752,9 +752,9 @@ export default {
 
                     if(document.id === 0 && debtor.hasOwnProperty('AllFileDebtPassportOffice') && !isEmpty(debtor.AllFileDebtPassportOffice)) {
                         const ergnArray = Object.values(debtor.AllFileDebtPassportOffice)
-                        
+
                         const AllFileDebtPassportOffice = await dispatch('downloadFile', { PaymentAccount: debtor.RashSchet, File: ergnArray[ergnArray.length - 1].FileName, PassportOffice: true });
-                        
+
                         listTemplates.push({
                             template: AllFileDebtPassportOffice,
                             type: 'headerBase64',
@@ -766,7 +766,7 @@ export default {
                     if(document.id === 3 && debtor.hasOwnProperty('AllFileDebtFromEgrn') && !isEmpty(debtor.AllFileDebtFromEgrn)) {
                         const ergnArray = Object.values(debtor.AllFileDebtFromEgrn)
                         const AllFileDebtFromEgrn = await dispatch('downloadFile', { PaymentAccount: debtor.RashSchet, File: ergnArray[ergnArray.length - 1].FileName, FromEgrn: true });
-                        
+
                         listTemplates.push({
                             template: AllFileDebtFromEgrn,
                             type: 'base64',
@@ -802,7 +802,7 @@ export default {
                 // debugger
                 return listTemplates
                 //  = await Promise.all(listTemplates);
-                
+
             });
             // console.log(templates);
             templates = await Promise.all(templates);
@@ -941,7 +941,7 @@ export default {
             let documentsForPrint = state.printDocumentsOrder.filter(d => d.checked);
 
             let templates = [];
-       
+
 
             // templates = debtors.map(async (debtor, index) => {
                 for(const debtor of debtors) {
@@ -949,29 +949,29 @@ export default {
                 // debugger
                 const data = await dispatch('getStatusDischarge', { PaymentAccount: debtor.RashSchet });
                 if(!isEmpty(data.data[1].return) && !isEmpty(data.data[1].return.Info[1])) {
-                    let equityРolders = Object.values(data.data[1].return.Info[1]); 
+                    let equityРolders = Object.values(data.data[1].return.Info[1]);
                     listTemplates = equityРolders.map(async polder => {
                         return {
-                            template: await judicialOrderStatementChelDoly.createTemplate({ 
+                            template: await judicialOrderStatementChelDoly.createTemplate({
                                 debtor: debtor,
                                 company: company,
                                 court: court,
                                 services: services,
                                 documentsList: documentsList,
                                 equityРolder: polder
-                            }), 
+                            }),
                             type: 'template',
                             paymentAccount: debtor.RashSchet
                         }
                     });
                 } else {
                     listTemplates.push({
-                        template: await judicialOrderStatementChel.createTemplate({ 
+                        template: await judicialOrderStatementChel.createTemplate({
                             debtor: debtor,
                             company: company,
                             services: services,
                             documentsList: documentsList
-                        }), 
+                        }),
                         type: 'template',
                         paymentAccount: debtor.RashSchet
                     })
@@ -980,8 +980,8 @@ export default {
                 for(const document of documentsForPrint) {
                     if(document.id === 1) {
                     const chargesItem = setOfCharges.getCharges(debtor)
-                        listTemplates.push( { 
-                            template: await setOfCharges.createTemplate({ 
+                        listTemplates.push( {
+                            template: await setOfCharges.createTemplate({
                                 debtor: debtor,
                                 company: company,
                                 services: services,
@@ -994,7 +994,7 @@ export default {
 
                     if(document.id === 2) {
                         listTemplates.push({
-                            template: await calculationPeni.createTemplate({ 
+                            template: await calculationPeni.createTemplate({
                                 debtor: debtor,
                                 company: company,
                                 DateFiltrStart: state.DateFiltrStart,
@@ -1004,7 +1004,7 @@ export default {
                             paymentAccount: debtor.RashSchet
                         })
                     }
-    
+
                     if(document.id === 5 && getters.getDefaultCompany && getters.getDefaultCompany.FileEGRUL) {
                         listTemplates.push({
                             template: cloneDeep(getters.getDefaultCompany.FileEGRUL),
@@ -1015,9 +1015,9 @@ export default {
 
                     if(document.id === 0 && debtor.hasOwnProperty('AllFileDebtPassportOffice') && !isEmpty(debtor.AllFileDebtPassportOffice)) {
                         const ergnArray = Object.values(debtor.AllFileDebtPassportOffice)
-                        
+
                         const AllFileDebtPassportOffice = await dispatch('downloadFile', { PaymentAccount: debtor.RashSchet, File: ergnArray[ergnArray.length - 1].FileName, PassportOffice: true });
-                        
+
                         listTemplates.push({
                             template: AllFileDebtPassportOffice,
                             type: 'headerBase64',
@@ -1029,7 +1029,7 @@ export default {
                     if(document.id === 3 && debtor.hasOwnProperty('AllFileDebtFromEgrn') && !isEmpty(debtor.AllFileDebtFromEgrn)) {
                         const ergnArray = Object.values(debtor.AllFileDebtFromEgrn)
                         const AllFileDebtFromEgrn = await dispatch('downloadFile', { PaymentAccount: debtor.RashSchet, File: ergnArray[ergnArray.length - 1].FileName, FromEgrn: true });
-                        
+
                         listTemplates.push({
                             template: AllFileDebtFromEgrn,
                             type: 'base64',
@@ -1064,13 +1064,13 @@ export default {
                 listTemplates = await Promise.all(listTemplates);
                 templates.push(listTemplates);
                 //  = await Promise.all(listTemplates);
-                
+
             // });
             }
             templates = flattenDeep(templates);
             // templates = await Promise.all(templates);
             // debugger
-       
+
             // return
             // templates = cloneDeep(state.printDocumentsOrder).filter((doc, index) => {
             //     return doc.checked
@@ -1188,8 +1188,8 @@ export default {
         },
         /**
          * Архивировать файл
-         * @param {*} param0 
-         * @param {*} param1 
+         * @param {*} param0
+         * @param {*} param1
          */
         async zipDocuments({ commit, dispatch, state }, { debtors, company, format }) {
 
@@ -1242,7 +1242,7 @@ export default {
                 // setTimeout(() => {
                 //     window.open(url, '_blank')
                 // }, 1000)
-                
+
                 zip.file(`${debtors[index].FIO}.pdf`, blob);
             })
 
@@ -1251,29 +1251,29 @@ export default {
                 return content
             });
         },
-        
+
 
         /**
          * Печать формы оплаты
-         * @param {*} param0 
-         * @param {*} param1 
+         * @param {*} param0
+         * @param {*} param1
          */
         async printPaymentForm({ commit, dispatch, state }, { debtors, format }) {
             dispatch('setPopupComponent', {component: 'PrintTemplatePopup', params: {checkedDebtor: debtors}})
         },
         /**
          * Печать свода начислений
-         * @param {*} param0 
-         * @param {*} param1 
+         * @param {*} param0
+         * @param {*} param1
          */
         async printSetOfCharges({ commit, dispatch, state }, { debtors, format, services, company }) {
             if(debtors.length <= 0) return;
-            
+
             let templates = [];
             debtors.forEach(debtor => {
                 const chargesItem = setOfCharges.getCharges(debtor),
                 template = setOfCharges.createTemplate({ debtor: debtor, company: company, services: services, charges: chargesItem })
-                templates.push(template);  
+                templates.push(template);
             });
 
             templates = await Promise.all(templates);
@@ -1389,7 +1389,7 @@ export default {
                 });
                 templates[debtor.RashSchet] = await dispatch("mergePDF", { 0: templates[debtor.RashSchet][0], 1: templates[debtor.RashSchet][1] });
                 commit('setEPCLoader', { step: 3, value: true })
-                
+
                 const result = await dispatch("signDocument", {
                   template: templates[debtor.RashSchet],
                   RashSchet: debtor.RashSchet,

@@ -5,6 +5,7 @@
       </div>
     <sidebar :sidebarOpen="sidebarOpen" />
     <div class="root-content">
+      <Toasts/>
       <Dialogs/>
       <cabinet-header />
       <div class="header__menu" @click="sidebarOpen = !sidebarOpen">
@@ -43,11 +44,14 @@ import globalPercentLoader   from '@/components/elements/globalPercentLoader'
 import serviceMessage from '@/components/elements/ServiceMessage.vue'
 import { getDocumentsOrderList, getServicesList } from '../store/modules/documents/statementsJudical';
 import Dialogs from "@/new/components/dialogs/Dialogs";
+import {storage} from "@/new/utils/storage";
+import Toasts from "@/new/components/toasts/Toasts";
 
 
 export default {
   name: 'CabinetLayout',
   components: {
+    Toasts,
     Dialogs,
     'cabinet-header': CabinetHeader,
     'global-percent-loader': globalPercentLoader,
@@ -58,7 +62,12 @@ export default {
   },
   data () {
     return {
-      sidebarOpen: true
+      sidebarOpen: storage.get('sidebarOpen', true)
+    }
+  },
+  watch: {
+    sidebarOpen: value => {
+      storage.set('sidebarOpen', value);
     }
   },
   serverPrefetch () {

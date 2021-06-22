@@ -8,7 +8,7 @@
 .controls {
   display: flex;
   align-items: center;
-  padding-left: 120px;
+  padding-left: 55px;
   padding-right: 20px;
 
   + .table {
@@ -36,8 +36,8 @@
   text-align: center;
   letter-spacing: 0.04em;
   color: #828282;
-  padding-bottom: 1px;
-  border-bottom: 1px solid #a1a1a1;
+
+  text-decoration: underline;
 
   user-select: none;
 
@@ -169,6 +169,14 @@
 .scroller {
   height: 100%;
   overflow-y: scroll !important;
+}
+
+.recordWrapper {
+
+}
+
+.selectedRecordWrapper {
+
 }
 
 .record{

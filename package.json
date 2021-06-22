@@ -8,7 +8,7 @@
     "serve": "cross-env NODE_ENV=production VUE_APP_API_URL=TESTING VUE_CLI_BABEL_TRANSPILE_MODULES=true npm run build-ssr && cross-env NODE_ENV=production VUE_APP_API_URL=TESTING VUE_CLI_BABEL_TRANSPILE_MODULES=true npm-run-all -p start serve:client",
     "serve:client": "vue-cli-service serve",
     "build-ssr": "npm run build-ssr:server -- --trace-warnings --silent && npm run build-ssr:client -- --no-clean --silent",
-    "build-ssr-dev" : "npm run build-ssr-dev:serve-dev -- --trace-warnings --silent && npm run build-ssr:client -- --no-clean --silent",
+    "build-ssr-dev": "npm run build-ssr-dev:serve-dev -- --trace-warnings --silent && npm run build-ssr:client -- --no-clean --silent",
     "build-ssr:client": "vue-cli-service build",
     "build-ssr:server": "cross-env WEBPACK_TARGET=node VUE_APP_API_URL=TESTING VUE_CLI_BABEL_TRANSPILE_MODULES=true vue-cli-service build",
     "build-ssr-dev:serve-dev": "cross-env WEBPACK_TARGET=node VUE_APP_API_URL=DEPLOYMENT VUE_CLI_BABEL_TRANSPILE_MODULES=true vue-cli-service build",
@@ -16,6 +16,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@messageformat/core": "^3.0.0",
+    "@messageformat/runtime": "^3.0.0",
     "@tinymce/tinymce-vue": "^3.2.4",
     "@vue/composition-api": "^1.0.0-rc.11",
     "@vuejs-community/vue-directive-mask": "^1.2.4",
@@ -73,7 +75,7 @@
     "vue-server-renderer": "^2.6.0",
     "vue-text-mask": "^6.1.2",
     "vue-virtual-scroller": "^1.0.10",
-    "vuedraggable": "^2.23.2",
+    "vuedraggable": "^2.24.3",
     "vuex": "^3.1.2",
     "vuex-persistedstate": "^3.1.0",
     "vuex-router-sync": "^5.0.0",

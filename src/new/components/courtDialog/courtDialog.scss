@@ -1,0 +1,54 @@
+.dialog {
+  width: 894px;
+  position: relative;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+
+  &:not(:first-child) {
+    margin-top: 20px;
+  }
+}
+
+.label,
+.value {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+  color: #000000;
+}
+
+.label {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.value,
+.input {
+  flex-grow: 1;
+}
+
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 30px;
+  width: 30px;
+}
+
+.actions {
+  margin: 30px -10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.action {
+  height: 40px;
+  padding: 0 20px;
+  margin: 0 10px;
+}

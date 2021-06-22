@@ -21,13 +21,13 @@ const renameProperty = function (obj, oldName, newName) {
  */
 export const http = async ({ url = baseURL, command, method, data, formData, params, timeout = 0, requestCode }) => {
     // использовалось для обработки данных в camelCase
-  
+
     let payload = {
-        ...data,      
+        ...data,
     };
     if (formData) {
         payload = formData
-    } 
+    }
     let paramsData = {
         ...params
     }
@@ -36,7 +36,7 @@ export const http = async ({ url = baseURL, command, method, data, formData, par
         url = url + command
     }
     delete axios.defaults.headers.common["X-Auth-Token"]
-    
+
     let token = localStorage.getItem('token')
     axios.defaults.headers.common["X-Auth-Token"] = token
 
@@ -59,13 +59,13 @@ export const http = async ({ url = baseURL, command, method, data, formData, par
                     dismissible: true,
                     position: 'top-right'
                 });
-            
+
             console.error('Server response error', errorsKey);
             return rej(serverResponse);
         } else if (!isEmpty(serverResponse.data)) {
             let resp = serverResponse.data
             if (getRequestCode) {
-                resp.RequestStatusCode = serverResponse.status 
+                resp.RequestStatusCode = serverResponse.status
             }
             return res(resp);
         } else if (isEmpty(serverResponse.data)) {
@@ -73,7 +73,7 @@ export const http = async ({ url = baseURL, command, method, data, formData, par
                 let resp = {
                     RequestStatusCode: 204
                 }
-                return res(resp) 
+                return res(resp)
             } else {
                 rej(serverResponse)
             }
@@ -84,4 +84,4 @@ export const http = async ({ url = baseURL, command, method, data, formData, par
 
 export default {
     namespaced: true,
-};  
+};
