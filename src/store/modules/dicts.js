@@ -106,21 +106,21 @@ export default {
 
       commit('setJudicialEgrnStatuses', [
         {
-          value: 'one',
-          label: 'Статус 1',
+          value: true,
+          label: 'Заказана',
         },
         {
-          value: 'two',
-          label: 'Статус 2',
+          value: false,
+          label: 'Не заказана',
         },
       ]);
       commit('setJudicialFeeStatuses', [
         {
-          value: 'paid',
+          value: true,
           label: 'Оплачена',
         },
         {
-          value: 'not_paid',
+          value: false,
           label: 'Не оплачена',
         },
       ]);

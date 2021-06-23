@@ -7,9 +7,10 @@ export const useDicts = () => {
   const services = computed(() => store.getters['dicts/services']);
   const servicesMap = computed(() => store.getters['dicts/servicesMap']);
 
-  const documentTypes = computed(() => store.getters['applicationUserList'].map(({id, name}) => ({
-    value: id,
-    label: name,
+  const documentTypes = computed(() => store.getters['applicationUserList'].map((document) => ({
+    value: document.id,
+    label: document.name,
+    full: document,
   })));
   const documentTypesMap = computed(() => documentTypes.value.reduce((acc, {value, label}) => ({
     ...acc,

@@ -107,18 +107,23 @@ export default defineComponent({
         icon: 'wallet',
         component: DebtorFinanceTab,
       },
-      {
+      type.value === 'judicial' && {
         key: 'court',
         label: 'Справочник суда и судебных дел',
         icon: 'mace',
         component: DebtorCourtsTab,
+      },
+      type.value === 'pretrial' && {
+        key: 'notificaitons',
+        label: 'Карточка уведомлений',
+        icon: 'bell',
       },
       /*{
         key: 'history',
         label: 'История',
         icon: 'clock'
       },*/
-    ]));
+    ].filter(Boolean)));
 
     const activeTab = ref(tabs.value[0]);
     const selectTab = tab => {

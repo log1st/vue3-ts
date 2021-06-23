@@ -24,6 +24,7 @@ export default defineComponent({
   name: "DebtorCommonTab",
   setup() {
     const data = inject('data');
+    const productionType = inject('productionType');
 
     const tabs = computed(() => ([
       {
@@ -36,12 +37,12 @@ export default defineComponent({
         label: 'Список жильцов',
         component: DebtorCommonResidentsTab,
       },
-      {
+      productionType.value === 'judicial' && {
         key: 'owners',
         label: 'Собственники',
         component: DebtorCommonOwnersTab,
       },
-    ]));
+    ].filter(Boolean)));
 
     const activeTab = ref(tabs.value[0]);
     const selectTab = tab => {

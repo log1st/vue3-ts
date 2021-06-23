@@ -6,7 +6,7 @@
     <form
       v-if="isActive"
       @submit.prevent="print"
-      :class="$style.form"
+      :class="[$style.form, $style[type]]"
     >
       <div :class="$style.documents">
         <div :class="$style.heading">Список документов в приложении</div>
@@ -33,7 +33,7 @@
           </div>
         </Draggable>
       </div>
-      <div :class="$style.services">
+      <div :class="$style.services" v-if="type === 'judicial'">
         <div :class="$style.heading">Выбор услуги</div>
         <div :class="$style.servicesList">
           <Checkbox
@@ -58,7 +58,7 @@
           <DateInput v-model="model.from" :is-disabled="model.allPeriod" placeholder="С" />
           <DateInput v-model="model.to" :is-disabled="model.allPeriod" placeholder="По" />
         </div>
-        <Checkbox :class="$style.moratorium" v-model="model.moratorium" state="switch" label="Мораторий расчёта пени"/>
+        <Checkbox v-if="type === 'judicial'" :class="$style.moratorium" v-model="model.moratorium" state="switch" label="Мораторий расчёта пени"/>
       </div>
       <div :class="$style.actions">
         <Btn :state="['tertiary', 'vertical']" :class="$style.action" @click="signAndSend" prepend-icon="flash-drive">
@@ -130,6 +130,13 @@ export default defineComponent({
       showDialog,
     } = useDialog();
 
+    const {
+      documentTypes,
+      documentTypesMap,
+
+      services,
+    } = useDicts();
+
     let printUnsubscribe;
     onBeforeUnmount(() => {
       // printUnsubscribe && printUnsubscribe()
@@ -138,6 +145,18 @@ export default defineComponent({
       if (!isActive.value) {
         return;
       }
+
+      await axios({
+        method: 'post',
+        url: `${baseURL}/document_attachments/company_bulk_create/`,
+        data: {
+          company_id: localStorage.getItem('defaultCompany'),
+          production_type: props.type,
+          attachments: model.value.documentsOrder.filter(id => model.value.documents[id]).map(id => (
+            documentTypes.value.find((document) => document.full.id === id).full
+          ))
+        }
+      })
 
       const {data: {id: requestId}} = await axios({
         method: 'post',
@@ -197,13 +216,6 @@ export default defineComponent({
 
       emit('close')
     }
-
-    const {
-      documentTypes,
-      documentTypesMap,
-
-      services,
-    } = useDicts();
 
     watch(documentTypes, types => {
       model.value.documents = types.reduce((acc, {value}) => ({

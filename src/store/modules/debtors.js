@@ -64,7 +64,7 @@ export default {
      * Количество задолжников на странице
      */
     debtorsCourtProceedingsInPage: 501, // Ставим максимально значение (Ибо именно его обробатыват в первую очередь)
-    debtorsPreTrialProceedingsInPage: 501, 
+    debtorsPreTrialProceedingsInPage: 501,
     // хз зачем
     debtorsInPageDefault: 50,
     /**
@@ -170,7 +170,7 @@ export default {
       })
     },
     getNewStatusOne (state, { id, status }) {
-        state.debtorsCourtProceedings.find(elem => elem._id === id).Status = status;  
+        state.debtorsCourtProceedings.find(elem => elem._id === id).Status = status;
     },
 
     // ================== блок чекбоксов ==========================
@@ -184,18 +184,18 @@ export default {
       const { id } = payload
       let elem;
       elem = state.debtorsCourtProceedings.find(el => el._id === id);
-      
+
       elem.checked = !elem.checked;
-      elem.checked ? state.checkedDebtorsCount++ : state.checkedDebtorsCount--  
+      elem.checked ? state.checkedDebtorsCount++ : state.checkedDebtorsCount--
     },
     checkPreTrialDebtor ( state, payload ) {
       const { id } = payload
 
       let elem;
-      elem = state.debtorsPreTrialProceedings.find(el => el._id === id);        
+      elem = state.debtorsPreTrialProceedings.find(el => el._id === id);
 
       elem.checked = !elem.checked;
-      elem.checked ? state.checkedDebtorsCount++ : state.checkedDebtorsCount-- 
+      elem.checked ? state.checkedDebtorsCount++ : state.checkedDebtorsCount--
     },
     /**
      * Снять выделение со всех элементов
@@ -267,7 +267,7 @@ export default {
       let index = 1
       state.debtorsPreTrialProceedings = []
         for (const key in payload) {
-          // _id = 
+          // _id =
           let newDebtor = {
             _id: (state.debtorsPreTrialProceedingsInPage * (state.currentPage - 1)) + index,
             checked: false
@@ -290,7 +290,7 @@ export default {
       let index = 1
       state.debtorsCourtProceedings = []
         for (const key in payload) {
-          // _id = 
+          // _id =
           let newDebtor = {
             _id: (state.debtorsCourtProceedingsInPage * (state.currentPage - 1)) + index,
             checked: false
@@ -307,7 +307,7 @@ export default {
           state.debtorsCourtProceedings.push(newDebtor)
           index++
         }
-      
+
     },
     setDebtorsData (state, payload) {
       state.debtorsData.AccruedCsv = payload.AllAccruedCsv
@@ -374,7 +374,7 @@ export default {
       const newHistoryObject = Object.assign({}, debtor.FullHistoryActions, newNote);
       debtor.FullHistoryActions = newHistoryObject;
     },
-    
+
     addDebtorFile(state, payload) {
       const { fileObject, PaymentAccount } = payload;
       const debtor = state.debtorsCourtProceedings.find(d => d.RashSchet == PaymentAccount);
@@ -406,7 +406,7 @@ export default {
   },
 
   actions: {
-    
+
     /**
      * Сохраняет/обновляет сортировку таблицы должников
      * @param { state, commit, getters, dispatch }
@@ -435,7 +435,7 @@ export default {
       }).then(res => {
               if (typeof window !== 'undefined') {
                 localStorage.setItem('debtorsPerPage', itemsPerPage)
-              } 
+              }
       }).catch(e => {
         console.error('ошибка запроса колонок таблицы', e);
       }).finally(() => {
@@ -450,13 +450,13 @@ export default {
       .then(res => {
               if (typeof window !== 'undefined') {
                 localStorage.setItem('debtorsPerPage', itemsPerPage)
-              } 
+              }
       }).catch(e => {
         console.error('ошибка запроса колонок таблицы', e);
       }).finally(() => {
         dispatch('appLoadingChange', false, { root: true });
       })
-    }, 
+    },
     /**
      * Форматирует таблицу после запроса с api
      * @private
@@ -488,8 +488,8 @@ export default {
     },
     /**
      * Для каждого модуля используем свой обработчик (на случай изменений)
-     * @param state 
-     * @param {*} payload 
+     * @param state
+     * @param {*} payload
      */
     _prepareSavingPreTrialProceedingsTableColumns ({state}, payload) {
       const statuses = {};
@@ -508,7 +508,7 @@ export default {
     },
     /*
     |--------------------------------------------------------------------------
-    | API совмещеных запросов (оптимизация) 
+    | API совмещеных запросов (оптимизация)
     |--------------------------------------------------------------------------
     */
     combinedRequests ({ dispatch, commit }, payload) {
@@ -521,7 +521,7 @@ export default {
       }
       let module = 'pretrial'
       if (payload) {
-        module = payload.module 
+        module = payload.module
       }
       // console.log(module)
       axios({
@@ -536,7 +536,7 @@ export default {
       })
       .then ( async res => {
         // commit('setListOfJudicialDistricts', res.listOfJudicialDistricts);
-        // commit('setListsOfStatusesDebtors', res.listCourtPractice); // СТАТУСЫ 
+        // commit('setListsOfStatusesDebtors', res.listCourtPractice); // СТАТУСЫ
         // commit('setApplicationList', Object.values(res.listApplication));
         // commit('setCompanyEmployees', res.listEmployee);
         // commit('setCompaniesNamesLists', res.listAll);
@@ -565,7 +565,7 @@ export default {
       })
       .finally(() => {
         dispatch('appLoadingChange', false, { root: true });
-      }) 
+      })
     },
     /**
     *  Получение настроек организации пользователя
@@ -591,7 +591,7 @@ export default {
 
     /**
      * Обновление настроек организации пользователя
-     * @param commit 
+     * @param commit
      * @param {Object} payload новые данные настроек
      */
     updateUserSetting ( { commit }, payload ) {
@@ -611,13 +611,13 @@ export default {
     getDebtorsCourtProceedingsList ({ dispatch, getters, commit, state, debtInPage }, force = false, payload ) {
       dispatch('appLoadingChange', true, { root: true });
       commit('setDebtorFiltered', false);
-      
+
       if(state.visitedPages[0] && state.visitedPages.some(p => p === getters.currentPage) && !force) { // отменяет повторную загрузку
         dispatch('appLoadingChange', false, { root: true });
-        return 
+        return
       }
       let companyId = localStorage.getItem('defaultCompany')
-    
+
       return axios({
         method: 'GET',
         url: baseURL + '/api/debtors-data/',
@@ -629,9 +629,9 @@ export default {
         }
       }).then( res => {
           let arrayDebtors = res.data.results
-          
+
           commit('addPageToVisitedPages', getters.currentPage);
-        
+
         if (res.data.results.length === 0) {
           commit('setDebtorsStatus', true)
         } else {
@@ -651,7 +651,7 @@ export default {
 
       if(state.visitedPages[0] && state.visitedPages.some(p => p === getters.currentPage) && !force) { // отменяет повторную загрузку
         dispatch('appLoadingChange', false, { root: true });
-        return 
+        return
       }
       let companyId = localStorage.getItem('defaultCompany')
 
@@ -666,9 +666,9 @@ export default {
         }
       }).then( res => {
           let arrayDebtors = res.data
-          
+
           commit('addPageToVisitedPages', getters.currentPage);
-        
+
         if (res.data.length == 0) {
           commit('setDebtorsStatus', true)
         } else {
@@ -697,11 +697,11 @@ export default {
         if (payload == 60) {
             let intDebtorOnPage = parseInt(getters.debtorsCourtProceedingsInPage)
             // В конце добавляем число на которое будет увеличен массив должников на странице
-            let countToLoad = state.debtorsCourtProceedings.length + 10 
+            let countToLoad = state.debtorsCourtProceedings.length + 10
             let arrayDebtorLength = state.debtorsCourtProceedings.length
             // let lastCStop = cloneDeep()
             // let lastCStart = cloneDeep()
-            // Колчиство должников на странице не будет больше кол-ва выбранного пользователем 
+            // Колчиство должников на странице не будет больше кол-ва выбранного пользователем
             if ( countToLoad > intDebtorPerPage ) {
               countToLoad = intDebtorPerPage
               }
@@ -710,7 +710,7 @@ export default {
               if (arrayDebtorLength <= intDebtorPerPage) {
                 // arrayDebtorLength = intDebtorPerPage
                 if (arrayDebtorLength != intDebtorPerPage){
-                  
+
                    await $http({
                       data:{
                         comand: 'ListDebtors',
@@ -723,13 +723,13 @@ export default {
                       // dispatch('appLoadingChange',false , { root: true });
                     })
                 }
-              } 
+              }
             } else {
               console.log('Load debtors: complete')
             }
-            
+
             console.log(countToLoad)
-        } 
+        }
       // console.log(payload)
     },
 
@@ -740,11 +740,11 @@ export default {
     },
     /**
      * Функция не используется
-     * @param {*} dispatch 
-     * @param {*} payload 
+     * @param {*} dispatch
+     * @param {*} payload
      */
     renderingPreTrialProceedingsListScrolled ({dispatch}, payload) {
-      // 
+      //
     },
 
     updateCourtProceedingsList ({ commit, dispatch }) {
@@ -772,10 +772,10 @@ export default {
       dispatch('appLoadingChange', true, { root: true });
 
       commit('setDebtorFiltered', true); // флаг поиска - пагинация будет работать с данными поиска
-      
+
       if(state.visitedPages[0] && state.visitedPages.some(p => p === getters.currentPage)) {
         dispatch('appLoadingChange', false, { root: true });
-        return 
+        return
       }
       $http({
         data: {
@@ -802,10 +802,10 @@ export default {
       dispatch('appLoadingChange', true, { root: true });
 
       commit('setDebtorFiltered', true); // флаг поиска - пагинация будет работать с данными поиска
-      
+
       if(state.visitedPages[0] && state.visitedPages.some(p => p === getters.currentPage)) {
         dispatch('appLoadingChange', false, { root: true });
-        return 
+        return
       }
       $http({
         data: {
@@ -830,8 +830,8 @@ export default {
 
     /**
      * Установить всех задолжников
-     * @param {*} param0 
-     * @param {*} payload 
+     * @param {*} param0
+     * @param {*} payload
      */
     setAllDebtors ({ commit }, payload) {
       commit('setAllDebtors', payload)
@@ -863,21 +863,21 @@ export default {
       .catch((err) => console.log(err))
     },
     /**
-     * Смена статуса 
-     * @param {*} param0 
-     * @param {*} param1 
+     * Смена статуса
+     * @param {*} param0
+     * @param {*} param1
      */
     getNewStatusOne ({ state, commit, dispatch, getters }, payload) {
       //
     },
     /**
      * Очистить список должников
-     * @param {*} param0 
+     * @param {*} param0
      */
     clearListDebtors ({ commit }, payload) {
       commit('clearListDebtors', );
     },
-   
+
     /**
      * Получить список родственных связей
      */
@@ -915,7 +915,7 @@ export default {
         PassportIssued: payload.fields.PassportIssued || '',
         PlaceBirthDebt: payload.fields.PlaceBirthDebt || '',
         Registration: payload.fields.Registration || '',
-        RegistrationDate: payload.fields.RegistrationDate || '', 
+        RegistrationDate: payload.fields.RegistrationDate || '',
         SoccetEnd: 1
       }
       data = qs.stringify(data);
@@ -948,8 +948,8 @@ export default {
     },
     /**
      * Список задолжников (Судебная практика)
-     * @param {*} param0 
-     * @param {*} payload 
+     * @param {*} param0
+     * @param {*} payload
      */
     getDebtorsOnePageFromApi({ getters }, payload) {
       let { CountStart = 0, CountStop = getters.allDebtors } = payload;
@@ -970,35 +970,35 @@ export default {
     },
     /**
      * Отредавтировать данные жильца
-     * @param {*} param0 
-     * @param {*} payload 
+     * @param {*} param0
+     * @param {*} payload
      */
     editDebtorData ({ commit, getters }, { fields }) {
-      
+
           // commit('editDebtorData', fields)
-        
+
     },
     /** Удалить жильца
-     * @param {*} param0 
-     * @param {*} payload 
+     * @param {*} param0
+     * @param {*} payload
      */
     deleteResident({ dispatch, commit, getters }, { FioDebt, CurrentDebtor }) {
 
           // commit('updateDebtorResidents', { RashSchet: CurrentDebtor, newArray })
-      
+
     },
     /**
      * Добавить действие в историю действий (тавтология прям)
      */
     addHistoryNote ({ dispatch, commit, getters }, payload) {
-      
+
           // commit('addHistoryNote', note);
-       
+
     },
 
     /**
      * Открытие модального окна с данными должника
-     * @requires dispatch Вызываем модалку должника и вставляем в нее полученые данные  
+     * @requires dispatch Вызываем модалку должника и вставляем в нее полученые данные
      * @param {Object} payload данные должника из мини модели
      */
     openDebtorData ( {dispatch}, payload ) {
@@ -1033,8 +1033,8 @@ export default {
         findStatus = findStatus.find(s => s.selected == true)
         stringStatus = findStatus.title
         // console.log(findStatus)
-      } 
-     
+      }
+
 
       return axios({
         method: 'post',
@@ -1048,12 +1048,12 @@ export default {
             Production: Production,
             Status: Status
           };
-          commit('addDebtorFile', { 
+          commit('addDebtorFile', {
             fileObject,
             PaymentAccount,
             PassportOffice: payload.PassportOffice ? true : false,
-            FromEgrn: payload.FromEgrn ? true : false, 
-            PaymentOrderStateDuty:  payload.PaymentOrderStateDuty ? true : false, 
+            FromEgrn: payload.FromEgrn ? true : false,
+            PaymentOrderStateDuty:  payload.PaymentOrderStateDuty ? true : false,
           });
         }
       }).catch(e => {
@@ -1092,8 +1092,8 @@ export default {
     },
     /**
      * Создать приложение
-     * @param {*} param0 
-     * @param {*} payload 
+     * @param {*} param0
+     * @param {*} payload
      */
     createApplication({ commit, dispatch, getters }, payload) {
       // dispatch('appLoadingChange', true, { root: true });
@@ -1123,8 +1123,8 @@ export default {
     },
     /**
      * Узнать инн физического лицв
-     * @param {*} param0 
-     * @param {*} payload 
+     * @param {*} param0
+     * @param {*} payload
      */
     getDebtorInn ({ commit, dispatch, getters }, payload) {
       const { fam, name, otch, bdate, docno } = payload;
@@ -1159,7 +1159,7 @@ export default {
 
     /**
      * Запрос завки на выписку
-     * @param {*} param0 
+     * @param {*} param0
      * @param {Object} payload данные должника требуемые для оформления заявки
      */
     getApplicationDischange({ getters, dispatch }, payload) {
@@ -1214,14 +1214,14 @@ export default {
           company_id: companyID
         }
       }).then((resp) => {
-        let status = resp.data.find( st => st.id === paylaod)
+        let status = resp.data.find( st => st.id === payload)
         // if (status.)
         console.log(status)
       })
     },
     /**
      * Статус заявки на выписку о переходе прав
-     */ 
+     */
     getStatusTransferRights({ getters, dispatch, commit }, payload) {
       const { PaymentAccount } = payload;
       return $http({
@@ -1252,7 +1252,7 @@ export default {
       })
     },
 
-     
+
 },
   getters: {
     /*
@@ -1351,7 +1351,7 @@ export default {
     },
     checkedPreTrialDebtors (state) {
       return cloneDeep(state.debtorsPreTrialProceedings.filter(d => d.checked));
-    },  
+    },
     /**
      * Сумма выделенных ячеек
      * @param state
@@ -1418,7 +1418,7 @@ export default {
     },
     preTrialPages: state => {
       return Math.ceil(state.allDebtors / state.debtorsPreTrialProceedingsInPage)
-    },  
+    },
     /**
      * Количество задолжников на странице в настройках
      * @param state
@@ -1438,13 +1438,13 @@ export default {
      */
     shownDebtors(state) {
       let result = ''
-      result = state.currentPage === 1 ? state.debtorsCourtProceedings.length : state.currentPage * state.debtorsCourtProceedings.length 
+      result = state.currentPage === 1 ? state.debtorsCourtProceedings.length : state.currentPage * state.debtorsCourtProceedings.length
       // state.currentPage * state.debtorsCourtProceedingsInPage >= state.allDebtors ? result += state.allDebtors : result += (state.currentPage * state.debtorsCourtProceedingsInPage)
       return result
     },
     shownPreTrialDebtors: state => {
       let result = ''
-      result = state.currentPage === 1 ? state.debtorsPreTrialProceedings.length : state.currentPage * state.debtorsPreTrialProceedings.length 
+      result = state.currentPage === 1 ? state.debtorsPreTrialProceedings.length : state.currentPage * state.debtorsPreTrialProceedings.length
 
       // state.currentPage * state.debtorsPreTrialProceedingsInPage >= state.allDebtors ? result += state.allDebtors : result += (state.currentPage * state.debtorsPreTrialProceedingsInPage)
       return result
@@ -1467,7 +1467,7 @@ export default {
       return state.debtorPaidColNames;
     },
     /**
-     * Возвращает список приложенией для поиска 
+     * Возвращает список приложенией для поиска
      */
     applicationList(state) {
       return state.applicationList;

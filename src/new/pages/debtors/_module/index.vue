@@ -20,6 +20,7 @@
       :filters-model.sync="filtersModel"
       @reset="resetSettings"
       @rowClick="showDebtorDialog"
+      :key="type"
     >
       <template #cell(status)="{record, index}">
         <DebtorStatus
@@ -83,14 +84,19 @@
       <template #cell(penalty)="{record}">
         {{formatMoney(record.penalty)}}
       </template>
-      <template #cell(fee)="{record}">
+      <template #cell(fee)="{record}" v-if="type === 'judicial'">
         {{formatMoney(record.fee)}}
       </template>
       <template v-for="field in summariesFields" :slot="`summary(${field})`" slot-scope="{value}">
         {{formatMoney(value)}}
       </template>
       <template #action(settings)="{isActive, close}">
-        <JudicialDebtorsAutomatizingDialog v-if="isActive" @close="close"/>
+        <template v-if="type === 'judicial'">
+          <JudicialDebtorsAutomatizingDialog v-if="isActive" @close="close"/>
+        </template>
+        <template v-if="type === 'pretrial'">
+          <PretrialDebtorsAutomatizingDialog v-if="isActive" @close="close"/>
+        </template>
       </template>
     </ActiveTable>
   </div>
@@ -112,20 +118,28 @@ import {useDialog} from "@/new/hooks/useDialog";
 import {useDicts} from "@/new/hooks/useDicts";
 import JudicialDebtorsAutomatizingDialog
   from "@/new/components/judicialDebtorsAutomatizingDialog/JudicialDebtorsAutomatizingDialog";
+import PretrialDebtorsAutomatizingDialog
+  from "@/new/components/pretrialDebtorsAutomatizingDialog/PretrialDebtorsAutomatizingDialog";
+import {useToast} from "@/new/hooks/useToast";
 
 export default defineComponent({
   name: "index",
-  components: {JudicialDebtorsAutomatizingDialog, TooltipWrapper, Tooltip, Icon, Rating, DebtorStatus, ActiveTable},
+  components: {
+    PretrialDebtorsAutomatizingDialog,
+    JudicialDebtorsAutomatizingDialog, TooltipWrapper, Tooltip, Icon, Rating, DebtorStatus, ActiveTable},
   props: {
     module: String
   },
   setup(props) {
     const type = computed(() => props.module);
 
-    const summariesFields = ['accrual', 'paid_up', 'debt', 'total_debt', 'penalty', 'fee'];
+    const summariesFields = computed(() => (
+      ['accrual', 'paid_up', 'debt', 'total_debt', 'penalty', type.value === 'judicial' && 'fee'].filter(Boolean)
+    ));
 
     const {
       showDialog,
+      confirmDialog,
     } = useDialog();
 
     const showStatusDialog = async (payload) => {
@@ -188,6 +202,97 @@ export default defineComponent({
           type: type.value,
         },
       })
+    }
+
+    const {
+      showToast,
+    } = useToast();
+
+    const showNotifyDialog = async (notificationType, {allSelected, selectedItems, selectedItem}) => {
+      const isActive = allSelected
+        || !!selectedItems?.length
+        || selectedItem > -1;
+
+      if(
+        !(await confirmDialog({
+          confirmLabel: 'Отправить уведомление',
+          title: {
+            sms: 'Отправка сообщения',
+            voice: 'Отправка голосового сообщения',
+          }[notificationType],
+          isCancellable: false,
+          isConfirmable: isActive,
+          hint: !isActive && 'Выберите должника'
+        }))
+      ) {
+        return;
+      }
+
+      try {
+        await axios({
+          method: 'post',
+          url: `${baseURL}/pretrial/${notificationType}/`,
+          data: {
+            company: +localStorage.getItem('defaultCompany'),
+
+            // all: allSelected,
+            payload: selectedItems || [props.selectedItem],
+            production_type: type.value,
+          }
+        });
+        await showToast({
+          message: 'Запрос отправлен на обработку',
+          type: 'success',
+        })
+      } catch (e) {
+        await showToast({
+          message: 'Серверная ошибка',
+          type: 'error',
+        })
+      }
+    }
+
+    const showClaimDialog = async (notificationType, {allSelected, selectedItems, selectedItem}) => {
+      const isActive = allSelected
+        || !!selectedItems?.length
+        || selectedItem > -1;
+
+      if(
+        !(await confirmDialog({
+          confirmLabel: 'Перевести',
+          title: 'Перевод должников в раздел “Судебное производство”',
+          isCancellable: isActive,
+          isConfirmable: isActive,
+          hint: !isActive && 'Выберите должника',
+          message: isActive && 'Перевести выбранных должников в раздел “Судебное производство”?'
+        }))
+      ) {
+        return;
+      }
+
+      try {
+        await axios({
+          method: 'post',
+          url: `${baseURL}/pretrial/claim/`,
+          data: {
+            company: +localStorage.getItem('defaultCompany'),
+
+            // all: allSelected,
+            payload: selectedItems || [props.selectedItem],
+            production_type: type.value,
+          }
+        });
+        await showToast({
+          message: 'Запрос выполнен',
+          type: 'success',
+        });
+        await fetchData();
+      } catch (e) {
+        await showToast({
+          message: 'Серверная ошибка',
+          type: 'error',
+        })
+      }
     }
 
     const {
@@ -269,6 +374,7 @@ export default defineComponent({
       contextActions,
       summaries,
       resetSettings,
+      dropRecords,
     } = useActiveTable({
       async fetch({
         params,
@@ -290,7 +396,7 @@ export default defineComponent({
             rating: Math.floor(Math.random() * 5),
           }
         }));
-        response.data.summaries = summariesFields.reduce((acc, cur) => ({
+        response.data.summaries = summariesFields.value.reduce((acc, cur) => ({
           ...acc,
           [cur]: Math.round(Math.random() * 100000000) / 100,
         }), {});
@@ -355,7 +461,7 @@ export default defineComponent({
           },
           width: 2,
         },
-        {
+        type.value === 'judicial' && {
           field: 'magistrate_court_id',
           type: 'select',
           props: {
@@ -370,7 +476,7 @@ export default defineComponent({
             }
           },
         },
-        {
+        type.value === 'judicial' && {
           field: 'regional_court_id',
           type: 'select',
           props: {
@@ -385,7 +491,7 @@ export default defineComponent({
             }
           },
         },
-        {
+        type.value === 'judicial' && {
           field: 'egrn_status',
           type: 'select',
           props: {
@@ -393,7 +499,7 @@ export default defineComponent({
             options: judicialEgrnStatuses.value,
           },
         },
-        {
+        type.value === 'judicial' && {
           field: 'fee_status',
           type: 'select',
           props: {
@@ -401,8 +507,8 @@ export default defineComponent({
             options: judicialFeeStatuses.value,
           },
         },
-      ])),
-      columns: ref([
+      ].filter(Boolean))),
+      columns: computed(() => ([
         {
           field: 'status',
           width: '155px',
@@ -458,13 +564,13 @@ export default defineComponent({
           isSortable: true,
           width: 237,
         },
-        {
+        type.value === 'judicial' && {
           field: 'fee',
           label: 'Пошлина',
           isSortable: true,
           width: 127,
         },
-      ]),
+      ].filter(Boolean))),
       contextActions: computed(() => ([
         {
           key: 'print',
@@ -477,12 +583,13 @@ export default defineComponent({
             });
           },
         }
-      ])),
+      ].filter(Boolean))),
       actions: computed(() => ([
-        {
+        ['judicial', 'pretrial'].includes(type.value) && {
           key: 'print',
           label: 'Подача документов',
           icon: 'printer',
+          isFixed: true,
           handler: ({allSelected, selectedItems}) => {
             showPrintDialog({
               allSelected,
@@ -491,7 +598,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        {
+        type.value === 'judicial' && {
           key: 'bill',
           label: 'Свод начислений по ЛС',
           icon: 'bill',
@@ -504,7 +611,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        {
+        type.value === 'judicial' && {
           key: 'fee',
           label: 'Бланк пошлины',
           icon: 'clipboard',
@@ -517,7 +624,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        {
+        type.value === 'judicial' && {
           key: 'egrn',
           label: 'Выписка ЕГРН',
           icon: 'egrn',
@@ -527,6 +634,45 @@ export default defineComponent({
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
               selectedItem: records.value[index]?.debtor?.pk,
             });
+          },
+          asQuick: true,
+        },
+        type.value === 'pretrial' && {
+          key: 'sms',
+          label: 'Отправка SMS',
+          icon: 'sms',
+          handler: ({allSelected, selectedItems, index}) => {
+            showNotifyDialog('sms', {
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            })
+          },
+          asQuick: true,
+        },
+        type.value === 'pretrial' && {
+          key: 'voice',
+          label: 'Голосовое уведомление',
+          icon: 'microphone',
+          handler: ({allSelected, selectedItems, index}) => {
+            showNotifyDialog('voice', {
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            })
+          },
+          asQuick: true,
+        },
+        type.value === 'pretrial' && {
+          key: 'move',
+          label: 'Перенос в судебное производство',
+          icon: 'court',
+          handler: ({allSelected, selectedItems, index}) => {
+            showClaimDialog('voice', {
+              allSelected,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            })
           },
           asQuick: true,
         },
@@ -547,8 +693,10 @@ export default defineComponent({
           icon: 'gears',
           asControl: true,
         },
-      ]))
+      ].filter(Boolean)))
     });
+
+    watch(type, dropRecords);
 
     return {
       fetchData,
@@ -575,6 +723,8 @@ export default defineComponent({
       showDebtorDialog,
 
       resetSettings,
+
+      type,
     }
   }
 })

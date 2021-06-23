@@ -30,6 +30,8 @@ import DutyFormDialog from "@/new/components/dutyFormDialog/DutyFormDialog";
 import ExtractFromEgrnDialog from "@/new/components/extractFromEgrnDialog/ExtractFromEgrnDialog";
 import DebtorDialog from "@/new/components/debtorDialog/DebtorDialog";
 import CourtDialog from "@/new/components/courtDialog/CourtDialog";
+import ConfirmDialog from "@/new/components/confirmDialog/ConfirmDialog";
+import ListenFileDialog from "@/new/components/listenFileDialog/ListenFileDialog";
 
 export default defineComponent({
   name: "Dialog",
@@ -74,6 +76,8 @@ export default defineComponent({
       extractFromEgrn: ExtractFromEgrnDialog,
       debtorDialog: DebtorDialog,
       court: CourtDialog,
+      confirm: ConfirmDialog,
+      listenFile: ListenFileDialog,
     };
 
     const componentInstance = computed(() => (

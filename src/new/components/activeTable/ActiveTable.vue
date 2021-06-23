@@ -427,10 +427,10 @@ export default defineComponent({
           showDialog({
             component: 'activeTableActions',
             payload: {
-              actions: props.actions.filter(({asQuick}) => asQuick),
+              actions: props.actions.filter(({asQuick, isFixed}) => asQuick && !isFixed),
               modelValue: visibleQuickActions.value,
               onSubmit(actions) {
-                visibleQuickActions.value = actions;
+                visibleQuickActions.value = props.actions.filter(({key, asQuick, isFixed}) => asQuick && (isFixed || actions.includes(key))).map(({key}) => key);
               }
             }
           })

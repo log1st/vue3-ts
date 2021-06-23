@@ -12,12 +12,33 @@
 .form {
   margin-top: 22px;
   display: grid;
-  grid-template-areas: (
-    'documents documents period'
-    'services services actions'
-  );
-  grid-template-columns: 2fr 1fr 2fr;
   grid-gap: 55px;
+
+  &.judicial {
+    grid-template-columns: 2fr 1fr 2fr;
+    grid-template-areas: (
+            'documents documents period'
+            'services services actions'
+    );
+  }
+
+  &.pretrial {
+    grid-template-columns: 3fr 2fr;
+    grid-template-areas: (
+            'documents period'
+            'actions actions'
+    );
+
+    .actions {
+      flex-direction: row;
+      justify-content: center;
+      margin: 0 -10px;
+    }
+
+    .action {
+      margin: 0 10px;
+    }
+  }
 }
 
 .documents {
