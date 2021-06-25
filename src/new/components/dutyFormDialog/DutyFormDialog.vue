@@ -37,6 +37,7 @@ export default defineComponent({
     selectedItems: Array,
     selectedItem: Number,
     type: String,
+    filters: Object,
   },
   setup(props, {emit}) {
     const isActive = computed(() => (
@@ -68,10 +69,15 @@ export default defineComponent({
       } = await axios({
         method: 'post',
         url: `${baseURL}/constructor/debtors-data`,
+        params: props.allSelected ? {...props.filters, filters: props.filters} : {},
         data: {
           company_id: localStorage.getItem('defaultCompany'),
           production_type: props.type,
           debtor_ids: props.selectedItems || [props.selectedItem],
+          ...(props.allSelected ? {
+            filters: props.filters,
+            ...props.filters,
+          } : {}),
         }
       });
 

@@ -12,12 +12,33 @@
 .form {
   margin-top: 22px;
   display: grid;
-  grid-template-areas: (
-    'documents documents period'
-    'services services actions'
-  );
-  grid-template-columns: 2fr 1fr 2fr;
   grid-gap: 55px;
+
+  &.judicial {
+    grid-template-columns: 2fr 1fr 2fr;
+    grid-template-areas: (
+            'documents documents period'
+            'actions actions actions'
+    );
+  }
+
+  &.pretrial {
+    grid-template-columns: 3fr 2fr;
+    grid-template-areas: (
+            'documents period'
+            'actions actions'
+    );
+
+    .actions {
+      flex-direction: row;
+      justify-content: center;
+      margin: 0 -10px;
+    }
+
+    .action {
+      margin: 0 10px;
+    }
+  }
 }
 
 .documents {
@@ -33,13 +54,19 @@
   align-items: center;
 }
 
+.documentsIcons {
+  display: flex;
+  align-items: center;
+  margin-left: -10px;
+}
+
 .documentsIcon {
   height: 20px;
   width: 20px;
   color: #828282;
 
   &:not(:first-child) {
-    margin-left: 15px;
+    margin-left: 4px;
   }
 }
 
@@ -120,16 +147,15 @@
 
 .actions {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
 }
 
 .action {
   height: 70px;
   width: 200px;
-
   &:not(:first-child) {
-    margin-top: 20px;
+    margin-left: 20px;
   }
 }
 

@@ -83,6 +83,10 @@ export const useActiveTable = ({
   watch(page, fetchData);
   watch(limit, fetchData);
 
+  const dropRecords = () => {
+    records.value = [];
+  }
+
   return {
     isFetching,
     fetchData,
@@ -106,5 +110,7 @@ export const useActiveTable = ({
     summaries,
 
     resetSettings,
+
+    dropRecords,
   }
 }

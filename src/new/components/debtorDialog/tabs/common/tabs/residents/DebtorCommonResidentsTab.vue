@@ -63,7 +63,9 @@ export default defineComponent({
     }, {
       immediate: true,
       deep: true,
-    })
+    });
+
+    const toRemove = ref([]);
 
     const columns = computed(() => ([
       {key: 'full_name', label: 'ФИО'},
@@ -81,6 +83,9 @@ export default defineComponent({
     ]));
 
     const remove = async (index) => {
+      if(model.value[index].id) {
+        toRemove.value.push(model.value[index].id);
+      }
       model.value.splice(index, 1);
     }
 
@@ -95,26 +100,38 @@ export default defineComponent({
 
     const submit = async () => {
       clearErrors();
-      await Promise.all(model.value.map(async (profile, index) => {
-        try {
-          const isNew = !profile.id;
+      await Promise.all([
+        ...toRemove.value.map(async (id) => {
           await axios({
-            url: `${baseURL}/debtor/tenant/${isNew ? '' : `${profile.id}/`}`,
-            method: isNew ? 'post' : 'put',
-            data: {
-              ...profile,
-              production_type: productionType.value,
-            },
+            url: `${baseURL}/debtor/tenant/${id}`,
+            method: 'delete',
           })
-        } catch (e) {
-          addErrors(
-            Object.entries(e.response.data).reduce((acc, [key, [message]]) => ([
-              ...acc,
-              [`${index}-${key}`, message]
-            ]), [])
-          )
-        }
-      }))
+        }),
+        ...model.value.map(async (profile, index) => {
+          try {
+            const isNew = !profile.id;
+            await axios({
+              url: `${baseURL}/debtor/tenant/${isNew ? '' : `${profile.id}/`}`,
+              method: isNew ? 'post' : 'put',
+              data: {
+                ...profile,
+                production_type: productionType.value,
+                ...(isNew ? {
+                  debtor: data.value.debtor.pk,
+                } : {}),
+              },
+            })
+          } catch (e) {
+            addErrors(
+              Object.entries(e.response.data).reduce((acc, [key, [message]]) => ([
+                ...acc,
+                [`${index}-${key}`, message]
+              ]), [])
+            )
+          }
+        }),
+      ])
+      toRemove.value = [];
       if(!Object.keys(errorsMap).length) {
         await onSave();
       }
@@ -124,6 +141,7 @@ export default defineComponent({
 
     const reset = async () => {
       clearErrors();
+      toRemove.value = [];
       model.value = cloneDeep(data.value.debtor_tenant_profiles)
       isEdit.value = +!isEdit.value
     }

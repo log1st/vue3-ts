@@ -41,6 +41,7 @@ import DebtorCommonTab from "@/new/components/debtorDialog/tabs/common/DebtorCom
 import DebtorDocumentsTab from "@/new/components/debtorDialog/tabs/documents/DebtorDocumentsTab";
 import DebtorFinanceTab from "@/new/components/debtorDialog/tabs/finance/DebtorFinanceTab";
 import DebtorCourtsTab from "@/new/components/debtorDialog/tabs/courts/DebtorCourtsTab";
+import DebtorNotificationsTab from "@/new/components/debtorDialog/tabs/notifications/DebtorNotificationsTab";
 
 export default defineComponent({
   name: "DebtorDialog",
@@ -76,7 +77,7 @@ export default defineComponent({
       });
       data.value = {
         ...response.data,
-        rating: Math.floor(Math.random() * 5)
+        rating: Math.floor(Math.random() * 5),
       };
       isLoading.value = false;
     };
@@ -107,18 +108,24 @@ export default defineComponent({
         icon: 'wallet',
         component: DebtorFinanceTab,
       },
-      {
+      type.value === 'judicial' && {
         key: 'court',
         label: 'Справочник суда и судебных дел',
         icon: 'mace',
         component: DebtorCourtsTab,
+      },
+      type.value === 'pretrial' && {
+        key: 'notificaitons',
+        label: 'Карточка уведомлений',
+        icon: 'bell',
+        component: DebtorNotificationsTab,
       },
       /*{
         key: 'history',
         label: 'История',
         icon: 'clock'
       },*/
-    ]));
+    ].filter(Boolean)));
 
     const activeTab = ref(tabs.value[0]);
     const selectTab = tab => {

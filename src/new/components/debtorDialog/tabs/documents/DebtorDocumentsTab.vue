@@ -23,7 +23,8 @@
           <td v-for="column in columns" :key="column.key">
             <div :class="$style.actions" v-if="column.key === 'actions'">
               <Btn :class="$style.action" prepend-icon="eye" state="quinary" :url="document.file" target="_blank"/>
-              <Btn :class="$style.action" prepend-icon="download" state="quinary" @click="downloadDocument(document.file)"/>
+              <Btn :class="$style.action" prepend-icon="megaphone" state="quinary" @click="listenSound(document)" v-if="activeTab === 'voice'"/>
+              <Btn :class="$style.action" prepend-icon="download" state="quinary" @click="downloadDocument(document.file)" v-else/>
             </div>
             <template v-else>
               <template v-if="document[column.key]">
@@ -66,19 +67,21 @@
 </template>
 
 <script>
-import {computed, defineComponent, inject, ref, watch} from "@vue/composition-api";
+import {computed, defineComponent, inject, onMounted, ref, watch} from "@vue/composition-api";
 import {baseURL} from "@/settings/config";
 import {formatDate} from "@/new/utils/date";
 import Btn from "@/new/components/btn/Btn";
 import {downloadFile} from "@/new/utils/file";
 import {formatMoney} from "@/new/utils/money";
 import Icon from "@/new/components/icon/Icon";
+import {useDialog} from "@/new/hooks/useDialog";
 
 export default defineComponent({
   name: "DebtorDocumentsTab",
   components: {Icon, Btn},
   setup() {
     const data = inject('data');
+    const productionType = inject('productionType');
 
     const tabs = computed(() => ([
       {
@@ -96,14 +99,14 @@ export default defineComponent({
           return response.data;
         }
       },
-      {
+      productionType.value === 'judicial' && {
         key: 'homebook',
         label: 'Выписка из домовой книги',
         async fetch() {
           return [];
         }
       },
-      {
+      productionType.value === 'judicial' && {
         key: 'egrn',
         label: 'Выписка из ЕГРН',
         async fetch() {
@@ -118,7 +121,7 @@ export default defineComponent({
           return response.data;
         }
       },
-      {
+      productionType.value === 'judicial' && {
         key: 'egrnRights',
         label: 'Выписка ЕГРН о переходе прав',
         async fetch() {
@@ -133,7 +136,7 @@ export default defineComponent({
           return response.data;
         }
       },
-      {
+      productionType.value === 'judicial' && {
         key: 'fee',
         label: 'ПП об оплате госпошлины',
         async fetch() {
@@ -145,7 +148,7 @@ export default defineComponent({
           return response.data.results;
         }
       },
-      {
+      productionType.value === 'judicial' && {
         key: 'judgments',
         label: 'Судебное решение',
         async fetch() {
@@ -157,7 +160,43 @@ export default defineComponent({
           return response.data.results;
         }
       },
-    ]));
+      productionType.value === 'pretrial' && {
+        key: 'pretrials',
+        label: 'Досудебное требование',
+        async fetch() {
+          const response = await axios({
+            method: 'get',
+            url: `${baseURL}/pretrial/claim/debtor/${data.value.debtor.pk}/`,
+          });
+
+          return response.data.results;
+        }
+      },
+      productionType.value === 'pretrial' && {
+        key: 'sms',
+        label: 'Уведомления',
+        async fetch() {
+          const response = await axios({
+            method: 'get',
+            url: `${baseURL}/pretrial/sms/debtor/${data.value.debtor.pk}/`,
+          });
+
+          return response.data.results;
+        }
+      },
+      productionType.value === 'pretrial' && {
+        key: 'voice',
+        label: 'Голосовое оповещение',
+        async fetch() {
+          const response = await axios({
+            method: 'get',
+            url: `${baseURL}/pretrial/voice/debtor/${data.value.debtor.pk}/`,
+          });
+
+          return response.data.results;
+        }
+      },
+    ].filter(Boolean)));
 
     const activeTab = ref(tabs.value[0]);
     const selectTab = tab => {
@@ -171,6 +210,30 @@ export default defineComponent({
           {key: 'file', label: 'Название'},
           {key: 'document_formation_date', label: 'Дата'},
           {key: 'status', label: 'Статус'},
+        ],
+        pretrials: [
+          {key: 'id', label: '№'},
+          {key: 'file', label: 'Название'},
+          {key: 'document_formation_date', label: 'Дата'},
+          {key: 'status', label: 'Статус'},
+        ],
+        sms: [
+          {key: 'phone_number', label: 'Телефон'},
+          {key: 'status_text', label: 'Статус'},
+          {key: 'operator', label: 'Оператор'},
+          {key: 'send_at', label: 'Отправено'},
+          {key: 'status_at', label: 'Статус измненен в'},
+          {key: 'cost', label: 'Стоимость'},
+          {key: 'message', label: 'Сообщение'},
+        ],
+        voice: [
+          {key: 'phone_number', label: 'Телефон'},
+          {key: 'status_text', label: 'Статус'},
+          {key: 'operator', label: 'Оператор'},
+          {key: 'send_at', label: 'Отправено'},
+          {key: 'status_at', label: 'Статус измненен в'},
+          {key: 'cost', label: 'Стоимость'},
+          {key: 'payload', label: 'Переданные данные'},
         ],
         homebook: [
           {key: 'id', label: '№'},
@@ -244,6 +307,31 @@ export default defineComponent({
       })
     }
 
+    const {
+      showDialog,
+    } = useDialog();
+
+    const listenSound = ({name, file}) => {
+      showDialog({
+        component: 'listenFile',
+        payload: {
+          title: name,
+          file,
+        }
+      })
+    }
+
+    watch(activeTab, (tab) => {
+      if(tab.key === 'voice' && (productionType.value === 'pretrial')) {
+        listenSound({
+          name: 'Test file',
+          file: 'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3'
+        })
+      }
+    }, {
+      immediate: true,
+    })
+
     return {
       activeTab,
       selectTab,
@@ -260,6 +348,7 @@ export default defineComponent({
       formatMoney,
 
       downloadDocument,
+      listenSound,
     }
   }
 })

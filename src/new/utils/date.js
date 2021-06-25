@@ -6,6 +6,11 @@ const dateIntl = new Intl.DateTimeFormat(undefined, {
 
 export const formatDate = (date) => dateIntl.format(new Date(date));
 
+export const formatDbDate = (date) => {
+  const [year, month, day] = date.split('-');
+  return formatDate(Date.UTC(year, month, day))
+}
+
 const dateTimeIntl = new Intl.DateTimeFormat(undefined, {
   year: 'numeric',
   month: '2-digit',
@@ -74,3 +79,14 @@ export const formatTime = (secondsAmount) => {
 export const formatTimeout = (seconds) => (
   [Math.floor(seconds / 60), seconds % 60].map((i) => String(i).padStart(2, '0')).join(':')
 );
+
+export const dateToApiDate = date => {
+  if(!date) {
+    return null;
+  }
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, 0);
+  const day = `${date.getDate()}`.padStart(2, 0);
+
+  return [year, month, day].join('-')
+}

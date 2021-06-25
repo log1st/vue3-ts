@@ -18,9 +18,44 @@ export const useDialog = () => {
     await store.dispatch('dialogs/hideDialogById', id);
   };
 
+  const confirmDialog = async ({
+    actions,
+    confirmLabel,
+    cancelLabel,
+    title,
+    message,
+    hint,
+    isCancellable = true,
+    isConfirmable = true
+  }) => new Promise(async (resolve, reject) => {
+    await store.dispatch('dialogs/showDialog', {
+      component: 'confirm',
+      closeHandler: () => {
+        resolve(false)
+      },
+      payload: {
+        onClose: () => {
+          resolve(false)
+        },
+        onConfirm: (value) => {
+          resolve(value)
+        },
+        actions,
+        confirmLabel,
+        cancelLabel,
+        title,
+        hint,
+        message,
+        isCancellable,
+        isConfirmable,
+      }
+    })
+  })
+
   return {
     dialogs,
     showDialog,
     hideDialogById,
+    confirmDialog,
   };
 }

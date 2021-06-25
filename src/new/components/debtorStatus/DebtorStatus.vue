@@ -41,6 +41,7 @@ export default defineComponent({
             ready_to_court: 'green',
             filed_in_court: 'purple',
             transfer_to_proceed: 'cyan',
+            error: 'red',
           }[cur.value]
         },
       }), {})

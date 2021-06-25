@@ -1,6 +1,6 @@
 <template>
     <popup-wrapper>
-        <template v-slot:header>    
+        <template v-slot:header>
           <p class="m-0"> {{title}} </p>
         </template>
         <div class="popup__status">

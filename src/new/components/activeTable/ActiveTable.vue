@@ -297,6 +297,7 @@ export default defineComponent({
     }
     const hideContextMenu = () => {
       contextMenu.value.isActive = false;
+      contextMenu.value.index = -1;
     }
 
     const getActionPayload = () => ({
@@ -385,10 +386,6 @@ export default defineComponent({
       ).map(({field}) => field)
     ))
 
-    const gridTemplate = computed(() => (
-      computedVisibleColumns.value.map(({width}) => typeof width === 'string' ? width: `${width || 1}fr`).join(' ')
-    ));
-
     const resetTableSettings = () => {
       emit('reset');
       visibleColumns.value = props.columns.map(({field}) => field);
@@ -427,10 +424,10 @@ export default defineComponent({
           showDialog({
             component: 'activeTableActions',
             payload: {
-              actions: props.actions.filter(({asQuick}) => asQuick),
+              actions: props.actions.filter(({asQuick, isFixed}) => asQuick && !isFixed),
               modelValue: visibleQuickActions.value,
               onSubmit(actions) {
-                visibleQuickActions.value = actions;
+                visibleQuickActions.value = props.actions.filter(({key, asQuick, isFixed}) => asQuick && (isFixed || actions.includes(key))).map(({key}) => key);
               }
             }
           })
@@ -478,7 +475,11 @@ export default defineComponent({
       props.columns
         .filter(({field}) => computedVisibleColumns.value.includes(field))
         .sort(({field: a}, {field: b}) => computedVisibleColumns.value.indexOf(a) > computedVisibleColumns.value.indexOf(b) ? 1 : -1)
-    ))
+    ));
+
+    const gridTemplate = computed(() => (
+      computedColumns.value.map(({width}) => typeof width === 'string' ? width: `${width || 1}fr`).join(' ')
+    ));
 
     const model = ref({
       filters: null,

@@ -27,7 +27,10 @@
         <tr v-for="document in documents" :key="document.id">
           <td v-for="column in columns" :key="column.key">
             <template v-if="document[column.key] || document[column.key] === 0">
-              <template v-if="activeTab.key === 'accruals' && column.key === 'amount'">
+              <template v-if="['start_date', 'end_date', 'date'].includes(column.key)">
+                {{formatDbDate(document[column.key])}}
+              </template>
+              <template v-else-if="activeTab.key === 'accruals' && column.key === 'amount'">
                 {{formatMoney(document[column.key])}}
               </template>
               <template v-else-if="activeTab.key === 'paidUps' && column.key === 'amount'">
@@ -54,8 +57,7 @@
 
 <script>
 import {computed, defineComponent, inject, ref, watch} from "@vue/composition-api";
-import {baseURL} from "@/settings/config";
-import {formatDate} from "@/new/utils/date";
+import {formatDate, formatDbDate} from "@/new/utils/date";
 import Btn from "@/new/components/btn/Btn";
 import {downloadFile} from "@/new/utils/file";
 import {formatMoney} from "@/new/utils/money";
@@ -116,8 +118,6 @@ export default defineComponent({
           {key: 'date', label: 'Дата'},
           {key: 'amount', label: 'Начислено'},
           {key: 'once_amount', label: 'Начисления разовые'},
-          {key: 'correction', label: 'Доп. корректировка'},
-          {key: 'subsidy', label: 'Субсидии'},
         ],
         paidUps: [
           {key: 'date', label: 'Месяц оплаты'},
@@ -173,6 +173,7 @@ export default defineComponent({
       documents,
 
       formatDate,
+      formatDbDate,
 
       formatMoney,
 

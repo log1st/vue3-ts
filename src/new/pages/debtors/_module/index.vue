@@ -20,6 +20,7 @@
       :filters-model.sync="filtersModel"
       @reset="resetSettings"
       @rowClick="showDebtorDialog"
+      :key="type"
     >
       <template #cell(status)="{record, index}">
         <DebtorStatus
@@ -43,19 +44,19 @@
             <TooltipWrapper
               v-for="substatus in record.debtor.debtor_status[record.debtor.debtor_status.length - 1].substatus"
               :key="substatus.substatus"
-              :text="{
-                fees_paid: 'Пошлина оплачена'
-              }[substatus.substatus]"
+              :text="judicialSubStatusesMap[substatus.substatus]"
             >
               <Icon
                 :class="[
                   $style.accountIcon,
                   $style[`accountIcon${{
                     fees_paid: 'Green',
+                    statement_ordered: 'Blue',
                   }[substatus.substatus]}`]
                 ]"
                 :icon="{
-                  fees_paid: 'coins'
+                  fees_paid: 'coins',
+                  statement_ordered: 'egrn-excerpt',
                 }[substatus.substatus]"
               />
             </TooltipWrapper>
@@ -83,14 +84,25 @@
       <template #cell(penalty)="{record}">
         {{formatMoney(record.penalty)}}
       </template>
-      <template #cell(fee)="{record}">
+      <template #cell(fee)="{record}" v-if="type === 'judicial'">
         {{formatMoney(record.fee)}}
+      </template>
+      <template #cell(started_at)="{record}" v-if="type === 'executive'">
+        {{formatDate(record.started_at)}}
+      </template>
+      <template #cell(started_at)="{record}" v-if="type === 'executive'">
+        {{formatDate(record.ended_at)}}
       </template>
       <template v-for="field in summariesFields" :slot="`summary(${field})`" slot-scope="{value}">
         {{formatMoney(value)}}
       </template>
       <template #action(settings)="{isActive, close}">
-        <JudicialDebtorsAutomatizingDialog v-if="isActive" @close="close"/>
+        <template v-if="type === 'judicial'">
+          <JudicialDebtorsAutomatizingDialog v-if="isActive" @close="close"/>
+        </template>
+        <template v-if="type === 'pretrial'">
+          <PretrialDebtorsAutomatizingDialog v-if="isActive" @close="close"/>
+        </template>
       </template>
     </ActiveTable>
   </div>
@@ -112,20 +124,29 @@ import {useDialog} from "@/new/hooks/useDialog";
 import {useDicts} from "@/new/hooks/useDicts";
 import JudicialDebtorsAutomatizingDialog
   from "@/new/components/judicialDebtorsAutomatizingDialog/JudicialDebtorsAutomatizingDialog";
+import PretrialDebtorsAutomatizingDialog
+  from "@/new/components/pretrialDebtorsAutomatizingDialog/PretrialDebtorsAutomatizingDialog";
+import {useToast} from "@/new/hooks/useToast";
+import {formatDate} from "@/new/utils/date";
 
 export default defineComponent({
   name: "index",
-  components: {JudicialDebtorsAutomatizingDialog, TooltipWrapper, Tooltip, Icon, Rating, DebtorStatus, ActiveTable},
+  components: {
+    PretrialDebtorsAutomatizingDialog,
+    JudicialDebtorsAutomatizingDialog, TooltipWrapper, Tooltip, Icon, Rating, DebtorStatus, ActiveTable},
   props: {
     module: String
   },
   setup(props) {
     const type = computed(() => props.module);
 
-    const summariesFields = ['accrual', 'paid_up', 'debt', 'total_debt', 'penalty', 'fee'];
+    const summariesFields = computed(() => (
+      ['accrual', 'paid_up', 'debt', 'total_debt', 'penalty', type.value === 'judicial' && 'fee'].filter(Boolean)
+    ));
 
     const {
       showDialog,
+      confirmDialog,
     } = useDialog();
 
     const showStatusDialog = async (payload) => {
@@ -191,10 +212,111 @@ export default defineComponent({
     }
 
     const {
+      showToast,
+    } = useToast();
+
+    const showNotifyDialog = async (notificationType, {allSelected, selectedItems, selectedItem}) => {
+      const isActive = allSelected
+        || !!selectedItems?.length
+        || selectedItem > -1;
+
+      if(
+        !(await confirmDialog({
+          confirmLabel: 'Отправить уведомление',
+          title: {
+            sms: 'Отправка сообщения',
+            voice: 'Отправка голосового сообщения',
+          }[notificationType],
+          isCancellable: false,
+          isConfirmable: isActive,
+          hint: !isActive && 'Выберите должника'
+        }))
+      ) {
+        return;
+      }
+
+      try {
+        await axios({
+          method: 'post',
+          url: `${baseURL}/pretrial/${notificationType}/`,
+          data: {
+            company: +localStorage.getItem('defaultCompany'),
+
+            filters: filtersModel.value,
+            payload: selectedItems || [props.selectedItem],
+            production_type: type.value,
+          }
+        });
+        await showToast({
+          message: 'Запрос отправлен на обработку',
+          type: 'success',
+        })
+      } catch (e) {
+        await showToast({
+          message: 'Серверная ошибка',
+          type: 'error',
+        })
+      }
+    }
+
+    const showClaimDialog = async (notificationType, {allSelected, selectedItems, selectedItem}) => {
+      const isActive = allSelected
+        || !!selectedItems?.length
+        || selectedItem > -1;
+
+      if(
+        !(await confirmDialog({
+          confirmLabel: 'Перевести',
+          title: 'Перевод должников в раздел “Судебное производство”',
+          isCancellable: isActive,
+          isConfirmable: isActive,
+          hint: !isActive && 'Выберите должника',
+          message: isActive && 'Перевести выбранных должников в раздел “Судебное производство”?'
+        }))
+      ) {
+        return;
+      }
+
+      try {
+        await axios({
+          method: 'post',
+          url: `${baseURL}/pretrial/claim/`,
+          data: {
+            company: +localStorage.getItem('defaultCompany'),
+
+            filters: filtersModel.value,
+            payload: selectedItems || [props.selectedItem],
+            production_type: type.value,
+          }
+        });
+        await showToast({
+          message: 'Запрос выполнен',
+          type: 'success',
+        });
+        await fetchData();
+      } catch (e) {
+        await showToast({
+          message: 'Серверная ошибка',
+          type: 'error',
+        })
+      }
+    }
+
+    const {
       judicialStatuses,
-      judicialEgrnStatuses,
+      judicialSubStatusesMap,
       judicialFeeStatuses,
     } = useDicts();
+
+    const smsNotificationStatuses = computed(() => ([
+      {value: false, label: 'Не отправлено'},
+      {value: true, label: 'Отправлено'},
+    ]));
+
+    const voiceNotificationStatuses = computed(() => ([
+      {value: false, label: 'Не отправлено'},
+      {value: true, label: 'Отправлено'},
+    ]));
 
     const {
       records: magistrateCourts,
@@ -255,6 +377,35 @@ export default defineComponent({
     });
 
     const {
+      records: bailiffs,
+      filtersModel: bailiffsFilterModel,
+    } = useActiveTable({
+      filters: ref([{
+        field: 'name',
+        type: 'text',
+        isHidden: true,
+      }]),
+      defaultLimit: ref(10),
+      async fetch({
+        params,
+        cancelToken,
+      }) {
+        const sectors = await axios({
+          method: 'get',
+          url: `${baseURL}/reference_books/regional_court_place/`,
+          params,
+          cancelToken,
+        });
+        return {
+          data: {
+            count: sectors.data.length,
+            results: sectors.data,
+          }
+        };
+      }
+    });
+
+    const {
       fetchData,
       isFetching,
       columns,
@@ -269,6 +420,7 @@ export default defineComponent({
       contextActions,
       summaries,
       resetSettings,
+      dropRecords,
     } = useActiveTable({
       async fetch({
         params,
@@ -290,10 +442,7 @@ export default defineComponent({
             rating: Math.floor(Math.random() * 5),
           }
         }));
-        response.data.summaries = summariesFields.reduce((acc, cur) => ({
-          ...acc,
-          [cur]: Math.round(Math.random() * 100000000) / 100,
-        }), {});
+        response.data.summaries = response.data.total;
         return response;
       },
       filters: computed(() => ([
@@ -355,7 +504,23 @@ export default defineComponent({
           },
           width: 2,
         },
-        {
+        type.value === 'pretrial' && {
+          field: 'sms_status',
+          type: 'select',
+          props: {
+            placeholder: 'SMS-уведомление',
+            options: smsNotificationStatuses.value,
+          },
+        },
+        type.value === 'pretrial' && {
+          field: 'voice_status',
+          type: 'select',
+          props: {
+            placeholder: 'Голосовое уведомление',
+            options: voiceNotificationStatuses.value,
+          },
+        },
+        type.value === 'judicial' && {
           field: 'magistrate_court_id',
           type: 'select',
           props: {
@@ -370,7 +535,7 @@ export default defineComponent({
             }
           },
         },
-        {
+        type.value === 'judicial' && {
           field: 'regional_court_id',
           type: 'select',
           props: {
@@ -385,27 +550,61 @@ export default defineComponent({
             }
           },
         },
-        {
-          field: 'egrn_status',
+        type.value === 'judicial' && {
+          field: 'substatus_name',
           type: 'select',
           props: {
             placeholder: 'Статус выписки ЕГРН',
-            options: judicialEgrnStatuses.value,
+            options: [
+              {
+                value: 'statement_ordered',
+                label: 'Заказана',
+              },
+              {
+                value: '',
+                label: 'Не заказана',
+              },
+            ],
           },
         },
-        {
+        type.value === 'executive' && {
+          field: 'bailiff_id',
+          type: 'select',
+          props: {
+            placeholder: 'По участкам ФССП',
+            isSearchable: true,
+            searchPlaceholder: 'Начните ввод',
+            options: bailiffs.value,
+            valueProp: 'id',
+            displayProp: 'name',
+            async onQuery({query}) {
+              bailiffsFilterModel.value.name = query;
+            }
+          },
+          width: 2,
+        },
+        type.value === 'judicial' && {
           field: 'fee_status',
           type: 'select',
           props: {
-            placeholder: 'Статус оплаты пошлины от',
-            options: judicialFeeStatuses.value,
+            placeholder: 'Статус оплаты пошлины',
+            options: [
+              {
+                value: 'fees_paid',
+                label: 'Оплачена',
+              },
+              {
+                value: '',
+                label: 'Не оплачена',
+              },
+            ],
           },
         },
-      ])),
-      columns: ref([
+      ].filter(Boolean))),
+      columns: computed(() => ([
         {
           field: 'status',
-          width: '155px',
+          width: '180px',
           isRequired: true,
           label: 'Статус',
           withTitle: false,
@@ -428,7 +627,22 @@ export default defineComponent({
           label: 'Адрес',
           width: 281,
         },
-        {
+        type.value === 'executive' && {
+          field: 'number',
+          label: '№ ИП',
+          width: 281
+        },
+        type.value === 'executive' && {
+          field: 'started_at',
+          label: 'Дата возбуждения ИП',
+          width: 281
+        },
+        type.value === 'executive' && {
+          field: 'ended_at',
+          label: 'Дата окончания ИП',
+          width: 281
+        },
+        ['pretrial', 'judicial'].includes(type.value) && {
           field: 'accrual',
           label: 'Начислено',
           isSortable: true,
@@ -440,13 +654,13 @@ export default defineComponent({
           isSortable: true,
           width: 163,
         },
-        {
+        ['pretrial', 'judicial'].includes(type.value) && {
           field: 'debt',
           label: 'Задолженность',
           isSortable: true,
           width: 237,
         },
-        {
+        ['pretrial', 'judicial'].includes(type.value) && {
           field: 'penalty',
           label: 'Пени',
           isSortable: true,
@@ -458,13 +672,13 @@ export default defineComponent({
           isSortable: true,
           width: 237,
         },
-        {
+        type.value === 'judicial' && {
           field: 'fee',
           label: 'Пошлина',
           isSortable: true,
           width: 127,
         },
-      ]),
+      ].filter(Boolean))),
       contextActions: computed(() => ([
         {
           key: 'print',
@@ -472,61 +686,109 @@ export default defineComponent({
           handler: ({allSelected, selectedItems, index}) => {
             showPrintDialog({
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
               selectedItem: records.value[index]?.debtor?.pk,
             });
           },
         }
-      ])),
+      ].filter(Boolean))),
       actions: computed(() => ([
-        {
+        ['judicial', 'pretrial'].includes(type.value) && {
           key: 'print',
           label: 'Подача документов',
           icon: 'printer',
+          isFixed: true,
           handler: ({allSelected, selectedItems}) => {
             showPrintDialog({
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
             });
           },
           asQuick: true,
         },
-        {
+        type.value === 'judicial' && {
           key: 'bill',
           label: 'Свод начислений по ЛС',
           icon: 'bill',
           handler: ({allSelected, selectedItems, index}) => {
             showSetOfChargesDialog({
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
               selectedItem: records.value[index]?.debtor?.pk,
             });
           },
           asQuick: true,
         },
-        {
+        type.value === 'judicial' && {
           key: 'fee',
           label: 'Бланк пошлины',
           icon: 'clipboard',
           handler: ({allSelected, selectedItems, index}) => {
             showDutyFormDialog({
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
               selectedItem: records.value[index]?.debtor?.pk,
             });
           },
           asQuick: true,
         },
-        {
+        type.value === 'judicial' && {
           key: 'egrn',
           label: 'Выписка ЕГРН',
           icon: 'egrn',
           handler: ({allSelected, selectedItems, index}) => {
             showExtractFromEgrnDialog({
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
               selectedItem: records.value[index]?.debtor?.pk,
             });
+          },
+          asQuick: true,
+        },
+        type.value === 'pretrial' && {
+          key: 'sms',
+          label: 'Отправка SMS',
+          icon: 'sms',
+          handler: ({allSelected, selectedItems, index}) => {
+            showNotifyDialog('sms', {
+              allSelected,
+              filters: filtersModel.value,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            })
+          },
+          asQuick: true,
+        },
+        type.value === 'pretrial' && {
+          key: 'voice',
+          label: 'Голосовое уведомление',
+          icon: 'microphone',
+          handler: ({allSelected, selectedItems, index}) => {
+            showNotifyDialog('voice', {
+              allSelected,
+              filters: filtersModel.value,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            })
+          },
+          asQuick: true,
+        },
+        false && type.value === 'pretrial' && {
+          key: 'move',
+          label: 'Перенос в судебное производство',
+          icon: 'court',
+          handler: ({allSelected, selectedItems, index}) => {
+            showClaimDialog('voice', {
+              allSelected,
+              filters: filtersModel.value,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            })
           },
           asQuick: true,
         },
@@ -536,6 +798,7 @@ export default defineComponent({
           handler: ({allSelected, selectedItems}) => {
             showStatusDialog({
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
             });
           },
@@ -547,8 +810,10 @@ export default defineComponent({
           icon: 'gears',
           asControl: true,
         },
-      ]))
+      ].filter(Boolean)))
     });
+
+    watch(type, dropRecords);
 
     return {
       fetchData,
@@ -562,6 +827,7 @@ export default defineComponent({
       contextActions,
 
       formatMoney,
+      formatDate,
 
       summaries,
       summariesFields,
@@ -575,6 +841,10 @@ export default defineComponent({
       showDebtorDialog,
 
       resetSettings,
+
+      type,
+
+      judicialSubStatusesMap,
     }
   }
 })

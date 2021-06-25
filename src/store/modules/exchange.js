@@ -34,7 +34,7 @@ export default {
     lists: [
       {
         id: 3,
-        name: 'Интсрукция',
+        name: 'Инструкция',
         route: '/exchange/manual',
         isActive: false
       },

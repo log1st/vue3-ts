@@ -6,34 +6,36 @@
     <form
       v-if="isActive"
       @submit.prevent="print"
-      :class="$style.form"
+      :class="[$style.form, $style[type]]"
     >
       <div :class="$style.documents">
         <div :class="$style.heading">Список документов в приложении</div>
         <div :class="$style.documentsHeader">
-          <Icon icon="eye" :class="$style.documentsIcon"/>
-          <Icon icon="printer" :class="$style.documentsIcon"/>
+          <div :class="$style.documentsIcons">
+            <Icon icon="eye" :class="$style.documentsIcon"/>
+            <Icon icon="printer" :class="$style.documentsIcon"/>
+          </div>
           <div :class="$style.documentsLabel">
             Настройка печати
           </div>
         </div>
         <Draggable
           :class="$style.documentsList"
-          v-model="model.documentsOrder"
+          v-model="model.documents"
           :handle="`.${$style.documentHandle}`"
           :drag-class="$style.isDragging"
         >
           <div
             :class="$style.document"
-            v-for="(document, index) in model.documentsOrder"
-            :key="document"
+            v-for="(document, index) in model.documents"
+            :key="document.id || document.type"
           >
             <Icon icon="drag-n-sort" :class="$style.documentHandle"/>
-            <Checkbox state="switch" :label="`${index + 1}. ${documentTypesMap[document]}`" v-model="model.documents[document]"/>
+            <Checkbox state="switch" :label="`${index + 1}. ${document.name}`" v-model="model.documents[index].is_active"/>
           </div>
         </Draggable>
       </div>
-      <div :class="$style.services">
+      <div :class="$style.services" v-if="false && type === 'judicial'">
         <div :class="$style.heading">Выбор услуги</div>
         <div :class="$style.servicesList">
           <Checkbox
@@ -58,7 +60,7 @@
           <DateInput v-model="model.from" :is-disabled="model.allPeriod" placeholder="С" />
           <DateInput v-model="model.to" :is-disabled="model.allPeriod" placeholder="По" />
         </div>
-        <Checkbox :class="$style.moratorium" v-model="model.moratorium" state="switch" label="Мораторий расчёта пени"/>
+        <Checkbox v-if="type === 'judicial'" :class="$style.moratorium" v-model="model.moratorium_enabled" state="switch" label="Мораторий расчёта пени"/>
       </div>
       <div :class="$style.actions">
         <Btn :state="['tertiary', 'vertical']" :class="$style.action" @click="signAndSend" prepend-icon="flash-drive">
@@ -76,7 +78,15 @@
 </template>
 
 <script>
-import {computed, defineComponent, getCurrentInstance, onBeforeUnmount, ref, watch} from '@vue/composition-api';
+import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch
+} from '@vue/composition-api';
 import SelectInput from "@/new/components/selectInput/SelectInput";
 import Btn from "@/new/components/btn/Btn";
 import Icon from "@/new/components/icon/Icon";
@@ -88,6 +98,7 @@ import {baseURL} from "@/settings/config";
 import {useToast} from "@/new/hooks/useToast";
 import {asyncAction} from "@/new/utils/asyncAction";
 import {useDialog} from "@/new/hooks/useDialog";
+import {dateToApiDate} from "@/new/utils/date";
 
 export default defineComponent({
   name: "PrintDebtorsDialog",
@@ -104,16 +115,16 @@ export default defineComponent({
     selectedItems: Array,
     selectedItem: Number,
     type: String,
+    filters: Object,
   },
   setup(props, {emit}) {
     const model = ref({
-      documents: {},
-      documentsOrder: [],
+      documents: [],
       services: {},
       allPeriod: true,
       from: null,
       to: null,
-      moratorium: true,
+      moratorium_enabled: true,
     });
 
     const isActive = computed(() => (
@@ -130,6 +141,51 @@ export default defineComponent({
       showDialog,
     } = useDialog();
 
+    const fetchAvailableDocuments = async () => {
+      const currentResponse = await axios({
+        method: 'get',
+        url: `${baseURL}/document_attachments/company`,
+        params: {
+          production_type: props.type,
+          company_id: localStorage.getItem('defaultCompany'),
+        }
+      });
+      const accountResponse = await axios({
+        method: 'get',
+        url: `${baseURL}/api/account/document/`,
+      });
+      const {data: {attachments, productions}} = await axios({
+        method: 'get',
+        url: `${baseURL}/document_attachments/defaults/`,
+      });
+
+      model.value.documents = [
+        ...currentResponse.data,
+        ...accountResponse.data
+          .filter(({can_be_attached, id}) => can_be_attached && (currentResponse.data.findIndex(d => d.id === id) === -1))
+          .map(document => ({
+            ...document,
+            type: 'organisation',
+          }))
+      ]
+
+      model.value.documents.push(...(
+        productions[props.type].filter(type => (
+          model.value.documents.findIndex(d => d.type === type) === -1
+        )).map(type => ({
+          type,
+          name: attachments[type].name,
+          is_active: false,
+        }))
+      ))
+    }
+
+    onMounted(fetchAvailableDocuments)
+
+    const {
+      services,
+    } = useDicts();
+
     let printUnsubscribe;
     onBeforeUnmount(() => {
       // printUnsubscribe && printUnsubscribe()
@@ -139,13 +195,42 @@ export default defineComponent({
         return;
       }
 
+      await axios({
+        method: 'post',
+        url: `${baseURL}/document_attachments/company_bulk_create/`,
+        params: props.allSelected ? {...props.filters, filters: props.filters} : {},
+        data: {
+          company_id: localStorage.getItem('defaultCompany'),
+          production_type: props.type,
+          attachments: model.value.documents.map((document, index) => ({
+            ...document,
+            order_number: index + 1,
+          })),
+
+          ...(props.allSelected ? {
+            filters: props.filters,
+            ...props.filters,
+          } : {}),
+        }
+      });
+
       const {data: {id: requestId}} = await axios({
         method: 'post',
         url: `${baseURL}/document_attachments/generate_merged/`,
+        params: props.allSelected ? {...props.filters, filters: props.filters} : {},
         data: {
           production_type: props.type,
           company_id: localStorage.getItem('defaultCompany'),
           debtor_ids: props.selectedItems || [props.selectedItem],
+          ...(model.value.allPeriod ? {} : {
+            date_from: dateToApiDate(model.value.from),
+            date_to: dateToApiDate(model.value.to),
+          }),
+
+          ...(props.allSelected ? {
+            filters: props.filters,
+            ...props.filters,
+          } : {}),
         }
       });
 
@@ -198,24 +283,6 @@ export default defineComponent({
       emit('close')
     }
 
-    const {
-      documentTypes,
-      documentTypesMap,
-
-      services,
-    } = useDicts();
-
-    watch(documentTypes, types => {
-      model.value.documents = types.reduce((acc, {value}) => ({
-        ...acc,
-        [value]: true
-      }), {});
-      model.value.documentsOrder = types.map(({value}) => value);
-    }, {
-      deep: true,
-      immediate: true,
-    });
-
     watch(services, s => {
       model.value.services = s.reduce((acc, {value}) => ({
         ...acc,
@@ -233,8 +300,6 @@ export default defineComponent({
 
     return {
       model,
-
-      documentTypesMap,
 
       services,
 
