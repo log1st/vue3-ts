@@ -87,6 +87,12 @@
       <template #cell(fee)="{record}" v-if="type === 'judicial'">
         {{formatMoney(record.fee)}}
       </template>
+      <template #cell(started_at)="{record}" v-if="type === 'executive'">
+        {{formatDate(record.started_at)}}
+      </template>
+      <template #cell(started_at)="{record}" v-if="type === 'executive'">
+        {{formatDate(record.ended_at)}}
+      </template>
       <template v-for="field in summariesFields" :slot="`summary(${field})`" slot-scope="{value}">
         {{formatMoney(value)}}
       </template>
@@ -121,6 +127,7 @@ import JudicialDebtorsAutomatizingDialog
 import PretrialDebtorsAutomatizingDialog
   from "@/new/components/pretrialDebtorsAutomatizingDialog/PretrialDebtorsAutomatizingDialog";
 import {useToast} from "@/new/hooks/useToast";
+import {formatDate} from "@/new/utils/date";
 
 export default defineComponent({
   name: "index",
@@ -370,6 +377,35 @@ export default defineComponent({
     });
 
     const {
+      records: bailiffs,
+      filtersModel: bailiffsFilterModel,
+    } = useActiveTable({
+      filters: ref([{
+        field: 'name',
+        type: 'text',
+        isHidden: true,
+      }]),
+      defaultLimit: ref(10),
+      async fetch({
+        params,
+        cancelToken,
+      }) {
+        const sectors = await axios({
+          method: 'get',
+          url: `${baseURL}/reference_books/regional_court_place/`,
+          params,
+          cancelToken,
+        });
+        return {
+          data: {
+            count: sectors.data.length,
+            results: sectors.data,
+          }
+        };
+      }
+    });
+
+    const {
       fetchData,
       isFetching,
       columns,
@@ -531,6 +567,22 @@ export default defineComponent({
             ],
           },
         },
+        type.value === 'executive' && {
+          field: 'bailiff_id',
+          type: 'select',
+          props: {
+            placeholder: 'По участкам ФССП',
+            isSearchable: true,
+            searchPlaceholder: 'Начните ввод',
+            options: bailiffs.value,
+            valueProp: 'id',
+            displayProp: 'name',
+            async onQuery({query}) {
+              bailiffsFilterModel.value.name = query;
+            }
+          },
+          width: 2,
+        },
         type.value === 'judicial' && {
           field: 'fee_status',
           type: 'select',
@@ -576,6 +628,21 @@ export default defineComponent({
           width: 281,
         },
         {
+          field: 'number',
+          label: '№ ИП',
+          width: 281
+        },
+        {
+          field: 'started_at',
+          label: 'Дата возбуждения ИП',
+          width: 281
+        },
+        {
+          field: 'ended_at',
+          label: 'Дата окончания ИП',
+          width: 281
+        },
+        ['pretrial', 'judicial'].includes(type.value) && {
           field: 'accrual',
           label: 'Начислено',
           isSortable: true,
@@ -587,13 +654,13 @@ export default defineComponent({
           isSortable: true,
           width: 163,
         },
-        {
+        ['pretrial', 'judicial'].includes(type.value) && {
           field: 'debt',
           label: 'Задолженность',
           isSortable: true,
           width: 237,
         },
-        {
+        ['pretrial', 'judicial'].includes(type.value) && {
           field: 'penalty',
           label: 'Пени',
           isSortable: true,
@@ -760,6 +827,7 @@ export default defineComponent({
       contextActions,
 
       formatMoney,
+      formatDate,
 
       summaries,
       summariesFields,
