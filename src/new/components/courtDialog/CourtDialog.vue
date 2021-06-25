@@ -2,7 +2,18 @@
   <form @submit.prevent="submit" :class="$style.dialog">
     <div :class="$style.field" v-for="field in fields" :key="field.key">
       <div :class="$style.label">{{field.label}}</div>
-      <div :class="$style.value" v-if="!isEdit">
+      <div :class="$style.value" v-if="!isEdit || [
+        'name',
+        'address',
+        'payment_recipient_name',
+        'bic',
+        'payment_recipient_account',
+        'inn',
+        'kpp',
+        'oktmo',
+        'payment_recipient_bank',
+        'kbk'
+      ].includes(field.key)">
         {{court[field.key]}}
       </div>
       <TextInput

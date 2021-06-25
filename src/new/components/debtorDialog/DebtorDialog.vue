@@ -41,6 +41,7 @@ import DebtorCommonTab from "@/new/components/debtorDialog/tabs/common/DebtorCom
 import DebtorDocumentsTab from "@/new/components/debtorDialog/tabs/documents/DebtorDocumentsTab";
 import DebtorFinanceTab from "@/new/components/debtorDialog/tabs/finance/DebtorFinanceTab";
 import DebtorCourtsTab from "@/new/components/debtorDialog/tabs/courts/DebtorCourtsTab";
+import DebtorNotificationsTab from "@/new/components/debtorDialog/tabs/notifications/DebtorNotificationsTab";
 
 export default defineComponent({
   name: "DebtorDialog",
@@ -76,7 +77,7 @@ export default defineComponent({
       });
       data.value = {
         ...response.data,
-        rating: Math.floor(Math.random() * 5)
+        rating: Math.floor(Math.random() * 5),
       };
       isLoading.value = false;
     };
@@ -117,6 +118,7 @@ export default defineComponent({
         key: 'notificaitons',
         label: 'Карточка уведомлений',
         icon: 'bell',
+        component: DebtorNotificationsTab,
       },
       /*{
         key: 'history',

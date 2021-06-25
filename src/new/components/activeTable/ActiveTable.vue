@@ -297,6 +297,7 @@ export default defineComponent({
     }
     const hideContextMenu = () => {
       contextMenu.value.isActive = false;
+      contextMenu.value.index = -1;
     }
 
     const getActionPayload = () => ({

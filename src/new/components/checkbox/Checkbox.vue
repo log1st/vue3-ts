@@ -3,7 +3,8 @@
     :class="[
       $style.checkbox,
       ...(Array.isArray(state) ? state : [state]).map(s => $style[s]),
-      isSelected && $style.isSelected
+      isSelected && $style.isSelected,
+      isDisabled && $style.isDisabled,
     ]"
     @click="onClick"
   >
@@ -42,11 +43,15 @@ export default defineComponent({
     },
     label: String,
     preLabel: String,
+    isDisabled: Boolean,
   },
   setup(props, {emit}) {
     const isSelected = computed(() => props.modelValue === props.trueValue);
 
     const onClick = () => {
+      if(props.isDisabled) {
+        return;
+      }
       emit(
         'update:modelValue',
         isSelected.value ? props.falseValue : props.trueValue,

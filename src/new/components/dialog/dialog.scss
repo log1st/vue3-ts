@@ -29,6 +29,10 @@
 
     .body {
       width: 100%;
+
+      overflow-y: auto;
+      overflow-x: hidden;
+      max-height: 100%;
     }
   }
 }
@@ -52,9 +56,6 @@
   position: relative;
 
   padding: 30px 40px 23px;
-
-  overflow-y: auto;
-  max-height: 100%;
 }
 
 .close {

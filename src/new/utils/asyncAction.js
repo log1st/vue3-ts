@@ -21,6 +21,7 @@ export const asyncAction = (action, handler, duration) => {
   });
 
   const unsubscribe = () => {
+    console.log('blya');
     clearTimeout(timeout);
   }
 

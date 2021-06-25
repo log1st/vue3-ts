@@ -44,19 +44,19 @@
             <TooltipWrapper
               v-for="substatus in record.debtor.debtor_status[record.debtor.debtor_status.length - 1].substatus"
               :key="substatus.substatus"
-              :text="{
-                fees_paid: 'Пошлина оплачена'
-              }[substatus.substatus]"
+              :text="judicialSubStatusesMap[substatus.substatus]"
             >
               <Icon
                 :class="[
                   $style.accountIcon,
                   $style[`accountIcon${{
                     fees_paid: 'Green',
+                    statement_ordered: 'Blue',
                   }[substatus.substatus]}`]
                 ]"
                 :icon="{
-                  fees_paid: 'coins'
+                  fees_paid: 'coins',
+                  statement_ordered: 'egrn-excerpt',
                 }[substatus.substatus]"
               />
             </TooltipWrapper>
@@ -235,7 +235,7 @@ export default defineComponent({
           data: {
             company: +localStorage.getItem('defaultCompany'),
 
-            // all: allSelected,
+            filters: filtersModel.value,
             payload: selectedItems || [props.selectedItem],
             production_type: type.value,
           }
@@ -277,7 +277,7 @@ export default defineComponent({
           data: {
             company: +localStorage.getItem('defaultCompany'),
 
-            // all: allSelected,
+            filters: filtersModel.value,
             payload: selectedItems || [props.selectedItem],
             production_type: type.value,
           }
@@ -297,9 +297,19 @@ export default defineComponent({
 
     const {
       judicialStatuses,
-      judicialEgrnStatuses,
+      judicialSubStatusesMap,
       judicialFeeStatuses,
     } = useDicts();
+
+    const smsNotificationStatuses = computed(() => ([
+      {value: false, label: 'Не отправлено'},
+      {value: true, label: 'Отправлено'},
+    ]));
+
+    const voiceNotificationStatuses = computed(() => ([
+      {value: false, label: 'Не отправлено'},
+      {value: true, label: 'Отправлено'},
+    ]));
 
     const {
       records: magistrateCourts,
@@ -396,10 +406,7 @@ export default defineComponent({
             rating: Math.floor(Math.random() * 5),
           }
         }));
-        response.data.summaries = summariesFields.value.reduce((acc, cur) => ({
-          ...acc,
-          [cur]: Math.round(Math.random() * 100000000) / 100,
-        }), {});
+        response.data.summaries = response.data.total;
         return response;
       },
       filters: computed(() => ([
@@ -461,6 +468,22 @@ export default defineComponent({
           },
           width: 2,
         },
+        type.value === 'pretrial' && {
+          field: 'sms_status',
+          type: 'select',
+          props: {
+            placeholder: 'SMS-уведомление',
+            options: smsNotificationStatuses.value,
+          },
+        },
+        type.value === 'pretrial' && {
+          field: 'voice_status',
+          type: 'select',
+          props: {
+            placeholder: 'Голосовое уведомление',
+            options: voiceNotificationStatuses.value,
+          },
+        },
         type.value === 'judicial' && {
           field: 'magistrate_court_id',
           type: 'select',
@@ -492,19 +515,37 @@ export default defineComponent({
           },
         },
         type.value === 'judicial' && {
-          field: 'egrn_status',
+          field: 'substatus_name',
           type: 'select',
           props: {
             placeholder: 'Статус выписки ЕГРН',
-            options: judicialEgrnStatuses.value,
+            options: [
+              {
+                value: 'statement_ordered',
+                label: 'Заказана',
+              },
+              {
+                value: '',
+                label: 'Не заказана',
+              },
+            ],
           },
         },
         type.value === 'judicial' && {
           field: 'fee_status',
           type: 'select',
           props: {
-            placeholder: 'Статус оплаты пошлины от',
-            options: judicialFeeStatuses.value,
+            placeholder: 'Статус оплаты пошлины',
+            options: [
+              {
+                value: 'fees_paid',
+                label: 'Оплачена',
+              },
+              {
+                value: '',
+                label: 'Не оплачена',
+              },
+            ],
           },
         },
       ].filter(Boolean))),
@@ -578,6 +619,7 @@ export default defineComponent({
           handler: ({allSelected, selectedItems, index}) => {
             showPrintDialog({
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
               selectedItem: records.value[index]?.debtor?.pk,
             });
@@ -593,6 +635,7 @@ export default defineComponent({
           handler: ({allSelected, selectedItems}) => {
             showPrintDialog({
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
             });
           },
@@ -605,6 +648,7 @@ export default defineComponent({
           handler: ({allSelected, selectedItems, index}) => {
             showSetOfChargesDialog({
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
               selectedItem: records.value[index]?.debtor?.pk,
             });
@@ -618,6 +662,7 @@ export default defineComponent({
           handler: ({allSelected, selectedItems, index}) => {
             showDutyFormDialog({
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
               selectedItem: records.value[index]?.debtor?.pk,
             });
@@ -631,6 +676,7 @@ export default defineComponent({
           handler: ({allSelected, selectedItems, index}) => {
             showExtractFromEgrnDialog({
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
               selectedItem: records.value[index]?.debtor?.pk,
             });
@@ -644,6 +690,7 @@ export default defineComponent({
           handler: ({allSelected, selectedItems, index}) => {
             showNotifyDialog('sms', {
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
               selectedItem: records.value[index]?.debtor?.pk,
             })
@@ -657,19 +704,21 @@ export default defineComponent({
           handler: ({allSelected, selectedItems, index}) => {
             showNotifyDialog('voice', {
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
               selectedItem: records.value[index]?.debtor?.pk,
             })
           },
           asQuick: true,
         },
-        type.value === 'pretrial' && {
+        false && type.value === 'pretrial' && {
           key: 'move',
           label: 'Перенос в судебное производство',
           icon: 'court',
           handler: ({allSelected, selectedItems, index}) => {
             showClaimDialog('voice', {
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
               selectedItem: records.value[index]?.debtor?.pk,
             })
@@ -682,6 +731,7 @@ export default defineComponent({
           handler: ({allSelected, selectedItems}) => {
             showStatusDialog({
               allSelected,
+              filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
             });
           },
@@ -725,6 +775,8 @@ export default defineComponent({
       resetSettings,
 
       type,
+
+      judicialSubStatusesMap,
     }
   }
 })

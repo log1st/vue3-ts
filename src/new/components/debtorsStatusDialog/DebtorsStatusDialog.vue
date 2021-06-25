@@ -45,6 +45,7 @@ export default defineComponent({
     selectedItems: Array,
     selectedItem: Number,
     type: String,
+    filters: Object,
   },
   setup(props, {emit}) {
     const {
@@ -84,11 +85,16 @@ export default defineComponent({
         await axios({
           method: 'post',
           url: `${baseURL}/api/debtors-data/${props.type}/status/`,
+          params: props.allSelected ? {...props.filters, filters: props.filters} : {},
           data: {
+            ...(props.allSelected ? {
+              filters: props.filters,
+              ...props.filters,
+            } : {}),
+
             status: model.value.status,
 
             debtor_ids: props.selectedItems || [],
-            all: props.allSelected,
 
             company_id: localStorage.getItem('defaultCompany'),
           }

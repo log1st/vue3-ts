@@ -4,7 +4,7 @@
       <div :class="$style.fieldLabel">
         {{field.label}}
       </div>
-      <TextInput :error="errorsMap[field.key]" v-if="isEdit" :class="$style.fieldValue" v-model="model[field.key]" :placeholder="field.label"/>
+      <TextInput :error="errorsMap[field.key]" v-if="isEdit && !['full_name', 'address'].includes(field.key)" :class="$style.fieldValue" v-model="model[field.key]" :placeholder="field.label"/>
       <div v-else :class="$style.fieldValue">
         {{model[field.key]}}
       </div>
