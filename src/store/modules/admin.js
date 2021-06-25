@@ -16,7 +16,8 @@ export default {
         allVars: [],
         companyTemplate:[],
         applications: [],
-        columnTemplate: []
+        columnTemplate: [],
+        documents: []
     }),
     mutations:{
         checkCompany (state, payload) {
@@ -84,6 +85,9 @@ export default {
           payload.forEach( att => {
             state.applications.push(att)
           })
+        },
+        setAllDocuments (state, payload) {
+          state.documents = payload
         }
     },
     actions:{
@@ -213,6 +217,7 @@ export default {
             })
           }) 
         },
+
         getDefautltColumnTemplate ({commit}) {
           return new Promise ((resolve, reject) => {
             $http({
@@ -516,7 +521,46 @@ export default {
             console.log(err)
           })
         },
-        
+        /**
+         * Получение всех доступных документов (всех компаний)
+         * @param {*} commit 
+         * @returns 
+         */
+        getAllDocuments ( {commit} ) {
+          return $http({
+            command: `/api/account/document/`,
+            method: 'GET',
+            requestCode: 'none'
+          })
+          .then( resp => {
+            commit('setAllDocuments', resp)
+          })
+        },
+        deleteDocument ( { dispatch }, payload ) {
+          const { id } = payload
+          return $http({
+            command: `/api/account/document/${id}/`,
+            method: 'DELETE',
+          }).then ( resp => {
+            this._vm.$toast.open({
+              message: `Документ удален`,
+              type: 'success',
+              duration: 5000,
+              dismissible: true,
+              position: 'top-right'
+            })
+            dispatch('getAllDocuments')
+          })
+          .catch( error => {
+            this._vm.$toast.open({
+              message: `Ошибка удаления документа - ${error} `,
+              type: 'erorr',
+              duration: 5000,
+              dismissible: true,
+              position: 'top-right'
+            })
+          })
+        },
         /**
          *  ========================================
          *  Конструктор документов
@@ -765,6 +809,10 @@ export default {
          * Все переменные что приходят в обертки групп
          */
         allGroupsVariables: state => state.allVars,
-        columnTemplate: state => state.columnTemplate
+        columnTemplate: state => state.columnTemplate,
+
+        documentsByCompanyId: (state) => (id) => {
+            return state.documents.filter( doc => doc.company === id )
+        }
     }
 }

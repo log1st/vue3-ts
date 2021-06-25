@@ -314,7 +314,8 @@ export default {
         'clearCompanyApplication',
         'setUpdatedApplication',
         'getRegionsList',
-        'getColumnTemplate'
+        'getColumnTemplate',
+        'getAllDocuments'
         ]),
 
       ...mapMutations([
@@ -713,6 +714,7 @@ export default {
 
     },
     mounted(){
+      this.getAllDocuments()
 
       events.$on('docarray', (data) => {
         this.documentArray = data.docs
