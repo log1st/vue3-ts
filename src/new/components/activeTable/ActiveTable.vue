@@ -386,10 +386,6 @@ export default defineComponent({
       ).map(({field}) => field)
     ))
 
-    const gridTemplate = computed(() => (
-      computedVisibleColumns.value.map(({width}) => typeof width === 'string' ? width: `${width || 1}fr`).join(' ')
-    ));
-
     const resetTableSettings = () => {
       emit('reset');
       visibleColumns.value = props.columns.map(({field}) => field);
@@ -479,7 +475,11 @@ export default defineComponent({
       props.columns
         .filter(({field}) => computedVisibleColumns.value.includes(field))
         .sort(({field: a}, {field: b}) => computedVisibleColumns.value.indexOf(a) > computedVisibleColumns.value.indexOf(b) ? 1 : -1)
-    ))
+    ));
+
+    const gridTemplate = computed(() => (
+      computedColumns.value.map(({width}) => typeof width === 'string' ? width: `${width || 1}fr`).join(' ')
+    ));
 
     const model = ref({
       filters: null,

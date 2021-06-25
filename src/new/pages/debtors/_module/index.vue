@@ -604,7 +604,7 @@ export default defineComponent({
       columns: computed(() => ([
         {
           field: 'status',
-          width: '155px',
+          width: '180px',
           isRequired: true,
           label: 'Статус',
           withTitle: false,
