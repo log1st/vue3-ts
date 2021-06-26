@@ -37,6 +37,7 @@ import {useActiveTable} from "@/new/components/activeTable/useActiveTable";
 import {baseURL} from "@/settings/config";
 import {useDialog} from "@/new/hooks/useDialog";
 import {useToast} from "@/new/hooks/useToast";
+import {useStore} from "@/new/hooks/useStore";
 
 export default defineComponent({
   name: 'index',
@@ -49,6 +50,8 @@ export default defineComponent({
     const {
       showToast,
     } = useToast();
+
+    const store = useStore();
 
     const {
       columns,
@@ -133,6 +136,10 @@ export default defineComponent({
               message: `Компания "${organization.name_full} установлена по умолчанию"`,
               type: 'success',
             });
+
+            //@TODO remove
+            store.dispatch('setCompanyDefault', store.getters['getCompanies'].findIndex(company => company.id === organization.id))
+            store.dispatch('setCompanyDefaultData', organization)
           }
         },
       ])),
