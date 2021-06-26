@@ -26,9 +26,12 @@ export default {
       judicialSubStatuses: [],
       judicialEgrnStatuses: [],
       judicialFeeStatuses: [],
+      tenantRelationships: [],
     }
   },
   getters: {
+    tenantRelationships: getList('tenantRelationships'),
+    tenantRelationshipsMap: getMap('tenantRelationships'),
     services: getList('services'),
     servicesMap: getMap('services'),
     judicialStatuses: getList('judicialStatuses'),
@@ -41,6 +44,7 @@ export default {
     judicialFeeStatusesMap: getMap('judicialFeeStatuses'),
   },
   mutations: {
+    settenantRelationships: setList('tenantRelationships'),
     setServices: setList('services'),
     setJudicialStatuses: setList('judicialStatuses'),
     setJudicialSubStatuses: setList('judicialSubStatuses'),
@@ -58,6 +62,19 @@ export default {
         method: 'get',
         url: `${baseURL}/debtor_status/consts`
       });
+
+      try {
+        const {
+          data
+        } = await axios({
+          method: 'get',
+          url: `${baseURL}/debtor/tenant/relationship/choices`
+        });
+
+        commit('settenantRelationships', data || [])
+      } catch (e) {
+        console.log('error', 'no relationships')
+      }
 
       commit('setJudicialStatuses', statuses.map(({value, info}) => ({
         value,

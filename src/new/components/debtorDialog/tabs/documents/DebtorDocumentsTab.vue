@@ -84,7 +84,7 @@ export default defineComponent({
     const productionType = inject('productionType');
 
     const tabs = computed(() => ([
-      {
+      productionType.value !== 'executive' && {
         key: 'common',
         label: 'Общий',
         async fetch() {
@@ -196,6 +196,27 @@ export default defineComponent({
           return response.data.results;
         }
       },
+      productionType.value === 'executive' && {
+        key: 'fns',
+        label: 'ФНС',
+        async fetch() {
+          return []
+        }
+      },
+      productionType.value === 'executive' && {
+        key: 'banks',
+        label: 'Банки',
+        async fetch() {
+          return []
+        }
+      },
+      productionType.value === 'executive' && {
+        key: 'executionList',
+        label: 'Исполнительный лист',
+        async fetch() {
+          return []
+        }
+      },
     ].filter(Boolean)));
 
     const activeTab = ref(tabs.value[0]);
@@ -275,6 +296,37 @@ export default defineComponent({
           {key: 'judge_full_name', label: 'ФИО судьи'},
           {key: 'status', label: 'Статус'},
           {key: 'statuses', label: 'История статусов'},
+        ],
+        fns: [
+          {key: 'id', label: '№'},
+          {key: 'case_id', label: 'Индефикатор запроса'},
+          {key: 'name', label: 'Наименование'},
+          {key: 'created_at', label: 'Дата запроса'},
+          {key: 'response_at', label: 'Дата ответа'},
+          {key: 'inspector_full_name', label: 'ФИО инспектора'},
+          {key: 'status', label: 'Статус'},
+          {key: 'statuses', label: 'История статусов'},
+        ],
+        banks: [
+          {key: 'id', label: '№'},
+          {key: 'case_id', label: 'Индефикатор запроса'},
+          {key: 'name', label: 'Наименование'},
+          {key: 'bank_name', label: 'Наименование банка'},
+          {key: 'created_at', label: 'Дата отправки'},
+          {key: 'response_at', label: 'Дата ответа'},
+          {key: 'inspector_full_name', label: 'ФИО инспектора'},
+          {key: 'status', label: 'Статус'},
+          {key: 'statuses', label: 'История статусов'},
+        ],
+        executionList: [
+          {key: 'id', label: '№'},
+          {key: 'case_id', label: '№ дела'},
+          {key: 'created_at', label: 'Дата возбуждения ИП'},
+          {key: 'ended_at', label: 'Дата окончания ИП'},
+          {key: 'reason', label: 'Основание прекращения'},
+          {key: 'executor_full_name', label: 'ФИО судебного пристава'},
+          {key: 'executor_contact', label: 'Контакты пристава'},
+          {key: 'status', label: 'Статус'},
         ],
       }[activeTab.value.key] || []),
       {

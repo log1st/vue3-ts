@@ -34,12 +34,23 @@
   background: #21317A;
   border-radius: 10px;
 
+  .prepend {
+    color: #fff;
+    height: 20px;
+    width: 20px;
+  }
+
   .content {
     font-weight: 500;
     font-size: 14px;
     line-height: 17px;
     letter-spacing: 0.02em;
     color: #FFFFFF;
+  }
+
+  &.isSquare {
+    height: 40px;
+    width: 40px;
   }
 
   &:not(.isDisabled) {
@@ -49,6 +60,14 @@
   }
 
   &.isDisabled {
+  }
+
+  &.active {
+    background: #fff;
+
+    .prepend {
+      color: #333333;
+    }
   }
 }
 

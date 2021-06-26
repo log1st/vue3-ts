@@ -2,13 +2,14 @@
   <div
     :class="[
       $style.record,
+      $style[state],
       isSelected && $style.isSelected,
        gridModifier
      ]"
     :style="{gridTemplateColumns: gridTemplate}"
     @contextmenu.prevent="$emit('contextmenu', $event)"
   >
-    <div :class="$style.selector" @click="$emit('rowClick')"/>
+    <div :class="$style.selector" v-if="state === 'primary'" @click="$emit('rowClick')"/>
     <div
       v-for="column in columns"
       :key="column.field"
@@ -19,7 +20,12 @@
     >
       <div :class="$style.content">
         <slot :name="`cell(${column.field})`" :record="record" :index="index">
-          {{getDeepField(record, column.field)}}
+          <div :class="$style.noData" v-if="[null, undefined].includes(getDeepField(record, column.field))">
+            Нет данных
+          </div>
+          <template v-else>
+            {{getDeepField(record, column.field)}}
+          </template>
         </slot>
       </div>
 
@@ -42,6 +48,10 @@ export default defineComponent({
   name: "ActiveTableRecord",
   components: {Checkbox},
   props: {
+    state: {
+      type: String,
+      default: 'primary'
+    },
     columns: Array,
     isSelectable: Boolean,
     selectableColumn: String,

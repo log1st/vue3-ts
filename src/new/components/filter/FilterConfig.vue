@@ -15,7 +15,9 @@
       v-else-if="type === 'text'"
       :state="['primary', 'dark']"
       v-model="value"
-      modelValueModifiers="lazy:250"
+      :modelValueModifiers="{
+        'delay:500': true,
+      }"
       v-bind="props"
     />
   </div>

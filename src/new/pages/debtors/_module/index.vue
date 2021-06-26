@@ -110,7 +110,7 @@
 
 <script>
 import {computed, defineComponent, ref, watch} from "@vue/composition-api";
-import {useActiveTable} from "@/new/components/activeTable/useActiveTable";
+import {formatFiltersModelToRequest, useActiveTable} from "@/new/components/activeTable/useActiveTable";
 import ActiveTable from "@/new/components/activeTable/ActiveTable";
 import axios from "axios";
 import {baseURL} from "@/settings/config";
@@ -251,6 +251,70 @@ export default defineComponent({
           message: 'Запрос отправлен на обработку',
           type: 'success',
         })
+      } catch (e) {
+        await showToast({
+          message: 'Серверная ошибка',
+          type: 'error',
+        })
+      }
+    }
+
+    const showFnsDialog = async ({allSelected, selectedItems, selectedItem, filters}) => {
+      const isActive = allSelected
+        || !!selectedItems?.length
+        || selectedItem > -1;
+
+      if(
+        !(await confirmDialog({
+          confirmLabel: 'Запросить',
+          title: 'Работа с печатными документами',
+          isCancellable: false,
+          isConfirmable: isActive,
+          hint: !isActive && 'Выберите должника',
+        }))
+      ) {
+        return;
+      }
+
+      try {
+        throw 'error';
+        await showToast({
+          message: 'Запрос выполнен',
+          type: 'success',
+        });
+        await fetchData();
+      } catch (e) {
+        await showToast({
+          message: 'Серверная ошибка',
+          type: 'error',
+        })
+      }
+    }
+
+    const showBankDialog = async ({allSelected, selectedItems, selectedItem, filters}) => {
+      const isActive = allSelected
+        || !!selectedItems?.length
+        || selectedItem > -1;
+
+      if(
+        !(await confirmDialog({
+          confirmLabel: 'Запросить',
+          title: 'Формирование запроса в банк',
+          isCancellable: false,
+          isConfirmable: isActive,
+          hint: !isActive && 'Выберите должника',
+        }))
+      ) {
+        return;
+      }
+
+      try {
+        throw 'error';
+        await showToast({
+          message: 'Запрос выполнен',
+          type: 'success',
+        });
+        await fetchData();
       } catch (e) {
         await showToast({
           message: 'Серверная ошибка',
@@ -561,7 +625,7 @@ export default defineComponent({
                 label: 'Заказана',
               },
               {
-                value: '',
+                value: '!statement_ordered',
                 label: 'Не заказана',
               },
             ],
@@ -594,7 +658,7 @@ export default defineComponent({
                 label: 'Оплачена',
               },
               {
-                value: '',
+                value: '!fees_paid',
                 label: 'Не оплачена',
               },
             ],
@@ -669,7 +733,7 @@ export default defineComponent({
         {
           field: 'total_debt',
           label: 'Общая задолженность',
-          isSortable: true,
+          // isSortable: true,
           width: 237,
         },
         type.value === 'judicial' && {
@@ -694,7 +758,7 @@ export default defineComponent({
         }
       ].filter(Boolean))),
       actions: computed(() => ([
-        ['judicial', 'pretrial'].includes(type.value) && {
+        {
           key: 'print',
           label: 'Подача документов',
           icon: 'printer',
@@ -784,6 +848,34 @@ export default defineComponent({
           icon: 'court',
           handler: ({allSelected, selectedItems, index}) => {
             showClaimDialog('voice', {
+              allSelected,
+              filters: filtersModel.value,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            })
+          },
+          asQuick: true,
+        },
+        type.value === 'executive' && {
+          key: 'fns',
+          label: 'Выписка из ФНС',
+          icon: 'fns',
+          handler: ({allSelected, selectedItems, index}) => {
+            showFnsDialog({
+              allSelected,
+              filters: filtersModel.value,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            })
+          },
+          asQuick: true,
+        },
+        type.value === 'executive' && {
+          key: 'bank',
+          label: 'Запрос в банк',
+          icon: 'bank',
+          handler: ({allSelected, selectedItems, index}) => {
+            showBankDialog({
               allSelected,
               filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),

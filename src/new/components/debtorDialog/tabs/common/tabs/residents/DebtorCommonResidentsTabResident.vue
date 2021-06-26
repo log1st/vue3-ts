@@ -35,7 +35,7 @@
             v-model="model[column.key]"
             is-multiple
             :placeholder="column.label"
-            :options="relationships"
+            :options="tenantRelationships"
             display-value-template="{n, plural, =1{Одна связь} one{# связь} few{# связи} other{# связей}}"
             @update:modelValue="partialSubmit('relationships')"
             :error="errorsMap[column.key]"
@@ -47,7 +47,7 @@
               {{registrationsMap[model[column.key]]}}
             </template>
             <template v-else-if="column.key === 'relationships'">
-              {{model[column.key].map(i => relationshipsMap[i]).join(', ')}}
+              {{model[column.key].map(i => tenantRelationshipsMap[i]).join(', ')}}
             </template>
             <template v-else>
               {{model[column.key]}}
@@ -69,6 +69,7 @@ import DateInput from "@/new/components/dateInput/DateInput";
 import SelectInput from "@/new/components/selectInput/SelectInput";
 import {cloneDeep} from "lodash";
 import {formatDate} from "@/new/utils/date";
+import {useDicts} from "@/new/hooks/useDicts";
 
 export default defineComponent({
   name: "DebtorCommonResidentsTabResident",
@@ -118,14 +119,10 @@ export default defineComponent({
       [value]: label
     }), {}));
 
-    const relationships = ref(["Брат", "Сестра", "Отец", "Мать", "Сын", "Сестра"].map((label, value) => ({
-      value,
-      label,
-    })));
-    const relationshipsMap = computed(() => relationships.value.reduce((acc, {value, label}) => ({
-      ...acc,
-      [value]: label
-    }), {}));
+    const {
+      tenantRelationships,
+      tenantRelationshipsMap,
+    } = useDicts();
 
     return {
       model,
@@ -140,8 +137,8 @@ export default defineComponent({
       registrations,
       registrationsMap,
 
-      relationships,
-      relationshipsMap,
+      tenantRelationships,
+      tenantRelationshipsMap,
 
       formatDate,
     }

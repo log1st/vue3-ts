@@ -29,6 +29,9 @@ export const useDicts = () => {
   const judicialFeeStatuses = computed(() => store.getters['dicts/judicialFeeStatuses']);
   const judicialFeeStatusesMap = computed(() => store.getters['dicts/judicialFeeStatusesMap']);
 
+  const tenantRelationships = computed(() => store.getters['dicts/tenantRelationships']);
+  const tenantRelationshipsMap = computed(() => store.getters['dicts/tenantRelationshipsMap']);
+
   return {
     services,
     servicesMap,
@@ -47,5 +50,8 @@ export const useDicts = () => {
 
     judicialFeeStatuses,
     judicialFeeStatusesMap,
+
+    tenantRelationships,
+    tenantRelationshipsMap,
   }
 }

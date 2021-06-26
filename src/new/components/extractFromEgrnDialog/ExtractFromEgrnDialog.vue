@@ -116,7 +116,7 @@ export default defineComponent({
           params: props.allSelected ? {...props.filters, filters: props.filters} : {},
           data: {
             company_id: localStorage.getItem('defaultCompany'),
-            debtors_ids: (props.selectedItems || [props.selectedItem]).map((id) => id),
+            debtor_ids: (props.selectedItems || [props.selectedItem]).map((id) => id),
             type: model.value.type,
 
             ...(props.allSelected ? {

@@ -1,6 +1,9 @@
 .record {
   position: relative;
   cursor: pointer;
+}
+
+.primary {
   padding: 0 10px;
 
   &:not(.isSelected):not(:hover) {
@@ -8,32 +11,68 @@
       display: none;
     }
   }
+
+  .selector {
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    background: #B8D7EB;
+    border-radius: 10px;
+  }
+
+  .content {
+    flex-grow: 1;
+
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.04em;
+
+    color: #333333;
+
+    position: relative;
+  }
+
+  .select {
+    margin-left: 10px;
+  }
+
 }
 
-.selector {
-  position: absolute;
-  right: 0;
-  left: 0;
-  top: 0;
-  bottom: 0;
 
-  background: #B8D7EB;
-  border-radius: 10px;
-}
+.secondary {
+  padding: 0 10px;
 
-.content {
-  flex-grow: 1;
+  &:not(.isSelected):not(:hover) {
+    .selector {
+      display: none;
+    }
+  }
 
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 15px;
-  letter-spacing: 0.04em;
+  .content {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.04em;
 
-  color: #333333;
+    color: #000000;
 
-  position: relative;
-}
+    position: relative;
+  }
 
-.select {
-  margin-left: 10px;
+  .cell {
+    padding: 20px 0;
+  }
+
+  .select {
+    margin-left: 10px;
+  }
+
+  .noData {
+    font-style: italic;
+    opacity: .6;
+  }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.dialog">
+  <div :class="[$style.dialog, $style[type]]">
     <div :class="$style.title">
       Работа с печатной формой подачи документов
     </div>
@@ -47,7 +47,7 @@
           />
         </div>
       </div>
-      <div :class="$style.period">
+      <div :class="$style.period" v-if="['judicial', 'pretrial'].includes(type)">
         <div :class="$style.heading">Период расчета</div>
         <Checkbox
           :class="$style.allPeriod"
@@ -63,7 +63,7 @@
         <Checkbox v-if="type === 'judicial'" :class="$style.moratorium" v-model="model.moratorium_enabled" state="switch" label="Мораторий расчёта пени"/>
       </div>
       <div :class="$style.actions">
-        <Btn :state="['tertiary', 'vertical']" :class="$style.action" @click="signAndSend" prepend-icon="flash-drive">
+        <Btn :state="['tertiary', 'vertical']" :class="$style.action" @click="signAndSend" prepend-icon="flash-drive" v-if="['judicial', 'pretrial'].includes(type)">
           Подписать и отправить по ЭЦП
         </Btn>
         <Btn :state="['tertiary', 'vertical']" :class="$style.action" type="submit" prepend-icon="printer">

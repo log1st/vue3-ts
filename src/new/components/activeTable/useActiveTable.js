@@ -2,6 +2,14 @@ import {ref, watch} from "@vue/composition-api";
 import axios from 'axios';
 import {isSameObject} from "@/new/utils/object";
 
+export const formatFiltersModelToRequest = async (filtersModel) => Object.entries(filtersModel).reduce((acc, [key, value]) => {
+  const isNot = typeof value === 'string' && value.startsWith('!');
+  return ({
+    ...acc,
+    [isNot ? `${key}_not` : key]: isNot ? value.substr(1) : value,
+  });
+}, {})
+
 export const useActiveTable = ({
   filters = ref([]),
   sort = ref([]),
@@ -55,7 +63,7 @@ export const useActiveTable = ({
 
     const response = await fetch({
       params: {
-        ...filtersModel.value,
+        ...await formatFiltersModelToRequest(filtersModel.value),
         limit: limit.value,
         offset: limit.value * (page.value - 1),
         o: sort.value.map(({field, direction}) => `${direction === 'asc' ? '' : '-'}${field}`).join(','),

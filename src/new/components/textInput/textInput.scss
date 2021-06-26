@@ -68,6 +68,7 @@
   .input::placeholder {
     color: inherit;
     opacity: .6;
+    text-overflow: ellipsis;
   }
 
   &.isDisabled {

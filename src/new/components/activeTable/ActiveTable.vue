@@ -1,18 +1,28 @@
 <template>
-  <div :class="$style.container">
+  <div :class="[
+    $style.container,
+    $style[state],
+  ]">
     <div :class="$style.controls">
+      <Btn
+        v-if="state === 'secondary'"
+        :state="['primary', model.filters && 'active'].filter(Boolean)"
+        @click="model.filters = !model.filters"
+        :prepend-icon="model.filters ? 'close' : 'magnifier'"
+        is-square
+      />
       <Actions
         v-if="quickActions.length"
         :actions="quickActions"
         :class="$style.actions"
       />
       <Actions
-        v-if="settingsActions.length"
+        v-if="settingsActions.length && withActions"
         :actions="settingsActions"
         :class="$style.actions"
       />
       <Actions
-        v-if="controlActions.length"
+        v-if="controlActions.length && withControls"
         v-model="model.controls"
         :actions="controlActions"
         :class="$style.actions"
@@ -21,9 +31,12 @@
           <slot :name="`action(${action.key})`" v-bind="payload"/>
         </template>
       </Actions>
-      <div :class="$style.linedActions" v-if="linedActions.length">
+      <div :class="$style.linedActions" v-if="linedActions.length && withLinedActions">
         <div
-          :class="$style.linedAction"
+          :class="[
+            $style.linedAction,
+            $style[action.state || 'primary']
+          ]"
           v-for="action in linedActions"
           :key="action.key"
           @click="action.onClick"
@@ -31,50 +44,55 @@
           {{action.label}}
         </div>
       </div>
-      <div :class="$style.stats">
-        <div :class="$style.stat">
-          Выбрано {{
-            wholeSelected ? ('всё') : (
-              allSelected ? records.length : selectedItems.length
-            )
-          }} из {{total}}
+      <template v-if="state === 'primary'">
+        <div :class="$style.stats">
+          <div :class="$style.stat">
+            Выбрано {{
+              wholeSelected ? ('всё') : (
+                allSelected ? records.length : selectedItems.length
+              )
+            }} из {{total}}
+          </div>
+          <div :class="$style.stat">
+            Показаны {{Math.min(limit, records.length)}} из {{total}} (с {{(page - 1) * limit + 1}} по {{Math.min(page * limit, total)}})
+          </div>
         </div>
-        <div :class="$style.stat">
-          Показаны {{Math.min(limit, records.length)}} из {{total}} (с {{(page - 1) * limit + 1}} по {{Math.min(page * limit, total)}})
-        </div>
-      </div>
-      <div :class="$style.filters">
-        <Actions
-          v-model="model.filters"
-          :actions="[{
+        <div :class="$style.filters">
+          <Actions
+            v-model="model.filters"
+            :actions="[{
             key: 'filters',
             icon: 'magnifier',
             label: 'Фильтрация',
             align: 'end'
           }]"
-        >
-          <template #filters="{isActive, close}">
-            <Filters
-              v-if="isActive"
-              v-model="localFilters"
-              :filters="filters"
-              @close="close"
-            />
-          </template>
-        </Actions>
-      </div>
+          >
+            <template #filters="{isActive, close}">
+              <Filters
+                v-if="isActive"
+                v-model="localFilters"
+                :filters="filters"
+                @close="close"
+              />
+            </template>
+          </Actions>
+        </div>
+      </template>
     </div>
     <div :class="$style.table">
       <div :class="[$style.header, $style.grid]" :style="{gridTemplateColumns: gridTemplate}">
         <template v-for="column in computedColumns">
-          <Checkbox
-            v-if="isSelectable && selectableColumn === column.field"
-            :class="[$style.cell, $style.selectAll]"
-            :key="column.field"
-            :model-value="allSelected || wholeSelected"
-            @update:modelValue="setAllSelected"
-            pre-label="Выделить все"
-          />
+          <template v-if="isSelectable && selectableColumn === column.field">
+            <Checkbox
+              v-if="!withUniqueSelection"
+              :class="[$style.cell, $style.selectAll]"
+              :key="column.field"
+              :model-value="allSelected || wholeSelected"
+              @update:modelValue="setAllSelected"
+              pre-label="Выделить все"
+            />
+            <div v-else></div>
+          </template>
           <div
             v-else-if="column.withTitle || (typeof column.withTitle === 'undefined')"
             :class="[$style.cell, column.isSortable && $style.sortable]"
@@ -94,8 +112,19 @@
           </div>
         </template>
       </div>
+      <div :class="[$style.inlineFilters]" :style="{gridTemplateColumns: gridTemplate}" v-if="model.filters && (state === 'secondary')">
+        <div :class="[$style.inlineFilter, $style.cell]" v-for="column in computedColumns" :key="column.field">
+          <template v-if="column.field in filtersMap">
+            <FilterConfig
+              :type="filtersMap[column.field].type"
+              :props="filtersMap[column.field].props"
+              v-model="localFilters[column.field]"
+            />
+          </template>
+        </div>
+      </div>
       <ContextMenu
-        v-if="contextMenu.isActive"
+        v-if="contextMenu.isActive && withContextMenu"
         @close="hideContextMenu"
         :class="$style.contextMenu"
         :actions="contextMenuActions"
@@ -133,6 +162,7 @@
                 :class="$style.record"
                 @contextmenu="showContextMenu(index, $event)"
                 @rowClick="$emit('rowClick', {record, index})"
+                :state="state"
               >
                 <template v-for="(slot, key) in $scopedSlots" :slot="key" slot-scope="data">
                   <slot :name="key" v-bind="data" />
@@ -148,7 +178,7 @@
           spin
         />
       </div>
-      <div :class="[$style.footer, $style.grid]" :style="{gridTemplateColumns: gridTemplate}">
+      <div :class="[$style.footer, $style.grid]" :style="{gridTemplateColumns: gridTemplate}" v-if="summariesFields.length">
         <div :class="$style.cell" v-for="column in computedColumns" :key="column.field">
           <div :class="$style.summaryLabel" v-if="column.field === summariesLabel">
             ИТОГО:
@@ -162,6 +192,7 @@
       </div>
     </div>
     <Pagination
+      v-if="withPagination"
       :class="$style.pagination"
       :total="total"
       :page.sync="localPage"
@@ -184,10 +215,14 @@ import {useLocalProp} from "@/new/hooks/useLocalProp";
 import Actions from "@/new/components/actions/Actions";
 import Filters from "@/new/components/filters/Filters";
 import {useDialog} from "@/new/hooks/useDialog";
+import Btn from "@/new/components/btn/Btn";
+import FilterConfig from "@/new/components/filter/FilterConfig";
 
 export default defineComponent({
   name: "ActiveTable",
   components: {
+    FilterConfig,
+    Btn,
     Filters,
     Actions,
     ContextMenu,
@@ -200,6 +235,10 @@ export default defineComponent({
     RecycleScroller,
   },
   props: {
+    state: {
+      type: String,
+      default: 'primary',
+    },
     columns: Array,
     isLoading: Boolean,
     isSelectable: Boolean,
@@ -212,8 +251,14 @@ export default defineComponent({
       default: 'pk',
     },
     records: Array,
-    summaries: Object,
-    summariesFields: Array,
+    summaries: {
+      type: Object,
+      default: () => ({}),
+    },
+    summariesFields: {
+      type: Array,
+      default: () => ([]),
+    },
     summariesLabel: String,
     sort: Array,
     actions: Array,
@@ -223,6 +268,31 @@ export default defineComponent({
     limit: Number,
     filters: Array,
     filtersModel: Object,
+    withUniqueSelection: Boolean,
+    withAllSelection: {
+      type: Boolean,
+      default: true,
+    },
+    withPagination: {
+      type: Boolean,
+      default: true,
+    },
+    withActions: {
+      type: Boolean,
+      default: true,
+    },
+    withControls: {
+      type: Boolean,
+      default: true,
+    },
+    withLinedActions: {
+      type: Boolean,
+      default: true,
+    },
+    withContextMenu: {
+      type: Boolean,
+      default: true,
+    }
   },
   setup(props, {emit}) {
     const sortsMap = computed(() => (
@@ -263,6 +333,12 @@ export default defineComponent({
     }
 
     const selectItem = (index) => {
+      if(props.withUniqueSelection) {
+        selectedItems.value = [
+          selectedItems.value[0] === index ? null : index
+        ].filter( i => i !== null);
+        return;
+      }
       const localIndex = selectedItems.value.findIndex((item) => item === index);
       wholeSelected.value = false;
       if(allSelected.value) {
@@ -446,14 +522,14 @@ export default defineComponent({
     ));
     const linedActions = computed(() => ([
       ...actions.value.filter(({asLined}) => asLined),
-      !wholeSelected.value && {
+      props.withAllSelection && !wholeSelected.value && {
         key: '_selectAll',
         label: 'Выбрать всё',
         onClick: () => {
           wholeSelected.value = true;
         },
       },
-      wholeSelected.value && {
+      props.withAllSelection && wholeSelected.value && {
         key: '_unselectAll',
         label: 'Снять выделение',
         onClick: () => {
@@ -488,7 +564,16 @@ export default defineComponent({
       lined: null,
     });
 
+    const filtersMap = computed(() => (
+      props.filters.reduce((acc, filter) => ({
+        ...acc,
+        [filter.field] : filter
+      }), {})
+    ))
+
     return {
+      filtersMap,
+
       model,
 
       gridTemplate,

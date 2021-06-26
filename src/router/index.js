@@ -90,6 +90,11 @@ const routes = [
     },
   },
   {
+    path: '/new-organizations',
+    name: 'organizations',
+    component: () => import('@/new/pages/organizations/index.vue'),
+  },
+  {
     path: '/exchange/manual',
     name: 'ExchangeManual',
     component: () => import('../views/main/exchange/manual'),

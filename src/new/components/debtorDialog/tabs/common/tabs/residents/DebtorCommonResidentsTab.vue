@@ -134,6 +134,7 @@ export default defineComponent({
       toRemove.value = [];
       if(!Object.keys(errorsMap).length) {
         await onSave();
+        await reset();
       }
     }
 

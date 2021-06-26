@@ -49,13 +49,18 @@ export default defineComponent({
 
     isDisabled: Boolean,
 
-    modelValueModifiers: String,
+    modelValueModifiers: {
+      type: Object,
+      default: () => ({})
+    },
 
     error: String,
   },
   setup(props, {emit}) {
     const value = useLocalProp(props, emit, 'modelValue', true);
     const valueModifiers = useModifiers(computed(() => props.modelValueModifiers));
+
+    console.log(valueModifiers.value);
 
     let valueTimeout;
     watch(value, (value) => {
