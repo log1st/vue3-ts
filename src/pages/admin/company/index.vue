@@ -56,9 +56,9 @@
                                   <td><span title="Перевод баланса" style="font-size: 1.5em; color: red" @click="openTransferBalanceModal(item)">+</span></td>
                                   <td>id: {{item.id}} </td>
                                   <td>{{item.name_short}}</td>
-                                  <!-- <td v-if="item.Phone != ''">Телефон: {{item.Phone}}</td> -->
-                                  <td v-if="item.email != ''">Email: {{item.email}}</td>
-                                  <td v-if="item.email == ''">Нет данных</td>
+                                  <td>id владельца: {{item.owner}}</td>
+                                  <td v-if="item.email">Email: {{item.email}}</td>
+                                  <!-- <td v-if="!item.email">Нет данных о </td> -->
                                   <td>ИНН: {{item.inn}}</td>
                                   <!-- <td>Колличество должников:{{item.AllTotalDebt}}</td>
                                   <td>Баланс:{{item.Balance}}</td> -->

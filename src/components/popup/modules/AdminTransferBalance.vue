@@ -1,7 +1,7 @@
 <template>
     <popup-wrapper>
         <template v-slot:header>    
-          <p class="m-0">Беревод баланса</p>
+          <p class="m-0">Перевод баланса</p>
         </template>
         <div class="popup__status">
             <div class="my-3">
@@ -17,7 +17,7 @@
                     </div>
                     <div class="compib__input">
                         <div class="search-input no-select-input">
-                            <v-select label="inn" :options="getAdminUserListArray" v-model="transfer.from" @change="checkOrganizationType()"></v-select>
+                            <v-select label="name_short" :options="getAdminUserListArray" v-model="transfer.from" @change="checkOrganizationType()"></v-select>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                     </div>
                     <div class="compib__input">
                         <div class="search-input no-select-input">
-                            <v-select label="inn" :options="getAdminUserListArray" v-model="transfer.to" @change="checkOrganizationType()"></v-select>
+                            <v-select label="name_short" :options="getAdminUserListArray" v-model="transfer.to" @change="checkOrganizationType()"></v-select>
                         </div>
                     </div>
                 </div>

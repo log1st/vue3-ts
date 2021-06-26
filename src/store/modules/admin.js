@@ -1,5 +1,6 @@
 import { URL, baseURL } from '@/settings/config'
 import cloneDeep from 'lodash/cloneDeep'
+import sortBy from 'lodash/sortBy'
 
 export default {
     state: () => ({
@@ -144,7 +145,8 @@ export default {
                 .then(resp => {
                   if (resp.data) {
                     resp.data.forEach( c => { c.checked = false }) // добавляем поле для checkbox
-                    let companyList =  resp.data 
+                    let companyList = resp.data
+                    companyList = sortBy( companyList, o => o.owner )
                     commit('setAdminUserList', companyList)
                     resolve()
                   } else {
@@ -377,7 +379,7 @@ export default {
               let calc;
               let company = result.find( c => c.id === company_id)
               calc = company.income - company.outcome
-              console.log(calc)
+              // console.log(calc)
 
                 // let calc = result[0].income - result[0].outcome
                 commit('setCompanyBalance', calc)
@@ -396,15 +398,24 @@ export default {
             const { owner } = payload
             $http({
               command: `/api/finance/balance/${owner}/`,
-              method: 'GET'
+              method: 'GET',
+              requestCode: 'none',
             })
             .then (res => {
-              if (res.RequestStatusCode === 200 || res.RequestStatusCode === 201) {
-                let calc = res[0].income - res[0].outcome
-                resolve(calc)
-              } else {
-                reject(false)
-              }
+              // if (res.RequestStatusCode === 200 || res.RequestStatusCode === 201) {
+                let calc = [];
+                // let company = result.find( c => c.id === company_id)
+                // calc = company.income - company.outcome
+                // let calc = res[0].income - res[0].outcome
+                res.forEach( company => {
+                  calc.push(company.income - company.outcome)
+                })
+                let result = 0;
+                calc.forEach( sum => {
+                  result +=  sum
+                })
+                // console.log(result)
+                resolve(result)
             })
           })
         },
