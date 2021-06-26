@@ -121,6 +121,13 @@ export default defineComponent({
               return;
             }
 
+            await axios({
+              method: 'patch',
+              url: `${baseURL}/api/account/user/active-company/${JSON.parse(localStorage.getItem('user')).id}/`,
+              data: {
+                default_company: organization.id
+              }
+            })
             localStorage.setItem('defaultCompany', organization.id);
             await showToast({
               message: `Компания "${organization.name_full} установлена по умолчанию"`,
