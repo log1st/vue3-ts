@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// import { createStore as store} from './../store'
-import { getDocumentsOrderList, getServicesList } from './../store/modules/documents/statementsJudical';
 
 Vue.use(VueRouter)
 
@@ -57,18 +55,6 @@ const routes = [
   // },
   {
     path: '/debtors',
-    name: 'Debtors',
-    component: () => import('../pages/debtors'),
-    meta: {
-      requiresAuth: true
-    },
-    beforeEnter: (to, from, next) => {
-      // getServicesList();
-      next();
-    }
-  },
-  {
-    path: '/new-debtors',
     name: 'debtors',
     redirect: {
       name: 'debtors-module',
@@ -90,7 +76,7 @@ const routes = [
     },
   },
   {
-    path: '/new-organizations',
+    path: '/organizations',
     name: 'organizations',
     component: () => import('@/new/pages/organizations/index.vue'),
   },
