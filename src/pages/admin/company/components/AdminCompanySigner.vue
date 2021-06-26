@@ -11,7 +11,7 @@
                         </div>
                         <div class="compib__input">
                             <div class="search-input">
-                                <input type="text" placeholder="Введите представителя по доверенности" v-model="signerName">
+                                <input type="text" placeholder="Введите представителя по доверенности" v-model="documents.signer">
                             </div>
                         </div>
                     </div>
@@ -21,23 +21,23 @@
                         </div>
                         <div class="compib__input">
                             <div class="search-input">
-                                <input type="text" placeholder="Введите ФИО представителя" v-model="fullname">
+                                <input type="text" placeholder="Введите ФИО представителя" v-model="documents.signer_name">
                             </div>
                         </div>
                     </div>
                 </div>
         </div>
-        <div class="d-data__content-row" v-for="(document, index) in documents" :key="index">
+        <div class="d-data__content-row">
             <div class="f-container" >
                 <div class="">
                     <div class="company-document-item">
                         <div class="company-document-status">
                             <icon-base width="18" height="18" viewbox="0 -2 12 18" iconColor="#7989a0"><icon-check /></icon-base>
-                            <span v-if="document.FileContents">Файл загружен</span>
-                            <span v-if="!document.FileContents">Файл не загружен</span>
+                            <span v-if="document.file">Файл загружен</span>
+                            <span v-if="!document.file">Файл не загружен</span>
                         </div>
                         <div class="company-document-actions">
-                          <template v-if="document.FileContents">
+                          <template v-if="document.file">
                             <row-hover-actions :icons="actionsIcons" @setRowHoverAction="runActions({ e: $event, document: document })" />
                           </template>
                         </div>
@@ -46,17 +46,17 @@
                         <input 
                           type="file" 
                           name="f-container-file"
-                          @change="changeFile({ ref: 'admin_organization_documents', document: document, index: index })" 
+                          @change="changeFile({ ref: 'admin_organization_documents', document: document, index: 0 })" 
                           ref="admin_organization_documents" 
                         >
                         <label for="f-container-file" class="f-container__input-label">
                           <div class="f-container__placeholder">
                               <span>Выбрать файл</span>
                           </div>
-                          <div class="f-container__button" @click="$refs.admin_organization_documents[index].click()">
+                          <div class="f-container__button" @click="$refs.admin_organization_documents[0].click()">
                             <div class="btn btn-primary">Выбрать</div>
                           </div>
-                          <div class="f-container__button" @click="deleteDocument(document.id)" v-if="document.FileContents">
+                          <div class="f-container__button" @click="deleteDocument(document.id)" v-if="document.file">
                             <div class="btn btn-red">Удалить</div>
                           </div>
                         </label>
@@ -69,8 +69,6 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { baseURL } from '@/settings/config'
-import qs from 'qs'
-import download from 'downloadjs';
 
 export default {
     props:{
@@ -85,73 +83,87 @@ export default {
             isLoading: false,
             isDownloading: false,
 
-            signerName: null,
-            fullname: null,
+            
 
             currentRowHovered: null,
             actionsIcons: ['view', 'download'],
-
-            documents:[
+            newDocument: {
+                file: undefined
+            },
+            documents:
                 {
-                  fileName: 'Представитель по доверенности',
-                  id: '-5',
-                  FileContents: ''
+                    signer_name: null,
+                    signer: null,
+                    file: undefined
                 }
-            ]
+            
         }
     },
+    computed: {
+      ...mapGetters(['documentsByCompanyId']),
+    },
+    created () {
+        this.getSignersDocument()
+    },
     methods: {
-
-        changeFile ({ ref, document, index }) {
-            this.upFiles(this.$refs[ref][index].files, document);
+        ...mapActions(['toBase64']),
+        getSignersDocument () {
+            let companyDocs = this.documentsByCompanyId(this.company.id)
+            this.documents = companyDocs.find( doc => doc.signer )
+            if (!this.documents) 
+            {
+                this.documents = {
+                    signer_name: null,
+                    signer: null,
+                    file: undefined
+                }
+                console.log(`signers: empty`)
+            } 
+            else 
+            {
+                console.log(this.documents) 
+            }
         },
-        async createFileObject(file, document) {
-          let fileBase64 = await this.toBase64(file);
-          fileBase64 = this.prepareBase64(fileBase64);
-          return {
-              FileName: document.fileName || document.FileName || 'без_названия',
-              Files: fileBase64,
-            //   Id: document.id || null
-          }
-      },
+        changeFile ({ ref, document, index }) {
+            this.upFiles(this.$refs[ref][index].files[0], document);
+        },
         /**
        * Загрузить файл представителя
        */
       async upFiles (files, document) {
-          this.$store.dispatch('appLoadingChange', true, { root: true });
-          let adminFile = await this.createFileObject(files[0], document);
-          let data = {
-              Comand: 'AddRepresentativeProxy',
-            //   Email: this.$store.getters.user.Email, // Данные Администратора для админской апи, пока что юзаем пользовательскую...
-            //   Phone: this.$store.getters.user.Phone,
-              Password: this.$store.getters.user.token,
-              FioProxy: this.fullname,
-              Subscribe: this.signerName,
-              Phone: this.company.Phone,
-              Email: this.company.Email,
-              OrganizationId: 0,
-              DateBirth: null,
-              PassportSeriesNumber: null,
-              WhenIssued: null,
-              IssuedWhom: null,                   
-              DivisionCode: null,                  
-              RegistrationAddress: null,       
-              DatePowerAttorney: null,           
-              ...adminFile,
-              SoccetEnd: 1
-          }
-          axios({
-              method: 'post',
-              url: baseURL,
-              data: qs.stringify(data)
-          }).then(res => {
-              // this.fileName = null;
-              // this.newDocument = false;
-              // this.documents = []
-            //   this.getCompanyFiles()
-          }).finally(() => {
-            this.$store.dispatch('appLoadingChange', false, { root: true });
-          })
+          console.log(files)
+        return this.$http({
+            command: '/api/account/document/',
+            method: 'POST',
+            data: {
+                name: this.documents[0].signer_name,
+                signer_name: this.documents[0].signer_name,
+                signer: this.documents[0].signer,
+                file: await this.toBase64(files),
+                klass: 'attorney',
+                company: this.company.id 
+            }
+        })
+        .then( resp => {
+            this.$toast.open({
+                message: `Подписант создан`,
+                type: 'success',
+                duration: 5000,
+                dismissible: true,
+                position: 'top-right'
+            })
+            console.log(resp)
+        })
+        .catch( error => {
+            console.log(error)
+            this.$toast.open({
+                message: `Ошибка добавления подписанта`,
+                type: 'error',
+                duration: 5000,
+                dismissible: true,
+                position: 'top-right'
+            })
+        })
       },
     },
 }

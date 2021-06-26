@@ -56,9 +56,9 @@
                                   <td><span title="Перевод баланса" style="font-size: 1.5em; color: red" @click="openTransferBalanceModal(item)">+</span></td>
                                   <td>id: {{item.id}} </td>
                                   <td>{{item.name_short}}</td>
-                                  <!-- <td v-if="item.Phone != ''">Телефон: {{item.Phone}}</td> -->
-                                  <td v-if="item.email != ''">Email: {{item.email}}</td>
-                                  <td v-if="item.email == ''">Нет данных</td>
+                                  <td>id владельца: {{item.owner}}</td>
+                                  <td v-if="item.email">Email: {{item.email}}</td>
+                                  <!-- <td v-if="!item.email">Нет данных о </td> -->
                                   <td>ИНН: {{item.inn}}</td>
                                   <!-- <td>Колличество должников:{{item.AllTotalDebt}}</td>
                                   <td>Баланс:{{item.Balance}}</td> -->
@@ -120,12 +120,12 @@
                                <div class="container-content">
                                  <div class="icon__wrapper">
                                   <span style="position: relative; top: 1em; margin-right: 3px; margin-left: 52px;">
-                                   <icon-base width="19" height="19" iconColor="#848aa1">
+                                   <icon-base width="30" height="20" iconColor="#848aa1">
                                     <icon-print />
                                   </icon-base>
                                   </span>
                                  <span style="position: relative; top:1em">
-                                   <icon-base width="15" height="15" iconColor="#848aa1">
+                                   <icon-base width="20" height="20" iconColor="#848aa1">
                                     <icon-eye />
                                   </icon-base>
                                   </span>
@@ -313,7 +313,9 @@ export default {
         'getCompanyApplication',
         'clearCompanyApplication',
         'setUpdatedApplication',
-        'getRegionsList'
+        'getRegionsList',
+        'getColumnTemplate',
+        'getAllDocuments'
         ]),
 
       ...mapMutations([
@@ -491,6 +493,7 @@ export default {
                 })
                 this.getCompanyBalance()
                 this.updateCompanyData()
+                this.getColumnTemplate({id:this.selectedCompany.id})
               })
               this.getCompanyApplication({id:this.SelectedUserId, type: 'judicial'})
             }
@@ -658,7 +661,7 @@ export default {
       'minCompany', 
       'docsTemplates', 
       'allDocsTypes',
-      'companyApplications'
+      'companyApplications',
       ]),
       companyApplicationsList : {
         set (val) {
@@ -711,6 +714,7 @@ export default {
 
     },
     mounted(){
+      this.getAllDocuments()
 
       events.$on('docarray', (data) => {
         this.documentArray = data.docs
@@ -731,7 +735,7 @@ export default {
       })
 
       events.$on('newBalance', data => {
-         this.selectedCompany.Balance = data.balance
+         this.selectedCompany.balance = data.balance
       })
     }
 

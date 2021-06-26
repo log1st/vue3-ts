@@ -1,5 +1,6 @@
 import { URL, baseURL } from '@/settings/config'
 import cloneDeep from 'lodash/cloneDeep'
+import sortBy from 'lodash/sortBy'
 
 export default {
     state: () => ({
@@ -15,7 +16,9 @@ export default {
         docsTypes:[],
         allVars: [],
         companyTemplate:[],
-        applications: []
+        applications: [],
+        columnTemplate: [],
+        documents: []
     }),
     mutations:{
         checkCompany (state, payload) {
@@ -30,7 +33,14 @@ export default {
         setCompanyTemplate (state, payload) {
 //
         },
-      
+        /**
+         * Установка шаблона колонок
+         * @param {*} state 
+         * @param {*} payload 
+         */
+        setColumnTemplate (state, payload) {
+          state.columnTemplate = payload
+        },
         AdminUserListFilterData(state, payload){
             state.UsersList.forEach(user => {
                 payload.every(cols => cols.data === '' ? true : (!user[cols.key] ? false : user[cols.key].toString().toLowerCase().includes(cols.data.toLowerCase())))
@@ -76,6 +86,9 @@ export default {
           payload.forEach( att => {
             state.applications.push(att)
           })
+        },
+        setAllDocuments (state, payload) {
+          state.documents = payload
         }
     },
     actions:{
@@ -132,7 +145,8 @@ export default {
                 .then(resp => {
                   if (resp.data) {
                     resp.data.forEach( c => { c.checked = false }) // добавляем поле для checkbox
-                    let companyList =  resp.data 
+                    let companyList = resp.data
+                    companyList = sortBy( companyList, o => o.owner )
                     commit('setAdminUserList', companyList)
                     resolve()
                   } else {
@@ -186,7 +200,41 @@ export default {
           });
           })
         },
-        
+
+        getColumnTemplate ({commit, dispatch}, payload) {
+          const { id } = payload
+          return new Promise ((resolve, reject) => {
+            $http({
+              command: `/api/document-parsing/templates/${id}/`,
+              method: 'GET',
+              requestCode: 'none'
+            }).then (resp => {
+              resolve({status: true, item: resp})
+              commit('setColumnTemplate', resp)
+              console.log(resp)
+            }).catch(err => {
+              console.log(err)
+              reject({status: false})
+              dispatch('getDefautltColumnTemplate') 
+            })
+          }) 
+        },
+
+        getDefautltColumnTemplate ({commit}) {
+          return new Promise ((resolve, reject) => {
+            $http({
+              command: `/api/document-parsing/templates/default/`,
+              method: 'GET'
+            })
+            .then (resp => {
+              commit('setColumnTemplate', resp)
+              resolve({status: true, items: resp})
+            })
+            .catch (error => {
+              reject({status: false, msg: error})
+            })
+          })
+        },
         /**
          * Изменить админ -настройки организации
          */
@@ -331,7 +379,7 @@ export default {
               let calc;
               let company = result.find( c => c.id === company_id)
               calc = company.income - company.outcome
-              console.log(calc)
+              // console.log(calc)
 
                 // let calc = result[0].income - result[0].outcome
                 commit('setCompanyBalance', calc)
@@ -350,15 +398,24 @@ export default {
             const { owner } = payload
             $http({
               command: `/api/finance/balance/${owner}/`,
-              method: 'GET'
+              method: 'GET',
+              requestCode: 'none',
             })
             .then (res => {
-              if (res.RequestStatusCode === 200 || res.RequestStatusCode === 201) {
-                let calc = res[0].income - res[0].outcome
-                resolve(calc)
-              } else {
-                reject(false)
-              }
+              // if (res.RequestStatusCode === 200 || res.RequestStatusCode === 201) {
+                let calc = [];
+                // let company = result.find( c => c.id === company_id)
+                // calc = company.income - company.outcome
+                // let calc = res[0].income - res[0].outcome
+                res.forEach( company => {
+                  calc.push(company.income - company.outcome)
+                })
+                let result = 0;
+                calc.forEach( sum => {
+                  result +=  sum
+                })
+                // console.log(result)
+                resolve(result)
             })
           })
         },
@@ -475,7 +532,46 @@ export default {
             console.log(err)
           })
         },
-        
+        /**
+         * Получение всех доступных документов (всех компаний)
+         * @param {*} commit 
+         * @returns 
+         */
+        getAllDocuments ( {commit} ) {
+          return $http({
+            command: `/api/account/document/`,
+            method: 'GET',
+            requestCode: 'none'
+          })
+          .then( resp => {
+            commit('setAllDocuments', resp)
+          })
+        },
+        deleteDocument ( { dispatch }, payload ) {
+          const { id } = payload
+          return $http({
+            command: `/api/account/document/${id}/`,
+            method: 'DELETE',
+          }).then ( resp => {
+            this._vm.$toast.open({
+              message: `Документ удален`,
+              type: 'success',
+              duration: 5000,
+              dismissible: true,
+              position: 'top-right'
+            })
+            dispatch('getAllDocuments')
+          })
+          .catch( error => {
+            this._vm.$toast.open({
+              message: `Ошибка удаления документа - ${error} `,
+              type: 'erorr',
+              duration: 5000,
+              dismissible: true,
+              position: 'top-right'
+            })
+          })
+        },
         /**
          *  ========================================
          *  Конструктор документов
@@ -723,6 +819,11 @@ export default {
         /**
          * Все переменные что приходят в обертки групп
          */
-        allGroupsVariables: state => state.allVars
+        allGroupsVariables: state => state.allVars,
+        columnTemplate: state => state.columnTemplate,
+
+        documentsByCompanyId: (state) => (id) => {
+            return state.documents.filter( doc => doc.company === id )
+        }
     }
 }
