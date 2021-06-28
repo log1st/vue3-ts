@@ -7,4 +7,4 @@ COPY . .
 RUN npm install
 RUN npm build
 
-COPY ./dist ./dist
+COPY ./dist /home/gitlab-runner/dist
