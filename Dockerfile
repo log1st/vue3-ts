@@ -6,7 +6,7 @@ COPY . .
 
 RUN export VUE_APP_API=$VUE_APP_API
 RUN echo $VUE_APP_API
-RUN node -e 'console.log(process.env)'
+RUN VUE_APP_API=$VUE_APP_API node -e 'console.log(process.env)'
 #RUN npm install
 #RUN npm run build
 
