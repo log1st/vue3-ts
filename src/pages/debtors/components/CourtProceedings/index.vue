@@ -182,7 +182,7 @@
 
       <template v-slot:cell(StateDuty)="{ row, i }">
         <span class="table__col-user">
-         {{ row.fee.individual_order || 0 }} ₽
+         {{ row.fee || 0 }} ₽
         </span>
       </template>
 
@@ -412,7 +412,11 @@
        */
       async handlerCellCheckbox (item, index) {
        await this.checkDebtor({id: item._id, module: 1});
+<<<<<<< HEAD
 
+=======
+       
+>>>>>>> 13d42f2a27defe0ee36beb59157a33c00a1c0af5
        if (!this.$store.state.debtors.sortValue) {
          let sortValue = cloneDeep(this.$store.state.debtors.sortValue)
          events.$emit('reActiveSort', sortValue);

@@ -21,7 +21,7 @@ export default {
       { serverName: 'paid_up',          name: 'PaidCsv',    alias: 'Оплачено',      views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
       { serverName: 'debt',             name: 'TotalDebt',  alias: 'Задолженность', views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
       { serverName: 'penalty',          name: 'PeniCsv',    alias: 'Пеня',          views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true },
-      { serverName: 'fee.individual_order', name: 'StateDuty',  alias: 'Пошлина',       views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true }
+      { serverName: 'fee', name: 'StateDuty',  alias: 'Пошлина',       views: { current: true, view: true, fixed: false, default: true, select: false }, width: '100px', isSum: true }
     ],
 
     /**
@@ -578,8 +578,6 @@ export default {
         })
         .then ( resp => {
           commit('setUserSettings', resp)
-          let total = !resp.records_numbers ? 100 : resp.records_numbers
-          localStorage.setItem('debtorsPerPage', total)
           resolve({status: true})
         })
         .catch( err => {
@@ -617,7 +615,6 @@ export default {
         return
       }
       let companyId = localStorage.getItem('defaultCompany')
-
       return axios({
         method: 'GET',
         url: baseURL + '/api/debtors-data/',
