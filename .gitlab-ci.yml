@@ -6,7 +6,7 @@ stages:
   - deploy
 
 build_app:
-  image: node:alpine
+  image: node:12
   stage: build
   only:
     - master
