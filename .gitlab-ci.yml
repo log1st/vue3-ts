@@ -24,7 +24,7 @@ build_app:
 step-deploy-prod:
   stage: deploy
   script:
-    - scp -r dist/* /home/gitlab-runner/dist
+    - cp -r dist/* /home/gitlab-runner/dist
 
 step-deploy-dev:
   stage: deploy
