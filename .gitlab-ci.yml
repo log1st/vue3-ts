@@ -23,6 +23,8 @@ step-deploy-prod:
   tags:
     - master
   variables:
+    CI_VUE_APP_API: https://api-2.urrobot.net
+    VUE_APP_API: https://api-2.urrobot.net
     ENVIRONMENT: production
 
 
