@@ -2,14 +2,13 @@ FROM node:12
 
 ARG VUE_APP_API
 
-#WORKDIR /app
+WORKDIR /app
 
-#COPY . .
+COPY . .
 
 ENV VUE_APP_API=$VUE_APP_API
 
-RUN VUE_APP_API=$VUE_APP_API node -e 'console.log(process.env)'
-#RUN npm install
-#RUN npm run build
+RUN npm install
+RUN npm run build
 
 COPY ./dist ./dist
