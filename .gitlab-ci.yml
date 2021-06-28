@@ -9,7 +9,7 @@ step-deploy-prod:
   script:
     - docker stop node-server || true
     - docker rm node-server || true
-    - docker build -t app/node-web-app .
+    - docker build -t app/node-web-app . --build-arg VUE_APP_API=$VUE_APP_API
     - docker run --name node-server -p 49162:8080 -p 49164:8081 -d app/node-web-app:latest sh -c 'tail -f'
     - docker cp node-server:/app/dist/ /home/gitlab-runner/
     - docker stop node-server
