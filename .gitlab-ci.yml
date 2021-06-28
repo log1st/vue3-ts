@@ -11,11 +11,12 @@ build_app:
   only:
     - master
   script:
+    - ls -la
     - npm install
     - npm run build
-  cache:
-    paths:
-      - node_modules/
+#  cache:
+#    paths:
+#      - node_modules/
   artifacts:
     paths:
       - dist/
