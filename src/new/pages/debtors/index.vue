@@ -36,6 +36,7 @@ export default defineComponent({
           }
         }
       },
+      /*
       {
         key: 'executive',
         label: 'Исполнительное\nпроизводство',
@@ -46,6 +47,7 @@ export default defineComponent({
           }
         }
       },
+      */
     ]));
 
     return {
