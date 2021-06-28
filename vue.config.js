@@ -8,6 +8,7 @@ const TARGET_NODE = process.env.WEBPACK_TARGET === 'node'
 
 console.log(process.env, 'some envs')
 
+/*
 const createApiFile = TARGET_NODE
   ? './create-api-server.js'
   : './create-api-client.js'
@@ -103,3 +104,4 @@ module.exports = {
       }))
   }
 }
+*/
