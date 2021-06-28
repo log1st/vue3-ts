@@ -21,7 +21,7 @@ const dateTimeIntl = new Intl.DateTimeFormat(undefined, {
   hour12: false,
 });
 
-export const formatDateTime = (date) => dateTimeIntl.format(date);
+export const formatDateTime = (date) => dateTimeIntl.format(new Date(date));
 
 const monthAndYearIntl = new Intl.DateTimeFormat(undefined, {
   year: 'numeric',

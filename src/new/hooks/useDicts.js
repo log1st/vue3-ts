@@ -4,6 +4,12 @@ import {useStore} from "@/new/hooks/useStore";
 export const useDicts = () => {
   const store = useStore();
 
+  const employeePositions = computed(() => store.getters['dicts/employeePositions']);
+  const employeePositionsMap = computed(() => store.getters['dicts/employeePositionsMap']);
+
+  const employeeRoles = computed(() => store.getters['dicts/employeeRoles']);
+  const employeeRolesMap = computed(() => store.getters['dicts/employeeRolesMap']);
+
   const services = computed(() => store.getters['dicts/services']);
   const servicesMap = computed(() => store.getters['dicts/servicesMap']);
 
@@ -33,6 +39,12 @@ export const useDicts = () => {
   const tenantRelationshipsMap = computed(() => store.getters['dicts/tenantRelationshipsMap']);
 
   return {
+    employeePositions,
+    employeePositionsMap,
+
+    employeeRoles,
+    employeeRolesMap,
+
     services,
     servicesMap,
 

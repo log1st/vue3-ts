@@ -2,7 +2,10 @@
   <div :class="$style.dialog">
     <div :class="$style.title" v-if="title">{{title}}</div>
     <div :class="$style.duration" v-if="duration">{{computedDuration}}</div>
-    <audio :class="$style.player" controls ref="audioRef" :src="file" @canplaythrough="onLoad"/>
+    <audio :class="$style.player" controls ref="audioRef" :src="file" @canplaythrough="onLoad" @error="onError" v-if="file"/>
+    <div :class="$style.error" v-else>
+      {{error || 'Нет файла'}}
+    </div>
   </div>
 </template>
 
@@ -30,12 +33,19 @@ export default {
 
     const audioRef = ref();
     const onLoad = async () => {
-      console.log('blya');
       await new Promise(requestAnimationFrame)
       duration.value = Math.floor(audioRef.value.duration);
     }
 
+    const error = ref();
+    const onError = err => {
+      error.value = err
+    }
+
     return {
+      error,
+      onError,
+
       duration,
       computedDuration,
       audioRef,

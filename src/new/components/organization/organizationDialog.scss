@@ -5,6 +5,32 @@
   position: relative;
 
   min-height: 400px;
+
+  padding-top: 10px;
+}
+
+.edit {
+  position: absolute;
+  top: -20px;
+  right: -5px;
+  color: #828282;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+
+  &.active {
+    .editIcon {
+      color: #21317A;
+    }
+  }
+}
+
+.editIcon {
+  height: 15px;
+  width: 15px;
+  margin-left: 10px;
 }
 
 .loader {
@@ -22,14 +48,6 @@
   line-height: 19px;
   letter-spacing: 0.04em;
   color: #000000;
-}
-
-.rating {
-  position: absolute;
-  top: 22px;
-  right: 110px;
-  transform: scale(1.5);
-  transform-origin: right top;
 }
 
 .tabs {
@@ -94,26 +112,4 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-}
-
-.control {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 30px;
-  width: 30px;
-  color: black;
-
-  cursor: pointer;
-
-  &:not(:hover) {
-    opacity: .7;
-  }
-
-  &.previous {
-    left: -35px;
-  }
-  &.next {
-    right: -35px;
-  }
 }

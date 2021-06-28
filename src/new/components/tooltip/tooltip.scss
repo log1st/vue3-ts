@@ -64,14 +64,14 @@ $offset: 5px;
 
 .leftPosition {
   .arrow {
-    left: -5px;
+    right: -5px;
     transform: rotate(90deg);
   }
 }
 
 .rightPosition {
   .arrow {
-    right: -5px;
+    left: -5px;
     transform: rotate(-90deg);
   }
 }
@@ -84,9 +84,18 @@ $offset: 5px;
     }
   }
   &.centerAlign {
+    &.leftPosition {
+      .arrow {
+        transform: translateY(-50%) rotate(-90deg);
+      }
+    }
+    &.right {
+      .arrow {
+        transform: translateY(-50%) rotate(90deg);
+      }
+    }
     .arrow {
       top: 50%;
-      transform: translateY(-50%);
     }
   }
   &.endAlign {

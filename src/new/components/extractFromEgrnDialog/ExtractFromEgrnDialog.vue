@@ -149,7 +149,7 @@ export default defineComponent({
         try {
           const {file_pdf} = await promise;
           await showToast({
-            message: 'Документ сформирован и отправлен на почту',
+            message: 'Запрос на выписку из ЕГРН успешно сформирован',
             type: 'success',
           })
           await showDialog({
@@ -162,7 +162,7 @@ export default defineComponent({
           emit('close');
         } catch (e) {
           await showToast({
-            message: 'Ошибка формирования документов',
+            message: 'Ошибка формирования запроса выписки',
             type: 'error',
           })
         }

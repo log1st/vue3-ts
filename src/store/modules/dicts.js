@@ -27,9 +27,15 @@ export default {
       judicialEgrnStatuses: [],
       judicialFeeStatuses: [],
       tenantRelationships: [],
+      employeePositions: [],
+      employeeRoles: [],
     }
   },
   getters: {
+    employeeRoles: getList('employeeRoles'),
+    employeeRolesMap: getMap('employeeRoles'),
+    employeePositions: getList('employeePositions'),
+    employeePositionsMap: getMap('employeePositions'),
     tenantRelationships: getList('tenantRelationships'),
     tenantRelationshipsMap: getMap('tenantRelationships'),
     services: getList('services'),
@@ -44,7 +50,9 @@ export default {
     judicialFeeStatusesMap: getMap('judicialFeeStatuses'),
   },
   mutations: {
-    settenantRelationships: setList('tenantRelationships'),
+    setEmployeeRoles: setList('employeeRoles'),
+    setEmployeePositions: setList('employeePositions'),
+    setTenantRelationships: setList('tenantRelationships'),
     setServices: setList('services'),
     setJudicialStatuses: setList('judicialStatuses'),
     setJudicialSubStatuses: setList('judicialSubStatuses'),
@@ -71,10 +79,37 @@ export default {
           url: `${baseURL}/debtor/tenant/relationship/choices`
         });
 
-        commit('settenantRelationships', data || [])
+        commit('setTenantRelationships', Object.entries(data).map(([value, label]) => ({
+          value,
+          label,
+        })))
       } catch (e) {
         console.log('error', 'no relationships')
       }
+
+      try {
+        const {
+          data
+        } = await axios({
+          method: 'get',
+          url: `${baseURL}/api/account/position/`
+        });
+
+        commit('setEmployeePositions', data.map(({id: value, name: label}) => ({
+          value,
+          label,
+        })))
+      } catch (e) {
+        console.log('error', 'no relationships')
+      }
+
+      commit('setEmployeeRoles', [
+        {value: 'manager', label: 'Менеджер'},
+        {value: 'employee', label: 'Сотрудник'},
+        {value: 'guest', label: 'Гость'},
+        {value: 'owner', label: 'Владелец'},
+        {value: 'admin', label: 'Админ'},
+      ])
 
       commit('setJudicialStatuses', statuses.map(({value, info}) => ({
         value,

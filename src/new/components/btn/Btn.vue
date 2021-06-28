@@ -38,6 +38,15 @@
         {{ label }}
       </slot>
     </div>
+    <div
+      v-if="appendIcon"
+      :class="$style.append"
+    >
+      <Icon
+        :icon="appendIcon"
+        :class="$style.icon"
+      />
+    </div>
   </component>
 </template>
 
@@ -63,6 +72,7 @@ export default defineComponent({
     },
     isSquare: Boolean,
     prependIcon: String,
+    appendIcon: String,
   },
   emits: ['click'],
   setup(props, { emit }) {

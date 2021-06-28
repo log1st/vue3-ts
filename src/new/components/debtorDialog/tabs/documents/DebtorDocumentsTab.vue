@@ -23,7 +23,7 @@
           <td v-for="column in columns" :key="column.key">
             <div :class="$style.actions" v-if="column.key === 'actions'">
               <Btn :class="$style.action" prepend-icon="eye" state="quinary" :url="document.file" target="_blank"/>
-              <Btn :class="$style.action" prepend-icon="megaphone" state="quinary" @click="listenSound(document)" v-if="activeTab === 'voice'"/>
+              <Btn :class="$style.action" prepend-icon="megaphone" state="quinary" @click="listenSound(document)" v-if="activeTab.key === 'voice'"/>
               <Btn :class="$style.action" prepend-icon="download" state="quinary" @click="downloadDocument(document.file)" v-else/>
             </div>
             <template v-else>
@@ -52,6 +52,9 @@
                 <template v-else-if="activeTab.key === 'fee' && column.key === 'amount'">
                   {{formatMoney(document[column.key])}}
                 </template>
+                <template v-else-if="['sms', 'voice'].includes(activeTab.key) && column.key === 'send_at'">
+                  {{formatDateTime(document[column.key])}}
+                </template>
                 <template v-else>
                   {{document[column.key]}}
                 </template>
@@ -69,7 +72,7 @@
 <script>
 import {computed, defineComponent, inject, onMounted, ref, watch} from "@vue/composition-api";
 import {baseURL} from "@/settings/config";
-import {formatDate} from "@/new/utils/date";
+import {formatDate, formatDateTime} from "@/new/utils/date";
 import Btn from "@/new/components/btn/Btn";
 import {downloadFile} from "@/new/utils/file";
 import {formatMoney} from "@/new/utils/money";
@@ -363,7 +366,8 @@ export default defineComponent({
       showDialog,
     } = useDialog();
 
-    const listenSound = ({name, file}) => {
+    const listenSound = (document) => {
+      const {name = 'Голосовое уведомление', file} = document;
       showDialog({
         component: 'listenFile',
         payload: {
@@ -372,17 +376,6 @@ export default defineComponent({
         }
       })
     }
-
-    watch(activeTab, (tab) => {
-      if(tab.key === 'voice' && (productionType.value === 'pretrial')) {
-        listenSound({
-          name: 'Test file',
-          file: 'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3'
-        })
-      }
-    }, {
-      immediate: true,
-    })
 
     return {
       activeTab,
@@ -396,6 +389,7 @@ export default defineComponent({
       documents,
 
       formatDate,
+      formatDateTime,
 
       formatMoney,
 

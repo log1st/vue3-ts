@@ -26,25 +26,26 @@
         <tbody>
         <tr v-for="document in documents" :key="document.id">
           <td v-for="column in columns" :key="column.key">
-            <template v-if="document[column.key] || document[column.key] === 0">
-              <template v-if="['start_date', 'end_date', 'date'].includes(column.key)">
-                {{formatDbDate(document[column.key])}}
-              </template>
-              <template v-else-if="activeTab.key === 'accruals' && column.key === 'amount'">
-                {{formatMoney(document[column.key])}}
-              </template>
-              <template v-else-if="activeTab.key === 'paidUps' && column.key === 'amount'">
-                {{formatMoney(document[column.key])}}
-              </template>
-              <template v-else-if="activeTab.key === 'debts' && column.key === 'value'">
-                {{formatMoney(document[column.key])}}
-              </template>
-              <template v-else-if="activeTab.key === 'penalties' && column.key === 'value'">
-                {{formatMoney(document[column.key])}}
-              </template>
-              <template v-else>
-                {{document[column.key]}}
-              </template>
+            <template v-if="['start_date', 'end_date', 'date'].includes(column.key)">
+              {{formatDbDate(document[column.key])}}
+            </template>
+            <template v-else-if="activeTab.key === 'accruals' && column.key === 'amount'">
+              {{formatMoney(document[column.key])}}
+            </template>
+            <template v-else-if="activeTab.key === 'accruals' && column.key === 'once_amount'">
+              {{formatMoney(onceAmount)}}
+            </template>
+            <template v-else-if="activeTab.key === 'paidUps' && column.key === 'amount'">
+              {{formatMoney(document[column.key])}}
+            </template>
+            <template v-else-if="activeTab.key === 'debts' && column.key === 'value'">
+              {{formatMoney(document[column.key])}}
+            </template>
+            <template v-else-if="activeTab.key === 'penalties' && column.key === 'value'">
+              {{formatMoney(document[column.key])}}
+            </template>
+            <template v-else-if="document[column.key] || document[column.key] === 0">
+              {{document[column.key]}}
             </template>
             <span v-else :class="$style.na">N/A</span>
           </td>
@@ -160,9 +161,13 @@ export default defineComponent({
       {label: 'Оплачено', value: data.value.paid_up},
       {label: 'Задолженность', value: data.value.total_debt},
       {label: 'Пеня', value: data.value.penalty}]
-    ))
+    ));
+
+    const onceAmount = computed(() => data.value.total_recalculations)
 
     return {
+      onceAmount,
+
       activeTab,
       selectTab,
       tabs,

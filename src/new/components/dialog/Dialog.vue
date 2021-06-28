@@ -32,6 +32,8 @@ import DebtorDialog from "@/new/components/debtorDialog/DebtorDialog";
 import CourtDialog from "@/new/components/courtDialog/CourtDialog";
 import ConfirmDialog from "@/new/components/confirmDialog/ConfirmDialog";
 import ListenFileDialog from "@/new/components/listenFileDialog/ListenFileDialog";
+import OrganizationDialog from "@/new/components/organization/OrganizationDialog";
+import EmployeeDialog from "@/new/components/employee/EmployeeDialog";
 
 export default defineComponent({
   name: "Dialog",
@@ -78,6 +80,8 @@ export default defineComponent({
       court: CourtDialog,
       confirm: ConfirmDialog,
       listenFile: ListenFileDialog,
+      organization: OrganizationDialog,
+      employee: EmployeeDialog,
     };
 
     const componentInstance = computed(() => (

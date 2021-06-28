@@ -17,14 +17,16 @@
         :filters-model.sync="filtersModel"
         @reset="resetSettings"
         state="secondary"
-        key-field="id"
-        selectable-column="id"
+        key-field="index"
+        selectable-column="index"
         :with-all-selection="false"
         :with-pagination="false"
         :with-actions="false"
         :with-controls="false"
         :with-context-menu="false"
         with-unique-selection
+        table-key="organizations"
+        :record-actions="recordActions"
       />
     </div>
   </div>
@@ -38,6 +40,7 @@ import {baseURL} from "@/settings/config";
 import {useDialog} from "@/new/hooks/useDialog";
 import {useToast} from "@/new/hooks/useToast";
 import {useStore} from "@/new/hooks/useStore";
+import {daDataToken} from "@/new/utils/envHelpers";
 
 export default defineComponent({
   name: 'index',
@@ -45,6 +48,7 @@ export default defineComponent({
   setup() {
     const {
       confirmDialog,
+      showDialog,
     } = useDialog();
 
     const {
@@ -52,6 +56,96 @@ export default defineComponent({
     } = useToast();
 
     const store = useStore();
+
+    const {
+      records: newOrganizationRecords,
+      filtersModel: newOrganizationFilterModel,
+      dropRecords: dropOrganizationRecords,
+    } = useActiveTable({
+      filters: computed(() => ([{
+        field: 'query',
+        type: 'text',
+      }])),
+      isImmediate: false,
+      defaultLimit: ref(10),
+      async fetch({params: {limit, query}, cancelToken}) {
+        const {data: {suggestions}} = await axios({
+          method: 'get',
+          url: `https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party`,
+          headers: {
+            'Authorization': `Token ${daDataToken}`,
+          },
+          params: {
+            count: limit,
+            query,
+            branch_type: 'MAIN',
+          },
+          cancelToken,
+        });
+
+        return {
+          data: {
+            count: suggestions.length,
+            results: suggestions.map(({value: label, data: {inn: value}}) => ({
+              value,
+              label,
+            })).filter(
+              ({value}, index, self) => self.findIndex((i) => i.value === value) === index
+            ),
+          }
+        }
+      }
+    })
+
+    const showAddOrganizationDialog = async () => {
+      const {result, model} = await confirmDialog({
+        headline: 'ИНН организации',
+        field: {
+          type: 'select',
+          props: {
+            placeholder: 'Введите ИНН новой компании',
+            isSearchable: true,
+            searchPlaceholder: 'Начните ввод',
+            optionsRef: newOrganizationRecords,
+            async onQuery({query}) {
+              newOrganizationFilterModel.value.query = query
+            }
+          }
+        },
+        confirmLabel: 'Подтвердить',
+        cancelLabel: 'Отменить'
+      });
+      if(!result) {
+        return;
+      }
+      dropOrganizationRecords();
+
+      const {data} = await axios({
+        method: 'post',
+        url: `${baseURL}/api/account/company/`,
+        data: {
+          inn: model,
+        }
+      });
+
+      await showToast({
+        message: `Компания "${data.name_full}" успешно добавлена`,
+        type: 'success',
+      })
+
+      await fetchData();
+    }
+
+    const showOrganizationDialog = (id, isInitialEdit = false) => {
+      showDialog({
+        component: 'organization',
+        isWide: true,
+        payload: {
+          id,
+          isInitialEdit,
+        }
+      })
+    }
 
     const {
       columns,
@@ -65,6 +159,8 @@ export default defineComponent({
       records,
       isFetching,
       actions,
+      recordActions,
+      fetchData,
     } = useActiveTable({
       async fetch({params, cancelToken}) {
         const {data} = await axios({
@@ -79,7 +175,7 @@ export default defineComponent({
             count: data.length,
             results: data.map((record, index) => ({
               ...record,
-              index,
+              index: index + 1,
             })),
           }
         }
@@ -99,8 +195,8 @@ export default defineComponent({
           asLined: true,
           state: 'primary',
           label: 'Добавить компанию',
-          handler: () => {
-            alert('Add company')
+          async handler() {
+            await showAddOrganizationDialog()
           }
         },
         {
@@ -119,7 +215,7 @@ export default defineComponent({
                 isConfirmable: isActive,
                 message: isActive && `Вы уверены, что хотите установить организацию "${organization.name_full}"?`,
                 hint: !isActive && 'Выберите организацию',
-              }))
+              })).result
             ) {
               return;
             }
@@ -137,15 +233,13 @@ export default defineComponent({
               type: 'success',
             });
 
-            //@TODO remove
-            store.dispatch('setCompanyDefault', store.getters['getCompanies'].findIndex(company => company.id === organization.id))
-            store.dispatch('setCompanyDefaultData', organization)
+            store.dispatch('setCompanyDefault', organization.id)
           }
         },
       ])),
       columns: ref([
         {
-          field: 'id',
+          field: 'index',
           isRequired: true,
           label: '№',
           withTitle: false,
@@ -176,6 +270,52 @@ export default defineComponent({
           width: 2,
         },
       ]),
+      recordActions: ref([
+        {
+          key: 'add',
+          label: 'Просмотреть',
+          icon: 'eye',
+          handler: ({record:{ id }}) => {
+            showOrganizationDialog(id)
+          }
+        },
+        {
+          key: 'edit',
+          label: 'Редактировать',
+          icon: 'pencil',
+          handler: ({record:{ id }}) => {
+            showOrganizationDialog(id, true)
+          }
+        },
+        {
+          key: 'delete',
+          label: 'Удалить',
+          icon: 'close',
+          async handler({record: {id, name_full}}) {
+            if(
+              !(await confirmDialog({
+                confirmLabel: 'Да',
+                title: 'Удаление организации',
+                message: `Вы уверены, что хотите удалить организацию "${name_full}"?`,
+              })).result
+            ) {
+              return;
+            }
+
+            await axios({
+              method: 'delete',
+              url: `${baseURL}/api/account/company/${id}`,
+            })
+
+            await fetchData();
+
+            await showToast({
+              message: 'Компания удалена',
+              type: 'success',
+            })
+          }
+        },
+      ])
     })
 
     return {
@@ -190,6 +330,7 @@ export default defineComponent({
       sort,
       resetSettings,
       records,
+      recordActions,
     }
   }
 });

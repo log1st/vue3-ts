@@ -39,8 +39,7 @@ export default {
     },
 
     InfoINNContracts: null,
-    defaultCompany: 0, // - организация по умолчанию
-    defaultCompanyData: {},
+    defaultCompany: +(localStorage.getItem('defaultCompany') || -1), // - организация по умолчанию
     companyEmployees: []
   }),
   mutations: {
@@ -60,9 +59,6 @@ export default {
      */
     setCompanyDefault ( state , index) {
       state.defaultCompany = index
-    },
-    setCompanyDefaultData ( state , data) {
-      state.defaultCompanyData = data
     },
     removeCompany (state, id) {
       state.companies.splice(id, 1)
@@ -150,59 +146,15 @@ export default {
     clearCompanies ({ commit }) {
       commit('clearCompanies')
     },
-    setCompanyDefault ({ commit, state }) {
-      let user = localStorage.getItem('user')
-      user = JSON.parse(user)
-      let defaultCompanyGlobal;
-      axios({
-        method: 'GET',
-        url: `${baseURL}/api/account/user/active-company/${user.id}/`
-      })
-        .then ( result => {
-          if (result.data.default_company !== null) {
-            defaultCompanyGlobal = state.companies.find(el => el.id === result.data.default_company)
-          }
-
-          // Устанавливаем компанию по умолчанию (индекс из массива)
-          commit('setCompanyDefault', state.companies.findIndex(el => el.checked))
-
-          // поиск выбранной компании из списка (по чек боксу)
-          let defultCompanyLocal = state.companies.find(el => el.checked)
-
-          if (!defultCompanyLocal) {
-            if (state.companies.length === 1) {
-              defultCompanyLocal = state.companies[0]
-            }
-            else {
-              defultCompanyLocal = defaultCompanyGlobal
-            }
-          }
-          if (!defaultCompanyGlobal) {
-            defaultCompanyGlobal = defultCompanyLocal
-          }
-          let defaultCompany;
-          //
-          if (defultCompanyLocal.id != defaultCompanyGlobal.id) {
-            defaultCompany = defultCompanyLocal
-          } else {
-            defaultCompany = defaultCompanyGlobal
-          }
-          commit('setCompanyDefaultData', defaultCompany)
-          axios({
-            url: `${baseURL}/api/account/user/active-company/${user.id}/`,
-            method: 'PATCH',
-            data: {
-              default_company: defaultCompany.id
-            },
-          })
-            .then( () => {
-              localStorage.removeItem('defaultCompany');
-              localStorage.removeItem('debtorsPerPage');
-              localStorage.setItem('debtorsPerPage', defaultCompany.debtor_per_page);
-              localStorage.setItem('defaultCompany', defaultCompany.id)
-            })
-
-        })
+    async setCompanyDefault ({ commit, state }) {
+      const user = JSON.parse(
+        localStorage.getItem('user')
+      )
+      const {data: {default_company}} = await axios({
+        method: 'get',
+        url: `${baseURL}/api/account/user/active-company/${user.id}/`,
+      });
+      commit('setCompanyDefault', default_company)
     },
     setCompanyChecked ({ commit }, payload) {
       commit('setCompanyChecked', payload)
@@ -892,8 +844,8 @@ export default {
     applicationUserList: state => state.applicationLists,
     getCompanies: state => state.companies,
     getCompaniesFullNames: state => state.companies.map(el => el.name_full),
-    getDefaultCompanyFullName: state => state.companies.length > 0 && state.defaultCompanyData.name_full || 'Компания',
-    getDefaultCompany: state => state.defaultCompanyData,
+    getDefaultCompany: state => state.companies.find(({id}) => id === state.defaultCompany),
+    getDefaultCompanyFullName: (state, getters) => getters.getDefaultCompany?.name_full || 'Компания',
     exchangedCompanyData: state => state.exchangedCompany,
     /**
      * Вернуть данные компании по id
@@ -908,15 +860,13 @@ export default {
     getInfoINNContracts (state) {
       return state.InfoINNContracts
     },
-    getDefaultCompanyShortName (state) {
-      return state.defaultCompanyData.name_short || '';
+    getDefaultCompanyShortName (state, getters) {
+      return getters.getDefaultCompany?.name_short || '';
     },
     companySettings: state => state.companySettings,
     companyEmployees: state => state.companyEmployees,
     balance (state) {
-       let defaultCompany = localStorage.getItem('defaultCompany')
-       let balance = state.companyBalance[defaultCompany]
-       return balance
+       return state.companyBalance[state.defaultCompany];
     }
   }
 }

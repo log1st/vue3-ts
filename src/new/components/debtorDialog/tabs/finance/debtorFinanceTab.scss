@@ -1,6 +1,8 @@
 .documents {
   display: flex;
   flex-direction: column;
+
+  flex-grow: 1;
 }
 
 .summaries {
@@ -68,7 +70,12 @@
 
 .content {
   margin-top: 40px;
-  display: flex;
+
+  height: 0;
+  flex-grow: 1;
+  overflow-y: auto;
+
+  min-height: 300px;
 }
 
 .na {

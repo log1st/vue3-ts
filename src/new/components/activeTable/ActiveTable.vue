@@ -164,6 +164,21 @@
                 @rowClick="$emit('rowClick', {record, index})"
                 :state="state"
               >
+                <template #cell(__actions)="{record, index}">
+                  <div :class="$style.recordActions">
+                    <TooltipWrapper
+                      position="left"
+                      align="center"
+                      :text="action.label"
+                      :class="$style.recordAction"
+                      v-for="action in recordActions"
+                      :key="action.key"
+                      @click="action.handler({record, index})"
+                    >
+                      <Icon :icon="action.icon"/>
+                    </TooltipWrapper>
+                  </div>
+                </template>
                 <template v-for="(slot, key) in $scopedSlots" :slot="key" slot-scope="data">
                   <slot :name="key" v-bind="data" />
                 </template>
@@ -217,10 +232,13 @@ import Filters from "@/new/components/filters/Filters";
 import {useDialog} from "@/new/hooks/useDialog";
 import Btn from "@/new/components/btn/Btn";
 import FilterConfig from "@/new/components/filter/FilterConfig";
+import {usePersistedSetting} from "@/new/hooks/usePersistedSetting";
+import TooltipWrapper from "@/new/components/tooltip/TooltipWrapper";
 
 export default defineComponent({
   name: "ActiveTable",
   components: {
+    TooltipWrapper,
     FilterConfig,
     Btn,
     Filters,
@@ -235,6 +253,7 @@ export default defineComponent({
     RecycleScroller,
   },
   props: {
+    tableKey: String,
     state: {
       type: String,
       default: 'primary',
@@ -292,7 +311,8 @@ export default defineComponent({
     withContextMenu: {
       type: Boolean,
       default: true,
-    }
+    },
+    recordActions: Array,
   },
   setup(props, {emit}) {
     const sortsMap = computed(() => (
@@ -432,7 +452,12 @@ export default defineComponent({
       showDialog,
     } = useDialog();
 
-    const visibleQuickActions = ref([]);
+    const visibleQuickActions = usePersistedSetting(
+      computed(() => `table-${props.tableKey}-quick-actions`),
+      props.actions
+        .filter(({asQuick}) => asQuick)
+        .map(({key}) => key)
+    );
 
     watch(computed(
       () => props.actions
@@ -441,18 +466,16 @@ export default defineComponent({
     ), newVisibleActions => {
       visibleQuickActions.value = newVisibleActions;
     }, {
-      immediate: true,
       deep: true,
     })
 
-    const visibleColumns = ref([]);
+    const visibleColumns = usePersistedSetting(computed(() => `table-${props.tableKey}-columns`), props.columns.map(({field}) => field));
 
     watch(computed(
       () => props.columns.map(({field}) => field)
     ), newVisibleColumns => {
       visibleColumns.value = newVisibleColumns;
     }, {
-      immediate: true,
       deep: true,
     });
 
@@ -547,11 +570,16 @@ export default defineComponent({
       align: 'start',
     })));
 
-    const computedColumns = computed(() => (
-      props.columns
+    const computedColumns = computed(() => ([
+      ...props.columns
         .filter(({field}) => computedVisibleColumns.value.includes(field))
-        .sort(({field: a}, {field: b}) => computedVisibleColumns.value.indexOf(a) > computedVisibleColumns.value.indexOf(b) ? 1 : -1)
-    ));
+        .sort(({field: a}, {field: b}) => computedVisibleColumns.value.indexOf(a) > computedVisibleColumns.value.indexOf(b) ? 1 : -1),
+      ...(props.recordActions?.length ? [{
+        field: '__actions',
+        withLabel: false,
+        width: '30px',
+      }] : [])
+    ]));
 
     const gridTemplate = computed(() => (
       computedColumns.value.map(({width}) => typeof width === 'string' ? width: `${width || 1}fr`).join(' ')

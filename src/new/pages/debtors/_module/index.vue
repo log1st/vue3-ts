@@ -20,6 +20,7 @@
       :filters-model.sync="filtersModel"
       @reset="resetSettings"
       @rowClick="showDebtorDialog"
+      :table-key="type"
       :key="type"
     >
       <template #cell(status)="{record, index}">
@@ -28,6 +29,9 @@
           :status="record.debtor.debtor_status[record.debtor.debtor_status.length - 1]"
           @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[record.debtor.debtor_status.length - 1].id })"
         />
+      </template>
+      <template #cell(phone_number)="{record, index}">
+        {{record.debtor_main_profile.phone_number}}
       </template>
       <template #cell(personal_account)="{record, index}">
         <div :class="$style.account">
@@ -128,6 +132,7 @@ import PretrialDebtorsAutomatizingDialog
   from "@/new/components/pretrialDebtorsAutomatizingDialog/PretrialDebtorsAutomatizingDialog";
 import {useToast} from "@/new/hooks/useToast";
 import {formatDate} from "@/new/utils/date";
+import {usePersistedSetting} from "@/new/hooks/usePersistedSetting";
 
 export default defineComponent({
   name: "index",
@@ -180,14 +185,54 @@ export default defineComponent({
       })
     }
 
-    const showDutyFormDialog = async (payload) => {
-      await showDialog({
-        component: 'dutyForm',
-        payload: {
-          ...payload,
-          type: type.value,
-        },
-      })
+    const showDutyFormDialog = async ({
+      allSelected,
+      filters,
+      selectedItems,
+      selectedItem,
+    }) => {
+      await showToast({
+        message: 'Формирование бланка пошлины...',
+        type: 'warning',
+      });
+
+      const {
+        data: {
+          link,
+        }
+      } = await axios({
+        method: 'post',
+        url: `${baseURL}/constructor/debtors-data`,
+        params: allSelected ? {...filters, filters: filters} : {},
+        data: {
+          company_id: localStorage.getItem('defaultCompany'),
+          production_type: type.value,
+          debtor_ids: selectedItems || [selectedItem],
+          ...(allSelected ? {
+            filters: filters,
+            ...filters,
+          } : {}),
+        }
+      });
+
+      if(link) {
+        await showToast({
+          message: 'Документ сформирован и отправлен на почту',
+          type: 'success',
+        });
+        await showDialog({
+          component: 'downloadFile',
+          payload: {
+            title: 'Работа с документами',
+            url: link,
+          },
+        });
+      } else {
+        await showToast({
+          message: 'Ошибка формирования документов',
+          type: 'error',
+        })
+      }
     }
 
     const showExtractFromEgrnDialog = async (payload) => {
@@ -200,13 +245,19 @@ export default defineComponent({
       })
     }
 
-    const showDebtorDialog = async ({record: {debtor: {pk}}}) => {
+    const showDebtorDialog = async ({record: {debtor: {pk}}, index}) => {
       await showDialog({
         component: 'debtorDialog',
         isWide: true,
         payload: {
           id: pk,
           type: type.value,
+          onNext: index < (records.value.length - 1) && (() => {
+            showDebtorDialog({record: records.value[index + 1], index: index + 1})
+          }),
+          onPrevious: index > 0 && (() => {
+            showDebtorDialog({record: records.value[index - 1], index: index - 1})
+          }),
         },
       })
     }
@@ -230,7 +281,7 @@ export default defineComponent({
           isCancellable: false,
           isConfirmable: isActive,
           hint: !isActive && 'Выберите должника'
-        }))
+        })).result
       ) {
         return;
       }
@@ -271,7 +322,7 @@ export default defineComponent({
           isCancellable: false,
           isConfirmable: isActive,
           hint: !isActive && 'Выберите должника',
-        }))
+        })).result
       ) {
         return;
       }
@@ -303,7 +354,7 @@ export default defineComponent({
           isCancellable: false,
           isConfirmable: isActive,
           hint: !isActive && 'Выберите должника',
-        }))
+        })).result
       ) {
         return;
       }
@@ -336,7 +387,7 @@ export default defineComponent({
           isConfirmable: isActive,
           hint: !isActive && 'Выберите должника',
           message: isActive && 'Перевести выбранных должников в раздел “Судебное производство”?'
-        }))
+        })).result
       ) {
         return;
       }
@@ -486,6 +537,7 @@ export default defineComponent({
       resetSettings,
       dropRecords,
     } = useActiveTable({
+      defaultLimit: usePersistedSetting(computed(() => `debtors-${type.value}-limit`), 10),
       async fetch({
         params,
         cancelToken,
@@ -679,6 +731,11 @@ export default defineComponent({
           isSortable: true,
           width: '164px',
           isRequired: true,
+        },
+        {
+          field: 'phone_number',
+          label: 'Телефон',
+          width: 214,
         },
         {
           field: 'full_name',

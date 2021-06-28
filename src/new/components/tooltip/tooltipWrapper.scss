@@ -45,33 +45,18 @@ $offset: 5px;
 
 .rightPosition {
   left: calc(100% + #{$offset});
-
-  .arrow {
-    right: -5px;
-    transform: rotate(-90deg);
-  }
 }
 
 .leftPosition,
 .rightPosition {
   &.startAlign {
     top: #{-$offset};
-    .arrow {
-      top: 11px;
-    }
   }
   &.centerAlign {
     top: 50%;
     transform: translateY(-50%);
-    .arrow {
-      top: 50%;
-      transform: translateY(-50%);
-    }
   }
   &.endAlign {
     bottom: #{-$offset};
-    .arrow {
-      bottom: 11px;
-    }
   }
 }

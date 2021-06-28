@@ -1,0 +1,59 @@
+.dialog {
+  width: 900px;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 22px;
+  color: #21317A;
+}
+
+.form {
+  margin-top: 40px;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-areas: (
+    'firstName lastName email phone'
+    'position position companies companies'
+    'role role submit submit'
+  );
+  grid-gap: 30px 20px;
+}
+
+.firstName {
+  grid-area: firstName;
+}
+
+.lastName {
+  grid-area: lastName;
+}
+
+.email {
+  grid-area: email;
+}
+
+.position {
+  grid-area: position;
+}
+
+.role {
+  grid-area: role;
+}
+
+.companies {
+  grid-area: companies;
+}
+
+.submit {
+  grid-area: submit;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.submitAction {
+  height: 60px;
+  width: 160px;
+}

@@ -43,7 +43,10 @@
         </template>
         <template v-else>
           <template v-if="model[column.key]">
-            <template v-if="column.key === 'registration'">
+            <template v-if="column.key === 'birth_date'">
+              {{formatDbDate(model[column.key])}}
+            </template>
+            <template v-else-if="column.key === 'registration'">
               {{registrationsMap[model[column.key]]}}
             </template>
             <template v-else-if="column.key === 'relationships'">
@@ -68,7 +71,7 @@ import TextInput from "@/new/components/textInput/TextInput";
 import DateInput from "@/new/components/dateInput/DateInput";
 import SelectInput from "@/new/components/selectInput/SelectInput";
 import {cloneDeep} from "lodash";
-import {formatDate} from "@/new/utils/date";
+import {formatDate, formatDbDate} from "@/new/utils/date";
 import {useDicts} from "@/new/hooks/useDicts";
 
 export default defineComponent({
@@ -141,6 +144,7 @@ export default defineComponent({
       tenantRelationshipsMap,
 
       formatDate,
+      formatDbDate,
     }
   }
 })

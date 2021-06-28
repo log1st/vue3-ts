@@ -1,8 +1,10 @@
 <template>
   <div :class="$style.dialog">
+    <div :class="$style.headline" v-if="headline">{{headline}}</div>
     <div :class="$style.title" v-if="title">{{title}}</div>
     <div :class="$style.hint" v-if="hint">{{hint}}</div>
     <div :class="$style.message" v-if="message">{{message}}</div>
+    <FilterConfig v-model="model" :class="$style.field" v-if="field" :type="field.type" :props="field.props"/>
     <div :class="$style.actions" v-if="computedActions.length">
       <Btn
         v-for="action in computedActions"
@@ -19,18 +21,22 @@
 
 <script>
 import Btn from "@/new/components/btn/Btn";
-import {computed} from '@vue/composition-api';
+import {computed, ref} from '@vue/composition-api';
+import TextInput from "@/new/components/textInput/TextInput";
+import FilterConfig from "@/new/components/filter/FilterConfig";
 
 export default {
   name: "ConfirmDialog",
-  components: {Btn},
+  components: {FilterConfig, TextInput, Btn},
   props: {
+    headline: String,
     title: String,
     message: [String, Boolean],
     hint: [String, Boolean],
     actions: Array,
     onClose: Function,
     onConfirm: Function,
+    field: Object,
     isCancellable: Boolean,
     isConfirmable: {
       type: Boolean,
@@ -46,6 +52,8 @@ export default {
     }
   },
   setup(props, {emit}) {
+    const model = ref();
+
     const computedActions = computed(() => (
       props.actions?.length ? props.actions : [
         props.isCancellable && {
@@ -62,7 +70,10 @@ export default {
         props.isConfirmable && {
           key: 'confirm',
           onClick: () => {
-            props.onConfirm && props.onConfirm(true);
+            props.onConfirm && props.onConfirm({
+              result: true,
+              model: model.value,
+            });
             emit('close');
           },
           props: {
@@ -75,6 +86,7 @@ export default {
 
     return {
       computedActions,
+      model,
     }
   }
 }

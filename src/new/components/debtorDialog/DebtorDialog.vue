@@ -26,7 +26,9 @@
         </div>
       </div>
       <div :class="$style.content">
+        <Icon @click="switchDebtor(-1)" v-if="onPrevious" :class="[$style.control, $style.previous]" icon="chevron-left"/>
         <component :is="activeTab.component"/>
+        <Icon @click="switchDebtor(1)" v-if="onNext" :class="[$style.control, $style.next]" icon="chevron-right"/>
       </div>
     </template>
   </div>
@@ -49,8 +51,10 @@ export default defineComponent({
   props: {
     id: Number,
     type: String,
+    onPrevious: [Function, Boolean],
+    onNext: [Function, Boolean],
   },
-  setup(props) {
+  setup(props, {emit}) {
     const data = ref();
     const type = computed(() => props.type);
     const onSave = async () => {
@@ -132,7 +136,18 @@ export default defineComponent({
       activeTab.value = tab;
     }
 
+    const switchDebtor = (direction) => {
+      emit('close');
+      if(direction > 0 && props.onNext) {
+        requestAnimationFrame(props.onNext)
+      } else if (direction < 0 && props.onPrevious) {
+        requestAnimationFrame(props.onPrevious)
+      }
+    }
+
     return {
+      switchDebtor,
+
       isLoading,
       data,
 

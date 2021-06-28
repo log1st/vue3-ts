@@ -89,6 +89,7 @@ export default defineComponent({
     isDisabled: Boolean,
     isMultiple: Boolean,
 
+    optionsRef: Object,
     options: {
       type: Array,
       default: () => ([]),
@@ -149,7 +150,7 @@ export default defineComponent({
     const value = useLocalProp(props, emit, 'modelValue');
 
     const optionsMap = computed(() => (
-      props.options.reduce((acc, cur) => ({
+      (props.optionsRef?.value || props.options).reduce((acc, cur) => ({
         ...acc,
         [cur[props.valueProp]]: cur
       }), {})
@@ -206,7 +207,7 @@ export default defineComponent({
     })
 
     const computedOptions = computed(() => (
-      props.options.map(option => ({
+      (props.optionsRef?.value || props.options).map(option => ({
         key: option[props.valueProp],
         label: arrayFrom(props.displayProp).map(i => option[i]).join(' '),
       }))

@@ -391,4 +391,40 @@
       flex-grow: 1;
     }
   }
+
+  .record {
+    &:not(:hover) {
+      .recordActions {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+    }
+  }
+
+  .recordActions {
+    display: flex;
+    flex-direction: column;
+
+    background: #FFFFFF;
+    box-shadow: 0px 15px 15px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+
+    padding: 5px 7px;
+  }
+
+  .recordAction {
+    height: 15px;
+    width: 15px;
+
+    color: #828282;
+
+    &:hover {
+      color: #21317A;
+    }
+
+    &:not(:first-child) {
+      margin-top: 12px;
+    }
+  }
 }

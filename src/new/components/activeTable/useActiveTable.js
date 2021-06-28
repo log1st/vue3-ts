@@ -15,6 +15,7 @@ export const useActiveTable = ({
   sort = ref([]),
   actions = ref([]),
   contextActions = ref([]),
+  recordActions = ref([]),
   columns = ref([]),
   fetch,
   isImmediate = true,
@@ -91,6 +92,10 @@ export const useActiveTable = ({
   watch(page, fetchData);
   watch(limit, fetchData);
 
+  watch(limit, l => {
+    defaultLimit.value = l;
+  })
+
   const dropRecords = () => {
     records.value = [];
   }
@@ -114,6 +119,8 @@ export const useActiveTable = ({
 
     actions,
     contextActions,
+
+    recordActions,
 
     summaries,
 

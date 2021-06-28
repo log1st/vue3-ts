@@ -87,7 +87,7 @@
       </div>
 
       <div class="header__user-data" :class="{ 'is-open' : dropdownProfileOpen }" @click="dropdownProfileOpen = !dropdownProfileOpen">
-        <div class="header__user-name" >{{$store.getters.getDefaultCompany.name_short}}</div>
+        <div class="header__user-name" >{{$store.getters.getDefaultCompanyShortName}}</div>
         <div class="header__user-balans"> {{ balance ? balance : 0 | sepnum }}&nbsp;&#8381;</div>
       </div>
       <transition name="fade">
@@ -125,7 +125,7 @@
     background-color: #fff;
     border-radius: 50%;
   }
-} 
+}
 </style>
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex'
@@ -190,7 +190,7 @@ export default {
         console.log("Database deleted successfully");
         console.log(event.result); // should be undefined
       };
-      await this.logout().then(() => { 
+      await this.logout().then(() => {
         this.$router.push('/login');
         // this.setInitialized(false);
       }).catch(err => console.log(err))
@@ -254,13 +254,13 @@ export default {
       if (typeof window !== 'undefined') {
 				  user = localStorage.getItem('user');
           user = JSON.parse(user);
-          return user.role === 'admin' 
+          return user.role === 'admin'
 			  } else {
           user = {
             role: 'company'
           }
           return user.role === 'company'
-        } 
+        }
     },
     adminPage() {
       let admin = this.$route.path.split('/')[1];
@@ -283,7 +283,7 @@ export default {
         }
       }
     },
-    
+
     isLoggedIn: {
       immediate: true,
       handler (val) {
@@ -315,14 +315,14 @@ export default {
         //     setInterval(() => {
         //         let user = localStorage.getItem('user')
         //         user = JSON.parse(user)
-                
+
         //         if (user) {
-        //           let data = { 
+        //           let data = {
         //             session_key: user.token
-        //           } 
+        //           }
         //           let url = baseURL+'/api/check_user_auth/'
         //           axios({
-        //             url: url, 
+        //             url: url,
         //             data: data,
         //             method: "POST"
         //           })
