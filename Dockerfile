@@ -4,7 +4,7 @@ FROM node:12
 
 #COPY . .
 
-RUN ( set -o posix ; set ) | less
+RUN declare -xp
 RUN node -e 'console.log(process.env)'
 #RUN npm install
 #RUN npm run build
