@@ -732,7 +732,7 @@ export default defineComponent({
           width: '164px',
           isRequired: true,
         },
-        {
+        type.value === 'judicial' && {
           field: 'phone_number',
           label: 'Телефон',
           width: 214,
