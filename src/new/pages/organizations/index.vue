@@ -163,12 +163,23 @@ export default defineComponent({
       fetchData,
     } = useActiveTable({
       async fetch({params, cancelToken}) {
-        return axios({
+        const {data} =  axios({
           method: 'get',
           url: `${baseURL}/api/account/company/`,
           params,
           cancelToken,
         });
+
+        return {
+          data: {
+            ...data,
+            results: response.data.results.map((record, index) => ({
+              ...record,
+              index,
+            }))
+          }
+        }
+
       },
       filters: computed(() => (
         ['name_full', 'name_short', 'inn', 'legal_address'].map(field => ({
