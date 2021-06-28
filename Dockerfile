@@ -4,8 +4,9 @@ FROM node:12
 
 #COPY . .
 
-RUN env
-RUN node -e 'console.log(process.env)'
+ENV VUE_APP_API=$VUE_APP_API
+
+RUN VUE_APP_API=$VUE_APP_API node -e 'console.log(process.env)'
 #RUN npm install
 #RUN npm run build
 
