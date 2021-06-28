@@ -1,6 +1,6 @@
 console.log(process.env);
-const URL = process.env.VUE_APP_API_URL;
-const baseURL = process.env.VUE_APP_API_URL;
+const URL = process.env.VUE_APP_API;
+const baseURL = process.env.VUE_APP_API;
 
 const keys = [
   'GroundsPowersSignatory',
