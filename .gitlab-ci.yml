@@ -17,6 +17,7 @@ step-deploy-prod:
     - master
   variables:
     ENVIRONMENT: production
+    VUE_APP_API_URL: https://api-2.urrobot.net
 
 
 step-deploy-dev:
@@ -32,3 +33,4 @@ step-deploy-dev:
     - DEV
   variables:
     ENVIRONMENT: development
+    VUE_APP_API_URL: https://api-test.urrobot.net
