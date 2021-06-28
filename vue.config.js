@@ -6,9 +6,8 @@ const { DefinePlugin } = require('webpack')
 // import merge from 'lodash/merge'
 const TARGET_NODE = process.env.WEBPACK_TARGET === 'node'
 
-console.log(process.env, 'some envs')
+console.log(process.env, 'envs here')
 
-/*
 const createApiFile = TARGET_NODE
   ? './create-api-server.js'
   : './create-api-client.js'
@@ -104,4 +103,3 @@ module.exports = {
       }))
   }
 }
-*/
