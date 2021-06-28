@@ -1,5 +1,7 @@
 FROM node:12
 
+ARG VUE_APP_API
+
 #WORKDIR /app
 
 #COPY . .
