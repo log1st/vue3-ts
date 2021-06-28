@@ -4,8 +4,8 @@
   "description": "Urrobot SSR edition. Testing version",
   "private": true,
   "scripts": {
-    "serve-dev": "cross-env NODE_ENV=development VUE_APP_API_URL=DEPLOYMENT VUE_CLI_BABEL_TRANSPILE_MODULES=true npm run build-ssr-dev && cross-env NODE_ENV=development VUE_APP_API_URL=DEPLOYMENT VUE_CLI_BABEL_TRANSPILE_MODULES=true npm-run-all -p start serve:client",
-    "serve": "cross-env NODE_ENV=production VUE_APP_API_URL=TESTING VUE_CLI_BABEL_TRANSPILE_MODULES=true npm run build-ssr && cross-env NODE_ENV=production VUE_APP_API_URL=TESTING VUE_CLI_BABEL_TRANSPILE_MODULES=true npm-run-all -p start serve:client",
+    "serve-dev": "cross-env NODE_ENV=development VUE_CLI_BABEL_TRANSPILE_MODULES=true npm run build-ssr-dev && cross-env NODE_ENV=development VUE_CLI_BABEL_TRANSPILE_MODULES=true npm-run-all -p start serve:client",
+    "serve": "cross-env NODE_ENV=production VUE_CLI_BABEL_TRANSPILE_MODULES=true npm run build-ssr && cross-env NODE_ENV=production VUE_CLI_BABEL_TRANSPILE_MODULES=true npm-run-all -p start serve:client",
     "serve:client": "vue-cli-service serve",
     "build-ssr": "npm run build-ssr:server -- --trace-warnings --silent && npm run build-ssr:client -- --no-clean --silent",
     "build-ssr-dev": "npm run build-ssr-dev:serve-dev -- --trace-warnings --silent && npm run build-ssr:client -- --no-clean --silent",
