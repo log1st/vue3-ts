@@ -14,6 +14,10 @@ step-deploy-prod:
     - docker cp node-server:/app/dist /home/gitlab-runner/dist
     - docker stop node-server
     - docker rm node-server
+  artifacts:
+    paths:
+      - dist
+    expire_in: 1 week
   only:
     - master
   tags:
