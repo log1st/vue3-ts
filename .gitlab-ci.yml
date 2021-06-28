@@ -12,8 +12,9 @@ build_app:
     - master
   script:
     - ls -la
-    - npm install
-    - npm run build
+#    - npm install
+#    - npm run build
+    - touch yes.txt
 #  cache:
 #    paths:
 #      - node_modules/
@@ -24,8 +25,10 @@ build_app:
 
 step-deploy-prod:
   stage: deploy
+  dependencies:
+    - build_app
   script:
-    - cp -r dist/* /home/gitlab-runner/dist
+    - ls -la
 
 step-deploy-dev:
   stage: deploy
