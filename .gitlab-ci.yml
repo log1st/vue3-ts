@@ -14,9 +14,9 @@ step-deploy-prod:
     - docker cp node-server:/app/dist /home/gitlab-runner/dist
     - docker stop node-server
   only:
-    - DEV
+    - master
   tags:
-    - DEV
+    - master
   variables:
     ENVIRONMENT: production
     VUE_APP_API: https://api-2.urrobot.net
