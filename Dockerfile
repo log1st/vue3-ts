@@ -1,8 +1,8 @@
 FROM node:12
 
-WORKDIR /app
+#WORKDIR /app
 
-COPY . .
+#COPY . .
 
 RUN export VUE_APP_API=${VUE_APP_API}
 RUN echo ${VUE_APP_API}
