@@ -2,24 +2,29 @@ image: docker/compose:latest
 services:
   - docker:dind
 stages:
+  - build
   - deploy
+
+build_app:
+  image: node:alpine
+  stage: build
+  only:
+    - master
+  script:
+    - npm install
+    - npm run build
+  cache:
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 hour
 
 step-deploy-prod:
   stage: deploy
   script:
-    - docker build -t app/node-web-app .
-  only:
-    - master
-  tags:
-    - master
-  variables:
-    ENVIRONMENT: production
-    VUE_APP_API: https://api-2.urrobot.net
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - dist
-
+    - scp -r dist/* /home/gitlab-runner/dist
 
 step-deploy-dev:
   stage: deploy
