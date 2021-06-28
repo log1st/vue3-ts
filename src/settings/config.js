@@ -1,5 +1,4 @@
 require('dotenv').config();
-// const URL = process.env.NODE_ENV === 'production' ?  : 'https://apidomenpyth.ru'
 const URL = process.env.VUE_APP_API_URL;
 const baseURL = process.env.VUE_APP_API_URL;
 
