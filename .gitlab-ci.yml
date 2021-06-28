@@ -11,10 +11,9 @@ build_app:
   only:
     - master
   script:
-    - ls -la
-#    - npm install
-#    - npm run build
-    - touch yes.txt
+    - docker build -t app/node-web-app .
+    - docker run --name node-server -p 49162:8080 -p 49164:8081 -d app/node-web-app:latest sh -c 'tail -f'
+    - docker cp app/node-web-app:/home/gitlab
 #  cache:
 #    paths:
 #      - node_modules/
@@ -25,10 +24,8 @@ build_app:
 
 step-deploy-prod:
   stage: deploy
-  dependencies:
-    - build_app
   script:
-    - ls -la
+    -
 
 step-deploy-dev:
   stage: deploy
@@ -36,7 +33,9 @@ step-deploy-dev:
     - docker stop node-server
     - docker rm node-server
     - docker build -t app/node-web-app .
-    - docker run --name node-server -p 49162:8080 -p 49164:8081 -d app/node-web-app:latest sh -c 'npm run serve'
+    - docker run --name node-server -p 49162:8080 -p 49164:8081 -d app/node-web-app:latest sh -c 'tail -f'
+    - docker cp node-server:/app/dist /home/gitlab-runner/dist
+    - docker stop node-server
   only:
     - DEV
   tags:

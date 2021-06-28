@@ -1,4 +1,4 @@
-FROM node:12 as build-stage
+FROM node:12
 
 WORKDIR /app
 
@@ -6,5 +6,3 @@ COPY . .
 
 RUN npm install
 RUN npm run build
-
-COPY --from=build-stage /app/dist /home/gitlab-runner/dist
