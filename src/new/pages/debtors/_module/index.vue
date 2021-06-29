@@ -24,13 +24,15 @@
       :key="type"
     >
       <template #cell(status)="{record, index}">
+        <!--
         <DebtorStatus
           v-if="false && record.debtor && record.debtor.debtor_status.length"
           :class="$style.status"
           :status="record.debtor.debtor_status[record.debtor.debtor_status.length - 1]"
           @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[record.debtor.debtor_status.length - 1].id })"
         />
-        <template v-else>&nbsp;</template>
+        -->
+        <span/>
       </template>
       <template #cell(phone_number)="{record, index}">
         {{record.debtor_main_profile.phone_number}}
