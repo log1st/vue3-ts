@@ -25,11 +25,12 @@
     >
       <template #cell(status)="{record, index}">
         <DebtorStatus
-          v-if="record.debtor && record.debtor.debtor_status.length"
+          v-if="false && record.debtor && record.debtor.debtor_status.length"
           :class="$style.status"
           :status="record.debtor.debtor_status[record.debtor.debtor_status.length - 1]"
           @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[record.debtor.debtor_status.length - 1].id })"
         />
+        <template v-else>&nbsp;</template>
       </template>
       <template #cell(phone_number)="{record, index}">
         {{record.debtor_main_profile.phone_number}}
@@ -721,7 +722,7 @@ export default defineComponent({
       columns: computed(() => ([
         {
           field: 'status',
-          width: '180px',
+          width: '100px',
           isRequired: true,
           label: 'Статус',
           withTitle: false,
