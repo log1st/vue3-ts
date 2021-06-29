@@ -99,6 +99,7 @@ import {useToast} from "@/new/hooks/useToast";
 import {asyncAction} from "@/new/utils/asyncAction";
 import {useDialog} from "@/new/hooks/useDialog";
 import {dateToApiDate} from "@/new/utils/date";
+import {useStore} from "@/new/hooks/useStore";
 
 export default defineComponent({
   name: "PrintDebtorsDialog",
@@ -118,6 +119,8 @@ export default defineComponent({
     filters: Object,
   },
   setup(props, {emit}) {
+    const store = useStore();
+
     const model = ref({
       documents: [],
       services: {},
@@ -147,7 +150,7 @@ export default defineComponent({
         url: `${baseURL}/document_attachments/company`,
         params: {
           production_type: props.type,
-          company_id: localStorage.getItem('defaultCompany'),
+          company_id: store.state.companies.defaultCompany,
         }
       });
       const accountResponse = await axios({
@@ -200,7 +203,7 @@ export default defineComponent({
         url: `${baseURL}/document_attachments/company_bulk_create/`,
         params: props.allSelected ? {...props.filters, filters: props.filters} : {},
         data: {
-          company_id: localStorage.getItem('defaultCompany'),
+          company_id: store.state.companies.defaultCompany,
           production_type: props.type,
           attachments: model.value.documents.map((document, index) => ({
             ...document,
@@ -220,7 +223,7 @@ export default defineComponent({
         params: props.allSelected ? {...props.filters, filters: props.filters} : {},
         data: {
           production_type: props.type,
-          company_id: localStorage.getItem('defaultCompany'),
+          company_id: store.state.companies.defaultCompany,
           debtor_ids: props.selectedItems || [props.selectedItem],
           ...(model.value.allPeriod ? {} : {
             date_from: dateToApiDate(model.value.from),
