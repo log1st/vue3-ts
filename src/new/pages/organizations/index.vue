@@ -173,7 +173,7 @@ export default defineComponent({
         return {
           data: {
             ...data,
-            results: response.data.results.map((record, index) => ({
+            results: data.results.map((record, index) => ({
               ...record,
               index,
             }))
