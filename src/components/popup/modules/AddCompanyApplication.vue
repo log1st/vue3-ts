@@ -22,7 +22,7 @@
                     <div class="compib__input">
                         <div class="company-input">
                             <!-- <input type="text" placeholder="Введите наименование" v-model="attachment.name"> -->
-                            <v-select :options="modules" label="title" v-model="attachment.module"></v-select>
+                            <v-select :options="modules" placeholder="Выберите модуль приложения" label="title" v-model="attachment.module"></v-select>
                         </div>
                     </div>
                 </div>
@@ -90,10 +90,10 @@ export default {
                     name: 'judicial',
                     title: 'Судебный модуль'
                 },
-                // {
-                //     name: '',
-                //     title: 'Досудебный модуль'
-                // },
+                {
+                    name: 'executive',
+                    title: 'Исполнительный модуль'
+                },
             ]
         }
     },

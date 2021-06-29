@@ -1,3 +1,16 @@
+.btn-group-application {
+  .btngroup__item {
+    border: 1px solid #949baf;
+    height: 50px;
+    span {
+      margin-top: 0;
+    }
+    &.active {
+      background-color: $colorBlue3;
+    }
+  }
+  
+}
 .config-data {
       &__add-space {
         padding: 0 40px;
