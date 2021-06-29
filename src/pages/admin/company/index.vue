@@ -117,10 +117,11 @@
                                       @change="setCompanySettings({ e: $event, selectedCompany, settingsMode: 'ApplicationsMode' })" class="m-2"></checkBox>
                                   </div> -->
                                </div>
+                              <btn-group class="btn-group-application" :buttons="prodButtons" :active="currentActiveAppProd" @currentActive="selectApplicationProduction($event); currentActiveAppProd = $event"/>
                                <div class="container-content">
                                  <div class="icon__wrapper">
-                                  <span style="position: relative; top: 1em; margin-right: 3px; margin-left: 52px;">
-                                   <icon-base width="30" height="20" iconColor="#848aa1">
+                                  <span style="position: relative; top: 1em; margin-left: 52px;">
+                                   <icon-base width="25" height="20" viewBox="0 0 40 25" iconColor="#848aa1">
                                     <icon-print />
                                   </icon-base>
                                   </span>
@@ -150,9 +151,6 @@
                                           </icon-base>
                                        </span>
                                        <span class="edit__application-icon" title="Удалить" @click="deleteApplication(list.id)">
-                                         <!-- <icon-base width="15" height="15" iconColor="#848aa1">
-                                            <icon-edit />
-                                          </icon-base> -->
                                           X
                                        </span>
                                     </li>
@@ -264,6 +262,13 @@ export default {
                 actionsIcons: ['view', 'edit'],
                 searchData: [
                   { key: 'FullNameOrganization', data: '' },
+                ],
+                currentActiveAppProd: 1,
+
+                prodButtons: [
+                  { name: 'Досудебное' },
+                  { name: 'Судебное' },
+                  { name: 'Исполнительное' },
                 ],
 
                 TemplateDocs: [],
@@ -408,12 +413,22 @@ export default {
         },
 
         /**
-         *  Отправка документов на склейку
-         * @description Пока что функция отключена возможно будет удалена полностью
-         * @warning **Устаревшая функция** 
-         */ 
-        sendToСompile(status){
-          //
+         * Выбор модуля приложений
+         */
+        selectApplicationProduction (production) {
+          let production_type = 'judicial';
+          switch (production) {
+            case 0:
+              production_type = 'pretrial'
+              break;
+            case 1:
+              production_type = 'judicial'
+              break;
+            case 2:
+              production_type = 'executive'
+              break;
+          }
+              this.getCompanyApplication({id:this.SelectedUserId, type: production_type})
         },
 
         /**

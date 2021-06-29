@@ -87,6 +87,9 @@ export default {
             state.applications.push(att)
           })
         },
+        clearCompanyApplication (state) {
+          state.applications = []
+        },
         setAllDocuments (state, payload) {
           state.documents = payload
         }
@@ -358,8 +361,10 @@ export default {
             })
             .catch( err => {
               reject(err)
+              commit('clearCompanyApplication')
               dispatch('getDefaultApplicationAdmin')
               console.log(err)
+              
             })
           })
         },
