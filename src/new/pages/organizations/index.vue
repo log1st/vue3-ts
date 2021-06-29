@@ -162,11 +162,14 @@ export default defineComponent({
       recordActions,
       fetchData,
     } = useActiveTable({
-      async fetch({params, cancelToken}) {
-        const {data} =  axios({
+      async fetch({params: {o: ordering, ...params}, cancelToken}) {
+        const {data} = await axios({
           method: 'get',
           url: `${baseURL}/api/account/company/`,
-          params,
+          params: {
+            ...params,
+            ordering
+          },
           cancelToken,
         });
 
@@ -187,6 +190,7 @@ export default defineComponent({
           type: 'text',
           props: {
             placeholder: 'Введите текст',
+            delay: 350
           }
         }))
       )),

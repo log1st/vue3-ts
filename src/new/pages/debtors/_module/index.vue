@@ -25,6 +25,7 @@
     >
       <template #cell(status)="{record, index}">
         <DebtorStatus
+          v-if="record.debtor && record.debtor.debtor_status.length"
           :class="$style.status"
           :status="record.debtor.debtor_status[record.debtor.debtor_status.length - 1]"
           @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[record.debtor.debtor_status.length - 1].id })"
@@ -41,7 +42,7 @@
               <Rating :model-value="record.tmp.rating"/>
             </div>
           </div>
-          <div :class="[
+          <div v-if="record.debtor.debtor_status && record.debtor.debtor_status.length" :class="[
             $style.accountIcons,
             record.debtor.debtor_status[record.debtor.debtor_status.length - 1].length > 1 && $style.accountIconsDense
           ]">
