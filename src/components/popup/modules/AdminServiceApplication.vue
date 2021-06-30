@@ -187,7 +187,6 @@ export default {
                 dismissible: true,
                 position: 'top-right'
               })
-              console.log(response)
                 this.loading = false
                 this.disabled = false
                 // this.fileName = null;
@@ -251,7 +250,7 @@ export default {
                         dismissible: true,
                         position: 'top-right'
                     })
-                    this.getCompanyApplication({id: this.params.companyId, type: 'judicial'})
+                    this.getCompanyApplication({id: this.params.companyId, type: this.production_type.name})
                     this.setPopupState(false)
                   })
                   .catch(err => {
