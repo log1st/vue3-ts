@@ -44,6 +44,13 @@
                            </div>
                         </div>
                       </div>
+                      <div class="d-data__content-row">
+                          <div class="f-container">
+                              <div class="">
+                                <v-select placeholder="Выберите модуль приложения" :options="applicationModules" label="title" v-model="production_type"></v-select>
+                              </div>
+                          </div>
+                      </div>
                       <div class="d-data__content-row" >
                           <div class="f-container">
                               <div class="">
@@ -98,6 +105,21 @@ export default {
             docs_list: [],
             docsName: [],
             applicationType: false,
+            production_type: undefined,
+            applicationModules: [
+              {
+                    name: 'pretrial',
+                    title: 'Досудебный модуль'
+                },
+                {
+                    name: 'judicial',
+                    title: 'Судебный модуль'
+                },
+                {
+                    name: 'executive',
+                    title: 'Исполнительный модуль'
+                },
+            ],
             typesList: [
               {type:'organisation',
               title: 'Организация'
@@ -207,7 +229,7 @@ export default {
                     data: {
                       name: this.name,
                       type: typeApp,
-                      production_type: 'judicial',
+                      production_type: this.production_type.name,
                       company: this.params.companyId,
                       document: docId
                     }

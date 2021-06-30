@@ -150,7 +150,7 @@
                                             <icon-edit />
                                           </icon-base>
                                        </span>
-                                       <span class="edit__application-icon" title="Удалить" @click="deleteApplication(list.id)">
+                                       <span class="edit__application-icon" title="Удалить" @click="deleteApplication({id:list.id, production_type: list.production_type})">
                                           X
                                        </span>
                                     </li>
@@ -633,14 +633,14 @@ export default {
          * Удаление приложения 
          * @param {Int} id приложения
          */
-        deleteApplication (id) {
-          console.log(id)
+        deleteApplication (payload) {
+          const { id, production_type } = payload
           this.$http({
             command: `/document_attachments/company/${id}/`,
             method: 'DELETE'
           })
           .then( resp => {
-              this.getCompanyApplication({id:this.SelectedUserId, type: 'judicial'})
+              this.getCompanyApplication({id:this.SelectedUserId, type: production_type})
           })
         },
         /**
