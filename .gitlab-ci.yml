@@ -41,9 +41,9 @@ step-deploy-dev:
       - dist
     expire_in: 1 week
   only:
-    - master
+    - DEV
   tags:
-    - master
+    - DEV
   variables:
     VUE_APP_API: https://api-test.urrobot.net
     ENVIRONMENT: development
