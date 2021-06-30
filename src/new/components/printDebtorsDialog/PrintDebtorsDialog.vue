@@ -229,6 +229,7 @@ export default defineComponent({
             date_from: dateToApiDate(model.value.from),
             date_to: dateToApiDate(model.value.to),
           }),
+          moratorium_enabled: model.value.moratorium_enabled,
 
           ...(props.allSelected ? {
             filters: props.filters,
