@@ -10,12 +10,7 @@ const chalk = require('chalk')
 portfinder.basePort = 8080
 
 async function start () {
-  let baseURL;
-if (process.env.VUE_APP_API_URL === 'DEPLOYMENT') {
-    baseURL = 'https://api.urrobot.net/';
-} else {
-    baseURL = 'https://apidomenpyth.ru';
-}
+  let baseURL = proces.env.VUE_APP_API;
 
   let availablePort
   availablePort = await portfinder.getPortPromise()
@@ -23,8 +18,8 @@ if (process.env.VUE_APP_API_URL === 'DEPLOYMENT') {
   const port = process.env.PORT || availablePort
   const devServerBaseURL = process.env.DEV_SERVER_BASE_URL || 'http://localhost'
   const devServerPort = process.env.DEV_SERVER_PORT || availablePort + 1
-  const isDev = process.env.VUE_APP_API_URL === 'TESTING' || process.env.NODE_ENV === 'development' 
-  
+  const isDev = process.env.NODE_ENV === 'development'
+
 
   const app = express()
 
@@ -50,12 +45,12 @@ if (process.env.VUE_APP_API_URL === 'DEPLOYMENT') {
     template,
     clientManifest
   })
- 
+
 
   if (isDev) {
     // Проксировать все js файлы, например при разделения на чанки
     // при ленивой загрузки
-    
+
     app.use('/*.js', proxy({
       target: `${devServerBaseURL}:${devServerPort}`,
       changeOrigin: true,
@@ -66,7 +61,7 @@ if (process.env.VUE_APP_API_URL === 'DEPLOYMENT') {
       },
       prependPath: false
     }))
-    
+
     app.use('/*hot-update*', proxy({
       target: `${devServerBaseURL}:${devServerPort}`,
       changeOrigin: true
@@ -78,7 +73,7 @@ if (process.env.VUE_APP_API_URL === 'DEPLOYMENT') {
       ws: true
     }))
   }
-  
+
   // Статика
   app.use('/js', express.static(path.resolve(__dirname, './dist/js')))
   app.use('/img', express.static(path.resolve(__dirname, './dist/img')))
@@ -87,14 +82,14 @@ if (process.env.VUE_APP_API_URL === 'DEPLOYMENT') {
   app.use('/robots.txt', express.static(path.resolve(__dirname, './dist/robots.txt')))
 
   app.get('*', (req, res) => {
-    res.setHeader('Content-Type', 'text/html') 
-    
-    
+    res.setHeader('Content-Type', 'text/html')
+
+
     const context = {
       title: 'App | ',
       url: req.url
     }
-    
+
 
     renderer.renderToString(context, (err, html) => {
       if (err) {
@@ -115,7 +110,7 @@ if (process.env.VUE_APP_API_URL === 'DEPLOYMENT') {
     console.log(
       chalk.black.bgGreen('\n DONE \n'),
       chalk.black.bgRed('\n Test Version urrobot-front v2.0.0 \n'),
-      chalk.green(`\nServer started at ${chalk.cyan(`http://localhost:${port}`)} \n`) 
+      chalk.green(`\nServer started at ${chalk.cyan(`http://localhost:${port}`)} \n`)
     )
   })
 }

@@ -42,7 +42,10 @@
           />
         </template>
         <template v-else>
-          <template v-if="model[column.key]">
+          <template v-if="column.key === 'passport_is_valid'">
+            {{model[column.key].passport_is_valid ? 'Да' : 'Нет'}}
+          </template>
+          <template v-else-if="model[column.key]">
             <template v-if="column.key === 'birth_date'">
               {{formatDbDate(model[column.key])}}
             </template>

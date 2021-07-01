@@ -19,7 +19,7 @@ export const useActiveTable = ({
   columns = ref([]),
   fetch,
   isImmediate = true,
-  defaultLimit = ref(5),
+  defaultLimit = ref(100),
   defaultPage = ref(1),
 } = {}) => {
   const isFetching = ref(false);

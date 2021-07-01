@@ -27,6 +27,7 @@
         with-unique-selection
         table-key="organizations"
         :record-actions="recordActions"
+        @rowClick="showViewDialog"
       />
     </div>
   </div>
@@ -145,6 +146,10 @@ export default defineComponent({
           isInitialEdit,
         }
       })
+    };
+
+    const showViewDialog = ({record:{ id }}) => {
+      showOrganizationDialog(id)
     }
 
     const {
@@ -162,23 +167,27 @@ export default defineComponent({
       recordActions,
       fetchData,
     } = useActiveTable({
-      async fetch({params, cancelToken}) {
+      async fetch({params: {o: ordering, ...params}, cancelToken}) {
         const {data} = await axios({
           method: 'get',
           url: `${baseURL}/api/account/company/`,
-          params,
+          params: {
+            ...params,
+            ordering
+          },
           cancelToken,
-        })
+        });
 
         return {
           data: {
-            count: data.length,
-            results: data.map((record, index) => ({
+            ...data,
+            results: data.results.map((record, index) => ({
               ...record,
               index: index + 1,
-            })),
+            }))
           }
         }
+
       },
       filters: computed(() => (
         ['name_full', 'name_short', 'inn', 'legal_address'].map(field => ({
@@ -186,6 +195,7 @@ export default defineComponent({
           type: 'text',
           props: {
             placeholder: 'Введите текст',
+            delay: 350
           }
         }))
       )),
@@ -275,9 +285,7 @@ export default defineComponent({
           key: 'add',
           label: 'Просмотреть',
           icon: 'eye',
-          handler: ({record:{ id }}) => {
-            showOrganizationDialog(id)
-          }
+          handler: showViewDialog
         },
         {
           key: 'edit',
@@ -331,6 +339,7 @@ export default defineComponent({
       resetSettings,
       records,
       recordActions,
+      showViewDialog,
     }
   }
 });

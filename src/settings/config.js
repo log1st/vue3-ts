@@ -1,17 +1,7 @@
-// const URL = process.env.NODE_ENV === 'production' ?  : 'https://apidomenpyth.ru'
-let URL, baseURL;
+const URL = process.env.VUE_APP_API;
+const baseURL = process.env.VUE_APP_API;
+export const socketURL = process.env.VUE_APP_SOCKET;
 
-switch (process.env.VUE_APP_API_URL) {
-  case 'TESTING':
-    URL = 'https://api-test.urrobot.net';
-    baseURL = 'https://api-test.urrobot.net';
-    break;
-
-  case 'DEPLOYMENT':
-    URL = 'https://api-2.urrobot.net';
-    baseURL = 'https://api-2.urrobot.net';
-    break;
-}
 const keys = [
   'GroundsPowersSignatory',
   'FullNameOrganization',

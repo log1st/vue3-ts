@@ -74,6 +74,8 @@ export default {
   setup() {
     const data = inject('data');
 
+    const store = useStore();
+
     const tabs = computed(() => ([
       {
         key: 'magistrate',
@@ -83,7 +85,7 @@ export default {
             method: 'get',
             url: `${baseURL}/reference_books/court_cases_history/`,
             params: {
-              company_id: localStorage.getItem('defaultCompany'),
+              company_id: store.getters['getDefaultCompanyId'],
               debtor: data.value.debtor.pk,
               id: data.value.debtor_main_profile.magistrate_court_place,
             }
@@ -100,7 +102,7 @@ export default {
             method: 'get',
             url: `${baseURL}/reference_books/court_cases_history/`,
             params: {
-              company_id: localStorage.getItem('defaultCompany'),
+              company_id: store.getters['getDefaultCompanyId'],
               debtor: data.value.debtor.pk,
               id: data.value.debtor_main_profile.regional_court_place,
             }

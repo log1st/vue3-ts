@@ -7,6 +7,14 @@ import find from 'lodash/find'
 import findIndex from 'lodash/findIndex'
 import cloneDeep from 'lodash/cloneDeep'
 
+export const companiesPlugins = [
+  store => {
+    store.watch(state => state.defaultCompany, id => {
+      localStorage.setItem('defaultCompany', id)
+    })
+  }
+]
+
 export default {
   state: () => ( {
     //Объект данных для модального окна организации *(выбранная организация)
@@ -240,16 +248,8 @@ export default {
           dispatch('uploadCompanies');
       })
     },
-    getCompanySettings ({commit}, payload) {
+    getCompanySettings ({commit, state}, id = state.defaultCompany) {
       return new Promise ((resolve, reject) => {
-        let id;
-
-        if (!payload) {
-          id = localStorage.getItem('defaultCompany')
-        } else {
-          id = payload
-        }
-
         $http({
           command: `/api/account/company-settings/${id}/`,
           method: 'GET',
@@ -843,6 +843,8 @@ export default {
     applicationUserList: state => state.applicationLists,
     getCompanies: state => state.companies,
     getCompaniesFullNames: state => state.companies.map(el => el.name_full),
+    getDefaultCompanyId: state => state.defaultCompany,
+    defaultCompanyId: state => state.defaultCompany,
     getDefaultCompany: state => state.companies.find(({id}) => id === state.defaultCompany),
     getDefaultCompanyFullName: (state, getters) => getters.getDefaultCompany?.name_full || 'Компания',
     exchangedCompanyData: state => state.exchangedCompany,

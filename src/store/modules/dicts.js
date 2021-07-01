@@ -24,6 +24,8 @@ export default {
       services: [],
       judicialStatuses: [],
       judicialSubStatuses: [],
+      pretrialStatuses: [],
+      pretrialSubStatuses: [],
       judicialEgrnStatuses: [],
       judicialFeeStatuses: [],
       tenantRelationships: [],
@@ -44,6 +46,10 @@ export default {
     judicialStatusesMap: getMap('judicialStatuses'),
     judicialSubStatuses: getList('judicialSubStatuses'),
     judicialSubStatusesMap: getMap('judicialSubStatuses'),
+    pretrialStatuses: getList('pretrialStatuses'),
+    pretrialStatusesMap: getMap('pretrialStatuses'),
+    pretrialSubStatuses: getList('pretrialSubStatuses'),
+    pretrialSubStatusesMap: getMap('pretrialSubStatuses'),
     judicialEgrnStatuses: getList('judicialEgrnStatuses'),
     judicialEgrnStatusesMap: getMap('judicialEgrnStatuses'),
     judicialFeeStatuses: getList('judicialFeeStatuses'),
@@ -56,6 +62,8 @@ export default {
     setServices: setList('services'),
     setJudicialStatuses: setList('judicialStatuses'),
     setJudicialSubStatuses: setList('judicialSubStatuses'),
+    setPretrialStatuses: setList('pretrialStatuses'),
+    setPretrialSubStatuses: setList('pretrialSubStatuses'),
     setJudicialEgrnStatuses: setList('judicialEgrnStatuses'),
     setJudicialFeeStatuses: setList('judicialFeeStatuses'),
   },
@@ -120,6 +128,25 @@ export default {
         value,
         label: info,
       })));
+
+      commit('setPretrialStatuses', [
+        {value: 'new', label: 'Новый'},
+        {value: 'sms', label: 'СМС'},
+        {value: 'voice', label: 'Голосовое'},
+        {value: 'moved_to_judicial', label: 'Передан в судебное'},
+      ]);
+
+      commit('setPretrialSubStatuses', [
+        {value: 'new', label: 'Создано'},
+        {value: 'send', label: 'Отправлено'},
+        {value: 'notsend', label: 'Ошибка отправки'},
+        {value: 'delivered', label: 'Доставлено'},
+        {value: 'failed', label: 'Не доставлено'},
+        {value: 'unknown', label: 'Неизвестно'},
+        {value: 'machine', label: 'Автоответчик'},
+        {value: 'ready', label: 'Согласие'},
+        {value: 'none', label: 'Отказ'},
+      ]);
 
       commit('setServices', [
         {

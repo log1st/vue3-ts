@@ -31,6 +31,14 @@
                 <template v-if="activeTab.key === 'common' && column.key === 'file'">
                   {{document[column.key].split('/').pop()}}
                 </template>
+                <template v-else-if="['sms', 'voice'].includes(activeTab.key) && column.key === 'operator'">
+                  <template v-if="document.operator && document.operator.name">
+                    {{document.operator && document.operator.name}}
+                  </template>
+                  <div :class="$style.na" v-else>
+                    N/A
+                  </div>
+                </template>
                 <template v-else-if="activeTab.key === 'common' && column.key === 'document_formation_date'">
                   {{formatDate(document[column.key])}}
                 </template>
@@ -169,7 +177,7 @@ export default defineComponent({
         async fetch() {
           const response = await axios({
             method: 'get',
-            url: `${baseURL}/pretrial/claim/debtor/${data.value.debtor.pk}/`,
+            url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/claim/`,
           });
 
           return response.data.results;
@@ -181,10 +189,10 @@ export default defineComponent({
         async fetch() {
           const response = await axios({
             method: 'get',
-            url: `${baseURL}/pretrial/sms/debtor/${data.value.debtor.pk}/`,
+            url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/sms/`,
           });
 
-          return response.data.results;
+          return response.data;
         }
       },
       productionType.value === 'pretrial' && {
@@ -193,10 +201,10 @@ export default defineComponent({
         async fetch() {
           const response = await axios({
             method: 'get',
-            url: `${baseURL}/pretrial/voice/debtor/${data.value.debtor.pk}/`,
+            url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/voice/`,
           });
 
-          return response.data.results;
+          return response.data;
         }
       },
       productionType.value === 'executive' && {
@@ -238,8 +246,7 @@ export default defineComponent({
         pretrials: [
           {key: 'id', label: '№'},
           {key: 'file', label: 'Название'},
-          {key: 'document_formation_date', label: 'Дата'},
-          {key: 'status', label: 'Статус'},
+          {key: 'created_at', label: 'Дата'},
         ],
         sms: [
           {key: 'phone_number', label: 'Телефон'},

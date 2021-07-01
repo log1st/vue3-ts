@@ -1,0 +1,58 @@
+.page {
+    height: calc(100vh - 90px);
+
+    background: top left no-repeat url(~@/assets/images/mainBackground.svg);
+    background-size: cover;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.tabs {
+    padding: 20px 105px 0;
+}
+
+.body {
+    flex-grow: 1;
+
+    margin-top: 40px;
+
+    padding: 0 40px 36px 55px;
+
+    display: grid;
+    grid-template-columns: 380fr 1125fr;
+    grid-gap: 40px;
+}
+
+.side {
+    background: rgba(255, 255, 255, 0.2);
+    border: 0.5px solid rgba(249, 249, 249, 0.6);
+    box-sizing: border-box;
+    box-shadow: inset -30px -30px 30px rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.controls {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 10px 10px 0px 0px;
+    padding: 30px 20px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.control {
+    width: 100%;
+    align-self: normal;
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+}
+
+.content {
+    background: rgba(255, 255, 255, 0.2);
+    border: 0.5px solid rgba(249, 249, 249, 0.6);
+    box-sizing: border-box;
+    box-shadow: inset -30px -30px 30px rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}

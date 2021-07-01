@@ -2,8 +2,11 @@ const VueSSRServerPlugin = require('vue-server-renderer/server-plugin')
 const VueSSRClientPlugin = require('vue-server-renderer/client-plugin')
 const nodeExternals = require('webpack-node-externals')
 const merge = require('lodash.merge')
+const { DefinePlugin } = require('webpack')
 // import merge from 'lodash/merge'
 const TARGET_NODE = process.env.WEBPACK_TARGET === 'node'
+
+console.log(process.env, 'envs here')
 
 const createApiFile = TARGET_NODE
   ? './create-api-server.js'
@@ -38,7 +41,11 @@ module.exports = {
     plugins: [
       TARGET_NODE
         ? new VueSSRServerPlugin()
-        : new VueSSRClientPlugin()
+        : new VueSSRClientPlugin(),
+      new DefinePlugin({
+        VUE_APP_API: process.env.VUE_APP_API,
+        VUE_APP_SOCKET: process.env.VUE_APP_SOCKET,
+      })
     ],
     externals: TARGET_NODE ? nodeExternals({
       whitelist: /\.css$/

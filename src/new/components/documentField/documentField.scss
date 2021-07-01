@@ -1,0 +1,110 @@
+.wrapper {
+
+}
+
+.field {
+  border-radius: 10px;
+  overflow: hidden;
+
+  position: relative;
+
+  &:after {
+    content: '';
+    display: block;
+    padding-bottom: 100%;
+  }
+}
+
+.preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #E0E0E0;
+}
+
+.placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #E0E0E0;
+
+  &:hover {
+    background: #828282;
+    box-shadow: 0px 15px 15px rgba(0, 0, 0, 0.15);
+    color: #FFFFFF;
+  }
+}
+
+.placeholderIcon {
+  height: 30px;
+  width: 30px;
+  color: #21317A;
+}
+
+.controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  display: grid;
+  grid-template-areas: (
+    'edit download'
+    'remove rename'
+  );
+  grid-gap: 4px;
+  padding: 16px;
+  align-content: space-between;
+  justify-content: space-between;
+
+  opacity: 0;
+
+  &:hover {
+    opacity: 1;
+    background: rgba(white, .4);
+  }
+}
+
+.edit {
+  grid-area: edit;
+  color: #5080CD;
+}
+
+.remove {
+  grid-area: remove;
+  color: #FF7D7D;
+}
+
+.download {
+  grid-area: download;
+  color: #009688
+}
+
+.rename {
+  grid-area: rename;
+  color: #5080CD;
+}
+
+.edit,
+.remove,
+.download,
+.rename {
+  height: 16px;
+  width: 16px;
+
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}

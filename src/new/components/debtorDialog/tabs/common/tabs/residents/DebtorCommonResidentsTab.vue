@@ -73,6 +73,7 @@ export default defineComponent({
       {key: 'birth_place', label: 'Место рождения'},
       {key: 'citizenship', label: 'Граж-во'},
       {key: 'num_of_passport', label: 'Серия и № паспорта'},
+      {key: 'passport_is_valid', label: 'Действителен паспорт'},
       {key: 'inn', label: 'ИНН'},
       {key: 'date_of_passport_issue', label: 'Дата выдачи'},
       {key: 'passport_issued_by', label: 'Кем выдан паспорт'},
