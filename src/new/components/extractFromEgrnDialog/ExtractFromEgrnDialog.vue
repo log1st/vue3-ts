@@ -14,8 +14,7 @@
       </div>
       <div :class="$style.fields">
         <Checkbox
-          v-model="model.type"
-          true-value="data"
+          v-model="model.data"
           :class="$style.field"
         >
           <template #label>
@@ -25,8 +24,7 @@
           </template>
         </Checkbox>
         <Checkbox
-          v-model="model.type"
-          true-value="rights"
+          v-model="model.rights"
           :class="$style.field"
         >
           <template #label>
@@ -35,6 +33,9 @@
             </div>
           </template>
         </Checkbox>
+      </div>
+      <div :class="$style.error" v-if="'type' in errorsMap">
+        {{errorsMap.type}}
       </div>
       <div :class="$style.error" v-if="'type' in errorsMap">
         {{errorsMap.type}}
@@ -67,6 +68,7 @@ import Icon from "@/new/components/icon/Icon";
 import Checkbox from "@/new/components/checkbox/Checkbox";
 import {asyncAction} from "@/new/utils/asyncAction";
 import {useErrors} from "@/new/hooks/useErrors";
+import {useStore} from "@/new/hooks/useStore";
 
 export default defineComponent({
   name: "setOfChargesDialog",
@@ -94,7 +96,8 @@ export default defineComponent({
     } = useDialog();
 
     const model = ref({
-      type: null,
+      rights: null,
+      data: null,
     })
 
     const {
@@ -103,6 +106,8 @@ export default defineComponent({
       errorsMap,
     } = useErrors();
 
+    const store = useStore();
+
     let printUnsubscribe;
     onBeforeUnmount(() => {
       printUnsubscribe && printUnsubscribe()
@@ -110,62 +115,66 @@ export default defineComponent({
     const submit = async () => {
       clearErrors();
       try {
-        const {data: {id: requestId}} = await axios({
-          method: 'post',
-          url: `${baseURL}/rosreestr/status/`,
-          params: props.allSelected ? {...props.filters, filters: props.filters} : {},
-          data: {
-            company_id: localStorage.getItem('defaultCompany'),
-            debtor_ids: (props.selectedItems || [props.selectedItem]).map((id) => id),
-            type: model.value.type,
+        for(const type in ['rights', 'data']) {
+          const {data: {id: requestId}} = await axios({
+            method: 'post',
+            url: `${baseURL}/rosreestr/status/`,
+            params: props.allSelected ? {...props.filters, filters: props.filters} : {},
+            data: {
+              company_id: store.getters['getDefaultCompanyId'],
+              debtor_ids: (props.selectedItems || [props.selectedItem]).map((id) => id),
+              type,
 
-            ...(props.allSelected ? {
-              filters: props.filters,
-              ...props.filters,
-            } : {}),
-          }
-        });
-
-        await showToast({
-          message: 'Формирование выписки ЕГРН...',
-          type: 'warning',
-        });
-
-        emit('close');
-
-        const {promise, unsubscribe} = asyncAction(
-          async () => (await axios({
-            method: 'get',
-            url: `${baseURL}/rosreestr/status/${requestId}/`
-          })).data,
-          async({status, file_pdf}) => ({
-            1: {status: true, payload: {file_pdf}},
-            2: {status: true, error: true},
-          }[status] || {status: false}),
-          1000,
-        );
-
-        printUnsubscribe = unsubscribe;
-        try {
-          const {file_pdf} = await promise;
-          await showToast({
-            message: 'Запрос на выписку из ЕГРН успешно сформирован',
-            type: 'success',
-          })
-          await showDialog({
-            component: 'downloadFile',
-            payload: {
-              title: 'Работа с документами',
-              url: file_pdf
+              ...(props.allSelected ? {
+                filters: props.filters,
+                ...props.filters,
+              } : {}),
             }
-          })
-          emit('close');
-        } catch (e) {
+          });
+
+
           await showToast({
-            message: 'Ошибка формирования запроса выписки',
-            type: 'error',
-          })
+            message: 'Формирование выписки ЕГРН...',
+            type: 'warning',
+          });
+
+          emit('close');
+
+          const {promise, unsubscribe} = asyncAction(
+            async () => (await axios({
+              method: 'get',
+              url: `${baseURL}/rosreestr/status/${requestId}/`
+            })).data,
+            async({status, file_pdf, ...etc}) => ({
+              1: {status: true, payload: {file_pdf}},
+              2: {status: true, error: etc},
+            }[status] || {status: false}),
+            1000,
+          );
+
+          printUnsubscribe = unsubscribe;
+          try {
+            const {file_pdf} = await promise;
+            await showToast({
+              message: 'Запрос на выписку из ЕГРН успешно сформирован',
+              type: 'success',
+            })
+            await showDialog({
+              component: 'downloadFile',
+              payload: {
+                title: 'Работа с документами',
+                url: file_pdf
+              }
+            })
+          } catch (e) {
+            await showToast({
+              title: 'Ошибка формирования запроса выписки',
+              message: Object.values(e?.stats?.errors || {}).map(({msg}) => msg).join(', '),
+              type: 'error',
+            })
+          }
         }
+        emit('close');
       } catch (e) {
         setErrors(
           Object.entries(e.response.data).reduce((acc, [key, [message]]) => ([

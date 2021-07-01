@@ -28,6 +28,7 @@ import {useToast} from "@/new/hooks/useToast";
 import {useDialog} from "@/new/hooks/useDialog";
 import Btn from "@/new/components/btn/Btn";
 import {baseURL} from "@/settings/config";
+import {useStore} from "@/new/hooks/useStore";
 
 export default defineComponent({
   name: "DutyFormDialog",
@@ -54,6 +55,8 @@ export default defineComponent({
       showDialog,
     } = useDialog();
 
+    const store = useStore();
+
     const submit = async () => {
       await showToast({
         message: 'Формирование бланка пошлины...',
@@ -71,7 +74,7 @@ export default defineComponent({
         url: `${baseURL}/constructor/debtors-data`,
         params: props.allSelected ? {...props.filters, filters: props.filters} : {},
         data: {
-          company_id: localStorage.getItem('defaultCompany'),
+          company_id: store.getters['getDefaultCompanyId'],
           production_type: props.type,
           debtor_ids: props.selectedItems || [props.selectedItem],
           ...(props.allSelected ? {

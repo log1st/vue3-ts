@@ -178,7 +178,7 @@ export default defineComponent({
             ...data,
             results: data.results.map((record, index) => ({
               ...record,
-              index,
+              index: index + 1,
             }))
           }
         }

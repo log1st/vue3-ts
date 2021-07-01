@@ -1,6 +1,6 @@
-console.log(process.env);
 const URL = process.env.VUE_APP_API;
 const baseURL = process.env.VUE_APP_API;
+export const socketURL = process.env.VUE_APP_SOCKET;
 
 const keys = [
   'GroundsPowersSignatory',

@@ -3,7 +3,10 @@
     :class="[$style.toast, $style[type]]"
     @click="hideOnClick"
   >
-    <div :class="$style.message">
+    <div :class="$style.title" v-if="title">
+      {{title}}
+    </div>
+    <div :class="$style.message" v-if="message">
       {{ message }}
     </div>
   </div>
@@ -18,6 +21,7 @@ export default defineComponent({
   name: 'Toast',
   props: {
     type: String,
+    title: String,
     message: String,
     duration: Number,
     isCloseable: Boolean,

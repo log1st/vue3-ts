@@ -24,12 +24,24 @@
       :key="type"
     >
       <template #cell(status)="{record, index}">
-        <DebtorStatus
-          v-if="record.debtor && record.debtor.debtor_status.length"
-          :class="$style.status"
-          :status="record.debtor.debtor_status[record.debtor.debtor_status.length - 1]"
-          @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[record.debtor.debtor_status.length - 1].id })"
-        />
+        <template v-if="module === 'judicial'">
+          <DebtorStatus
+            type="judicial"
+            v-if="record.debtor && record.debtor.debtor_status.length"
+            :class="$style.status"
+            :status="record.debtor.debtor_status[record.debtor.debtor_status.length - 1]"
+            @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[record.debtor.debtor_status.length - 1].id })"
+          />
+        </template>
+        <template v-else-if="module === 'pretrial'">
+          <DebtorStatus
+            type="pretrial"
+            v-if="record.debtor && record.debtor.pretrial_status.length"
+            :class="$style.status"
+            :status="record.debtor.pretrial_status[record.debtor.pretrial_status.length - 1]"
+            @click="showStatusDialog({ selectedItem: record.debtor.pretrial_status[record.debtor.pretrial_status.length - 1].id })"
+          />
+        </template>
         <span/>
       </template>
       <template #cell(phone_number)="{record, index}">
@@ -47,25 +59,52 @@
             $style.accountIcons,
             record.debtor.debtor_status[record.debtor.debtor_status.length - 1].length > 1 && $style.accountIconsDense
           ]">
-            <TooltipWrapper
-              v-for="substatus in record.debtor.debtor_status[record.debtor.debtor_status.length - 1].substatus"
-              :key="substatus.substatus"
-              :text="judicialSubStatusesMap[substatus.substatus]"
-            >
-              <Icon
-                :class="[
+            <template v-if="module === 'judicial'">
+              <TooltipWrapper
+                v-for="substatus in record.debtor.debtor_status[record.debtor.debtor_status.length - 1].substatus"
+                :key="substatus.substatus"
+                :text="judicialSubStatusesMap[substatus.substatus]"
+                v-if="['fees_paid', 'statement_ordered', 'fees_await_paid'].includes(substatus.substatus)"
+              >
+                <Icon
+                  :class="[
+                  $style.accountIcon,
+                  $style[`accountIcon${{
+                    fees_paid: 'Green',
+                    statement_ordered: 'Blue',
+                    fees_await_paid: 'Green',
+                  }[substatus.substatus]}`]
+                ]"
+                  :icon="{
+                  fees_paid: 'coins',
+                  statement_ordered: 'egrn-excerpt',
+                  fees_await_paid: 'coins',
+                }[substatus.substatus]"
+                />
+              </TooltipWrapper>
+            </template>
+            <template v-else-if="module === 'pretrial'">
+              <TooltipWrapper
+                v-for="substatus in record.debtor.pretrial_status[record.debtor.pretrial_status.length - 1].substatus"
+                :key="substatus.substatus"
+                :text="pretrialSubStatusesMap[substatus.substatus]"
+                v-if="substatus.substatus in pretrialSubStatusesMap"
+              >
+                <Icon
+                  :class="[
                   $style.accountIcon,
                   $style[`accountIcon${{
                     fees_paid: 'Green',
                     statement_ordered: 'Blue',
                   }[substatus.substatus]}`]
                 ]"
-                :icon="{
+                  :icon="{
                   fees_paid: 'coins',
                   statement_ordered: 'egrn-excerpt',
                 }[substatus.substatus]"
-              />
-            </TooltipWrapper>
+                />
+              </TooltipWrapper>
+            </template>
           </div>
         </div>
       </template>
@@ -94,10 +133,24 @@
         {{formatMoney(record.fee)}}
       </template>
       <template #cell(started_at)="{record}" v-if="type === 'executive'">
-        {{formatDate(record.started_at)}}
+        <template v-if="record.started_at">
+          {{formatDate(record.started_at)}}
+        </template>
+        <template v-else>
+          <div :class="$style.na">
+            N/A
+          </div>
+        </template>
       </template>
-      <template #cell(started_at)="{record}" v-if="type === 'executive'">
-        {{formatDate(record.ended_at)}}
+      <template #cell(ended_at)="{record}" v-if="type === 'executive'">
+        <template v-if="record.ended_at">
+          {{formatDate(record.ended_at)}}
+        </template>
+        <template v-else>
+          <div :class="$style.na">
+            N/A
+          </div>
+        </template>
       </template>
       <template v-for="field in summariesFields" :slot="`summary(${field})`" slot-scope="{value}">
         {{formatMoney(value)}}
@@ -135,6 +188,7 @@ import PretrialDebtorsAutomatizingDialog
 import {useToast} from "@/new/hooks/useToast";
 import {formatDate} from "@/new/utils/date";
 import {usePersistedSetting} from "@/new/hooks/usePersistedSetting";
+import {useStore} from "@/new/hooks/useStore";
 
 export default defineComponent({
   name: "index",
@@ -207,7 +261,7 @@ export default defineComponent({
         url: `${baseURL}/constructor/debtors-data`,
         params: allSelected ? {...filters, filters: filters} : {},
         data: {
-          company_id: localStorage.getItem('defaultCompany'),
+          company_id: store.getters['getDefaultCompanyId'],
           production_type: type.value,
           debtor_ids: selectedItems || [selectedItem],
           ...(allSelected ? {
@@ -397,13 +451,13 @@ export default defineComponent({
       try {
         await axios({
           method: 'post',
-          url: `${baseURL}/pretrial/claim/`,
+          url: `${baseURL}/api/debtors-data/move/`,
           data: {
             company: +localStorage.getItem('defaultCompany'),
 
             filters: filtersModel.value,
-            payload: selectedItems || [props.selectedItem],
-            production_type: type.value,
+            ids: selectedItems || [props.selectedItem],
+            production_type: 'judicial',
           }
         });
         await showToast({
@@ -422,7 +476,7 @@ export default defineComponent({
     const {
       judicialStatuses,
       judicialSubStatusesMap,
-      judicialFeeStatuses,
+      pretrialSubStatusesMap,
     } = useDicts();
 
     const smsNotificationStatuses = computed(() => ([
@@ -522,6 +576,8 @@ export default defineComponent({
       }
     });
 
+    const store = useStore();
+
     const {
       fetchData,
       isFetching,
@@ -549,7 +605,7 @@ export default defineComponent({
           url: `${baseURL}/api/debtors-data/`,
           params: {
             ...params,
-            company_id: localStorage.getItem('defaultCompany'),
+            company_id: store.getters['getDefaultCompanyId'],
           },
           cancelToken,
         });
@@ -901,7 +957,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        false && type.value === 'pretrial' && {
+        type.value === 'pretrial' && {
           key: 'move',
           label: 'Перенос в судебное производство',
           icon: 'court',
@@ -909,7 +965,7 @@ export default defineComponent({
             showClaimDialog('voice', {
               allSelected,
               filters: filtersModel.value,
-              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItems: selectedItems.map(index => records.value[index].pk),
               selectedItem: records.value[index]?.debtor?.pk,
             })
           },
@@ -996,6 +1052,7 @@ export default defineComponent({
       type,
 
       judicialSubStatusesMap,
+      pretrialSubStatusesMap,
     }
   }
 })

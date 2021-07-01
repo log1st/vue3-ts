@@ -150,7 +150,7 @@ export default defineComponent({
         url: `${baseURL}/document_attachments/company`,
         params: {
           production_type: props.type,
-          company_id: store.state.companies.defaultCompany,
+          company_id: store.getters['getDefaultCompanyId'],
         }
       });
       const accountResponse = await axios({
@@ -203,7 +203,7 @@ export default defineComponent({
         url: `${baseURL}/document_attachments/company_bulk_create/`,
         params: props.allSelected ? {...props.filters, filters: props.filters} : {},
         data: {
-          company_id: store.state.companies.defaultCompany,
+          company_id: store.getters['getDefaultCompanyId'],
           production_type: props.type,
           attachments: model.value.documents.map((document, index) => ({
             ...document,
@@ -223,7 +223,7 @@ export default defineComponent({
         params: props.allSelected ? {...props.filters, filters: props.filters} : {},
         data: {
           production_type: props.type,
-          company_id: store.state.companies.defaultCompany,
+          company_id: store.getters['getDefaultCompanyId'],
           debtor_ids: props.selectedItems || [props.selectedItem],
           ...(model.value.allPeriod ? {} : {
             date_from: dateToApiDate(model.value.from),

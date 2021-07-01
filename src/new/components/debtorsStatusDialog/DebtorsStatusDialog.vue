@@ -36,6 +36,7 @@ import SelectInput from "@/new/components/selectInput/SelectInput";
 import {useDicts} from "@/new/hooks/useDicts";
 import Btn from "@/new/components/btn/Btn";
 import {baseURL} from "@/settings/config";
+import {useStore} from "@/new/hooks/useStore";
 
 export default defineComponent({
   name: "DebtorsStatusDialog",
@@ -74,7 +75,9 @@ export default defineComponent({
       props.allSelected
       || props.selectedItems?.length
       || props.selectedItem > -1
-    ))
+    ));
+
+    const store = useStore();
 
     const submit = async () => {
       if(!isActive.value) {
@@ -96,7 +99,7 @@ export default defineComponent({
 
             debtor_ids: props.selectedItems || [],
 
-            company_id: localStorage.getItem('defaultCompany'),
+            company_id: store.getters['getDefaultCompanyId'],
           }
         })
       } else {

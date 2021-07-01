@@ -13,7 +13,7 @@ import debtors from './modules/debtors'
 import messages from './modules/messages'
 import files from './modules/files'
 import courts from './modules/courts'
-import companies from './modules/companies'
+import companies, {companiesPlugins} from './modules/companies'
 import modules from './modules/modules' // модули работы с должниками
 import main from './modules/main' // моя организация
 import serviceMessage from './modules/service-message' // сервисные сообщения (зеленые)
@@ -28,6 +28,7 @@ import persistence, {persistencePlugins} from './modules/persistence' // адм�
 import statementsJudical from './modules/documents/statementsJudical';
 import services from '../services'
 import dicts, {dictsPlugins} from "@/store/modules/dicts";
+import socket, {socketPlugins} from "@/store/modules/socket";
 
 Vue.use(Vuex)
 
@@ -42,6 +43,8 @@ return new Vuex.Store({
   plugins: [
     ...dictsPlugins,
     ...persistencePlugins,
+    ...companiesPlugins,
+    ...socketPlugins,
   ],
   actions: {
     setGlobalLoader ({ dispatch }, promises) {
@@ -120,6 +123,7 @@ return new Vuex.Store({
     toasts,
     dicts,
     persistence,
+    socket,
   },
   strict: true
 })
