@@ -4,22 +4,6 @@
             <div class="main-container__title">Удаление</div>
         </div>
         <div class="delete__csv-wrapper d-data__content-row">
-          <ur-btn
-                class="btn btn-red"
-                :loading="loading"
-                @click="validationPopup({type: 0})"
-                :disabled="disabled"
-            >
-                <span>Удалить все csv файлы пользователя</span>
-            </ur-btn>
-            <ur-btn
-                class="btn btn-red"
-                :loading="loading"
-                @click="validationPopup({type: 1})"
-                :disabled="disabled"
-                >
-                <span>Удалить все приложения пользователя</span>
-            </ur-btn>
             <ur-btn
                 class="btn btn-red"
                 :loading="loading"
@@ -150,7 +134,7 @@ export default {
 
           this.$http({
             method: 'DELETE',
-            command: `/api/companies/${this.selectedCompany.id}/`
+            command: `/api/account/company/${this.selectedCompany.id}/`
           })
           .then ( res => {
             this.loading = false

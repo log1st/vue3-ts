@@ -18,7 +18,8 @@ export default {
         companyTemplate:[],
         applications: [],
         columnTemplate: [],
-        documents: []
+        documents: [],
+        selectedCompanySettings: false
     }),
     mutations:{
         checkCompany (state, payload) {
@@ -92,6 +93,9 @@ export default {
         },
         setAllDocuments (state, payload) {
           state.documents = payload
+        },
+        setSelectedCompanySettings (state, payload) {
+          state.selectedCompanySettings = payload 
         }
     },
     actions:{
@@ -424,6 +428,23 @@ export default {
             })
           })
         },
+        
+        getCompanySettingsById ( {commit}, payload ) {
+          return new Promise ((res, rej) => {
+            const { id } = payload
+            $http({
+              command: `/api/account/company-settings/${id}/`,
+              method: 'GET'
+            })
+            .then(resp => {
+              commit('setSelectedCompanySettings', resp)
+              res({status: true, item: resp})
+            })
+            .catch ( error => {
+              rej({status: false, msg: error})
+            })
+          })
+        },
 
         /**
          * Обновить данные выбранной организации
@@ -446,6 +467,7 @@ export default {
                       res(true)
                     }
                   })
+                  // await dispatch('getCompanySettingsById', {id: elem.id})
                 } else {
                   rej(false)
                 }
@@ -470,7 +492,6 @@ export default {
          */
         setFinalyDocumentTemplate ( { state }, payload ) {
           const { template } = payload
-          // console.log(template)
          return axios({
             url:`${baseURL}/constructor/company/template/`,
             method: 'POST',
@@ -552,6 +573,7 @@ export default {
             commit('setAllDocuments', resp)
           })
         },
+
         deleteDocument ( { dispatch }, payload ) {
           const { id } = payload
           return $http({
@@ -603,7 +625,6 @@ export default {
               }
             })
           })
-          
         },
         
         editVariable ( { state }, payload ) {
@@ -829,6 +850,8 @@ export default {
 
         documentsByCompanyId: (state) => (id) => {
             return state.documents.filter( doc => doc.company === id )
-        }
+        },
+        adminCompanySettings: state => state.selectedCompanySettings
+
     }
 }
