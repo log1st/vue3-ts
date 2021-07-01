@@ -2,7 +2,7 @@
   <div :class="$style.filter">
     <SelectInput
       v-if="type === 'select'"
-      :state="['primary', 'dark']"
+      :state="props.state || ['primary', 'dark']"
       v-model="value"
       v-bind="(({onQuery, ...newProps}) => newProps)(props)"
       v-on="{

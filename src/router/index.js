@@ -81,52 +81,29 @@ const routes = [
     component: () => import('@/new/pages/organizations/index.vue'),
   },
   {
-    path: '/exchange/manual',
-    name: 'ExchangeManual',
-    component: () => import('../views/main/exchange/manual'),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/exchange/import',
-    name: 'Import',
-    component: () => import('../views/main/exchange/import'),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/exchange/import/upload',
-    name: 'ImportUpload',
-    component: () => import('../views/main/exchange/import/upload.vue'),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/exchange/export',
-    name: 'Export',
-    component: () => import('../views/main/exchange/export'),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/exchange/export/upload',
-    name: 'ExportUpload',
-    component: () => import('../views/main/exchange/export/upload'),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/exchange/gis',
-    name: 'Gis',
-    component: () => import('../views/main/exchange/gis'),
-    meta: {
-      requiresAuth: true
-    }
+    path: '/exchange',
+    name: 'exchange',
+    redirect: {
+      name: 'exchange-import'
+    },
+    component: () => import('@/new/pages/exchange/index.vue'),
+    children: [
+      {
+        path: 'import',
+        name: 'exchange-import',
+        component: () => import('@/new/pages/exchange/import/index.vue'),
+      },
+      {
+        path: 'export',
+        name: 'exchange-export',
+        component: () => import('@/new/pages/exchange/export/index.vue'),
+      },
+      {
+        path: 'integration',
+        name: 'exchange-integration',
+        component: () => import('@/new/pages/exchange/integration/index.vue'),
+      },
+    ]
   },
   {
     path: '/courts',

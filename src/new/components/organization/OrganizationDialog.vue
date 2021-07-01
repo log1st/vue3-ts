@@ -45,6 +45,7 @@ import Rating from "@/new/components/rating/Rating";
 import Icon from "@/new/components/icon/Icon";
 import OrganizationCommonTab from "@/new/components/organization/tabs/common/OrganizationCommonTab";
 import OrganizationEmployeesTab from "@/new/components/organization/tabs/employees/OrganizationEmployeesTab";
+import OrganizationDocumentsTab from "@/new/components/organization/tabs/documents/OrganizationDocumentsTab";
 
 export default defineComponent({
   name: "OrganizationDialog",
@@ -116,6 +117,7 @@ export default defineComponent({
         key: 'documents',
         label: 'Документы',
         icon: 'documents',
+        component: OrganizationDocumentsTab,
       },
     ].filter(Boolean)));
 

@@ -192,7 +192,7 @@ export default defineComponent({
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/sms/`,
           });
 
-          return response.data.results;
+          return response.data;
         }
       },
       productionType.value === 'pretrial' && {
@@ -204,7 +204,7 @@ export default defineComponent({
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/voice/`,
           });
 
-          return response.data.results;
+          return response.data;
         }
       },
       productionType.value === 'executive' && {
