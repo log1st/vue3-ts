@@ -83,7 +83,7 @@
                 />
               </TooltipWrapper>
             </template>
-            <template v-else-if="module === 'pretrial'">
+            <template v-else-if="module === 'pretrial' && !!record.debtor.pretrial_status">
               <TooltipWrapper
                 v-for="substatus in record.debtor.pretrial_status[record.debtor.pretrial_status.length - 1].substatus"
                 :key="substatus.substatus"

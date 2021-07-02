@@ -81,8 +81,56 @@ const routes = [
     component: () => import('@/new/pages/organizations/index.vue'),
   },
   {
-    path: '/exchange',
-    name: 'exchange',
+    path: '/exchange/manual',
+    name: 'ExchangeManual',
+    component: () => import('../views/main/exchange/manual'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/exchange/import',
+    name: 'Import',
+    component: () => import('../views/main/exchange/import'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/exchange/import/upload',
+    name: 'ImportUpload',
+    component: () => import('../views/main/exchange/import/upload.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/exchange/export',
+    name: 'Export',
+    component: () => import('../views/main/exchange/export'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/exchange/export/upload',
+    name: 'ExportUpload',
+    component: () => import('../views/main/exchange/export/upload'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/exchange/gis',
+    name: 'Gis',
+    component: () => import('../views/main/exchange/gis'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/new-exchange',
+    name: 'new-exchange',
     redirect: {
       name: 'exchange-import'
     },

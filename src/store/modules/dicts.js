@@ -131,15 +131,15 @@ export default {
         label: info,
       })));
 
-      commit('setPretrialStatuses', pretrial_statuses.map(({value, info}) => ({
+      commit('setPretrialStatuses', pretrial_statuses?.map(({value, info}) => ({
         value,
         label: info,
-      })));
+      })) || []);
 
-      commit('setPretrialSubStatuses', pretrial_substatuses.map(({value, info}) => ({
+      commit('setPretrialSubStatuses', pretrial_substatuses?.map(({value, info}) => ({
         value,
         label: info,
-      })));
+      })) || []);
 
       commit('setServices', [
         {
