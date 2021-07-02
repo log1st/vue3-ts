@@ -73,6 +73,8 @@ export default {
         data: {
           statuses,
           substatuses,
+          pretrial_statuses,
+          pretrial_substatuses,
         }
       } = await axios({
         method: 'get',
@@ -129,24 +131,15 @@ export default {
         label: info,
       })));
 
-      commit('setPretrialStatuses', [
-        {value: 'new', label: 'Новый'},
-        {value: 'sms', label: 'СМС'},
-        {value: 'voice', label: 'Голосовое'},
-        {value: 'moved_to_judicial', label: 'Передан в судебное'},
-      ]);
+      commit('setPretrialStatuses', pretrial_statuses?.map(({value, info}) => ({
+        value,
+        label: info,
+      })) || []);
 
-      commit('setPretrialSubStatuses', [
-        {value: 'new', label: 'Создано'},
-        {value: 'send', label: 'Отправлено'},
-        {value: 'notsend', label: 'Ошибка отправки'},
-        {value: 'delivered', label: 'Доставлено'},
-        {value: 'failed', label: 'Не доставлено'},
-        {value: 'unknown', label: 'Неизвестно'},
-        {value: 'machine', label: 'Автоответчик'},
-        {value: 'ready', label: 'Согласие'},
-        {value: 'none', label: 'Отказ'},
-      ]);
+      commit('setPretrialSubStatuses', pretrial_substatuses?.map(({value, info}) => ({
+        value,
+        label: info,
+      })) || []);
 
       commit('setServices', [
         {

@@ -83,25 +83,23 @@
                 />
               </TooltipWrapper>
             </template>
-            <template v-else-if="module === 'pretrial'">
+            <template v-else-if="module === 'pretrial' && !!record.debtor.pretrial_status">
               <TooltipWrapper
                 v-for="substatus in record.debtor.pretrial_status[record.debtor.pretrial_status.length - 1].substatus"
                 :key="substatus.substatus"
                 :text="pretrialSubStatusesMap[substatus.substatus]"
-                v-if="substatus.substatus in pretrialSubStatusesMap"
+                v-if="['court'].includes(substatus.substatus)"
               >
                 <Icon
                   :class="[
                   $style.accountIcon,
                   $style[`accountIcon${{
-                    fees_paid: 'Green',
-                    statement_ordered: 'Blue',
+                    court: 'Green',
                   }[substatus.substatus]}`]
                 ]"
                   :icon="{
-                  fees_paid: 'coins',
-                  statement_ordered: 'egrn-excerpt',
-                }[substatus.substatus]"
+                    court: 'court',
+                  }[substatus.substatus]"
                 />
               </TooltipWrapper>
             </template>
@@ -189,6 +187,8 @@ import {useToast} from "@/new/hooks/useToast";
 import {formatDate} from "@/new/utils/date";
 import {usePersistedSetting} from "@/new/hooks/usePersistedSetting";
 import {useStore} from "@/new/hooks/useStore";
+// @TODO: remove
+import qs from "qs";
 
 export default defineComponent({
   name: "index",
@@ -608,6 +608,7 @@ export default defineComponent({
             company_id: store.getters['getDefaultCompanyId'],
           },
           cancelToken,
+          paramsSerializer: params => qs.stringify(params, {arrayFormat: 'repeat', skipNulls: true})
         });
         response.data.results = response.data.results.map((record, index) => ({
           ...record,
@@ -957,7 +958,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        type.value === 'pretrial' && {
+        false && type.value === 'pretrial' && {
           key: 'move',
           label: 'Перенос в судебное производство',
           icon: 'court',

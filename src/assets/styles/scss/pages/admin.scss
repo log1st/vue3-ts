@@ -37,6 +37,14 @@
             font-size: 14px;
             padding: 0.5em 0;
         }
+        &__closer {
+          position: relative;
+          top: -12px;
+          left: 114px;
+          // transform: translate(114px, -14px);
+          width: 50px;
+          cursor: pointer;
+        }
         &__spacer{
           &-left {
             position: relative;

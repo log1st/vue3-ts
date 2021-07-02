@@ -81,6 +81,16 @@
     }
   }
 
+  &.small {
+    .trigger {
+      height: 30px;
+      border-radius: 6px;
+    }
+    .input {
+      font-size: 12px;
+    }
+  }
+
   .error {
     margin-top: 10px;
     color: red;

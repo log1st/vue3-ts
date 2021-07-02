@@ -68,6 +68,7 @@ import {formatDate} from "@/new/utils/date";
 import {formatMoney} from "@/new/utils/money";
 import Btn from "@/new/components/btn/Btn";
 import {useDialog} from "@/new/hooks/useDialog";
+import {useStore} from "@/new/hooks/useStore";
 export default {
   name: "DebtorCourtsTab",
   components: {Btn, Icon},

@@ -111,6 +111,11 @@ export default defineComponent({
   setup() {
     const data = inject('data');
 
+    const residents = computed(() => data.value.debtor_tenant_profiles.reduce((acc, resident) => ({
+      ...acc,
+      [resident.full_name]: resident
+    }), {}));
+
     const characteristics = ref([]);
     const fetchCharacteristics = async () => {
       const response = await axios({
@@ -120,7 +125,10 @@ export default defineComponent({
           debtor_id: data.value.debtor.pk,
         }
       })
-      characteristics.value = response.data;
+      characteristics.value = response.data.map(record => ({
+        ...(residents.value[record.owner_name] || {}),
+        ...record,
+      }));
     }
 
     const owners = ref([]);
@@ -132,7 +140,10 @@ export default defineComponent({
           debtor_id: data.value.debtor.pk,
         }
       })
-      owners.value = response.data;
+      owners.value = response.data.map(record => ({
+        ...(residents.value[record.owner_name] || {}),
+        ...record,
+      }));
     }
 
     watch(computed(() => data.value.debtor.pk), async() => {

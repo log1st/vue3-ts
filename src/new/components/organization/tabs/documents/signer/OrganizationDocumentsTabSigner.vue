@@ -19,7 +19,7 @@
       </div>
       <TextInput v-else v-model="model[field]" :placeholder="label" :class="$style.input"/>
     </div>
-    <DocumentField :file.sync="model.file" :class="$style.document"/>
+    <DocumentField :is-editable="isEditing" :file.sync="model.file" :class="$style.document"/>
     <div :class="$style.actions">
       <Btn :class="$style.action" @click="toggleEditing" state="quaternary" label="Редактировать" v-if="!isEditing" />
       <Btn :class="$style.action" @click="stopEditing" state="secondary" label="Отмена" v-if="isEditing" />

@@ -92,10 +92,12 @@ import SelectInput from "@/new/components/selectInput/SelectInput";
 import {cloneDeep} from "lodash";
 import {formatDate, formatDbDate} from "@/new/utils/date";
 import {useDicts} from "@/new/hooks/useDicts";
+import Icon from "@/new/components/icon/Icon";
+import TooltipWrapper from "@/new/components/tooltip/TooltipWrapper";
 
 export default defineComponent({
   name: "DebtorCommonResidentsTabResident",
-  components: {SelectInput, DateInput, TextInput, Btn},
+  components: {TooltipWrapper, Icon, SelectInput, DateInput, TextInput, Btn},
   model: {
     prop: 'modelValue',
     event: 'update:modelValue'

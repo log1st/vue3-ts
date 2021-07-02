@@ -104,10 +104,12 @@ export default defineComponent({
         })
       } else {
         await axios({
-          method: 'patch',
-          url: `${baseURL}/debtor_status/${props.selectedItem}/`,
+          method: 'post',
+          url: `${baseURL}/api/debtors-data/${props.type}/status/`,
           data: {
             status: model.value.status,
+            debtor_ids: [props.selectedItem],
+            company_id: store.getters['getDefaultCompanyId'],
           }
         })
       }

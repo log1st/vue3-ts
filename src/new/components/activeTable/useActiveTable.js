@@ -4,9 +4,12 @@ import {isSameObject} from "@/new/utils/object";
 
 export const formatFiltersModelToRequest = async (filtersModel) => Object.entries(filtersModel).reduce((acc, [key, value]) => {
   const isNot = typeof value === 'string' && value.startsWith('!');
+
+  const field = isNot ? `${key}_not` : key;
+
   return ({
     ...acc,
-    [isNot ? `${key}_not` : key]: isNot ? value.substr(1) : value,
+    [field]: isNot ? value.substr(1) : value,
   });
 }, {})
 

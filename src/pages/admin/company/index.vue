@@ -105,6 +105,7 @@
                                   <div class="btn btn-primary" style="margin-top: 0.5em" @click="setDocumentTemplate()">Применить выбранные шаблоны</div>
                               </div>
                             </div>
+                            <admin-company-court-template :company="this.selectedCompany" />
                             <!-- Настройка приложений -->
                             <div class="application__wrapper">
                               <div class="col__half">
@@ -235,14 +236,14 @@ import AdminCompanyDelete from './components/AdminCompanyDelete'
 import { baseURL, URL } from '@/settings/config'
 import _ from 'lodash'
 import cloneDeep from 'lodash/cloneDeep'
-import filter from 'lodash/filter'
-import find from 'lodash/find'
+import AdminCompanyCourtTemplate from './components/AdminCompanyCourtTemplate.vue'
 
 export default {
     name: 'AdminCompany',
     components: { 
       searchInput,
       checkBox,
+      'admin-company-court-template':AdminCompanyCourtTemplate,
       'admin-delete-court-n-debtor-adress':AdminDeleteCourtNDebtorAdress,
       'admin-company-data-config':AdminCompanyDataConfig,
       'admin-regions': AdminRegions,
