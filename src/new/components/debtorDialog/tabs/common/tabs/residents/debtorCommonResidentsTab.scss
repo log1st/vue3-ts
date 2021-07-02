@@ -90,3 +90,29 @@
   width: 180px;
   margin: 0 12.5px;
 }
+
+.passport {
+  display: flex;
+  align-items: center;
+
+
+  &.invalid {
+    color: #f03b3b;
+  }
+  &.valid {
+    color: #28a03a;
+  }
+
+  &.checking {
+    color: #808080;
+  }
+}
+
+.passportHint {
+  margin-left: 10px;
+}
+
+.passportHintIcon {
+  height: 14px;
+  width: 14px;
+}

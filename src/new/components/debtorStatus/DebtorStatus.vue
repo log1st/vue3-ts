@@ -55,6 +55,8 @@ export default defineComponent({
             failed: 'red',
             unknown: 'cyan',
             ready: 'purple',
+            in_work: 'purple',
+            court: 'green',
             machine: 'cyan',
             none: 'red',
           }[cur.value]

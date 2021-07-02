@@ -69,6 +69,8 @@ import Checkbox from "@/new/components/checkbox/Checkbox";
 import {asyncAction} from "@/new/utils/asyncAction";
 import {useErrors} from "@/new/hooks/useErrors";
 import {useStore} from "@/new/hooks/useStore";
+// @TODO: remove
+import qs from "qs";
 
 export default defineComponent({
   name: "setOfChargesDialog",
@@ -115,7 +117,6 @@ export default defineComponent({
     const submit = async () => {
       clearErrors();
       try {
-        for(const type in ['rights', 'data']) {
           const {data: {id: requestId}} = await axios({
             method: 'post',
             url: `${baseURL}/rosreestr/status/`,
@@ -123,13 +124,14 @@ export default defineComponent({
             data: {
               company_id: store.getters['getDefaultCompanyId'],
               debtor_ids: (props.selectedItems || [props.selectedItem]).map((id) => id),
-              type,
+              type: [model.value.data && 'data', model.value.rights && 'rights'].filter(Boolean),
 
               ...(props.allSelected ? {
                 filters: props.filters,
                 ...props.filters,
               } : {}),
-            }
+            },
+            paramsSerializer: params => qs.stringify(params, {arrayFormat: 'repeat'})
           });
 
 
@@ -173,7 +175,6 @@ export default defineComponent({
               type: 'error',
             })
           }
-        }
         emit('close');
       } catch (e) {
         setErrors(

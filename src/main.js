@@ -232,6 +232,7 @@ Vue.use(ToggleButton)
 Vue.config.productionTip = false
 
 import axios from 'axios';
+import qs from 'qs';
 
 // axios.defaults.headers.common['Auth'] = 'fgeriot4548eoritgbne9585bfdgklj543bdrlgkjdneb56';
 if (typeof window !== 'undefined') {
