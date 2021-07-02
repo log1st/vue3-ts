@@ -42,9 +42,25 @@
           />
         </template>
         <template v-else>
-          <template v-if="column.key === 'passport_is_valid'">
-            {{model[column.key].passport_is_valid ? 'Да' : 'Нет'}}
-          </template>
+          <span :class="[
+            $style.passport,
+            model.passport_is_invalid && $style.invalid,
+            model.passport_is_valid && $style.valid,
+            (!model.passport_is_invalid && !model.passport_is_valid) && $style.checking
+          ]" v-if="column.key === 'num_of_passport'">
+            {{model[column.key]}}
+            <TooltipWrapper :class="$style.passportHint" position="top" align="center" :text="(
+              model.passport_is_invalid ? 'Паспорт недействителен' : (
+                model.passport_is_valid ? 'Паспорт подтверждён' : ('На проверке')
+              )
+            )">
+              <Icon :class="$style.passportHintIcon" :icon="(
+              model.passport_is_invalid ? 'close-rounded' : (
+                model.passport_is_valid ? 'check-rounded' : ('question-rounded')
+              )
+            )"/>
+            </TooltipWrapper>
+          </span>
           <template v-else-if="model[column.key]">
             <template v-if="column.key === 'birth_date'">
               {{formatDbDate(model[column.key])}}

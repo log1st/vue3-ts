@@ -8,6 +8,16 @@
         {{tab.label}}
       </div>
     </div>
+    <div :class="$style.controls">
+      <Btn
+        state="primary"
+        prepend-icon="upload"
+        label="Загрузить документы"
+        @click="selectHousebookDocuments"
+        v-if="activeTab.key === 'homebook'"
+        :class="$style.control"
+      />
+    </div>
     <div :class="$style.content">
       <Icon v-if="isLoading" icon="loader" spin :class="$style.loader"/>
       <table :class="$style.table">
@@ -54,6 +64,15 @@
                 <template v-else-if="activeTab.key === 'egrnRights' && column.key === 'created_at'">
                   {{formatDate(document[column.key])}}
                 </template>
+                <template v-else-if="activeTab.key === 'homebook' && column.key === 'created_at'">
+                  {{formatDate(document[column.key])}}
+                </template>
+                <template v-else-if="activeTab.key === 'homebook' && column.key === 'document_formation_date'">
+                  {{formatDate(document[column.key])}}
+                </template>
+                <template v-else-if="activeTab.key === 'homebook' && column.key === 'file'">
+                  {{document[column.key].split('/').pop()}}
+                </template>
                 <template v-else-if="activeTab.key === 'fee' && column.key === 'file'">
                   {{document[column.key].split('/').pop()}}
                 </template>
@@ -86,6 +105,7 @@ import {downloadFile} from "@/new/utils/file";
 import {formatMoney} from "@/new/utils/money";
 import Icon from "@/new/components/icon/Icon";
 import {useDialog} from "@/new/hooks/useDialog";
+import {useFileManager} from "@/new/hooks/useFileManager";
 
 export default defineComponent({
   name: "DebtorDocumentsTab",
@@ -114,7 +134,15 @@ export default defineComponent({
         key: 'homebook',
         label: 'Выписка из домовой книги',
         async fetch() {
-          return [];
+          const response = await axios({
+            method: 'get',
+            url: `${baseURL}/documents/extract_house_book/`,
+            params: {
+              debtor_id: data.value.debtor.pk
+            }
+          });
+
+          return response.data;
         }
       },
       productionType.value === 'judicial' && {
@@ -268,8 +296,9 @@ export default defineComponent({
         ],
         homebook: [
           {key: 'id', label: '№'},
-          {key: 'file', label: 'Название'},
-          {key: 'created_at', label: 'Дата'},
+          {key: 'file', label: 'Наименование'},
+          {key: 'created_at', label: 'Дата создания'},
+          {key: 'document_formation_date', label: 'Дата формирования'},
         ],
         egrn: [
           {key: 'id', label: '№'},
@@ -348,7 +377,7 @@ export default defineComponent({
     const isLoading = ref(false);
     const documents = ref([]);
 
-    watch(computed(() => activeTab.value.key), async () => {
+    const fetch = async () => {
       isLoading.value = true;
       await new Promise(requestAnimationFrame);
       try {
@@ -358,7 +387,9 @@ export default defineComponent({
         //
       }
       isLoading.value = false;
-    }, {
+    }
+
+    watch(computed(() => activeTab.value.key), fetch, {
       immediate: true,
     });
 
@@ -384,7 +415,39 @@ export default defineComponent({
       })
     }
 
+    const {
+      files: housebookDocuments,
+      selectFiles: selectHousebookDocuments,
+    } = useFileManager({
+      multiple: true,
+    })
+
+    watch(housebookDocuments, async files => {
+      try {
+        await Promise.all(files.map(async file => {
+          const payload = new FormData();
+          payload.append('file', file);
+          payload.append('debtor', data.value.debtor.pk);
+          payload.append('production_type', productionType.value);
+          payload.append('document_formation_date', (new Date).toISOString());
+          await axios({
+            method: 'post',
+            url: `${baseURL}/documents/extract_house_book/`,
+            data: payload,
+          })
+        }))
+      } catch (e) {
+
+      } finally {
+        fetch()
+      }
+    }, {
+      deep: true,
+    })
+
     return {
+      selectHousebookDocuments,
+
       activeTab,
       selectTab,
       tabs,

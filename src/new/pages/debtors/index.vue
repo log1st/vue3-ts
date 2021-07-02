@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.page"  v-if="companyId >= 0">
+  <div :class="$style.page"  v-if="companyId > 0">
     <div :class="$style.tabs">
       <Tabs :tabs="tabs"/>
     </div>

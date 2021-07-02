@@ -3,8 +3,8 @@
     <div :class="$style.title">Сведения о характеристиках объекта недвижимости</div>
     <table :class="$style.table">
       <tbody>
-      <template  v-for="characteristic in characteristics">
-        <tr :key="`${characteristic.id}-header`">
+      <template  v-for="(characteristic, index) in characteristics">
+        <tr :key="`${characteristic.id}-header`" v-if="index === 0">
           <td :colspan="characteristicsColumns.length">
             <div :class="$style.fields">
               <div :class="$style.field">
@@ -32,7 +32,7 @@
             </div>
           </td>
         </tr>
-        <tr>
+        <tr v-if="index === 0">
           <th v-for="column in characteristicsColumns" :key="column.key">
             {{column.label}}
           </th>
@@ -59,8 +59,8 @@
     <div :class="$style.title">Сведения о переходе прав объекта недвижимости</div>
     <table :class="$style.table">
       <tbody>
-      <template  v-for="owner in owners">
-        <tr :key="`${owner.id}-header`">
+      <template  v-for="(owner, index) in owners">
+        <tr :key="`${owner.id}-header`" v-if="index === 0">
           <td :colspan="ownersColumns.length">
             <div :class="$style.fields">
               <div :class="$style.field">
@@ -75,7 +75,7 @@
             </div>
           </td>
         </tr>
-        <tr>
+        <tr v-if="index === 0">
           <th v-for="column in ownersColumns" :key="column.key">
             {{column.label}}
           </th>

@@ -47,7 +47,7 @@ export default {
     },
 
     InfoINNContracts: null,
-    defaultCompany: +(localStorage.getItem('defaultCompany') || -1), // - организация по умолчанию
+    defaultCompany: +(localStorage.getItem('defaultCompany') || null), // - организация по умолчанию
     companyEmployees: []
   }),
   mutations: {

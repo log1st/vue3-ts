@@ -347,7 +347,7 @@ export default defineComponent({
           method: 'post',
           url: `${baseURL}/pretrial/${notificationType}/`,
           data: {
-            company: +localStorage.getItem('defaultCompany'),
+            company: store.getters['defaultCompanyId'],
 
             filters: filtersModel.value,
             payload: selectedItems || [props.selectedItem],
