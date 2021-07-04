@@ -1,6 +1,19 @@
 <template>
     <div class="config-data__wrapper template__wrapper">
         <div class="config-data__actions-btn-wrapper">
+
+            <div style="margin:1em 0">
+                <v-select :options="allColumnTemplate" label="title" class="select_created_template" v-model="createdTemplated" placeholder="Выберите один из созданых шаблонов">
+                </v-select>
+
+                <ur-btn
+                class="btn btn-primary"
+                style="margin-top: 1em"
+                >
+                    Назначить шаблон
+                </ur-btn>
+            </div>
+                <hr>
             <div style="margin:1em 0 ">
                 <v-select :options="productionType" label="title" v-model="selectedProductionType" placeholder="Выберите тип производвства">
                 </v-select>
@@ -217,6 +230,8 @@ export default {
                     placeholder: 'Ввeдите переменную'
                 },
             ],
+            createdTemplated: undefined,
+
             fileType: [ 
                 'csv', 'excel'
             ],
@@ -351,6 +366,7 @@ export default {
                         console.log(resp)
                         this.loading = false
                         this.disabled = false
+                        this.assignTemplateToCompany(resp.pk)
                     })
                 }
             })
@@ -363,8 +379,35 @@ export default {
                         position: 'top-right'
                     })
             })
-
-            
+        },
+        
+        assignTemplateToCompany (payload) {
+            return this.$http({
+                command: `/api/document-parsing/templates/assign/${payload}/`,
+                method: 'PATCH',
+                data: {
+                    company_id: this.command.id
+                }
+            })
+            .then ( resp => {
+                this.$toast.open({
+                    message: `Шаблон парсинга установлен`,
+                    type: 'success',
+                    duration: 5000,
+                    dismissible: true,
+                    position: 'top-right'
+                })
+                console.log(resp)
+            })
+            .catch( error => {
+                this.$toast.open({
+                    message: `Ошибка установки шаблона`,
+                    type: 'error',
+                    duration: 5000,
+                    dismissible: true,
+                    position: 'top-right'
+                })
+            })
         },
         /**
          * Получение типов колонок
@@ -385,7 +428,8 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'columnTemplate'
+            'columnTemplate',
+            'allColumnTemplate'
         ])
     }
 }
@@ -415,4 +459,9 @@ export default {
             overflow: hidden;
         }
     }
+    .select_created_template {
+            .vs__search {
+                display: block !important;
+            }
+        }
 </style>

@@ -59,7 +59,7 @@ export default {
                 requestCode: 'none'
             })
             .then ( resp => {
-                console.log(resp)
+                // console.log(resp)
                 this.courts = resp
             })
             .catch ( err => {

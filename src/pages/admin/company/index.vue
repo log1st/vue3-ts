@@ -321,7 +321,8 @@ export default {
         'setUpdatedApplication',
         'getRegionsList',
         'getColumnTemplate',
-        'getAllDocuments'
+        'getAllDocuments',
+        'getAllColumnTemplate'
         ]),
 
       ...mapMutations([
@@ -727,7 +728,7 @@ export default {
           this.checkCompany(this.minCompany.id)
       }
       this.getRegionsList()
-
+      this.getAllColumnTemplate()
     },
     mounted(){
       this.getAllDocuments()

@@ -19,6 +19,7 @@ export default {
         applications: [],
         columnTemplate: [],
         documents: [],
+        allColumnTemplate: [],
         selectedCompanySettings: false
     }),
     mutations:{
@@ -96,6 +97,9 @@ export default {
         },
         setSelectedCompanySettings (state, payload) {
           state.selectedCompanySettings = payload 
+        },
+        setAllColumnTemplate ( state , payload ) {
+          state.allColumnTemplate = payload
         }
     },
     actions:{
@@ -207,7 +211,28 @@ export default {
           });
           })
         },
+        getAllColumnTemplate ({commit}, payload) {
+          return $http({
+            command: '/api/document-parsing/templates/',
+            method: 'GET',
+            requestCode: 'none'
+          })
+          .then ( resp => {
+            commit('setAllColumnTemplate', resp)
+            // console.log(resp)
+          })
+          .catch ( error => {
+            console.log(error)
+          })
+        },
 
+        /**
+         * Полечение шаблона компании
+         * @param {*} commit 
+         * @param {*} dispatch 
+         * @param {*} payload 
+         * @returns 
+         */
         getColumnTemplate ({commit, dispatch}, payload) {
           const { id } = payload
           return new Promise ((resolve, reject) => {
@@ -810,26 +835,31 @@ export default {
          * @param state
          */
         getAdminUserListArray: state => state.UsersList,
+        
         /**
          * Объект компании
          * @param state
          */
         getCompany: state => state.checkedCompany,
+
         /**
          * Минимизированный объект компании 
          * @param state
          */
         minCompany: state => state.UsersList.find(el => el.checked === true) || false,
+
         /**
          * Все типы шаблонов документов 
          * @param state
          */
         allDocsTypes: state => state.docsTypes,
+
         /**
          * Все шаблоны документов
          * @param state
          */
         docsTemplates: state => state.allTemplates,
+
         /**
         * Отмеченные задолжники
         * @param state
@@ -837,21 +867,34 @@ export default {
         checkedCompany (state) {
             return cloneDeep(state.UsersList.filter(d => d.checked));
         },
+
         /**
          * Все приложения организации
          * @param state
          */
         companyApplications: state => state.applications,
+
         /**
          * Все переменные что приходят в обертки групп
          */
         allGroupsVariables: state => state.allVars,
+
+        /**
+         * Получение шаблона парсинга документа 
+         * @param state
+         */
         columnTemplate: state => state.columnTemplate,
 
+        /**
+         * Получение документов по id компании
+         * @param state
+         * @param {Integer} id компании 
+         */
         documentsByCompanyId: (state) => (id) => {
             return state.documents.filter( doc => doc.company === id )
         },
-        adminCompanySettings: state => state.selectedCompanySettings
 
+        adminCompanySettings: state => state.selectedCompanySettings,
+        allColumnTemplate: state => state.allColumnTemplate
     }
 }
