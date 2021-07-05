@@ -13,6 +13,12 @@
           ]" v-for="field in block.fields" :key="field.key">
             <div :class="$style.label">
               {{field.label}}
+              <div :class="$style.labelAction" v-if="isEditing && [
+                'postal_address_zip_code',
+                'physical_address'
+              ].includes(field.key) && model[field.key] !== model.legal_address"
+                @click="presetAddress(field.key)"
+              >Как юр. адрес</div>
             </div>
             <template v-if="isEditing && ((typeof field.isEditable === 'undefined') || !!field.isEditable)">
               <div :class="$style.input">
@@ -40,7 +46,7 @@
 </template>
 
 <script>
-import {computed, inject, ref, watch} from "@vue/composition-api";
+import {computed, getCurrentInstance, inject, ref, watch} from "@vue/composition-api";
 import TextInput from "@/new/components/textInput/TextInput";
 import FilterConfig from "@/new/components/filter/FilterConfig";
 import {getDeepField} from "@/new/utils/object";
@@ -296,6 +302,11 @@ export default {
       },
     ]));
 
+    const presetAddress = async key => {
+      await new Promise(requestAnimationFrame);
+      model.value[key] = model.value.legal_address
+    }
+
     return {
       model,
 
@@ -308,6 +319,8 @@ export default {
       errorsMap,
 
       isEditing,
+
+      presetAddress,
     }
   }
 }

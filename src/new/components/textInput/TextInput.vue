@@ -77,7 +77,7 @@ export default defineComponent({
     error: String,
   },
   setup(props, {emit}) {
-    const value = useLocalProp(props, emit, 'modelValue', true);
+    const value = useLocalProp(props, emit, 'modelValue', true, true);
     const valueModifiers = useModifiers(computed(() => props.modelValueModifiers));
 
     let valueTimeout;
