@@ -10,7 +10,7 @@
     </div>
     <div :class="$style.header">
       <div :class="$style.title">
-        Карточка истории судебных дел
+        Карточка уведомлений
       </div>
     </div>
     <div :class="$style.content">
@@ -35,9 +35,12 @@
                   {{getDeepField(document, column.key)}}
                 </template>
               </template>
+              <div :class="$style.actions" v-else-if="column.key === 'actions'">
+                <Btn :class="$style.action" prepend-icon="megaphone" state="quinary" @click="listenSound(document)" v-if="activeTab.key === 'voice'"/>
+              </div>
               <span v-else :class="$style.na">
-              N/A
-            </span>
+                N/A
+              </span>
             </td>
           </tr>
         </template>
@@ -123,6 +126,21 @@ export default {
       immediate: true,
     });
 
+    const {
+      showDialog,
+    } = useDialog();
+
+    const listenSound = (document) => {
+      const {name = 'Голосовое уведомление', file} = document;
+      showDialog({
+        component: 'listenFile',
+        payload: {
+          title: name,
+          file,
+        }
+      })
+    }
+
     return {
       activeTab,
       selectTab,
@@ -139,6 +157,8 @@ export default {
       formatMoney,
 
       getDeepField,
+
+      listenSound,
     }
   }
 }

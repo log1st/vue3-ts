@@ -13,16 +13,6 @@
   justify-content: space-between;
 }
 
-.action {
-  height: 40px;
-  padding: 0 15px;
-
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-}
-
 .title {
   font-weight: 600;
   font-size: 16px;
@@ -129,6 +119,10 @@
       color: #333333;
       padding: 15px 20px;
       white-space: pre-line;
+
+      &:last-child {
+        position: relative;
+      }
     }
     tr {
       &:hover {
@@ -148,5 +142,25 @@
     th {
       padding: 0 10px;
     }
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+.action {
+  height: 35px;
+  width: 35px;
+
+  &:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  &:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
   }
 }
