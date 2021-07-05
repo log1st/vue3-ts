@@ -11,6 +11,8 @@
           :class="$style.instance"
           v-bind="payload"
           @close="close"
+          @hide="$emit('hide')"
+          @show="$emit('show')"
         />
       </div>
     </div>

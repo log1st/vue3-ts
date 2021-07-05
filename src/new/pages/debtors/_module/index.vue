@@ -200,6 +200,8 @@ export default defineComponent({
     module: String
   },
   setup(props) {
+    const store = useStore();
+
     const type = computed(() => props.module);
 
     const summariesFields = computed(() => (
@@ -545,6 +547,11 @@ export default defineComponent({
         field: 'name',
         type: 'text',
         isHidden: true,
+      }, {
+        field: 'company_id',
+        type: 'text',
+        isHidden: true,
+        defaultValue: store.getters['defaultCompanyId']
       }]),
       defaultLimit: ref(10),
       async fetch({
@@ -574,6 +581,11 @@ export default defineComponent({
         field: 'name',
         type: 'text',
         isHidden: true,
+      }, {
+        field: 'company_id',
+        type: 'text',
+        isHidden: true,
+        defaultValue: store.getters['defaultCompanyId']
       }]),
       defaultLimit: ref(10),
       async fetch({
@@ -623,8 +635,6 @@ export default defineComponent({
         };
       }
     });
-
-    const store = useStore();
 
     const {
       fetchData,
@@ -727,7 +737,7 @@ export default defineComponent({
           field: 'personal_account',
           type: 'text',
           width: 2,
-          defaultValue: [],
+          defaultValue: '',
           props: {
             placeholder: '№ ЛС',
             /*

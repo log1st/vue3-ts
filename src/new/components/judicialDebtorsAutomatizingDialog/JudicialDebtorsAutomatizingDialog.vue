@@ -153,7 +153,7 @@ export default defineComponent({
     const fetchData = async () => {
       const response = await axios({
         method: 'get',
-        url: `${baseURL}/api/account/company-settings/${localStorage.getItem('defaultCompany')}/`
+        url: `${baseURL}/api/account/company-settings/${store.getters['defaultCompanyId']}/`
       });
 
       model.value = {
@@ -201,7 +201,7 @@ export default defineComponent({
       async fetch() {
         const response = await axios({
           method: 'get',
-          url: `${baseURL}/api/account/company/${localStorage.getItem('defaultCompany')}/employees/`
+          url: `${baseURL}/api/account/company/${store.getters['defaultCompanyId']}/employees/`
         });
         return {
           data: {

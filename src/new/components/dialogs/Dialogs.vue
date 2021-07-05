@@ -7,16 +7,18 @@
     :enter-class="$style.enter"
   >
     <Dialog
-      v-for="dialog in dialogs"
+      v-for="(dialog, index) in dialogs"
       v-bind="dialog"
-      :key="dialog.id"
+      :key="`${hidden.includes(dialog.id) ? 'hidden' : 'shown'}-${dialog.id}`"
       @close="hideDialogById(dialog.id)"
+      @hide="hide(index)"
+      @show="show(index)"
     />
   </transition-group>
 </template>
 
 <script>
-import {defineComponent} from '@vue/composition-api';
+import {defineComponent, ref} from '@vue/composition-api';
 import {useDialog} from "@/new/hooks/useDialog";
 import Dialog from "@/new/components/dialog/Dialog";
 
@@ -29,9 +31,25 @@ export default defineComponent({
       hideDialogById,
     } = useDialog();
 
+    const hidden = ref([]);
+
+    const hide = (id) => {
+      if(!hidden.value.includes(id)) {
+        hidden.value.push(id)
+      }
+    }
+
+    const show = (id) => {
+      hidden.value.splice(hidden.value.indexOf(id), 1)
+    }
+
     return {
       dialogs,
       hideDialogById,
+
+      hide,
+      show,
+      hidden,
     }
   }
 });
