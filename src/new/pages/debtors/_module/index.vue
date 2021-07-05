@@ -726,7 +726,9 @@ export default defineComponent({
             substatuses: debtor_status.reduce((acc, {substatus}) => ([
               ...acc,
               ...substatus.map(({substatus: s}) => s),
-            ]), []).filter((v, i, s) => s.indexOf(v) === i).filter(Boolean),
+            ]), []).filter((v, i, s) => s.indexOf(v) === i).filter(Boolean).sort((a, b) => (
+                (a.indexOf('statement') > 0 ? 1 : 0) - (b.indexOf('statement') > 0 ? 1 : 0) ? -1 : 1
+            )),
             pretrial_substatuses: record.debtor.pretrial_status.reduce((acc, {substatus}) => ([
               ...acc,
               ...substatus.map(({status: s}) => s),
