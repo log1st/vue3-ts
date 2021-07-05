@@ -128,6 +128,7 @@ import {formatMessage} from "@/new/utils/messageFormat";
 import TextInput from "@/new/components/textInput/TextInput";
 import {baseURL} from "@/settings/config";
 import {useErrors} from "@/new/hooks/useErrors";
+import {useStore} from "@/new/hooks/useStore";
 
 export default defineComponent({
   name: "JudicialDebtorsAutomatizingDialog",
@@ -221,13 +222,15 @@ export default defineComponent({
       clearErrors,
     } = useErrors();
 
+    const store = useStore();
+
     const submit = async () => {
       clearErrors();
 
       try {
         await axios({
           method: 'patch',
-          url: `${baseURL}/api/account/company-settings/${localStorage.getItem('defaultCompany')}/`,
+          url: `${baseURL}/api/account/company-settings/${store.getters['defaultCompanyId']}/`,
           data: model.value,
         })
         emit('close');
