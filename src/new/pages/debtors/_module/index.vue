@@ -712,6 +712,8 @@ export default defineComponent({
             new Date(a).getTime() < new Date(b).getTime() ? 1 : -1
           ))
 
+          const s = ['statement_ordered', 'statement_received', 'statement_ready', 'statement_error'];
+
           return ({
             ...record,
             index,
@@ -727,7 +729,7 @@ export default defineComponent({
               ...acc,
               ...substatus.map(({substatus: s}) => s),
             ]), []).filter((v, i, s) => s.indexOf(v) === i).filter(Boolean).sort((a, b) => (
-                (a.indexOf('statement') > 0 ? 1 : 0) - (b.indexOf('statement') > 0 ? 1 : 0) ? -1 : 1
+               (s.includes(a) ? 1 : 0) - (s.includes(b) ? 1 : 0) ? 1 : -1
             )),
             pretrial_substatuses: record.debtor.pretrial_status.reduce((acc, {substatus}) => ([
               ...acc,
