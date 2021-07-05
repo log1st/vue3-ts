@@ -166,7 +166,7 @@
 </template>
 
 <script>
-import {computed, defineComponent, ref, watch} from "@vue/composition-api";
+import {computed, defineComponent, onBeforeUnmount, ref, watch} from "@vue/composition-api";
 import {formatFiltersModelToRequest, useActiveTable} from "@/new/components/activeTable/useActiveTable";
 import ActiveTable from "@/new/components/activeTable/ActiveTable";
 import axios from "axios";
@@ -189,6 +189,7 @@ import {usePersistedSetting} from "@/new/hooks/usePersistedSetting";
 import {useStore} from "@/new/hooks/useStore";
 // @TODO: remove
 import qs from "qs";
+import {asyncAction} from "@/new/utils/asyncAction";
 
 export default defineComponent({
   name: "index",
@@ -322,6 +323,11 @@ export default defineComponent({
       showToast,
     } = useToast();
 
+    let sendUnsubscribe;
+    onBeforeUnmount(() => {
+      sendUnsubscribe && sendUnsubscribe()
+    });
+
     const showNotifyDialog = async (notificationType, {allSelected, selectedItems, selectedItem}) => {
       const isActive = allSelected
         || !!selectedItems?.length
@@ -343,7 +349,7 @@ export default defineComponent({
       }
 
       try {
-        await axios({
+        const {data: {uuid}} = await axios({
           method: 'post',
           url: `${baseURL}/pretrial/${notificationType}/`,
           data: {
@@ -358,6 +364,48 @@ export default defineComponent({
           message: 'Запрос отправлен на обработку',
           type: 'success',
         })
+
+        const {promise, unsubscribe} = asyncAction(
+          async () => (await axios({
+            method: 'get',
+            url: `${baseURL}/api/datafile/status/${uuid}/`
+          })).data,
+          async(data) => {
+            const {status_value_max, status_value, status_text, state} = data[0]
+            if(state === 2) {
+              return {
+                status: true,
+                error: status_text
+              }
+            }
+            if(status_value === status_value_max) {
+              return {
+                status: true,
+                payload: {
+                  text: status_text
+                }
+              }
+            } else {
+              return {status: false}
+            }
+          },
+          1000,
+        );
+
+        sendUnsubscribe = unsubscribe;
+        try {
+          const {text} = await promise;
+          await showToast({
+            message: text,
+            type: 'success',
+          })
+        } catch (e) {
+          console.log(e);
+          await showToast({
+            message: 'Ошибка отправки уведомления',
+            type: 'error',
+          })
+        }
       } catch (e) {
         await showToast({
           message: 'Серверная ошибка',
