@@ -146,10 +146,12 @@ export default {
           {
             key: 'type',
             label: 'Тип организации',
+            isEditable: false
           },
           {
             key: 'okopf',
             label: 'ОКОПФ',
+            isEditable: false
           },
           {
             key: 'taxation_system',
@@ -220,6 +222,7 @@ export default {
           {
             key: 'director',
             label: 'Генеральный директор',
+            isEditable: false
           },
           {
             // @TODO
@@ -240,6 +243,7 @@ export default {
           {
             key: 'legal_address',
             label: 'Юридический адрес',
+            isEditable: false
           },
           {
             key: 'physical_address',
@@ -268,6 +272,7 @@ export default {
           {
             key: 'ogrn',
             label: 'ОГРН',
+            isEditable: false
           },
           {
             key: 'ras_schet',
@@ -280,10 +285,12 @@ export default {
           {
             key: 'full_name_bank',
             label: 'Полное наименование банка',
+            isEditable: false
           },
           {
             key: 'kor_schet',
             label: 'Корреспондентский счет',
+            isEditable: false
           },
         ]
       },
