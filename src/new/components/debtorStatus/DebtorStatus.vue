@@ -59,7 +59,7 @@ export default defineComponent({
             court: 'green',
             machine: 'cyan',
             none: 'red',
-          }[cur.value]
+          }[cur.value] || 'gray'
         },
       }), {})
     ));
@@ -67,10 +67,14 @@ export default defineComponent({
     const computedStatus = computed(() => computedStatuses.value[props.status?.status]);
 
     const computedSubStatus = computed(() => (
-      ({
-        judicial: judicialSubStatusesMap,
-        pretrial: pretrialSubStatusesMap,
-      }[props.type]).value[props.status?.substatus[props.status?.substatus.length - 1]?.substatus] || null
+      props.status?.status === 'other' ? (
+        props.status?.substatus[0]?.substatus
+      ) : (
+        ({
+          judicial: judicialSubStatusesMap,
+          pretrial: pretrialSubStatusesMap,
+        }[props.type]).value[props.status?.substatus[0]?.substatus] || null
+      )
     ))
 
     return {

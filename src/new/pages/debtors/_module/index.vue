@@ -29,8 +29,8 @@
             type="judicial"
             v-if="record.debtor && record.debtor.debtor_status.length"
             :class="$style.status"
-            :status="record.debtor.debtor_status[record.debtor.debtor_status.length - 1]"
-            @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[record.debtor.debtor_status.length - 1].id })"
+            :status="record.debtor.debtor_status[0]"
+            @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[0].id })"
           />
         </template>
         <template v-else-if="module === 'pretrial'">
@@ -38,8 +38,8 @@
             type="pretrial"
             v-if="record.debtor && record.debtor.pretrial_status.length"
             :class="$style.status"
-            :status="record.debtor.pretrial_status[record.debtor.pretrial_status.length - 1]"
-            @click="showStatusDialog({ selectedItem: record.debtor.pretrial_status[record.debtor.pretrial_status.length - 1].id })"
+            :status="record.debtor.pretrial_status[0]"
+            @click="showStatusDialog({ selectedItem: record.debtor.pretrial_status[0].id })"
           />
         </template>
         <span/>
@@ -51,17 +51,17 @@
         <div :class="$style.account">
           <div :class="$style.accountInfo">
             <div :class="$style.accountNumber">{{record.debtor.personal_account}}</div>
-            <div :class="$style.accountStars">
+            <div :class="$style.accountStars" v-if="false">
               <Rating :model-value="record.tmp.rating"/>
             </div>
           </div>
           <div v-if="record.debtor.debtor_status && record.debtor.debtor_status.length" :class="[
             $style.accountIcons,
-            record.debtor.debtor_status[record.debtor.debtor_status.length - 1].length > 1 && $style.accountIconsDense
+            record.debtor.debtor_status[0].length > 1 && $style.accountIconsDense
           ]">
             <template v-if="module === 'judicial'">
               <TooltipWrapper
-                v-for="substatus in record.debtor.debtor_status[record.debtor.debtor_status.length - 1].substatus"
+                v-for="substatus in record.debtor.debtor_status[0].substatus"
                 :key="substatus.substatus"
                 :text="judicialSubStatusesMap[substatus.substatus]"
                 v-if="['fees_paid', 'statement_ordered', 'fees_await_paid'].includes(substatus.substatus)"
@@ -85,7 +85,7 @@
             </template>
             <template v-else-if="module === 'pretrial' && !!record.debtor.pretrial_status">
               <TooltipWrapper
-                v-for="substatus in record.debtor.pretrial_status[record.debtor.pretrial_status.length - 1].substatus"
+                v-for="substatus in record.debtor.pretrial_status[0].substatus"
                 :key="substatus.substatus"
                 :text="pretrialSubStatusesMap[substatus.substatus]"
                 v-if="['court'].includes(substatus.substatus)"
@@ -610,13 +610,38 @@ export default defineComponent({
           cancelToken,
           paramsSerializer: params => qs.stringify(params, {arrayFormat: 'repeat', skipNulls: true})
         });
-        response.data.results = response.data.results.map((record, index) => ({
-          ...record,
-          index,
-          tmp: {
-            rating: Math.floor(Math.random() * 5),
-          }
-        }));
+        response.data.results = response.data.results.map((record, index) => {
+          const debtor_status = record.debtor.debtor_status.map(status => {
+            try {
+              const parsed = JSON.parse(status.status.replace(/'/g, '"'))
+              if(Array.isArray(parsed)) {
+                return {
+                  ...status,
+                  status: parsed[0],
+                }
+              }
+            } catch(e) {
+            }
+            return status;
+          });
+
+          debtor_status.sort(({updated_at: a}, {updated_at: b}) => (
+            new Date(a).getTime() < new Date(b).getTime() ? 1 : -1
+          ))
+
+          return ({
+            ...record,
+            index,
+            debtor: {
+              ...record.debtor,
+              debtor_status: debtor_status.length ? debtor_status : [
+                {
+                  status: 'new',
+                }
+              ],
+            }
+          });
+        });
         response.data.summaries = response.data.total;
         return response;
       },

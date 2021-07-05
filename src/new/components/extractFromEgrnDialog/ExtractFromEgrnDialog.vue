@@ -161,13 +161,6 @@ export default defineComponent({
               message: 'Запрос на выписку из ЕГРН успешно сформирован',
               type: 'success',
             })
-            await showDialog({
-              component: 'downloadFile',
-              payload: {
-                title: 'Работа с документами',
-                url: file_pdf
-              }
-            })
           } catch (e) {
             await showToast({
               title: 'Ошибка формирования запроса выписки',

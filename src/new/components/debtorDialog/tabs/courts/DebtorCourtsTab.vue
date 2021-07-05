@@ -21,27 +21,20 @@
       <Icon v-if="isLoading" icon="loader" spin :class="$style.loader"/>
 
       <table :class="$style.table">
+        <thead>
+
+        <tr>
+          <th v-for="column in columns" :key="column.key">
+            {{column.label}}
+          </th>
+        </tr>
+        </thead>
         <tbody>
-        <template  v-for="document in documents">
-          <tr :key="`${document.id}-header`">
-            <td :colspan="columns.length">
-              <div :class="$style.fields">
-                <div :class="$style.field">
-                  <div :class="$style.fieldLabel">Перод</div>
-                  <div :class="$style.fieldValue">{{[document.start_date, document.end_date].filter(Boolean).join(' - ')}}</div>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th v-for="column in columns" :key="column.key">
-              {{column.label}}
-            </th>
-          </tr>
+        <template  v-for="(document, index) in documents">
           <tr :key="`${document.id}-data`">
             <td v-for="column in columns" :key="column.key">
               <template v-if="document[column.key]">
-                <template v-if="column.key === 'ownership_registration_date'">
+                <template v-if="['canceled_date', 'case_consideration_date', 'receipt_date', 'returned_date'].includes(column.key) && document[column.key]">
                   {{formatDate(document[column.key])}}
                 </template>
                 <template v-else>
@@ -121,20 +114,16 @@ export default {
 
     const columns = computed(() => ([
       ...([
-        {key: 'pk', label: '№'},
-        {key: 'id', label: 'Идентификатор дела'},
-        {key: 'number', label: '№ дела'},
-        {key: 'created_date', label: 'Дата поступления'},
-        {key: 'view_date', label: 'Дата рассмотрения'},
-        {key: 'effected_date', label: 'Дата вступления решения в силу'},
+        {key: 'canceled_date', label: 'Дата отмены'},
+        {key: 'case_consideration_date', label: 'Дата рассмотрения'},
+        {key: 'case_number', label: '№ дела'},
+        {key: 'effective_decision_date', label: 'Дата вынесения решения'},
         {key: 'judge_full_name', label: 'ФИО судьи'},
-        {key: 'status', label: 'Статус оплаты'},
-        {key: 'statuses', label: 'История статусов'},
+        {key: 'payment_status', label: 'Статус оплаты'},
+        {key: 'receipt_date', label: 'Дата создания счёта'},
+        {key: 'returned_date', label: 'Дата возврата'},
+        {key: 'status_history', label: 'История статусов'},
       ]),
-      {
-        key: 'actions',
-        label: ''
-      }
     ]));
 
     const isLoading = ref(false);

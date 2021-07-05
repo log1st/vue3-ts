@@ -8,7 +8,7 @@
       <div :class="$style.title">
         Данные должника {{data.debtor_main_profile.full_name}}
       </div>
-      <Rating :model-value="data.rating" :class="$style.rating"></Rating>
+      <Rating :model-value="data.rating" :class="$style.rating" v-if="false"/>
       <div :class="$style.tabs">
         <div
           :class="[
