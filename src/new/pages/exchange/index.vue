@@ -48,6 +48,7 @@ export default defineComponent({
           name: 'exchange-import',
         }
       },
+      /*
       {
         key: 'export',
         label: 'Выгрузка данных',
@@ -64,6 +65,7 @@ export default defineComponent({
           name: 'exchange-integration',
         }
       },
+      */
     ]));
 
     const store = useStore();

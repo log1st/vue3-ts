@@ -717,14 +717,16 @@ export default defineComponent({
         },
         {
           field: 'personal_account',
-          type: 'select',
+          type: 'text',
           width: 2,
           defaultValue: [],
           props: {
             placeholder: '№ ЛС',
+            /*
             isFillable: true,
             isMultiple: true,
             displayValueTemplate: '{n, plural, =1{Один номер} one{# номер} few{# номера} other{# номеров}} ЛС'
+             */
           }
         },
         {
