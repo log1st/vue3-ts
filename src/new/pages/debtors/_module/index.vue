@@ -61,10 +61,10 @@
           ]">
             <template v-if="module === 'judicial'">
               <TooltipWrapper
-                v-for="substatus in record.debtor.debtor_status[0].substatus"
-                :key="substatus.substatus"
-                :text="judicialSubStatusesMap[substatus.substatus]"
-                v-if="['fees_paid', 'statement_ordered', 'fees_await_paid'].includes(substatus.substatus)"
+                v-for="substatus in record.substatuses"
+                :key="substatus"
+                :text="judicialSubStatusesMap[substatus]"
+                v-if="['fees_paid', 'statement_ordered', 'fees_await_paid'].includes(substatus)"
               >
                 <Icon
                   :class="[
@@ -73,33 +73,33 @@
                     fees_paid: 'Green',
                     statement_ordered: 'Blue',
                     fees_await_paid: 'Green',
-                  }[substatus.substatus]}`]
+                  }[substatus]}`]
                 ]"
                   :icon="{
                   fees_paid: 'coins',
                   statement_ordered: 'egrn-excerpt',
                   fees_await_paid: 'coins',
-                }[substatus.substatus]"
+                }[substatus]"
                 />
               </TooltipWrapper>
             </template>
             <template v-else-if="module === 'pretrial' && !!record.debtor.pretrial_status">
               <TooltipWrapper
-                v-for="substatus in record.debtor.pretrial_status[0].substatus"
-                :key="substatus.substatus"
-                :text="pretrialSubStatusesMap[substatus.substatus]"
-                v-if="['court'].includes(substatus.substatus)"
+                v-for="substatus in record.pretrial_substatuses"
+                :key="substatus"
+                :text="pretrialSubStatusesMap[substatus]"
+                v-if="['court'].includes(substatus)"
               >
                 <Icon
                   :class="[
                   $style.accountIcon,
                   $style[`accountIcon${{
                     court: 'Green',
-                  }[substatus.substatus]}`]
+                  }[substatus]}`]
                 ]"
                   :icon="{
                     court: 'court',
-                  }[substatus.substatus]"
+                  }[substatus]"
                 />
               </TooltipWrapper>
             </template>
@@ -687,7 +687,15 @@ export default defineComponent({
                   status: 'new',
                 }
               ],
-            }
+            },
+            substatuses: debtor_status.reduce((acc, {substatus}) => ([
+              ...acc,
+              ...substatus.map(({substatus: s}) => s),
+            ]), []).filter((v, i, s) => s.indexOf(v) === i).filter(Boolean),
+            pretrial_substatuses: record.debtor.pretrial_status.reduce((acc, {substatus}) => ([
+              ...acc,
+              ...substatus.map(({status: s}) => s),
+            ]), []).filter((v, i, s) => s.indexOf(v) === i).filter(Boolean),
           });
         });
         response.data.summaries = response.data.total;

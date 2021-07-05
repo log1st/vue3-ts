@@ -65,7 +65,13 @@
             icon: 'magnifier',
             label: 'Фильтрация',
             align: 'end'
-          }]"
+          }, isFilterApplied && {
+            key: 'reset',
+            icon: 'reset',
+            label: 'Очистить',
+            align: 'end',
+            onClick: resetFilters
+          }].filter(Boolean)"
           >
             <template #filters="{isActive, close}">
               <Filters
@@ -234,6 +240,7 @@ import Btn from "@/new/components/btn/Btn";
 import FilterConfig from "@/new/components/filter/FilterConfig";
 import {usePersistedSetting} from "@/new/hooks/usePersistedSetting";
 import TooltipWrapper from "@/new/components/tooltip/TooltipWrapper";
+import {isEqual} from "lodash";
 
 export default defineComponent({
   name: "ActiveTable",
@@ -441,6 +448,24 @@ export default defineComponent({
     const localPage = useLocalProp(props, emit, 'page');
     const localFilters = useLocalProp(props, emit, 'filtersModel');
 
+    const defaultFilter = computed(() => (
+      props.filters.reduce((acc, cur) => ({
+        ...acc,
+        [cur.field]: JSON.parse(JSON.stringify(cur.defaultValue || null))
+      }), {})
+    ))
+
+    const isFilterApplied = computed(() => (
+      !isEqual(
+        localFilters.value,
+        defaultFilter.value,
+      )
+    ));
+
+    const resetFilters = () => {
+      localFilters.value = JSON.parse(JSON.stringify(defaultFilter.value))
+    }
+
     watch(localPage, () => {
       setAllSelected(false);
     });
@@ -636,6 +661,9 @@ export default defineComponent({
       localFilters,
 
       computedColumns,
+
+      isFilterApplied,
+      resetFilters,
     }
   }
 })

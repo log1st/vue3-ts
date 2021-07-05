@@ -4,10 +4,11 @@
       v-model="currentDate"
       :state.sync="headerState"
       :class="$style.header"
+      :with-days="withDays"
     />
     <div :class="$style.body">
       <CalendarMonths
-        v-if="headerState === 'month'"
+        v-if="headerState === 'month' || (headerState === 'day' && !withDays)"
         v-model="currentDate"
         @update:modelValue="setState('day')"
       />
@@ -17,7 +18,7 @@
         @update:modelValue="setState('month')"
       />
       <CalendarDays
-        v-else
+        v-else-if="withDays"
         v-model="localValue"
         :current-date="currentDate"
       />
@@ -34,7 +35,7 @@ import CalendarHeader from "@/new/components/dateInput/header/CalendarHeader";
 import CalendarMonths from "@/new/components/dateInput/months/CalendarMonths";
 import CalendarYears from "@/new/components/dateInput/years/CalendarYears";
 import CalendarDays from "@/new/components/dateInput/days/CalendarDays";
-import {useLocalProp} from "@/new/hooks/useLocalProp";
+import {setDate, addMonths, addDays} from "@/new/utils/dateFns";
 
 export default defineComponent({
   name: 'Calendar',
@@ -45,6 +46,8 @@ export default defineComponent({
   },
   props: {
     modelValue: [Date, Array],
+    withDays: Boolean,
+    autoDay: [String, Number]
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
@@ -78,6 +81,20 @@ export default defineComponent({
     const isRange = computed(() => Array.isArray(localValue.value));
 
     const currentDate = ref(Array.isArray(localValue.value) ? localValue.value[0] : localValue.value || new Date());
+
+    watch(currentDate, (d) => {
+      if(!props.withDays) {
+        let newDate = d;
+        if(props.autoDay === 'first') {
+          newDate = setDate(newDate, 1);
+        } else if(props.autoDay === 'last') {
+          newDate = addDays(setDate(addMonths(newDate, 1), 1), -1)
+        } else {
+          newDate(newDate, props.autoDay)
+        }
+        localValue.value = newDate;
+      }
+    })
 
     const headerState = ref('day');
 

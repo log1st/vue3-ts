@@ -9,7 +9,7 @@
       :class="$style.label"
       @click="toggleState"
     >
-      <template v-if="state === 'month'">
+      <template v-if="state === 'month' || (state === 'days' && !withDays)">
         {{ formatYear(localValue) }}
       </template>
       <template v-else-if="state === 'day'">
@@ -43,6 +43,7 @@ export default defineComponent({
   props: {
     state: String,
     modelValue: Date,
+    withDays: Boolean,
   },
   emits: ['update:modelValue', 'update:state'],
   setup(props, { emit }) {

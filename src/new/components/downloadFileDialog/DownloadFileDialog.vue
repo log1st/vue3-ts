@@ -34,8 +34,12 @@ export default defineComponent({
     }
 
     const download = async () => {
+      const url = new URL(props.url);
+      const params = new URLSearchParams(url.search);
+      params.append('download', '1');
+      url.search = params.toString();
       await downloadFile({
-        url: props.url,
+        url: url.toString(),
         name: props.url.split('/').pop(),
       })
       close();

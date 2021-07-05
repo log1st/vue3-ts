@@ -40,7 +40,7 @@
         <tr :key="`${characteristic.id}-data`">
           <td v-for="column in characteristicsColumns" :key="column.key">
             <template v-if="characteristic[column.key]">
-              <template v-if="column.key === 'ownership_registration_date'">
+              <template v-if="['ownership_registration_date', 'birth_date'].includes(column.key) && characteristic[column.key]">
                 {{formatDate(characteristic[column.key])}}
               </template>
               <template v-else>
@@ -83,7 +83,7 @@
         <tr :key="`${owner.id}-data`">
           <td v-for="column in ownersColumns" :key="column.key">
             <template v-if="owner[column.key]">
-              <template v-if="column.key === 'ownership_registration_date'">
+              <template v-if="['ownership_registration_date', 'birth_date'].includes(column.key) && owner[column.key]">
                 {{formatDate(owner[column.key])}}
               </template>
               <template v-else>
