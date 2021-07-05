@@ -26,9 +26,9 @@
         </div>
       </div>
       <div :class="$style.content">
-        <Icon @click="switchDebtor(-1)" v-if="onPrevious" :class="[$style.control, $style.previous]" icon="chevron-left"/>
+        <Icon @click="switchDebtor(-1)" v-if="isPreviousAvailable.value" :class="[$style.control, $style.previous]" icon="chevron-left"/>
         <component :is="activeTab.component"/>
-        <Icon @click="switchDebtor(1)" v-if="onNext" :class="[$style.control, $style.next]" icon="chevron-right"/>
+        <Icon @click="switchDebtor(1)" v-if="isNextAvailable.value" :class="[$style.control, $style.next]" icon="chevron-right"/>
       </div>
     </template>
   </div>
@@ -49,9 +49,11 @@ export default defineComponent({
   name: "DebtorDialog",
   components: {Icon, Rating},
   props: {
-    id: Number,
+    id: Object,
     type: String,
+    isNextAvailable: Object,
     onPrevious: [Function, Boolean],
+    isPreviousAvailable: Object,
     onNext: [Function, Boolean],
   },
   setup(props, {emit}) {
@@ -74,7 +76,7 @@ export default defineComponent({
       isLoading.value = true;
       const response = await axios({
         method: 'get',
-        url: `${baseURL}/api/debtors-data/${props.id}`,
+        url: `${baseURL}/api/debtors-data/${props.id.value}`,
         params: {
           production_type: props.type,
         }
@@ -86,7 +88,7 @@ export default defineComponent({
       isLoading.value = false;
     };
 
-    watch(computed(() => props.id), async () => {
+    watch(props.id, async () => {
       await new Promise(requestAnimationFrame);
       await fetchData()
     }, {
@@ -137,7 +139,6 @@ export default defineComponent({
     }
 
     const switchDebtor = (direction) => {
-      emit('close');
       if(direction > 0 && props.onNext) {
         requestAnimationFrame(props.onNext)
       } else if (direction < 0 && props.onPrevious) {

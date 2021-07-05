@@ -304,19 +304,44 @@ export default defineComponent({
       })
     }
 
-    const showDebtorDialog = async ({record: {debtor: {pk}}, index}) => {
+    const current = ref();
+
+    const showDebtorDialog = async ({record: {debtor: {pk}}}) => {
+      current.value = pk;
       await showDialog({
         component: 'debtorDialog',
         isWide: true,
         payload: {
-          id: pk,
+          id: current,
           type: type.value,
-          onNext: index < (records.value.length - 1) && (() => {
-            showDebtorDialog({record: records.value[index + 1], index: index + 1})
-          }),
-          onPrevious: index > 0 && (() => {
-            showDebtorDialog({record: records.value[index - 1], index: index - 1})
-          }),
+          isNextAvailable: computed(() => (
+            records.value.findIndex((r) => (
+              r.debtor.pk === current.value
+            )) < records.value.length - 1
+          )),
+          isPreviousAvailable: computed(() => (
+            records.value.findIndex((r) => (
+              r.debtor.pk === current.value
+            )) > 0
+          )),
+          onNext: () => {
+            const index = records.value.findIndex((r) => (
+              r.debtor.pk === current.value
+            ));
+
+            if(index < records.value.length - 1) {
+              current.value = records.value[index + 1].debtor.pk
+            }
+          },
+          onPrevious: () => {
+            const index = records.value.findIndex((r) => (
+              r.debtor.pk === current.value
+            ));
+
+            if(index > 0) {
+              current.value = records.value[index - 1].debtor.pk
+            }
+          },
         },
       })
     }
