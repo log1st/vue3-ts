@@ -29,7 +29,7 @@
 
 .field {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 240px 1fr;
   grid-gap: 50px;
   &:not(:first-child) {
     margin-top: 20px;
@@ -52,6 +52,19 @@
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+
+  position: relative;
+}
+
+.labelAction {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: 1px solid black;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 10px;
+  cursor: pointer;
 }
 
 .value {

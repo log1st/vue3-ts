@@ -10,29 +10,21 @@
     </div>
     <div :class="$style.header">
       <div :class="$style.title">
-        Карточка истории судебных дел
+        Карточка уведомлений
       </div>
     </div>
     <div :class="$style.content">
       <Icon v-if="isLoading" icon="loader" spin :class="$style.loader"/>
-
       <table :class="$style.table">
+        <thead>
+        <tr>
+          <th v-for="column in columns" :key="column.key">
+            {{column.label}}
+          </th>
+        </tr>
+        </thead>
         <tbody>
         <template  v-for="(document, index) in documents">
-          <tr :key="`${document.id}-header`" v-if="index === 0">
-            <td :colspan="columns.length">
-              <div :class="$style.fields">
-                <div :class="$style.field">
-                  <div :class="$style.fieldValue">{{[document.start_date, document.end_date].filter(Boolean).join(' - ')}}</div>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr v-if="index === 0">
-            <th v-for="column in columns" :key="column.key">
-              {{column.label}}
-            </th>
-          </tr>
           <tr :key="`${document.id}-data`">
             <td v-for="column in columns" :key="column.key">
               <template v-if="getDeepField(document, column.key)">
@@ -43,9 +35,12 @@
                   {{getDeepField(document, column.key)}}
                 </template>
               </template>
+              <div :class="$style.actions" v-else-if="column.key === 'actions'">
+                <Btn :class="$style.action" prepend-icon="megaphone" state="quinary" @click="listenSound(document)" v-if="activeTab.key === 'voice'"/>
+              </div>
               <span v-else :class="$style.na">
-            N/A
-          </span>
+                N/A
+              </span>
             </td>
           </tr>
         </template>
@@ -111,6 +106,7 @@ export default {
       {key: 'send_at', label: 'Отправлено'},
       {key: 'status', label: 'Статус'},
       {key: 'cost', label: 'Цена'},
+      {key: 'actions', label: ''},
     ].filter(Boolean)));
 
     const isLoading = ref(false);
@@ -130,6 +126,21 @@ export default {
       immediate: true,
     });
 
+    const {
+      showDialog,
+    } = useDialog();
+
+    const listenSound = (document) => {
+      const {name = 'Голосовое уведомление', file} = document;
+      showDialog({
+        component: 'listenFile',
+        payload: {
+          title: name,
+          file,
+        }
+      })
+    }
+
     return {
       activeTab,
       selectTab,
@@ -146,6 +157,8 @@ export default {
       formatMoney,
 
       getDeepField,
+
+      listenSound,
     }
   }
 }

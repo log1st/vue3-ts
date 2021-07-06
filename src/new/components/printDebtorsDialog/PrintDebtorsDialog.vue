@@ -169,6 +169,7 @@ export default defineComponent({
           .map(document => ({
             ...document,
             type: 'organisation',
+            production_type: props.type,
           }))
       ]
 

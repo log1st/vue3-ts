@@ -164,7 +164,7 @@ export default defineComponent({
     const summaries = computed(() => (
       [{label: 'Начислено', value: data.value.accrual},
       {label: 'Оплачено', value: data.value.paid_up},
-      {label: 'Задолженность', value: data.value.total_debt},
+      {label: 'Задолженность', value: data.value.debt},
       {label: 'Пеня', value: data.value.penalty}]
     ));
 
