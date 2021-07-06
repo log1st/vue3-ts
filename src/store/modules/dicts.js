@@ -46,6 +46,14 @@ export default {
     judicialStatusesMap: getMap('judicialStatuses'),
     judicialSubStatuses: getList('judicialSubStatuses'),
     judicialSubStatusesMap: getMap('judicialSubStatuses'),
+    judicialSubStatusesGroups: state => state.judicialSubStatuses.reduce((acc, cur) => ([
+      ...acc,
+      cur.group
+    ]), []).filter((c, i, s) => s.indexOf(c) === i),
+    judicialSubStatusesGroupsMap: state => state.judicialSubStatuses.reduce((acc, cur) => ({
+      ...acc,
+      [cur.value]: cur.group
+    }), {}),
     pretrialStatuses: getList('pretrialStatuses'),
     pretrialStatusesMap: getMap('pretrialStatuses'),
     pretrialSubStatuses: getList('pretrialSubStatuses'),
@@ -126,9 +134,10 @@ export default {
         label: info,
       })));
 
-      commit('setJudicialSubStatuses', substatuses.map(({value, info}) => ({
+      commit('setJudicialSubStatuses', substatuses.map(({value, info, group}) => ({
         value,
         label: info,
+        group,
       })));
 
       commit('setPretrialStatuses', pretrial_statuses?.map(({value, info}) => ({

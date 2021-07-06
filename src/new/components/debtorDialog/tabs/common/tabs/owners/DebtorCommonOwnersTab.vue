@@ -119,6 +119,7 @@ export default defineComponent({
         url: `${baseURL}/rosreestr/estate_objects_characteristics/`,
         params: {
           debtor_id: data.value.debtor.pk,
+          active: 1,
         }
       })
       characteristics.value = response.data;
@@ -131,6 +132,7 @@ export default defineComponent({
         url: `${baseURL}/rosreestr/estate_object_ownership_movement/`,
         params: {
           debtor_id: data.value.debtor.pk,
+          active: 1,
         }
       })
       owners.value = response.data;

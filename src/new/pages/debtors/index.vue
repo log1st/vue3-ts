@@ -11,6 +11,7 @@
 import {computed, defineComponent} from '@vue/composition-api';
 import Tabs from "@/new/components/tabs/Tabs";
 import {useStore} from "@/new/hooks/useStore";
+import {isDev} from "@/entry-server";
 
 export default defineComponent({
   name: 'index',
@@ -37,8 +38,7 @@ export default defineComponent({
           }
         }
       },
-      /*
-      {
+      isDev && {
         key: 'executive',
         label: 'Исполнительное\nпроизводство',
         url: {
@@ -48,9 +48,7 @@ export default defineComponent({
           }
         }
       },
-
-       */
-    ]));
+    ].filter(Boolean)));
 
     const store = useStore();
     const companyId = computed(() => store.getters['defaultCompanyId']);

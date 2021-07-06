@@ -28,6 +28,8 @@ export const useDicts = () => {
 
   const judicialSubStatuses = computed(() => store.getters['dicts/judicialSubStatuses']);
   const judicialSubStatusesMap = computed(() => store.getters['dicts/judicialSubStatusesMap']);
+  const judicialSubStatusesGroups = computed(() => store.getters['dicts/judicialSubStatusesGroups']);
+  const judicialSubStatusesGroupsMap = computed(() => store.getters['dicts/judicialSubStatusesGroupsMap']);
 
   const pretrialStatuses = computed(() => store.getters['dicts/pretrialStatuses']);
   const pretrialStatusesMap = computed(() => store.getters['dicts/pretrialStatusesMap']);
@@ -62,6 +64,8 @@ export const useDicts = () => {
 
     judicialSubStatuses,
     judicialSubStatusesMap,
+    judicialSubStatusesGroups,
+    judicialSubStatusesGroupsMap,
 
     pretrialStatuses,
     pretrialStatusesMap,

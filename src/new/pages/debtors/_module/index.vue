@@ -553,6 +553,8 @@ export default defineComponent({
     const {
       judicialStatuses,
       judicialSubStatusesMap,
+      judicialSubStatusesGroups,
+      judicialSubStatusesGroupsMap,
       pretrialSubStatusesMap,
     } = useDicts();
 
@@ -726,7 +728,26 @@ export default defineComponent({
             new Date(a).getTime() < new Date(b).getTime() ? 1 : -1
           ))
 
-          const s = ['statement_ordered', 'statement_received', 'statement_ready', 'statement_error'];
+          const order = ['statement'];
+          const s = [...judicialSubStatusesGroups.value].sort((a, b) => (
+            order.indexOf(a) < order.indexOf(b) ? 1 : -1
+          )).reduce((acc, cur) => ({
+            ...acc,
+            [cur]: false
+          }), {});
+
+          const substatuses = debtor_status.reduce((acc, {substatus}) => ([
+            ...acc,
+            ...substatus.map(({substatus: s}) => s),
+          ]), []).filter((v, i, s) => !!v && (s.indexOf(v) === i)).filter(v => {
+            if(!s[judicialSubStatusesGroupsMap.value[v]]) {
+              s[judicialSubStatusesGroupsMap.value[v]] = true;
+              return true;
+            }
+            return false;
+          }).sort((a, b) => (
+            order.indexOf(judicialSubStatusesGroupsMap.value[a]) < order.indexOf(judicialSubStatusesGroupsMap.value[b]) ? 1 : -1
+          ));
 
           return ({
             ...record,
@@ -739,20 +760,7 @@ export default defineComponent({
                 }
               ],
             },
-            substatuses: debtor_status.reduce((acc, {substatus}) => ([
-              ...acc,
-              ...substatus.map(({substatus: s}) => s),
-            ]), []).filter((v, i, s) => s.indexOf(v) === i).filter(Boolean)
-            .sort((a, b) => (
-              new Date(a.updated_at).getTime() > new Date(b.updated_at).getTime() ? 1 : -1
-            ))
-            .filter((substatus, index, self) => (
-              substatus !== 'statement_ordered' || (
-                substatus === 'statement_ordered' && (self.indexOf('statement_error') < self.indexOf(substatus))
-              )
-            )).sort((a, b) => (
-               s.indexOf(a) - s.indexOf(b) > 0 ? -1 : 1
-            )),
+            substatuses,
             pretrial_substatuses: record.debtor.pretrial_status.reduce((acc, {substatus}) => ([
               ...acc,
               ...substatus.map(({status: s}) => s),
