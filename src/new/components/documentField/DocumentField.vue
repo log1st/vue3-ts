@@ -5,7 +5,9 @@
         <Icon icon="add" :class="$style.placeholderIcon"/>
       </div>
       <template v-else>
-        <div :class="$style.preview" :style="{backgroundImage: `url(${preview})`}"/>
+        <div :class="$style.preview">
+          <Icon icon="file" :class="$style.previewIcon"/>
+        </div>
         <div :class="$style.controls" v-if="isEditable">
           <Icon icon="download" @click="download" :class="$style.download"/>
           <Icon icon="pencil" @click="update" :class="$style.edit"/>

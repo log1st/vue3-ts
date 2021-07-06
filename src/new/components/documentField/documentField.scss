@@ -23,6 +23,16 @@
   left: 0;
   right: 0;
   bottom: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.previewIcon {
+  height: 50%;
+  width: 50%;
+  opacity: .6;
 }
 
 .placeholder {
@@ -70,10 +80,8 @@
   align-content: space-between;
   justify-content: space-between;
 
-  opacity: 0;
 
   &:hover {
-    opacity: 1;
     background: rgba(white, .4);
   }
 }

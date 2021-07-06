@@ -691,7 +691,19 @@ export default defineComponent({
             company_id: store.getters['getDefaultCompanyId'],
           },
           cancelToken,
-          paramsSerializer: params => qs.stringify(params, {arrayFormat: 'repeat', skipNulls: true})
+          paramsSerializer: ({
+            fee_status,
+            fee_status_not,
+            substatus_name,
+            substatus_name_not,
+            ...otherParams
+          }) => {
+            return qs.stringify({
+              ...otherParams,
+              substatus_name: [substatus_name, fee_status].filter(Boolean),
+              substatus_name_not: [substatus_name_not, fee_status_not].filter(Boolean),
+            }, {arrayFormat: 'repeat', skipNulls: true});
+          }
         });
         response.data.results = response.data.results.map((record, index) => {
           const debtor_status = record.debtor.debtor_status.map(status => {
@@ -728,12 +740,16 @@ export default defineComponent({
             substatuses: debtor_status.reduce((acc, {substatus}) => ([
               ...acc,
               ...substatus.map(({substatus: s}) => s),
-            ]), []).filter((v, i, s) => s.indexOf(v) === i).filter(Boolean).sort((a, b) => (
-               s.indexOf(a) - s.indexOf(b) > 0 ? -1 : 1
-            )).filter((substatus, index, self) => (
+            ]), []).filter((v, i, s) => s.indexOf(v) === i).filter(Boolean)
+            .sort((a, b) => (
+              new Date(a.updated_at).getTime() > new Date(b.updated_at).getTime() ? 1 : -1
+            ))
+            .filter((substatus, index, self) => (
               substatus !== 'statement_ordered' || (
-                substatus === 'statement_ordered' && !self.includes('statement_error')
+                substatus === 'statement_ordered' && (self.indexOf('statement_error') < self.indexOf(substatus))
               )
+            )).sort((a, b) => (
+               s.indexOf(a) - s.indexOf(b) > 0 ? -1 : 1
             )),
             pretrial_substatuses: record.debtor.pretrial_status.reduce((acc, {substatus}) => ([
               ...acc,

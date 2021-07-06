@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.dialog">
+  <div :class="$style.dialog" :key="id.value">
     <Icon icon="loader" spin v-if="isLoading" :class="$style.loader"></Icon>
     <div :class="$style.title" v-if="!data">
       Данные должника
@@ -89,6 +89,7 @@ export default defineComponent({
     };
 
     watch(props.id, async () => {
+      data.value = undefined;
       await new Promise(requestAnimationFrame);
       await fetchData()
     }, {
