@@ -108,7 +108,8 @@ export default {
             // console.log([event, type, courtId])
             let data = {
                 ...event,
-                company: this.company.id
+                company: this.company.id,
+                production_type: 'judicial'
             }
             switch (type) {
                 case 1:
