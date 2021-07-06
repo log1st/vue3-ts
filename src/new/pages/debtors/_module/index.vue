@@ -729,7 +729,7 @@ export default defineComponent({
               ...acc,
               ...substatus.map(({substatus: s}) => s),
             ]), []).filter((v, i, s) => s.indexOf(v) === i).filter(Boolean).sort((a, b) => (
-               (s.includes(a) ? s.indexOf(a) : 0) - (s.includes(b) ? s.indexOf(b) : 0) ? -1 : 1
+               s.indexOf(a) > s.indexOf(b) ? -1 : 1
             )),
             pretrial_substatuses: record.debtor.pretrial_status.reduce((acc, {substatus}) => ([
               ...acc,

@@ -39,12 +39,12 @@
         </tr>
         <tr :key="`${characteristic.id}-data`">
           <td v-for="column in characteristicsColumns" :key="column.key">
-            <template v-if="characteristic[column.key]">
-              <template v-if="['ownership_registration_date', 'birth_date'].includes(column.key) && characteristic[column.key]">
-                {{formatDate(characteristic[column.key])}}
+            <template v-if="getDeepField(characteristic, column.key)">
+              <template v-if="['ownership_registration_date', 'birth_date'].includes(column.key) && getDeepField(characteristic, column.key)">
+                {{formatDate(getDeepField(characteristic, column.key))}}
               </template>
               <template v-else>
-                {{characteristic[column.key]}}
+                {{getDeepField(characteristic, column.key)}}
               </template>
             </template>
             <span v-else :class="$style.na">
@@ -82,12 +82,12 @@
         </tr>
         <tr :key="`${owner.id}-data`">
           <td v-for="column in ownersColumns" :key="column.key">
-            <template v-if="owner[column.key]">
+            <template v-if="getDeepField(owner, column.key)">
               <template v-if="['ownership_registration_date', 'birth_date'].includes(column.key) && owner[column.key]">
-                {{formatDate(owner[column.key])}}
+                {{formatDate(getDeepField(owner, column.key))}}
               </template>
               <template v-else>
-                {{owner[column.key]}}
+                {{getDeepField(owner, column.key)}}
               </template>
             </template>
             <span v-else :class="$style.na">
@@ -105,16 +105,12 @@
 import {defineComponent, inject, computed, watch, ref} from "@vue/composition-api";
 import {baseURL} from "@/settings/config";
 import {formatDate} from "@/new/utils/date";
+import {getDeepField} from "@/new/utils/object";
 
 export default defineComponent({
   name: "DebtorCommonOwnersTab",
   setup() {
     const data = inject('data');
-
-    const residents = computed(() => data.value.debtor_tenant_profiles.reduce((acc, resident) => ({
-      ...acc,
-      [resident.full_name]: resident
-    }), {}));
 
     const characteristics = ref([]);
     const fetchCharacteristics = async () => {
@@ -125,10 +121,7 @@ export default defineComponent({
           debtor_id: data.value.debtor.pk,
         }
       })
-      characteristics.value = response.data.map(record => ({
-        ...(residents.value[record.owner_name] || {}),
-        ...record,
-      }));
+      characteristics.value = response.data;
     }
 
     const owners = ref([]);
@@ -140,10 +133,7 @@ export default defineComponent({
           debtor_id: data.value.debtor.pk,
         }
       })
-      owners.value = response.data.map(record => ({
-        ...(residents.value[record.owner_name] || {}),
-        ...record,
-      }));
+      owners.value = response.data;
     }
 
     watch(computed(() => data.value.debtor.pk), async() => {
@@ -156,10 +146,10 @@ export default defineComponent({
 
     const characteristicsColumns = computed(() => ([
       {key: 'owner_name', label: 'Собственник'},
-      {key: 'birth_date', label: 'Дата рождения'},
-      {key: 'birth_place', label: 'Место рождения'},
-      {key: 'num_of_passport', label: 'Серия и № паспорта'},
-      {key: 'date_of_passport_issue', label: 'Дата выдачи'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.birth_date', label: 'Дата рождения'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.birth_place', label: 'Место рождения'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.num_of_passport', label: 'Серия и № паспорта'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.date_of_passport_issue', label: 'Дата выдачи'},
       {key: 'registered_ownership_type', label: 'Вид зарегестрированного права'},
       {key: 'fraction_in_ownership', label: 'Доля в праве'},
       {key: 'ownership_registration_date', label: 'Дата рег-ции права'},
@@ -168,10 +158,10 @@ export default defineComponent({
 
     const ownersColumns = computed(() => ([
       {key: 'owner_name', label: 'Собственник'},
-      {key: 'birth_date', label: 'Дата рождения'},
-      {key: 'birth_place', label: 'Место рождения'},
-      {key: 'num_of_passport', label: 'Серия и № паспорта'},
-      {key: 'date_of_passport_issue', label: 'Дата выдачи'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.birth_date', label: 'Дата рождения'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.birth_place', label: 'Место рождения'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.num_of_passport', label: 'Серия и № паспорта'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.date_of_passport_issue', label: 'Дата выдачи'},
       {key: 'registered_ownership_type', label: 'Вид зарегестрированного права'},
       {key: 'fraction_in_ownership', label: 'Доля в праве'},
       {key: 'ownership_registration_date', label: 'Дата рег-ции права'},
@@ -186,6 +176,7 @@ export default defineComponent({
       characteristicsColumns,
 
       formatDate,
+      getDeepField,
     }
   }
 })
