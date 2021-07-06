@@ -64,7 +64,7 @@
                 v-for="substatus in record.substatuses"
                 :key="substatus"
                 :text="judicialSubStatusesMap[substatus]"
-                v-if="['fees_paid', 'statement_ordered', 'statement_received', 'statement_ready', 'fees_await_paid'].includes(substatus)"
+                v-if="['fees_paid', 'statement_received', 'statement_ready', 'fees_await_paid'].includes(substatus)"
               >
                 <Icon
                   :class="[
@@ -761,7 +761,7 @@ export default defineComponent({
             ...substatus.map(({substatus: s}) => s),
           ]), [])
             .filter((v, i, s) => !!v && (s.indexOf(v) === i))
-            .filter(v => !['statement_error'].includes(v))
+            .filter(v => !['statement_error', 'statement_ordered'].includes(v))
             .sort((a, b) => (
               orders.indexOf(a) < orders.indexOf(b) ? 1 : -1
             ))
