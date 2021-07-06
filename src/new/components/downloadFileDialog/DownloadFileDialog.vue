@@ -4,10 +4,10 @@
       {{title}}
     </div>
     <div :class="$style.actions">
-      <Btn :class="$style.action" @click="close" :url="url" target="_blank" :state="['tertiary', 'vertical']" prepend-icon="eye" label="Открыть и посмотреть"/>
-      <Btn :class="$style.action" @click="download" :state="['tertiary', 'vertical']" prepend-icon="download" label="Скачать"/>
+      <Btn :class="$style.action" v-if="withPreview" @click="close" :url="url" target="_blank" :state="['tertiary', 'vertical']" prepend-icon="eye" label="Открыть и посмотреть"/>
+      <Btn :class="$style.action" v-if="withDownload" @click="download" :state="['tertiary', 'vertical']" prepend-icon="download" label="Скачать"/>
     </div>
-    <div @click="copy" :class="$style.copy">
+    <div @click="copy"  v-if="withCopy" :class="$style.copy">
       Скопировать ссылку
     </div>
   </div>
@@ -26,6 +26,18 @@ export default defineComponent({
   props: {
     title: String,
     url: String,
+    withDownload: {
+      type: Boolean,
+      default: true,
+    },
+    withPreview: {
+      type: Boolean,
+      default: true,
+    },
+    withCopy: {
+      type: Boolean,
+      default: true,
+    },
   },
   setup(props, {emit}) {
     const close = async () => {

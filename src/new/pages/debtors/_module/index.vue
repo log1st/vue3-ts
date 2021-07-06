@@ -284,6 +284,8 @@ export default defineComponent({
           payload: {
             title: 'Работа с документами',
             url: link,
+            withPreview: false,
+            withCopy: false,
           },
         });
       } else {
