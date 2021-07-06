@@ -3,7 +3,7 @@
         <!-- Дополнительные документы -->
         <div class="d-data__content-row" v-for="(document, index) in companyDocuments" :key="index + '_additional'" >
               <div class="f-container">
-                  <p>{{ document.description || 'Введите название документа (например "устав") и выберите файл:' }}</p>
+                  <p>{{ document.description || document.name || 'Введите название документа (например "устав") и выберите файл:' }}</p>
                   <div class="">
                       <!-- Если новый файл, даем ввести имя -->
                       <ur-input placeholder="Название документа" v-model="document.description" v-if="!document.id"></ur-input>
