@@ -44,7 +44,7 @@
                       <div class="d-data__content-row" v-if="params.type == 1 || params.type == 3">
                           <div class="f-container">
                               <div class="">
-                                <v-select placeholder="Выберите загруженный документ" :options="docsName" label="description" v-model="selected"></v-select>
+                                <v-select placeholder="Выберите загруженный документ" :options="docsName" label="name" v-model="selected"></v-select>
                               </div>
                           </div>
                       </div>
@@ -333,5 +333,10 @@ export default {
   .disabled-file {
     cursor: no-drop !important;
     background-color: #b2b7cc !important;
+  }
+  .f-container {
+    .vs__search {
+      display: block;
+    }
   }
 </style>
