@@ -48,8 +48,8 @@
               </template>
             </template>
             <span v-else :class="$style.na">
-            N/A
-          </span>
+              N/A
+            </span>
           </td>
         </tr>
       </template>

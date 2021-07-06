@@ -30,9 +30,9 @@
               <template v-if="document[column.key]">
                 {{formatDbDate(document[column.key])}}
               </template>
-              <div :class="$style.na" v-else>
-                N/A
-              </div>
+              <template v-else>
+                {{formatDate(new Date)}}
+              </template>
             </template>
             <template v-else-if="activeTab.key === 'accruals' && column.key === 'amount'">
               {{formatMoney(document[column.key])}}
