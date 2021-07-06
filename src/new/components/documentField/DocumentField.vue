@@ -110,7 +110,7 @@ export default {
       emit('remove')
     }
 
-    const isRenaming = ref(false);
+    const isRenaming = ref(true);
     const toggleRenaming = async () => {
       await new Promise(requestAnimationFrame)
       isRenaming.value = !isRenaming.value

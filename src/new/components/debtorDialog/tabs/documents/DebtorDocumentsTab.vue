@@ -393,6 +393,10 @@ export default defineComponent({
       immediate: true,
     });
 
+    watch(computed(() => data.value.debtor.pk), fetch, {
+      immediate: true,
+    });
+
     const downloadDocument = (file) => {
       downloadFile({
         url: file,

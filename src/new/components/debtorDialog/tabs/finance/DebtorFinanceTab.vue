@@ -154,6 +154,18 @@ export default defineComponent({
       immediate: true,
     });
 
+    watch(computed(() => data.value.debtor.pk), async () => {
+      await new Promise(requestAnimationFrame);
+      try {
+        documents.value = [];
+        documents.value = await activeTab.value.fetch()
+      } catch (e) {
+        //
+      }
+    }, {
+      immediate: true,
+    });
+
     const downloadDocument = (file) => {
       downloadFile({
         url: file,

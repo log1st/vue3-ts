@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.dialog" :key="id.value">
+  <div :class="$style.dialog">
     <Icon icon="loader" spin v-if="isLoading" :class="$style.loader"></Icon>
     <div :class="$style.title" v-if="!data">
       Данные должника
@@ -76,7 +76,7 @@ export default defineComponent({
       isLoading.value = true;
       const response = await axios({
         method: 'get',
-        url: `${baseURL}/api/debtors-data/${props.id.value}`,
+        url: `${baseURL}/api/debtors-data/${props.id.value}/`,
         params: {
           production_type: props.type,
         }
@@ -89,7 +89,6 @@ export default defineComponent({
     };
 
     watch(props.id, async () => {
-      data.value = undefined;
       await new Promise(requestAnimationFrame);
       await fetchData()
     }, {

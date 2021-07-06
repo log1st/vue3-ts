@@ -126,6 +126,20 @@ export default {
       immediate: true,
     });
 
+    watch(computed(() => data.value.debtor.pk), async () => {
+      isLoading.value = true;
+      await new Promise(requestAnimationFrame);
+      try {
+        documents.value = [];
+        documents.value = await activeTab.value.fetch()
+      } catch (e) {
+        //
+      }
+      isLoading.value = false;
+    }, {
+      immediate: true,
+    });
+
     const {
       showDialog,
     } = useDialog();
