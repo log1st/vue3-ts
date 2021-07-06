@@ -129,6 +129,31 @@ const routes = [
     }
   },
   {
+    path: '/new-exchange',
+    name: 'new-exchange',
+    redirect: {
+      name: 'exchange-import'
+    },
+    component: () => import('@/new/pages/exchange/index.vue'),
+    children: [
+      {
+        path: 'import',
+        name: 'exchange-import',
+        component: () => import('@/new/pages/exchange/import/index.vue'),
+      },
+      {
+        path: 'export',
+        name: 'exchange-export',
+        component: () => import('@/new/pages/exchange/export/index.vue'),
+      },
+      {
+        path: 'integration',
+        name: 'exchange-integration',
+        component: () => import('@/new/pages/exchange/integration/index.vue'),
+      },
+    ]
+  },
+  {
     path: '/courts',
     name: 'Courts',
     component: () => import('../views/main/Courts.vue'),

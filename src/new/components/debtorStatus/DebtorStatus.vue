@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="computedStatus"
     :class="[$style.status, $style[computedStatus.color]]"
     @click="$emit('click', $event)"
   >
@@ -23,15 +24,21 @@ export default defineComponent({
   components: {Icon},
   props: {
     status: Object,
+    type: String,
   },
   setup(props) {
     const {
       judicialStatuses,
       judicialSubStatusesMap,
+      pretrialStatuses,
+      pretrialSubStatusesMap,
     } = useDicts();
 
     const computedStatuses = computed(() => (
-      judicialStatuses.value.reduce((acc, cur) => ({
+      ({
+        judicial: judicialStatuses,
+        pretrial: pretrialStatuses,
+      }[props.type]).value.reduce((acc, cur) => ({
         ...acc,
         [cur.value]: {
           ...cur,
@@ -42,7 +49,17 @@ export default defineComponent({
             filed_in_court: 'purple',
             transfer_to_proceed: 'cyan',
             error: 'red',
-          }[cur.value]
+            send: 'gray',
+            notsend: 'error',
+            delivered: 'green',
+            failed: 'red',
+            unknown: 'cyan',
+            ready: 'purple',
+            in_work: 'purple',
+            court: 'green',
+            machine: 'cyan',
+            none: 'red',
+          }[cur.value] || 'gray'
         },
       }), {})
     ));
@@ -50,7 +67,14 @@ export default defineComponent({
     const computedStatus = computed(() => computedStatuses.value[props.status?.status]);
 
     const computedSubStatus = computed(() => (
-      judicialSubStatusesMap.value[props.status?.substatus[props.status?.substatus.length - 1]?.substatus] || null
+      props.status?.status === 'other' ? (
+        props.status?.substatus[0]?.substatus
+      ) : (
+        ({
+          judicial: judicialSubStatusesMap,
+          pretrial: pretrialSubStatusesMap,
+        }[props.type]).value[props.status?.substatus[0]?.substatus] || null
+      )
     ))
 
     return {

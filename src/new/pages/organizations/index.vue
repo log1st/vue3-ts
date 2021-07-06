@@ -27,6 +27,7 @@
         with-unique-selection
         table-key="organizations"
         :record-actions="recordActions"
+        @rowClick="showViewDialog"
       />
     </div>
   </div>
@@ -145,6 +146,10 @@ export default defineComponent({
           isInitialEdit,
         }
       })
+    };
+
+    const showViewDialog = ({record:{ id }}) => {
+      showOrganizationDialog(id)
     }
 
     const {
@@ -178,7 +183,7 @@ export default defineComponent({
             ...data,
             results: data.results.map((record, index) => ({
               ...record,
-              index,
+              index: index + 1,
             }))
           }
         }
@@ -280,9 +285,7 @@ export default defineComponent({
           key: 'add',
           label: 'Просмотреть',
           icon: 'eye',
-          handler: ({record:{ id }}) => {
-            showOrganizationDialog(id)
-          }
+          handler: showViewDialog
         },
         {
           key: 'edit',
@@ -336,6 +339,7 @@ export default defineComponent({
       resetSettings,
       records,
       recordActions,
+      showViewDialog,
     }
   }
 });

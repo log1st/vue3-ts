@@ -28,6 +28,8 @@
       :class="$style.picker"
       v-model="value"
       @close="hide"
+      :with-days="withDays"
+      :auto-day="autoDay"
     />
   </div>
 </template>
@@ -38,7 +40,7 @@ import Icon from "@/new/components/icon/Icon";
 import ContextMenu from "@/new/components/contextMenu/ContextMenu";
 import Calendar from "./calendar/Calendar";
 import {useLocalProp} from "@/new/hooks/useLocalProp";
-import {formatDate} from "@/new/utils/date";
+import {formatDate, formatMonthAndYear} from "@/new/utils/date";
 
 export default defineComponent({
   name: "DateInput",
@@ -58,6 +60,15 @@ export default defineComponent({
     label: String,
 
     isDisabled: Boolean,
+
+    withDays: {
+      type: Boolean,
+      default: true,
+    },
+    autoDay: {
+      type: [String, Number],
+      default: 'first',
+    }
   },
   setup(props, {emit}) {
 
@@ -79,11 +90,14 @@ export default defineComponent({
 
     const value = useLocalProp(props, emit, 'modelValue');
 
-    const displayValue = computed(() => (
-      Array.isArray(value.value)
-        ? value.value.filter(Boolean).map(i => formatDate(i)).join(' - ')
-        : (value.value ? formatDate(value.value) : null)
-    ));
+    const displayValue = computed(() => {
+      const formatFunction = props.withDays ? formatDate : formatMonthAndYear;
+      return (
+        Array.isArray(value.value)
+          ? value.value.filter(Boolean).map(i => formatFunction(i)).join(' - ')
+          : (value.value ? formatFunction(value.value) : null)
+      );
+    });
 
     return {
       isActive,

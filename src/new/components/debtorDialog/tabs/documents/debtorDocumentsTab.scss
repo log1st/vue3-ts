@@ -143,3 +143,16 @@
     border-bottom-right-radius: 0;
   }
 }
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 20px -10px 0px;
+}
+
+.control {
+  margin: 0 10px;
+  height: 40px;
+  padding: 0 20px;
+}

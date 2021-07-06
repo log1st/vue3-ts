@@ -5,6 +5,7 @@
       ...(Array.isArray(state) ? state : [state]).map(i => $style[i]),
       isDisabled && $style.isDisabled,
       !!error && $style.hasError,
+      $style[type]
     ]"
   >
     <div :class="$style.label" v-if="label">
@@ -14,9 +15,19 @@
       <span :class="$style.prepend" v-if="('prepend' in $scopedSlots || 'prepend' in $slots)">
         <slot name="prepend"/>
       </span>
-      <input
+      <textarea
+        :rows="rows"
+        v-if="type === 'textarea'"
         :class="$style.input"
         v-model="value"
+        :disabled="isDisabled"
+        :placeholder="placeholder"
+      />
+      <input
+        v-else
+        :class="$style.input"
+        v-model="value"
+        :disabled="isDisabled"
         :placeholder="placeholder"
       />
     </label>
@@ -47,6 +58,15 @@ export default defineComponent({
     placeholder: String,
     label: String,
 
+    type: {
+      type: String,
+      default: 'text',
+    },
+    rows: {
+      type: Number,
+      default: 3,
+    },
+
     isDisabled: Boolean,
 
     modelValueModifiers: {
@@ -57,7 +77,7 @@ export default defineComponent({
     error: String,
   },
   setup(props, {emit}) {
-    const value = useLocalProp(props, emit, 'modelValue', true);
+    const value = useLocalProp(props, emit, 'modelValue', true, true);
     const valueModifiers = useModifiers(computed(() => props.modelValueModifiers));
 
     let valueTimeout;

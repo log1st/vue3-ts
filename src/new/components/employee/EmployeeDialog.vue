@@ -116,12 +116,14 @@ export default {
         props.onSave && props.onSave();
         emit('close');
       } catch (e) {
-        setErrors(
-          Object.entries(e.response.data).reduce((acc, [key, [message]]) => ([
-            ...acc,
-            [key, message]
-          ]), [])
-        )
+        if(e?.response?.data) {
+          setErrors(
+            Object.entries(e?.response?.data || {}).reduce((acc, [key, [message]]) => ([
+              ...acc,
+              [key, message]
+            ]), [])
+          )
+        }
       }
     }
 

@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.page">
+  <div :class="$style.page"  v-if="companyId > 0">
     <div :class="$style.tabs">
       <Tabs :tabs="tabs"/>
     </div>
@@ -10,6 +10,7 @@
 <script>
 import {computed, defineComponent} from '@vue/composition-api';
 import Tabs from "@/new/components/tabs/Tabs";
+import {useStore} from "@/new/hooks/useStore";
 
 export default defineComponent({
   name: 'index',
@@ -47,11 +48,16 @@ export default defineComponent({
           }
         }
       },
-      */
+
+       */
     ]));
+
+    const store = useStore();
+    const companyId = computed(() => store.getters['defaultCompanyId']);
 
     return {
       tabs,
+      companyId,
     }
   }
 });

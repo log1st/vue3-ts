@@ -43,7 +43,8 @@ module.exports = {
         ? new VueSSRServerPlugin()
         : new VueSSRClientPlugin(),
       new DefinePlugin({
-        VUE_APP_API: process.env.VUE_APP_API
+        VUE_APP_API: process.env.VUE_APP_API,
+        VUE_APP_SOCKET: process.env.VUE_APP_SOCKET,
       })
     ],
     externals: TARGET_NODE ? nodeExternals({

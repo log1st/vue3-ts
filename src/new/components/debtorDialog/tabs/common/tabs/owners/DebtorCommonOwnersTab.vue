@@ -3,8 +3,8 @@
     <div :class="$style.title">Сведения о характеристиках объекта недвижимости</div>
     <table :class="$style.table">
       <tbody>
-      <template  v-for="characteristic in characteristics">
-        <tr :key="`${characteristic.id}-header`">
+      <template  v-for="(characteristic, index) in characteristics">
+        <tr :key="`${characteristic.id}-header`" v-if="index === 0">
           <td :colspan="characteristicsColumns.length">
             <div :class="$style.fields">
               <div :class="$style.field">
@@ -32,19 +32,19 @@
             </div>
           </td>
         </tr>
-        <tr>
+        <tr v-if="index === 0">
           <th v-for="column in characteristicsColumns" :key="column.key">
             {{column.label}}
           </th>
         </tr>
         <tr :key="`${characteristic.id}-data`">
           <td v-for="column in characteristicsColumns" :key="column.key">
-            <template v-if="characteristic[column.key]">
-              <template v-if="column.key === 'ownership_registration_date'">
-                {{formatDate(characteristic[column.key])}}
+            <template v-if="getDeepField(characteristic, column.key)">
+              <template v-if="['ownership_registration_date', 'birth_date'].includes(column.key) && getDeepField(characteristic, column.key)">
+                {{formatDate(getDeepField(characteristic, column.key))}}
               </template>
               <template v-else>
-                {{characteristic[column.key]}}
+                {{getDeepField(characteristic, column.key)}}
               </template>
             </template>
             <span v-else :class="$style.na">
@@ -59,8 +59,8 @@
     <div :class="$style.title">Сведения о переходе прав объекта недвижимости</div>
     <table :class="$style.table">
       <tbody>
-      <template  v-for="owner in owners">
-        <tr :key="`${owner.id}-header`">
+      <template  v-for="(owner, index) in owners">
+        <tr :key="`${owner.id}-header`" v-if="index === 0">
           <td :colspan="ownersColumns.length">
             <div :class="$style.fields">
               <div :class="$style.field">
@@ -75,19 +75,19 @@
             </div>
           </td>
         </tr>
-        <tr>
+        <tr v-if="index === 0">
           <th v-for="column in ownersColumns" :key="column.key">
             {{column.label}}
           </th>
         </tr>
         <tr :key="`${owner.id}-data`">
           <td v-for="column in ownersColumns" :key="column.key">
-            <template v-if="owner[column.key]">
-              <template v-if="column.key === 'ownership_registration_date'">
-                {{formatDate(owner[column.key])}}
+            <template v-if="getDeepField(owner, column.key)">
+              <template v-if="['ownership_registration_date', 'birth_date'].includes(column.key) && owner[column.key]">
+                {{formatDate(getDeepField(owner, column.key))}}
               </template>
               <template v-else>
-                {{owner[column.key]}}
+                {{getDeepField(owner, column.key)}}
               </template>
             </template>
             <span v-else :class="$style.na">
@@ -105,6 +105,7 @@
 import {defineComponent, inject, computed, watch, ref} from "@vue/composition-api";
 import {baseURL} from "@/settings/config";
 import {formatDate} from "@/new/utils/date";
+import {getDeepField} from "@/new/utils/object";
 
 export default defineComponent({
   name: "DebtorCommonOwnersTab",
@@ -145,10 +146,10 @@ export default defineComponent({
 
     const characteristicsColumns = computed(() => ([
       {key: 'owner_name', label: 'Собственник'},
-      {key: 'birth_date', label: 'Дата рождения'},
-      {key: 'birth_place', label: 'Место рождения'},
-      {key: 'num_of_passport', label: 'Серия и № паспорта'},
-      {key: 'date_of_passport_issue', label: 'Дата выдачи'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.birth_date', label: 'Дата рождения'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.birth_place', label: 'Место рождения'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.num_of_passport', label: 'Серия и № паспорта'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.date_of_passport_issue', label: 'Дата выдачи'},
       {key: 'registered_ownership_type', label: 'Вид зарегестрированного права'},
       {key: 'fraction_in_ownership', label: 'Доля в праве'},
       {key: 'ownership_registration_date', label: 'Дата рег-ции права'},
@@ -157,10 +158,10 @@ export default defineComponent({
 
     const ownersColumns = computed(() => ([
       {key: 'owner_name', label: 'Собственник'},
-      {key: 'birth_date', label: 'Дата рождения'},
-      {key: 'birth_place', label: 'Место рождения'},
-      {key: 'num_of_passport', label: 'Серия и № паспорта'},
-      {key: 'date_of_passport_issue', label: 'Дата выдачи'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.birth_date', label: 'Дата рождения'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.birth_place', label: 'Место рождения'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.num_of_passport', label: 'Серия и № паспорта'},
+      {key: 'debtor_data.debtor_tenant_profiles.0.date_of_passport_issue', label: 'Дата выдачи'},
       {key: 'registered_ownership_type', label: 'Вид зарегестрированного права'},
       {key: 'fraction_in_ownership', label: 'Доля в праве'},
       {key: 'ownership_registration_date', label: 'Дата рег-ции права'},
@@ -175,6 +176,7 @@ export default defineComponent({
       characteristicsColumns,
 
       formatDate,
+      getDeepField,
     }
   }
 })

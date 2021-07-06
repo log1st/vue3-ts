@@ -24,14 +24,24 @@
       :key="type"
     >
       <template #cell(status)="{record, index}">
-        <!--
-        <DebtorStatus
-          v-if="false && record.debtor && record.debtor.debtor_status.length"
-          :class="$style.status"
-          :status="record.debtor.debtor_status[record.debtor.debtor_status.length - 1]"
-          @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[record.debtor.debtor_status.length - 1].id })"
-        />
-        -->
+        <template v-if="module === 'judicial'">
+          <DebtorStatus
+            type="judicial"
+            v-if="record.debtor && record.debtor.debtor_status.length"
+            :class="$style.status"
+            :status="record.debtor.debtor_status[0]"
+            @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[0].id })"
+          />
+        </template>
+        <template v-else-if="module === 'pretrial'">
+          <DebtorStatus
+            type="pretrial"
+            v-if="record.debtor && record.debtor.pretrial_status.length"
+            :class="$style.status"
+            :status="record.debtor.pretrial_status[0]"
+            @click="showStatusDialog({ selectedItem: record.debtor.pretrial_status[0].id })"
+          />
+        </template>
         <span/>
       </template>
       <template #cell(phone_number)="{record, index}">
@@ -41,33 +51,58 @@
         <div :class="$style.account">
           <div :class="$style.accountInfo">
             <div :class="$style.accountNumber">{{record.debtor.personal_account}}</div>
-            <div :class="$style.accountStars">
+            <div :class="$style.accountStars" v-if="false">
               <Rating :model-value="record.tmp.rating"/>
             </div>
           </div>
           <div v-if="record.debtor.debtor_status && record.debtor.debtor_status.length" :class="[
             $style.accountIcons,
-            record.debtor.debtor_status[record.debtor.debtor_status.length - 1].length > 1 && $style.accountIconsDense
+            record.debtor.debtor_status[0].length > 1 && $style.accountIconsDense
           ]">
-            <TooltipWrapper
-              v-for="substatus in record.debtor.debtor_status[record.debtor.debtor_status.length - 1].substatus"
-              :key="substatus.substatus"
-              :text="judicialSubStatusesMap[substatus.substatus]"
-            >
-              <Icon
-                :class="[
+            <template v-if="module === 'judicial'">
+              <TooltipWrapper
+                v-for="substatus in record.substatuses"
+                :key="substatus"
+                :text="judicialSubStatusesMap[substatus]"
+                v-if="['fees_paid', 'statement_ordered', 'fees_await_paid'].includes(substatus)"
+              >
+                <Icon
+                  :class="[
                   $style.accountIcon,
                   $style[`accountIcon${{
                     fees_paid: 'Green',
                     statement_ordered: 'Blue',
-                  }[substatus.substatus]}`]
+                    fees_await_paid: 'Green',
+                  }[substatus]}`]
                 ]"
-                :icon="{
+                  :icon="{
                   fees_paid: 'coins',
                   statement_ordered: 'egrn-excerpt',
-                }[substatus.substatus]"
-              />
-            </TooltipWrapper>
+                  fees_await_paid: 'coins',
+                }[substatus]"
+                />
+              </TooltipWrapper>
+            </template>
+            <template v-else-if="module === 'pretrial' && !!record.debtor.pretrial_status">
+              <TooltipWrapper
+                v-for="substatus in record.pretrial_substatuses"
+                :key="substatus"
+                :text="pretrialSubStatusesMap[substatus]"
+                v-if="['court'].includes(substatus)"
+              >
+                <Icon
+                  :class="[
+                  $style.accountIcon,
+                  $style[`accountIcon${{
+                    court: 'Green',
+                  }[substatus]}`]
+                ]"
+                  :icon="{
+                    court: 'court',
+                  }[substatus]"
+                />
+              </TooltipWrapper>
+            </template>
           </div>
         </div>
       </template>
@@ -96,10 +131,24 @@
         {{formatMoney(record.fee)}}
       </template>
       <template #cell(started_at)="{record}" v-if="type === 'executive'">
-        {{formatDate(record.started_at)}}
+        <template v-if="record.started_at">
+          {{formatDate(record.started_at)}}
+        </template>
+        <template v-else>
+          <div :class="$style.na">
+            N/A
+          </div>
+        </template>
       </template>
-      <template #cell(started_at)="{record}" v-if="type === 'executive'">
-        {{formatDate(record.ended_at)}}
+      <template #cell(ended_at)="{record}" v-if="type === 'executive'">
+        <template v-if="record.ended_at">
+          {{formatDate(record.ended_at)}}
+        </template>
+        <template v-else>
+          <div :class="$style.na">
+            N/A
+          </div>
+        </template>
       </template>
       <template v-for="field in summariesFields" :slot="`summary(${field})`" slot-scope="{value}">
         {{formatMoney(value)}}
@@ -117,7 +166,7 @@
 </template>
 
 <script>
-import {computed, defineComponent, ref, watch} from "@vue/composition-api";
+import {computed, defineComponent, onBeforeUnmount, ref, watch} from "@vue/composition-api";
 import {formatFiltersModelToRequest, useActiveTable} from "@/new/components/activeTable/useActiveTable";
 import ActiveTable from "@/new/components/activeTable/ActiveTable";
 import axios from "axios";
@@ -137,6 +186,10 @@ import PretrialDebtorsAutomatizingDialog
 import {useToast} from "@/new/hooks/useToast";
 import {formatDate} from "@/new/utils/date";
 import {usePersistedSetting} from "@/new/hooks/usePersistedSetting";
+import {useStore} from "@/new/hooks/useStore";
+// @TODO: remove
+import qs from "qs";
+import {asyncAction} from "@/new/utils/asyncAction";
 
 export default defineComponent({
   name: "index",
@@ -147,6 +200,8 @@ export default defineComponent({
     module: String
   },
   setup(props) {
+    const store = useStore();
+
     const type = computed(() => props.module);
 
     const summariesFields = computed(() => (
@@ -209,7 +264,7 @@ export default defineComponent({
         url: `${baseURL}/constructor/debtors-data`,
         params: allSelected ? {...filters, filters: filters} : {},
         data: {
-          company_id: localStorage.getItem('defaultCompany'),
+          company_id: store.getters['getDefaultCompanyId'],
           production_type: type.value,
           debtor_ids: selectedItems || [selectedItem],
           ...(allSelected ? {
@@ -229,6 +284,8 @@ export default defineComponent({
           payload: {
             title: 'Работа с документами',
             url: link,
+            withPreview: false,
+            withCopy: false,
           },
         });
       } else {
@@ -249,19 +306,44 @@ export default defineComponent({
       })
     }
 
-    const showDebtorDialog = async ({record: {debtor: {pk}}, index}) => {
+    const current = ref();
+
+    const showDebtorDialog = async ({record: {debtor: {pk}}}) => {
+      current.value = pk;
       await showDialog({
         component: 'debtorDialog',
         isWide: true,
         payload: {
-          id: pk,
+          id: current,
           type: type.value,
-          onNext: index < (records.value.length - 1) && (() => {
-            showDebtorDialog({record: records.value[index + 1], index: index + 1})
-          }),
-          onPrevious: index > 0 && (() => {
-            showDebtorDialog({record: records.value[index - 1], index: index - 1})
-          }),
+          isNextAvailable: computed(() => (
+            records.value.findIndex((r) => (
+              r.debtor.pk === current.value
+            )) < records.value.length - 1
+          )),
+          isPreviousAvailable: computed(() => (
+            records.value.findIndex((r) => (
+              r.debtor.pk === current.value
+            )) > 0
+          )),
+          onNext: () => {
+            const index = records.value.findIndex((r) => (
+              r.debtor.pk === current.value
+            ));
+
+            if(index < records.value.length - 1) {
+              current.value = records.value[index + 1].debtor.pk
+            }
+          },
+          onPrevious: () => {
+            const index = records.value.findIndex((r) => (
+              r.debtor.pk === current.value
+            ));
+
+            if(index > 0) {
+              current.value = records.value[index - 1].debtor.pk
+            }
+          },
         },
       })
     }
@@ -269,6 +351,11 @@ export default defineComponent({
     const {
       showToast,
     } = useToast();
+
+    let sendUnsubscribe;
+    onBeforeUnmount(() => {
+      sendUnsubscribe && sendUnsubscribe()
+    });
 
     const showNotifyDialog = async (notificationType, {allSelected, selectedItems, selectedItem}) => {
       const isActive = allSelected
@@ -291,11 +378,11 @@ export default defineComponent({
       }
 
       try {
-        await axios({
+        const {data: {uuid}} = await axios({
           method: 'post',
           url: `${baseURL}/pretrial/${notificationType}/`,
           data: {
-            company: +localStorage.getItem('defaultCompany'),
+            company: store.getters['defaultCompanyId'],
 
             filters: filtersModel.value,
             payload: selectedItems || [props.selectedItem],
@@ -306,6 +393,48 @@ export default defineComponent({
           message: 'Запрос отправлен на обработку',
           type: 'success',
         })
+
+        const {promise, unsubscribe} = asyncAction(
+          async () => (await axios({
+            method: 'get',
+            url: `${baseURL}/api/datafile/status/${uuid}/`
+          })).data,
+          async(data) => {
+            const {status_value_max, status_value, status_text, state} = data[0]
+            if(state === 2) {
+              return {
+                status: true,
+                error: status_text
+              }
+            }
+            if(status_value === status_value_max) {
+              return {
+                status: true,
+                payload: {
+                  text: status_text
+                }
+              }
+            } else {
+              return {status: false}
+            }
+          },
+          1000,
+        );
+
+        sendUnsubscribe = unsubscribe;
+        try {
+          const {text} = await promise;
+          await showToast({
+            message: text,
+            type: 'success',
+          })
+        } catch (e) {
+          console.log(e);
+          await showToast({
+            message: 'Ошибка отправки уведомления',
+            type: 'error',
+          })
+        }
       } catch (e) {
         await showToast({
           message: 'Серверная ошибка',
@@ -399,13 +528,13 @@ export default defineComponent({
       try {
         await axios({
           method: 'post',
-          url: `${baseURL}/pretrial/claim/`,
+          url: `${baseURL}/api/debtors-data/move/`,
           data: {
             company: +localStorage.getItem('defaultCompany'),
 
             filters: filtersModel.value,
-            payload: selectedItems || [props.selectedItem],
-            production_type: type.value,
+            ids: selectedItems || [props.selectedItem],
+            production_type: 'judicial',
           }
         });
         await showToast({
@@ -424,7 +553,7 @@ export default defineComponent({
     const {
       judicialStatuses,
       judicialSubStatusesMap,
-      judicialFeeStatuses,
+      pretrialSubStatusesMap,
     } = useDicts();
 
     const smsNotificationStatuses = computed(() => ([
@@ -445,6 +574,11 @@ export default defineComponent({
         field: 'name',
         type: 'text',
         isHidden: true,
+      }, {
+        field: 'company_id',
+        type: 'text',
+        isHidden: true,
+        defaultValue: store.getters['defaultCompanyId']
       }]),
       defaultLimit: ref(10),
       async fetch({
@@ -474,6 +608,11 @@ export default defineComponent({
         field: 'name',
         type: 'text',
         isHidden: true,
+      }, {
+        field: 'company_id',
+        type: 'text',
+        isHidden: true,
+        defaultValue: store.getters['defaultCompanyId']
       }]),
       defaultLimit: ref(10),
       async fetch({
@@ -551,17 +690,75 @@ export default defineComponent({
           url: `${baseURL}/api/debtors-data/`,
           params: {
             ...params,
-            company_id: localStorage.getItem('defaultCompany'),
+            company_id: store.getters['getDefaultCompanyId'],
           },
           cancelToken,
-        });
-        response.data.results = response.data.results.map((record, index) => ({
-          ...record,
-          index,
-          tmp: {
-            rating: Math.floor(Math.random() * 5),
+          paramsSerializer: ({
+            fee_status,
+            fee_status_not,
+            substatus_name,
+            substatus_name_not,
+            ...otherParams
+          }) => {
+            return qs.stringify({
+              ...otherParams,
+              substatus_name: [substatus_name, fee_status].filter(Boolean),
+              substatus_name_not: [substatus_name_not, fee_status_not].filter(Boolean),
+            }, {arrayFormat: 'repeat', skipNulls: true});
           }
-        }));
+        });
+        response.data.results = response.data.results.map((record, index) => {
+          const debtor_status = record.debtor.debtor_status.map(status => {
+            try {
+              const parsed = JSON.parse(status.status.replace(/'/g, '"'))
+              if(Array.isArray(parsed)) {
+                return {
+                  ...status,
+                  status: parsed[0],
+                }
+              }
+            } catch(e) {
+            }
+            return status;
+          });
+
+          debtor_status.sort(({updated_at: a}, {updated_at: b}) => (
+            new Date(a).getTime() < new Date(b).getTime() ? 1 : -1
+          ))
+
+          const s = ['statement_ordered', 'statement_received', 'statement_ready', 'statement_error'];
+
+          return ({
+            ...record,
+            index,
+            debtor: {
+              ...record.debtor,
+              debtor_status: debtor_status.length ? debtor_status : [
+                {
+                  status: 'new',
+                }
+              ],
+            },
+            substatuses: debtor_status.reduce((acc, {substatus}) => ([
+              ...acc,
+              ...substatus.map(({substatus: s}) => s),
+            ]), []).filter((v, i, s) => s.indexOf(v) === i).filter(Boolean)
+            .sort((a, b) => (
+              new Date(a.updated_at).getTime() > new Date(b.updated_at).getTime() ? 1 : -1
+            ))
+            .filter((substatus, index, self) => (
+              substatus !== 'statement_ordered' || (
+                substatus === 'statement_ordered' && (self.indexOf('statement_error') < self.indexOf(substatus))
+              )
+            )).sort((a, b) => (
+               s.indexOf(a) - s.indexOf(b) > 0 ? -1 : 1
+            )),
+            pretrial_substatuses: record.debtor.pretrial_status.reduce((acc, {substatus}) => ([
+              ...acc,
+              ...substatus.map(({status: s}) => s),
+            ]), []).filter((v, i, s) => s.indexOf(v) === i).filter(Boolean),
+          });
+        });
         response.data.summaries = response.data.total;
         return response;
       },
@@ -589,14 +786,16 @@ export default defineComponent({
         },
         {
           field: 'personal_account',
-          type: 'select',
+          type: 'text',
           width: 2,
-          defaultValue: [],
+          defaultValue: '',
           props: {
             placeholder: '№ ЛС',
+            /*
             isFillable: true,
             isMultiple: true,
             displayValueTemplate: '{n, plural, =1{Один номер} one{# номер} few{# номера} other{# номеров}} ЛС'
+             */
           }
         },
         {
@@ -724,7 +923,7 @@ export default defineComponent({
       columns: computed(() => ([
         {
           field: 'status',
-          width: '100px',
+          width: '180px',
           isRequired: true,
           label: 'Статус',
           withTitle: false,
@@ -911,7 +1110,7 @@ export default defineComponent({
             showClaimDialog('voice', {
               allSelected,
               filters: filtersModel.value,
-              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItems: selectedItems.map(index => records.value[index].pk),
               selectedItem: records.value[index]?.debtor?.pk,
             })
           },
@@ -998,6 +1197,7 @@ export default defineComponent({
       type,
 
       judicialSubStatusesMap,
+      pretrialSubStatusesMap,
     }
   }
 })

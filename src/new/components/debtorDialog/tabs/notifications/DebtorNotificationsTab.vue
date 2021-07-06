@@ -10,43 +10,37 @@
     </div>
     <div :class="$style.header">
       <div :class="$style.title">
-        Карточка истории судебных дел
+        Карточка уведомлений
       </div>
     </div>
     <div :class="$style.content">
       <Icon v-if="isLoading" icon="loader" spin :class="$style.loader"/>
-
       <table :class="$style.table">
+        <thead>
+        <tr>
+          <th v-for="column in columns" :key="column.key">
+            {{column.label}}
+          </th>
+        </tr>
+        </thead>
         <tbody>
-        <template  v-for="document in documents">
-          <tr :key="`${document.id}-header`">
-            <td :colspan="columns.length">
-              <div :class="$style.fields">
-                <div :class="$style.field">
-                  <div :class="$style.fieldLabel">Перод</div>
-                  <div :class="$style.fieldValue">{{[document.start_date, document.end_date].filter(Boolean).join(' - ')}}</div>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th v-for="column in columns" :key="column.key">
-              {{column.label}}
-            </th>
-          </tr>
+        <template  v-for="(document, index) in documents">
           <tr :key="`${document.id}-data`">
             <td v-for="column in columns" :key="column.key">
-              <template v-if="document[column.key]">
-                <template v-if="column.key === 'ownership_registration_date'">
-                  {{formatDate(document[column.key])}}
+              <template v-if="getDeepField(document, column.key)">
+                <template v-if="['created_at', 'send_at'].includes(column.key)">
+                  {{formatDate(getDeepField(document, column.key))}}
                 </template>
                 <template v-else>
-                  {{document[column.key]}}
+                  {{getDeepField(document, column.key)}}
                 </template>
               </template>
+              <div :class="$style.actions" v-else-if="column.key === 'actions'">
+                <Btn :class="$style.action" prepend-icon="megaphone" state="quinary" @click="listenSound(document)" v-if="activeTab.key === 'voice'"/>
+              </div>
               <span v-else :class="$style.na">
-            N/A
-          </span>
+                N/A
+              </span>
             </td>
           </tr>
         </template>
@@ -64,6 +58,7 @@ import {formatDate} from "@/new/utils/date";
 import {formatMoney} from "@/new/utils/money";
 import Btn from "@/new/components/btn/Btn";
 import {useDialog} from "@/new/hooks/useDialog";
+import {getDeepField} from "@/new/utils/object";
 export default {
   name: "DebtorNotificationsTab",
   components: {Btn, Icon},
@@ -77,10 +72,10 @@ export default {
         async fetch() {
           const response = await axios({
             method: 'get',
-            url: `${baseURL}/pretrial/sms/debtor/${data.value.debtor.pk}`,
+            url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/sms/`,
           });
 
-          return response.data.results;
+          return response.data;
         }
       },
       {
@@ -89,10 +84,10 @@ export default {
         async fetch() {
           const response = await axios({
             method: 'get',
-            url: `${baseURL}/pretrial/voice/debtor/${data.value.debtor.pk}`,
+            url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/voice/`,
           });
 
-          return response.data.results;
+          return response.data;
         }
       },
     ]));
@@ -103,22 +98,16 @@ export default {
     }
 
     const columns = computed(() => ([
-      ...([
-        {key: 'pk', label: '№'},
-        {key: 'id', label: 'Идентификатор дела'},
-        {key: 'number', label: '№ дела'},
-        {key: 'created_date', label: 'Дата поступления'},
-        {key: 'view_date', label: 'Дата рассмотрения'},
-        {key: 'effected_date', label: 'Дата вступления решения в силу'},
-        {key: 'judge_full_name', label: 'ФИО судьи'},
-        {key: 'status', label: 'Статус оплаты'},
-        {key: 'statuses', label: 'История статусов'},
-      ]),
-      {
-        key: 'actions',
-        label: ''
-      }
-    ]));
+      {key: 'id', label: '№'},
+      {key: 'operator.name', label: 'Оператор'},
+      {key: 'created_at', label: 'Создано'},
+      {key: 'phone_number', label: 'Номер телефон'},
+      (activeTab.value.key === 'sms') && {key: 'message', label: 'Сообщение'},
+      {key: 'send_at', label: 'Отправлено'},
+      {key: 'status', label: 'Статус'},
+      {key: 'cost', label: 'Цена'},
+      {key: 'actions', label: ''},
+    ].filter(Boolean)));
 
     const isLoading = ref(false);
     const documents = ref([]);
@@ -137,6 +126,21 @@ export default {
       immediate: true,
     });
 
+    const {
+      showDialog,
+    } = useDialog();
+
+    const listenSound = (document) => {
+      const {name = 'Голосовое уведомление', file} = document;
+      showDialog({
+        component: 'listenFile',
+        payload: {
+          title: name,
+          file,
+        }
+      })
+    }
+
     return {
       activeTab,
       selectTab,
@@ -151,6 +155,10 @@ export default {
       formatDate,
 
       formatMoney,
+
+      getDeepField,
+
+      listenSound,
     }
   }
 }

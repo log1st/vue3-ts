@@ -24,6 +24,8 @@ export default {
       services: [],
       judicialStatuses: [],
       judicialSubStatuses: [],
+      pretrialStatuses: [],
+      pretrialSubStatuses: [],
       judicialEgrnStatuses: [],
       judicialFeeStatuses: [],
       tenantRelationships: [],
@@ -44,6 +46,10 @@ export default {
     judicialStatusesMap: getMap('judicialStatuses'),
     judicialSubStatuses: getList('judicialSubStatuses'),
     judicialSubStatusesMap: getMap('judicialSubStatuses'),
+    pretrialStatuses: getList('pretrialStatuses'),
+    pretrialStatusesMap: getMap('pretrialStatuses'),
+    pretrialSubStatuses: getList('pretrialSubStatuses'),
+    pretrialSubStatusesMap: getMap('pretrialSubStatuses'),
     judicialEgrnStatuses: getList('judicialEgrnStatuses'),
     judicialEgrnStatusesMap: getMap('judicialEgrnStatuses'),
     judicialFeeStatuses: getList('judicialFeeStatuses'),
@@ -56,6 +62,8 @@ export default {
     setServices: setList('services'),
     setJudicialStatuses: setList('judicialStatuses'),
     setJudicialSubStatuses: setList('judicialSubStatuses'),
+    setPretrialStatuses: setList('pretrialStatuses'),
+    setPretrialSubStatuses: setList('pretrialSubStatuses'),
     setJudicialEgrnStatuses: setList('judicialEgrnStatuses'),
     setJudicialFeeStatuses: setList('judicialFeeStatuses'),
   },
@@ -65,6 +73,8 @@ export default {
         data: {
           statuses,
           substatuses,
+          pretrial_statuses,
+          pretrial_substatuses,
         }
       } = await axios({
         method: 'get',
@@ -120,6 +130,16 @@ export default {
         value,
         label: info,
       })));
+
+      commit('setPretrialStatuses', pretrial_statuses?.map(({value, info}) => ({
+        value,
+        label: info,
+      })) || []);
+
+      commit('setPretrialSubStatuses', pretrial_substatuses?.map(({value, info}) => ({
+        value,
+        label: info,
+      })) || []);
 
       commit('setServices', [
         {

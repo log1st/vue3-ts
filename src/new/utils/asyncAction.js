@@ -6,7 +6,7 @@ export const asyncAction = (action, handler, duration) => {
       setTimeout(async () => {
         const response = await handler(await action());
         if(response.status) {
-          if('payload' in response) {
+          if(!('error' in response)) {
             resolve(response.payload);
           } else {
             reject(response.error);
@@ -21,7 +21,6 @@ export const asyncAction = (action, handler, duration) => {
   });
 
   const unsubscribe = () => {
-    console.log('blya');
     clearTimeout(timeout);
   }
 

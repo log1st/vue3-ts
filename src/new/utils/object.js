@@ -3,7 +3,10 @@ export const arrayFrom = (item) => (
 )
 
 export const getDeepField = (object, field, delimiter = '.') => {
-  return field.split(delimiter).reduce((acc, cur) => acc[cur], object)
+  return field.split(delimiter).reduce((acc, cur) => {
+    console.log(acc, cur);
+    return acc?.[cur];
+  }, object)
 }
 
 export const isSameObject = (function() {

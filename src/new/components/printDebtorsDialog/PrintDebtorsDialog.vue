@@ -57,17 +57,17 @@
           @update:modelValue="dropPeriod"
         />
         <div :class="$style.periodFields">
-          <DateInput v-model="model.from" :is-disabled="model.allPeriod" placeholder="С" />
-          <DateInput v-model="model.to" :is-disabled="model.allPeriod" placeholder="По" />
+          <DateInput :with-days="false" auto-day="first" v-model="model.from" :is-disabled="model.allPeriod" placeholder="С" />
+          <DateInput :with-days="false" auto-day="last" v-model="model.to" :is-disabled="model.allPeriod" placeholder="По" />
         </div>
         <Checkbox v-if="type === 'judicial'" :class="$style.moratorium" v-model="model.moratorium_enabled" state="switch" label="Мораторий расчёта пени"/>
       </div>
       <div :class="$style.actions">
-        <Btn :state="['tertiary', 'vertical']" :class="$style.action" @click="signAndSend" prepend-icon="flash-drive" v-if="['judicial', 'pretrial'].includes(type)">
-          Подписать и отправить по ЭЦП
-        </Btn>
         <Btn :state="['tertiary', 'vertical']" :class="$style.action" type="submit" prepend-icon="printer">
           Формирование и печать
+        </Btn>
+        <Btn :state="['tertiary', 'vertical']" :class="$style.action" @click="signAndSend" prepend-icon="flash-drive" v-if="['judicial', 'pretrial'].includes(type)">
+          Подписать и отправить по ЭЦП
         </Btn>
       </div>
     </form>
@@ -150,7 +150,7 @@ export default defineComponent({
         url: `${baseURL}/document_attachments/company`,
         params: {
           production_type: props.type,
-          company_id: store.state.companies.defaultCompany,
+          company_id: store.getters['getDefaultCompanyId'],
         }
       });
       const accountResponse = await axios({
@@ -169,6 +169,7 @@ export default defineComponent({
           .map(document => ({
             ...document,
             type: 'organisation',
+            production_type: props.type,
           }))
       ]
 
@@ -203,7 +204,7 @@ export default defineComponent({
         url: `${baseURL}/document_attachments/company_bulk_create/`,
         params: props.allSelected ? {...props.filters, filters: props.filters} : {},
         data: {
-          company_id: store.state.companies.defaultCompany,
+          company_id: store.getters['getDefaultCompanyId'],
           production_type: props.type,
           attachments: model.value.documents.map((document, index) => ({
             ...document,
@@ -223,12 +224,13 @@ export default defineComponent({
         params: props.allSelected ? {...props.filters, filters: props.filters} : {},
         data: {
           production_type: props.type,
-          company_id: store.state.companies.defaultCompany,
+          company_id: store.getters['getDefaultCompanyId'],
           debtor_ids: props.selectedItems || [props.selectedItem],
           ...(model.value.allPeriod ? {} : {
             date_from: dateToApiDate(model.value.from),
             date_to: dateToApiDate(model.value.to),
           }),
+          moratorium_enabled: model.value.moratorium_enabled,
 
           ...(props.allSelected ? {
             filters: props.filters,
