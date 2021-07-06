@@ -249,6 +249,9 @@ export default {
       })
     },
     getCompanySettings ({commit, state}, id = state.defaultCompany) {
+      if(!id) {
+        return;
+      }
       return new Promise ((resolve, reject) => {
         $http({
           command: `/api/account/company-settings/${id}/`,

@@ -64,7 +64,7 @@
                 v-for="substatus in record.substatuses"
                 :key="substatus"
                 :text="judicialSubStatusesMap[substatus]"
-                v-if="['fees_paid', 'statement_ordered', 'fees_await_paid'].includes(substatus)"
+                v-if="['fees_paid', 'statement_ordered', 'statement_received', 'statement_ready', 'fees_await_paid'].includes(substatus)"
               >
                 <Icon
                   :class="[
@@ -72,12 +72,16 @@
                   $style[`accountIcon${{
                     fees_paid: 'Green',
                     statement_ordered: 'Blue',
+                    statement_ready: 'Blue',
+                    statement_received: 'Blue',
                     fees_await_paid: 'Green',
                   }[substatus]}`]
                 ]"
                   :icon="{
                   fees_paid: 'coins',
                   statement_ordered: 'egrn-excerpt',
+                  statement_ready: 'egrn-excerpt',
+                  statement_received: 'egrn-excerpt',
                   fees_await_paid: 'coins',
                 }[substatus]"
                 />
@@ -461,12 +465,19 @@ export default defineComponent({
       }
 
       try {
-        throw 'error';
-        await showToast({
-          message: 'Запрос выполнен',
-          type: 'success',
+        const {data: {link}} = await axios({
+          method: 'get',
+          url: `${baseURL}/enforcements/executive_bank_history/`,
         });
-        await fetchData();
+        await showDialog({
+          component: 'downloadFile',
+          payload: {
+            title: 'Работа с документами',
+            url: link,
+            withPreview: false,
+            withCopy: false,
+          },
+        });
       } catch (e) {
         await showToast({
           message: 'Серверная ошибка',
@@ -493,10 +504,18 @@ export default defineComponent({
       }
 
       try {
-        throw 'error';
-        await showToast({
-          message: 'Запрос выполнен',
-          type: 'success',
+        const {data: {link}} = await axios({
+          method: 'get',
+          url: `${baseURL}/enforcements/executive_fns_history/`,
+        });
+        await showDialog({
+          component: 'downloadFile',
+          payload: {
+            title: 'Работа с документами',
+            url: link,
+            withPreview: false,
+            withCopy: false,
+          },
         });
         await fetchData();
       } catch (e) {
@@ -729,6 +748,7 @@ export default defineComponent({
           ))
 
           const order = ['statement'];
+          const orders = ['statement_ordered', 'statement_received', 'statement_ready'];
           const s = [...judicialSubStatusesGroups.value].sort((a, b) => (
             order.indexOf(a) < order.indexOf(b) ? 1 : -1
           )).reduce((acc, cur) => ({
@@ -739,15 +759,19 @@ export default defineComponent({
           const substatuses = debtor_status.reduce((acc, {substatus}) => ([
             ...acc,
             ...substatus.map(({substatus: s}) => s),
-          ]), []).filter((v, i, s) => !!v && (s.indexOf(v) === i)).filter(v => {
-            if(!s[judicialSubStatusesGroupsMap.value[v]]) {
-              s[judicialSubStatusesGroupsMap.value[v]] = true;
-              return true;
-            }
-            return false;
-          }).sort((a, b) => (
-            order.indexOf(judicialSubStatusesGroupsMap.value[a]) < order.indexOf(judicialSubStatusesGroupsMap.value[b]) ? 1 : -1
-          ));
+          ]), [])
+            .filter((v, i, s) => !!v && (s.indexOf(v) === i))
+            .filter(v => !['statement_error'].includes(v))
+            .sort((a, b) => (
+              orders.indexOf(a) < orders.indexOf(b) ? 1 : -1
+            ))
+            .filter((v) => {
+              if(!s[judicialSubStatusesGroupsMap.value[v]]) {
+                s[judicialSubStatusesGroupsMap.value[v]] = true;
+                return true;
+              }
+              return false;
+            });
 
           return ({
             ...record,
@@ -931,7 +955,7 @@ export default defineComponent({
       columns: computed(() => ([
         {
           field: 'status',
-          width: '180px',
+          width: type.value === 'executive' ? '80px' : `180px`,
           isRequired: true,
           label: 'Статус',
           withTitle: false,
@@ -959,17 +983,17 @@ export default defineComponent({
           label: 'Адрес',
           width: 281,
         },
-        type.value === 'executive' && {
+        false && type.value === 'executive' && {
           field: 'number',
           label: '№ ИП',
           width: 281
         },
-        type.value === 'executive' && {
+        false && type.value === 'executive' && {
           field: 'started_at',
           label: 'Дата возбуждения ИП',
           width: 281
         },
-        type.value === 'executive' && {
+        false && type.value === 'executive' && {
           field: 'ended_at',
           label: 'Дата окончания ИП',
           width: 281
@@ -1124,7 +1148,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        type.value === 'executive' && {
+        false && type.value === 'executive' && {
           key: 'fns',
           label: 'Выписка из ФНС',
           icon: 'fns',
@@ -1138,7 +1162,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        type.value === 'executive' && {
+        false && type.value === 'executive' && {
           key: 'bank',
           label: 'Запрос в банк',
           icon: 'bank',
@@ -1152,7 +1176,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        {
+        type.value !== 'executive' && {
           key: 'status',
           label: 'Изменить статус выбранных должников',
           handler: ({allSelected, selectedItems}) => {
@@ -1164,7 +1188,7 @@ export default defineComponent({
           },
           asLined: true,
         },
-        {
+        type.value !== 'executive' && {
           key: 'settings',
           label: 'Настройки',
           icon: 'gears',

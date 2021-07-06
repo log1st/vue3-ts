@@ -26,7 +26,7 @@
         <tbody>
         <tr v-for="document in documents" :key="document.id">
           <td v-for="column in columns" :key="column.key">
-            <template v-if="['start_date', 'end_date'].includes(column.key)">
+            <template v-if="['start_date', 'end_date', 'date'].includes(column.key)">
               <template v-if="document[column.key]">
                 {{formatDbDate(document[column.key])}}
               </template>

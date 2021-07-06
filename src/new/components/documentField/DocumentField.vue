@@ -81,6 +81,7 @@ export default {
     });
 
     watch(localFile, async file => {
+      return;
       if(props.isCreator) {
         return;
       }
