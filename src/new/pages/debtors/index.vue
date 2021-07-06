@@ -12,6 +12,7 @@ import {computed, defineComponent} from '@vue/composition-api';
 import Tabs from "@/new/components/tabs/Tabs";
 import {useStore} from "@/new/hooks/useStore";
 import {isDev} from "@/entry-server";
+import {baseURL} from "@/settings/config";
 
 export default defineComponent({
   name: 'index',
@@ -38,7 +39,7 @@ export default defineComponent({
           }
         }
       },
-      isDev && {
+      baseURL.includes('api-test') && {
         key: 'executive',
         label: 'Исполнительное\nпроизводство',
         url: {
