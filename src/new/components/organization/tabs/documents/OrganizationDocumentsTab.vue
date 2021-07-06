@@ -68,6 +68,9 @@ export default {
     const toRemove = ref([]);
 
     const fetchData = async () => {
+      documents.value = [];
+      signer.value = null;
+
       let {data: foundDocuments} = await axios({
         method: 'get',
         url: `${baseURL}/api/account/company/${data.value.id}/documents/`
@@ -127,6 +130,8 @@ export default {
           }).then(resolve)
         })
       }))
+
+      await fetchData()
 
       await onSave();
     }
