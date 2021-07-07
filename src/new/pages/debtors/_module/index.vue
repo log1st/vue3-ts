@@ -601,6 +601,11 @@ export default defineComponent({
         type: 'text',
         isHidden: true,
         defaultValue: store.getters['defaultCompanyId']
+      }, {
+        field: 'production_type',
+        type: 'text',
+        isHidden: true,
+        defaultValue: props.module,
       }]),
       defaultLimit: ref(10),
       async fetch({
@@ -635,6 +640,11 @@ export default defineComponent({
         type: 'text',
         isHidden: true,
         defaultValue: store.getters['defaultCompanyId']
+      }, {
+        field: 'production_type',
+        type: 'text',
+        isHidden: true,
+        defaultValue: props.module,
       }]),
       defaultLimit: ref(10),
       async fetch({

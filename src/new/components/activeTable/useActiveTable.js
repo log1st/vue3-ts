@@ -85,7 +85,13 @@ export const useActiveTable = ({
     cancelRequest = null;
   }
 
-  watch(filtersModel, fetchData, {
+  watch(filtersModel, async () => {
+    if(page.value === 1) {
+      await fetchData();
+    } else {
+      page.value = 1;
+    }
+  }, {
     immediate: isImmediate,
     deep: true,
   });

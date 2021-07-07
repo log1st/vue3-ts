@@ -59,48 +59,46 @@
     <div :class="$style.title">Сведения о переходе прав объекта недвижимости</div>
     <table :class="$style.table">
       <tbody>
-      <template  v-for="(owner, index) in owners">
+      <template  v-for="(group, index) in owners">
         <tr v-if="index === 0">
           <th v-for="column in ownersColumns" :key="column.key">
             {{column.label}}
           </th>
         </tr>
-        <tr :key="`${owner.id}-header`" v-if="!owners[index - 1] || (
-          owner.ownership_registration_date !== owners[index - 1].ownership_registration_date
-        )">
-          <td :colspan="ownersColumns.length">
-            <div :class="$style.fields">
-              <div :class="$style.field">
-                <div :class="$style.fieldLabel">Период владения</div>
-                <div :class="$style.fieldValue">
-                  <template v-if="!owners[index - 1]">с</template>
-                  {{formatDate(owner.ownership_registration_date)}}
-                  <template v-if="owners[index - 1]">
-                    - {{formatDate(owners[index - 1].ownership_registration_date)}}
-                  </template>
-                  <template v-else>
-                    по настоящее время
-                  </template>
+        <template v-for="group in owners">
+          <tr :key="`${group.date_from}-header`">
+            <td :colspan="ownersColumns.length">
+              <div :class="$style.fields">
+                <div :class="$style.field">
+                  <div :class="$style.fieldLabel">Период владения</div>
+                  <div :class="$style.fieldValue">
+                    <template v-if="!group.date_to">с</template>
+                    {{formatDbDate(group.date_from)}}
+                    <template v-if="group.date_to">
+                      - {{formatDbDate(group.date_to)}}
+                    </template>
+                    <template v-else>по настоящее время</template>
+                  </div>
                 </div>
               </div>
-            </div>
-          </td>
-        </tr>
-        <tr :key="`${owner.id}-data`">
-          <td v-for="column in ownersColumns" :key="column.key">
-            <template v-if="getDeepField(owner, column.key)">
-              <template v-if="column.key.includes('date') && getDeepField(owner, column.key)">
-                {{formatDate(getDeepField(owner, column.key))}}
+            </td>
+          </tr>
+          <tr v-for="owner in group.data" :key="`${group.date_from}-${owner.id}-data`">
+            <td v-for="column in ownersColumns" :key="column.key">
+              <template v-if="getDeepField(owner, column.key)">
+                <template v-if="column.key.includes('date') && getDeepField(owner, column.key)">
+                  {{formatDate(getDeepField(owner, column.key))}}
+                </template>
+                <template v-else>
+                  {{getDeepField(owner, column.key)}}
+                </template>
               </template>
-              <template v-else>
-                {{getDeepField(owner, column.key)}}
-              </template>
-            </template>
-            <span v-else :class="$style.na">
-            N/A
-          </span>
-          </td>
-        </tr>
+              <span v-else :class="$style.na">
+              N/A
+            </span>
+            </td>
+          </tr>
+        </template>
       </template>
       </tbody>
     </table>
@@ -110,7 +108,7 @@
 <script>
 import {defineComponent, inject, computed, watch, ref} from "@vue/composition-api";
 import {baseURL} from "@/settings/config";
-import {formatDate} from "@/new/utils/date";
+import {formatDate, formatDbDate} from "@/new/utils/date";
 import {getDeepField} from "@/new/utils/object";
 
 export default defineComponent({
@@ -135,7 +133,7 @@ export default defineComponent({
     const fetchOwners = async () => {
       const response = await axios({
         method: 'get',
-        url: `${baseURL}/rosreestr/estate_object_ownership_movement/`,
+        url: `${baseURL}/rosreestr/estate_object_ownership_movement/groupped`,
         params: {
           debtor_id: data.value.debtor.pk,
           active: 1,
@@ -188,6 +186,7 @@ export default defineComponent({
       characteristicsColumns,
 
       formatDate,
+      formatDbDate,
       getDeepField,
     }
   }
