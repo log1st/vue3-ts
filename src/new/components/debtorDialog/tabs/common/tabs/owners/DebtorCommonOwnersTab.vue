@@ -65,19 +65,18 @@
             {{column.label}}
           </th>
         </tr>
-        <tr :key="`${owner.id}-header`" v-if="!owners[index - 1] || (
-          owner.ownership_registration_date !== owners[index - 1].ownership_registration_date
+        <tr :key="`${owner.id}-header`" v-if="!owners[index + 1] || (
+          owner.ownership_registration_date !== owners[index + 1].ownership_registration_date
         )">
           <td :colspan="ownersColumns.length">
             <div :class="$style.fields">
               <div :class="$style.field">
                 <div :class="$style.fieldLabel">Период владения</div>
                 <div :class="$style.fieldValue">
-                  <template v-if="owners[index - 1]">
-                    {{formatDate(owners[index - 1].ownership_registration_date)}} -
-                  </template>
-                  <template v-else>до</template>
                   {{formatDate(owner.ownership_registration_date)}}
+                  <template v-if="owners[index + 1]">
+                    - {{formatDate(owners[index + 1].ownership_registration_date)}}
+                  </template>
                 </div>
               </div>
             </div>
