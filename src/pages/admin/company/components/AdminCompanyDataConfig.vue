@@ -363,7 +363,7 @@ export default {
                         }
                     })
                     .then( resp => {
-                        console.log(resp)
+                        // console.log(resp)
                         this.loading = false
                         this.disabled = false
                         this.assignTemplateToCompany(resp.pk)
@@ -397,7 +397,7 @@ export default {
                     dismissible: true,
                     position: 'top-right'
                 })
-                console.log(resp)
+                // console.log(resp)
             })
             .catch( error => {
                 this.$toast.open({

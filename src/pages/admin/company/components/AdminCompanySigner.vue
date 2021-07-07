@@ -33,8 +33,8 @@
                     <div class="company-document-item">
                         <div class="company-document-status">
                             <icon-base width="18" height="18" viewbox="0 -2 12 18" iconColor="#7989a0"><icon-check /></icon-base>
-                            <span v-if="document.file">Файл загружен</span>
-                            <span v-if="!document.file">Файл не загружен</span>
+                            <span v-if="documents.file">Файл загружен</span> <span style="margin-left: 1em"> <a :href="documents.file"> скачать</a> </span>
+                            <span v-if="!documents.file">Файл не загружен</span>
                         </div>
                         <div class="company-document-actions">
                           <template v-if="document.file">
@@ -53,7 +53,7 @@
                           <div class="f-container__placeholder">
                               <span>Выбрать файл</span>
                           </div>
-                          <div class="f-container__button" @click="$refs.admin_organization_documents[0].click()">
+                          <div class="f-container__button" @click="$refs.admin_organization_documents.click()">
                             <div class="btn btn-primary">Выбрать</div>
                           </div>
                           <div class="f-container__button" @click="deleteDocument(document.id)" v-if="document.file">
@@ -125,20 +125,21 @@ export default {
             }
         },
         changeFile ({ ref, document, index }) {
-            this.upFiles(this.$refs[ref][index].files[0], document);
+            // console.log(this.$refs[ref].files[0])
+            this.upFiles(this.$refs[ref].files[0], document);
         },
         /**
        * Загрузить файл представителя
        */
       async upFiles (files, document) {
-          console.log(files)
+        //   console.log(files)
         return this.$http({
             command: '/api/account/document/',
             method: 'POST',
             data: {
-                name: this.documents[0].signer_name,
-                signer_name: this.documents[0].signer_name,
-                signer: this.documents[0].signer,
+                name: this.documents.signer_name,
+                signer_name: this.documents.signer_name,
+                signer: this.documents.signer,
                 file: await this.toBase64(files),
                 klass: 'attorney',
                 company: this.company.id 

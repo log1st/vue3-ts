@@ -278,6 +278,19 @@ export default {
         },
 
         setUpdatedApplication ({state, commit}, payload) {
+          let prod_type;
+          switch (payload) {
+            case 0:
+              prod_type = 'pretrial'
+              break;
+            case 1:
+              prod_type = 'judicial'
+              break;
+            case 2:
+              prod_type = 'executive'
+              break;
+          }
+
           return new Promise ((resolve, reject) => {
             let attachments = state.applications
             attachments.forEach(att => {
@@ -293,14 +306,32 @@ export default {
               method: 'POST',
               data: {
                 company_id: state.checkedCompany.id,
-                production_type: payload,
+                production_type: prod_type,
                 attachments
               }
             })
             .then (response => {
               resolve({status: true})
               commit('setCompanyApplication', response.data)
+              this._vm.$toast.open({
+                    message: `Приложения успешно сохранены`,
+                    type: 'success',
+                    duration: 5000,
+                    dismissible: true,
+                    position: 'top-right'
+              })
               console.log(response)
+            })
+            .catch (error => {
+              console.log(error)
+              reject({status: false})
+              this._vm.$toast.open({
+                message: error,
+                type: 'error',
+                duration: 5000,
+                dismissible: true,
+                position: 'top-right'
+          })
             })
           })
         },
@@ -617,7 +648,7 @@ export default {
           .catch( error => {
             this._vm.$toast.open({
               message: `Ошибка удаления документа - ${error} `,
-              type: 'erorr',
+              type: 'error',
               duration: 5000,
               dismissible: true,
               position: 'top-right'
