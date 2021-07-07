@@ -60,25 +60,28 @@
     <table :class="$style.table">
       <tbody>
       <template  v-for="(owner, index) in owners">
-        <tr :key="`${owner.id}-header`" v-if="index === 0">
+        <tr v-if="index === 0">
+          <th v-for="column in ownersColumns" :key="column.key">
+            {{column.label}}
+          </th>
+        </tr>
+        <tr :key="`${owner.id}-header`" v-if="!owners[index - 1] || (
+          owner.ownership_registration_date !== owners[index - 1].ownership_registration_date
+        )">
           <td :colspan="ownersColumns.length">
             <div :class="$style.fields">
               <div :class="$style.field">
                 <div :class="$style.fieldLabel">Период владения</div>
                 <div :class="$style.fieldValue">
-                  <template v-if="owner.ownership_period">
-                    {{owner.ownership_period}}
+                  <template v-if="owners[index - 1]">
+                    {{formatDate(owners[index - 1].ownership_registration_date)}} -
                   </template>
-                  <span :class="$style.na" v-else>N/A</span>
+                  <template v-else>до</template>
+                  {{formatDate(owner.ownership_registration_date)}}
                 </div>
               </div>
             </div>
           </td>
-        </tr>
-        <tr v-if="index === 0">
-          <th v-for="column in ownersColumns" :key="column.key">
-            {{column.label}}
-          </th>
         </tr>
         <tr :key="`${owner.id}-data`">
           <td v-for="column in ownersColumns" :key="column.key">

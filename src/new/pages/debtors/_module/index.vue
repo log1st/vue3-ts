@@ -949,6 +949,10 @@ export default defineComponent({
                 value: '!fees_paid',
                 label: 'Не оплачена',
               },
+              {
+                value: 'fees_await_paid',
+                label: 'Ожидает оплату',
+              },
             ],
           },
         },
