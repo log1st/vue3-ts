@@ -60,25 +60,31 @@
     <table :class="$style.table">
       <tbody>
       <template  v-for="(owner, index) in owners">
-        <tr :key="`${owner.id}-header`" v-if="index === 0">
+        <tr v-if="index === 0">
+          <th v-for="column in ownersColumns" :key="column.key">
+            {{column.label}}
+          </th>
+        </tr>
+        <tr :key="`${owner.id}-header`" v-if="!owners[index - 1] || (
+          owner.ownership_registration_date !== owners[index - 1].ownership_registration_date
+        )">
           <td :colspan="ownersColumns.length">
             <div :class="$style.fields">
               <div :class="$style.field">
                 <div :class="$style.fieldLabel">Период владения</div>
                 <div :class="$style.fieldValue">
-                  <template v-if="owner.ownership_period">
-                    {{owner.ownership_period}}
+                  <template v-if="!owners[index - 1]">с</template>
+                  {{formatDate(owner.ownership_registration_date)}}
+                  <template v-if="owners[index - 1]">
+                    - {{formatDate(owners[index - 1].ownership_registration_date)}}
                   </template>
-                  <span :class="$style.na" v-else>N/A</span>
+                  <template v-else>
+                    по настоящее время
+                  </template>
                 </div>
               </div>
             </div>
           </td>
-        </tr>
-        <tr v-if="index === 0">
-          <th v-for="column in ownersColumns" :key="column.key">
-            {{column.label}}
-          </th>
         </tr>
         <tr :key="`${owner.id}-data`">
           <td v-for="column in ownersColumns" :key="column.key">
@@ -148,10 +154,12 @@ export default defineComponent({
 
     const characteristicsColumns = computed(() => ([
       {key: 'owner_name', label: 'Собственник'},
-      {key: 'debtor_data.debtor_tenant_profiles.0.birth_date', label: 'Дата рождения'},
-      {key: 'debtor_data.debtor_tenant_profiles.0.birth_place', label: 'Место рождения'},
-      {key: 'debtor_data.debtor_tenant_profiles.0.num_of_passport', label: 'Серия и № паспорта'},
-      {key: 'debtor_data.debtor_tenant_profiles.0.date_of_passport_issue', label: 'Дата выдачи'},
+      {key: 'debtor_data.tenants.0.birth_date', label: 'Дата рождения'},
+      {key: 'debtor_data.tenants.0.birth_place', label: 'Место рождения'},
+      {key: 'debtor_data.tenants.0.num_of_passport', label: 'Серия и № паспорта'},
+      {key: 'debtor_data.tenants.0.date_of_passport_issue', label: 'Дата выдачи'},
+      {key: 'debtor_data.tenants.0.passport_issued_by', label: 'Кем выдан'},
+      {key: 'debtor_data.tenants.0.inn', label: 'ИНН'},
       {key: 'registered_ownership_type', label: 'Вид зарегестрированного права'},
       {key: 'fraction_in_ownership', label: 'Доля в праве'},
       {key: 'ownership_registration_date', label: 'Дата рег-ции права'},
@@ -160,10 +168,12 @@ export default defineComponent({
 
     const ownersColumns = computed(() => ([
       {key: 'owner_name', label: 'Собственник'},
-      {key: 'debtor_data.debtor_tenant_profiles.0.birth_date', label: 'Дата рождения'},
-      {key: 'debtor_data.debtor_tenant_profiles.0.birth_place', label: 'Место рождения'},
-      {key: 'debtor_data.debtor_tenant_profiles.0.num_of_passport', label: 'Серия и № паспорта'},
-      {key: 'debtor_data.debtor_tenant_profiles.0.date_of_passport_issue', label: 'Дата выдачи'},
+      {key: 'debtor_data.tenants.0.birth_date', label: 'Дата рождения'},
+      {key: 'debtor_data.tenants.0.birth_place', label: 'Место рождения'},
+      {key: 'debtor_data.tenants.0.num_of_passport', label: 'Серия и № паспорта'},
+      {key: 'debtor_data.tenants.0.date_of_passport_issue', label: 'Дата выдачи'},
+      {key: 'debtor_data.tenants.0.passport_issued_by', label: 'Кем выдан'},
+      {key: 'debtor_data.tenants.0.inn', label: 'ИНН'},
       {key: 'registered_ownership_type', label: 'Вид зарегестрированного права'},
       {key: 'fraction_in_ownership', label: 'Доля в праве'},
       {key: 'ownership_registration_date', label: 'Дата рег-ции права'},

@@ -5,7 +5,7 @@
     </div>
     <div :class="$style.actions">
       <Btn :class="$style.action" v-if="withPreview" @click="close" :url="url" target="_blank" :state="['tertiary', 'vertical']" prepend-icon="eye" label="Открыть и посмотреть"/>
-      <Btn :class="$style.action" v-if="withDownload" @click="download" :state="['tertiary', 'vertical']" prepend-icon="download" label="Скачать"/>
+      <Btn :class="$style.action" v-if="withDownload" @click="close" :url="downloadUrl" :state="['tertiary', 'vertical']" prepend-icon="download" label="Скачать"/>
     </div>
     <div @click="copy"  v-if="withCopy" :class="$style.copy">
       Скопировать ссылку
@@ -16,8 +16,7 @@
 <script>
 import Btn from "@/new/components/btn/Btn";
 import {copyToClipboard} from "@/new/utils/string";
-import {downloadFile} from "@/new/utils/file";
-import {defineComponent} from "@vue/composition-api";
+import {defineComponent, computed} from "@vue/composition-api";
 import {useToast} from "@/new/hooks/useToast";
 
 export default defineComponent({
@@ -45,15 +44,16 @@ export default defineComponent({
       emit('close');
     }
 
-    const download = async () => {
+    const downloadUrl = computed(() => {
       const url = new URL(props.url);
       const params = new URLSearchParams(url.search);
       params.append('download', '1');
       url.search = params.toString();
-      await downloadFile({
-        url: url.toString(),
-        name: props.url.split('/').pop(),
-      })
+
+      return url.toString();
+    })
+
+    const download = async () => {
       close();
     }
 
@@ -74,6 +74,8 @@ export default defineComponent({
       download,
       copy,
       close,
+
+      downloadUrl,
     }
   }
 })
