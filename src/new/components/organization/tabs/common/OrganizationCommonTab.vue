@@ -230,16 +230,6 @@ export default {
             label: 'Генеральный директор',
             isEditable: false
           },
-          {
-            // @TODO
-            key: 'some_unknown_field',
-            label: 'Основание полномочий подписанта',
-            isEditable: false
-          },
-          {
-            key: 'representative_power_attorney',
-            label: 'Представитель по доверенности',
-          },
         ]
       },
       {
