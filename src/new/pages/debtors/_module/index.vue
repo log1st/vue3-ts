@@ -231,6 +231,7 @@ export default defineComponent({
     const showPrintDialog = async (payload) => {
       await showDialog({
         component: 'printDebtors',
+        isWide: true,
         payload: {
           ...payload,
           type: type.value,
