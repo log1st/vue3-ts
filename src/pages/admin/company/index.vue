@@ -105,7 +105,7 @@
                                   <div class="btn btn-primary" style="margin-top: 0.5em" @click="setDocumentTemplate()">Применить выбранные шаблоны</div>
                               </div>
                             </div>
-                            <admin-company-court-template :company="this.selectedCompany" />
+                            <admin-company-court-template :templates="comapnyTemplates" :company="this.selectedCompany" />
                             <!-- Настройка приложений -->
                             <div class="application__wrapper">
                               <div class="col__half">
@@ -164,7 +164,7 @@
                                      <ur-btn
                                           class="btn btn-primary"
                                           :loading="loading"
-                                          @click="saveApplicationState('judicial')"
+                                          @click="saveApplicationState()"
                                           :disabled="disabled"
                                       >
                                           <span>Сохранить</span>
@@ -330,8 +330,8 @@ export default {
         'setCheckApplication'
       ]),
 
-        saveApplicationState (payload) {
-          this.setUpdatedApplication(payload)
+        saveApplicationState () {
+          this.setUpdatedApplication(this.currentActiveAppProd)
         },
         /**
          * Открытие модального окна перевода средств
