@@ -1,7 +1,7 @@
 <template>
     <div class="document__wrapper">
         <!-- Дополнительные документы -->
-        <div class="d-data__content-row" v-for="(document, index) in companyDocuments" :key="index + '_additional'" >
+        <div class="d-data__content-row" v-for="(document, index) in companyDocuments" v-show="!!!document.signer" :key="index + '_additional'" >
               <div class="f-container">
                   <p>{{ document.description || document.name || 'Введите название документа (например "устав") и выберите файл:' }}</p>
                   <div class="">
@@ -38,7 +38,7 @@
                             <div class="f-container__button" @click="$refs.admin_organization_documents_additional[index].click()">
                               <div class="btn btn-primary">Выбрать</div>
                             </div>
-                            <div class="f-container__button" @click="deleteDocument(document.id)" v-if="document.file">
+                            <div class="f-container__button" @click="deleteDocument({id: document.id})" v-if="document.file">
                               <div class="btn btn-red">Удалить</div>
                             </div>
                           </label>
