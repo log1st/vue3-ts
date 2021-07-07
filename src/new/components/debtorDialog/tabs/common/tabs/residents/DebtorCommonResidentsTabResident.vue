@@ -67,7 +67,7 @@
             </span>
           </span>
           <template v-else-if="model[column.key]">
-            <template v-if="column.key === 'birth_date'">
+            <template v-if="column.key.includes('date')">
               {{formatDbDate(model[column.key])}}
             </template>
             <template v-else-if="column.key === 'registration'">
