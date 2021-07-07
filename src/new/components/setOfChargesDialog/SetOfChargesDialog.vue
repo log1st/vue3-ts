@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import {computed, defineComponent} from "@vue/composition-api";
+import {computed, defineComponent, watch} from "@vue/composition-api";
 import {useToast} from "@/new/hooks/useToast";
 import {useDialog} from "@/new/hooks/useDialog";
 import Btn from "@/new/components/btn/Btn";
@@ -106,6 +106,14 @@ export default defineComponent({
         })
       }
     }
+
+    watch(isActive, value => {
+      if(value) {
+        submit()
+      }
+    }, {
+      immediate: true
+    })
 
     return {
       isActive,

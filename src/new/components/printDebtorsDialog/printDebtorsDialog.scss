@@ -26,8 +26,31 @@
     grid-template-columns: 2fr 1fr 2fr;
     grid-template-areas: (
             'documents documents period'
-            'actions actions actions'
+            'documents documents actions'
     );
+
+    .documents {
+      max-height: calc(100vh - 400px);
+      overflow-y: auto;
+    }
+
+    .documentsHeader,
+    .documentsList {
+      padding-left: 10px;
+    }
+
+    .actions {
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: flex-end;
+    }
+    .action {
+      margin: 0;
+
+      &:not(:first-child) {
+        margin-top: 20px;
+      }
+    }
   }
 
   &.pretrial {
