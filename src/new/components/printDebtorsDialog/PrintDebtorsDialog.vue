@@ -166,7 +166,7 @@ export default defineComponent({
         ...currentResponse.data,
         ...accountResponse.data
           .filter(({can_be_attached, id}) => can_be_attached && (currentResponse.data.findIndex(d => d.id === id) === -1))
-          .map(document => ({
+          .map(({id, ...document}) => ({
             ...document,
             type: 'organisation',
             production_type: props.type,
