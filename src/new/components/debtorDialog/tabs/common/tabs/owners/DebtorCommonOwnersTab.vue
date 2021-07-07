@@ -78,6 +78,9 @@
                   <template v-if="owners[index - 1]">
                     - {{formatDate(owners[index - 1].ownership_registration_date)}}
                   </template>
+                  <template v-else>
+                    по настоящее время
+                  </template>
                 </div>
               </div>
             </div>
