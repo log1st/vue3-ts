@@ -8,8 +8,8 @@
     ]"
     @click="onClick"
   >
-    <div :class="$style.preLabel" v-if="preLabel">
-      {{preLabel}}
+    <div :class="$style.preLabel" v-if="preLabel || ('preLabel' in $scopedSlots || 'preLabel' in $slots)">
+      <slot name="preLabel">{{preLabel}}</slot>
     </div>
     <div :class="$style.check"/>
     <div :class="$style.label" v-if="label || ('label' in $scopedSlots || 'label' in $slots)">

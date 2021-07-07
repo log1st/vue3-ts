@@ -33,6 +33,13 @@
             </div>
           </template>
         </Checkbox>
+        <Checkbox v-model="model.force" :class="[$style.field, $style.fieldRight]">
+          <template #preLabel>
+            <div :class="$style.fieldLabel">
+              Перезаказать
+            </div>
+          </template>
+        </Checkbox>
       </div>
       <div :class="$style.error" v-if="'type' in errorsMap">
         {{errorsMap.type}}
@@ -100,6 +107,7 @@ export default defineComponent({
     const model = ref({
       rights: null,
       data: null,
+      force: false,
     })
 
     const {
@@ -125,6 +133,7 @@ export default defineComponent({
               company_id: store.getters['getDefaultCompanyId'],
               debtor_ids: (props.selectedItems || [props.selectedItem]).map((id) => id),
               type: [model.value.data && 'data', model.value.rights && 'rights'].filter(Boolean),
+              force: model.value.force,
 
               ...(props.allSelected ? {
                 filters: props.filters,
