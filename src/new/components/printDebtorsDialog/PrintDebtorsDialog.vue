@@ -170,6 +170,7 @@ export default defineComponent({
             ...document,
             type: 'organisation',
             production_type: props.type,
+            document: document.id,
           }))
       ]
 

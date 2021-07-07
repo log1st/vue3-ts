@@ -50,10 +50,7 @@ export default defineComponent({
       const params = new URLSearchParams(url.search);
       params.append('download', '1');
       url.search = params.toString();
-      await downloadFile({
-        url: url.toString(),
-        name: props.url.split('/').pop(),
-      })
+      window.open(url.toString(), '_blank')
       close();
     }
 
