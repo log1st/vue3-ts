@@ -267,12 +267,19 @@ export default defineComponent({
           return []
         }
       },
-      // @TODO
       {
         key: 'myDocuments',
         label: 'Мои документы',
         async fetch() {
-          return []
+          const response = await axios({
+            method: 'get',
+            url: `${baseURL}/documents/debtor/`,
+            params: {
+              debtor_id: data.value.debtor.pk
+            }
+          })
+
+          return response.data;
         }
       },
     ].filter(Boolean)));
@@ -388,7 +395,6 @@ export default defineComponent({
           {key: 'executor_contact', label: 'Контакты пристава'},
           {key: 'status', label: 'Статус'},
         ],
-        // @TODO
         myDocuments: [
           {key: 'id', label: '№'},
           {key: 'file', label: 'Наименование'},
@@ -491,8 +497,7 @@ export default defineComponent({
           payload.append('production_type', productionType.value);
           await axios({
             method: 'post',
-            // @TODO
-            url: `${baseURL}/`,
+            url: `${baseURL}/documents/debtor/`,
             data: payload,
           })
         }))
