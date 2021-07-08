@@ -34,7 +34,7 @@
           <tr :key="`${document.id}-data`">
             <td v-for="column in columns" :key="column.key">
               <template v-if="document[column.key]">
-                <template v-if="['canceled_date', 'case_consideration_date', 'receipt_date', 'returned_date'].includes(column.key) && document[column.key]">
+                <template v-if="column.key.includes('date') && document[column.key]">
                   {{formatDate(document[column.key])}}
                 </template>
                 <template v-else>
@@ -85,7 +85,10 @@ export default {
             }
           });
 
-          return response.data;
+          return response.data.map((r, index) => ({
+            __index: index + 1,
+            ...r
+          }));
         }
       },
       {
@@ -102,7 +105,10 @@ export default {
             }
           });
 
-          return response.data;
+          return response.data.map((r, index) => ({
+            __index: index + 1,
+            ...r
+          }));
         }
       },
     ]));
@@ -114,14 +120,14 @@ export default {
 
     const columns = computed(() => ([
       ...([
-        {key: 'canceled_date', label: 'Дата отмены'},
-        {key: 'case_consideration_date', label: 'Дата рассмотрения'},
+        {key: '__index', label: '№'},
+        {key: 'id', label: 'Идентификатор дела'},
         {key: 'case_number', label: '№ дела'},
-        {key: 'effective_decision_date', label: 'Дата вынесения решения'},
+        {key: 'receipt_date', label: 'Дата поступления'},
+        {key: 'case_consideration_date', label: 'Дата рассмотрения'},
+        {key: 'effective_decision_date', label: 'Дата вступления решения в силу'},
         {key: 'judge_full_name', label: 'ФИО судьи'},
         {key: 'payment_status', label: 'Статус оплаты'},
-        {key: 'receipt_date', label: 'Дата создания счёта'},
-        {key: 'returned_date', label: 'Дата возврата'},
         {key: 'status_history', label: 'История статусов'},
       ]),
     ]));
