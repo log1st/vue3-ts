@@ -29,6 +29,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import { baseURL } from '@/settings/config'
 
 export default {
     props:{
@@ -56,20 +57,31 @@ export default {
             return this.docsTemplates.map( tmp => {
                 return {
                         name: tmp.name,
-                        template: tmp.id,
-                        // mode: 'default'
+                        template: tmp.id
                     }
                 })
         },
         docsTemplatesShareholder () {
-            let arr = this.docsTemplates.filter( tmp => tmp.template_type_obj.description === "суд приказ (дольщики)")
+            let arr = this.docsTemplates.filter( tmp => tmp.template_type_obj.id === this.shareholderId)
             return arr.map( newTmp => {
                     return {
                         name: newTmp.name,
-                        template: newTmp.id,
-                        // mode: 'shareholder'
+                        template: newTmp.id
                     }
             })
+        },
+        shareholderId () {
+            switch (baseURL) {
+                case 'https://api-2.urrobot.net':
+                    return 10
+                    break;
+                case 'https://api-test.urrobot.net':
+                    return 11
+                    break;
+            
+                default:
+                    break;
+            }
         }
     },
     methods: {
@@ -86,11 +98,11 @@ export default {
             } else {
                 let result;
                 template.forEach( tmp => {
-                    if (templateType === 1 && tmp.template_obj.template_type_obj.description != "суд приказ (дольщики)" ) {
+                    if (templateType === 1 && tmp.template_obj.template_type_obj.id != this.shareholderId ) {
                         console.log(tmp, id)
                         result = tmp.template_obj.name
                     } 
-                    // else if (templateType === 1 && tmp.template_obj.template_type_obj.description === "суд приказ (дольщики)") {
+                    // else if (templateType === 1 && tmp.template_obj.template_type_obj.description === this.shareholderId) {
                     //     result = 'Выберите шаблон суд приказа'
                     // }
                 })
@@ -111,10 +123,10 @@ export default {
             } else {
                 let result;
                 template.forEach( tmp => {
-                    if (templateType === 2 && tmp.template_obj.template_type_obj.description === "суд приказ (дольщики)") {
+                    if (templateType === 2 && tmp.template_obj.template_type_obj.id === this.shareholderId) {
                         result = tmp.template_obj.name
                     } 
-                    // else if (templateType === 2 && tmp.template_obj.template_type_obj.description != "суд приказ (дольщики)") {
+                    // else if (templateType === 2 && tmp.template_obj.template_type_obj.description != this.shareholderId) {
                     //     result = 'Выберите шаблон суд приказа (дольщики)'
                     // }
                 })
@@ -237,9 +249,9 @@ export default {
             })
             .then ( resp => {
                 let type = templateType === 2 ? 'суд приказ (дольщики)' : ''
-                if (type != '' && type === lastItem.template_obj.template_type_obj.description ) {
+                if (type != '' && type === lastItem.template_obj.template_type_obj.id ) {
                     this.deleteLastTemplate(lastItem)
-                } else if (type === '' && type != lastItem.template_obj.template_type_obj.description) {
+                } else if (type === '' && type != lastItem.template_obj.template_type_obj.id) {
                     this.deleteLastTemplate(lastItem)
                 }
             })
