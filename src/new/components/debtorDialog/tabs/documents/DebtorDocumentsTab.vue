@@ -482,7 +482,7 @@ export default defineComponent({
       multiple: true,
     })
 
-    watch(selectMyDocuments, async files => {
+    watch(myDocuments, async files => {
       try {
         await Promise.all(files.map(async file => {
           const payload = new FormData();
