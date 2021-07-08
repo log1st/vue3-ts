@@ -47,7 +47,7 @@
             <template v-else>
               <template v-if="document[column.key]">
                 <template v-if="activeTab.key === 'common' && column.key === 'file'">
-                  {{document[column.key].split('/').pop()}}
+                  {{decodeURIComponent(document[column.key].split('/').pop())}}
                 </template>
                 <template v-else-if="['sms', 'voice'].includes(activeTab.key) && column.key === 'operator'">
                   <template v-if="document.operator && document.operator.name">
@@ -61,13 +61,13 @@
                   {{formatDate(document[column.key])}}
                 </template>
                 <template v-else-if="activeTab.key === 'egrn' && column.key === 'file'">
-                  {{document[column.key].split('/').pop()}}
+                  {{decodeURIComponent(document[column.key].split('/').pop())}}
                 </template>
                 <template v-else-if="activeTab.key === 'egrn' && column.key === 'created_at'">
                   {{formatDate(document[column.key])}}
                 </template>
                 <template v-else-if="activeTab.key === 'egrnRights' && column.key === 'file'">
-                  {{document[column.key].split('/').pop()}}
+                  {{decodeURIComponent(document[column.key].split('/').pop())}}
                 </template>
                 <template v-else-if="activeTab.key === 'egrnRights' && column.key === 'created_at'">
                   {{formatDate(document[column.key])}}
@@ -79,10 +79,13 @@
                   {{formatDate(document[column.key])}}
                 </template>
                 <template v-else-if="activeTab.key === 'homebook' && column.key === 'file'">
-                  {{document[column.key].split('/').pop()}}
+                  {{decodeURIComponent(document[column.key].split('/').pop())}}
+                </template>
+                <template v-else-if="activeTab.key === 'myDocuments' && column.key === 'file'">
+                  {{decodeURIComponent(document[column.key].split('/').pop())}}
                 </template>
                 <template v-else-if="activeTab.key === 'fee' && column.key === 'file'">
-                  {{document[column.key].split('/').pop()}}
+                  {{decodeURIComponent(document[column.key].split('/').pop())}}
                 </template>
                 <template v-else-if="activeTab.key === 'fee' && column.key === 'amount'">
                   {{formatMoney(document[column.key])}}
