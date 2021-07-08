@@ -17,6 +17,14 @@
         v-if="activeTab.key === 'homebook'"
         :class="$style.control"
       />
+      <Btn
+        state="primary"
+        prepend-icon="upload"
+        label="Загрузить документы"
+        @click="selectMyDocuments"
+        v-if="activeTab.key === 'myDocuments'"
+        :class="$style.control"
+      />
     </div>
     <div :class="$style.content">
       <Icon v-if="isLoading" icon="loader" spin :class="$style.loader"/>
@@ -113,6 +121,7 @@ export default defineComponent({
   setup() {
     const data = inject('data');
     const productionType = inject('productionType');
+    const substatus = inject('substatus');
 
     const tabs = computed(() => ([
       productionType.value !== 'executive' && {
@@ -258,9 +267,19 @@ export default defineComponent({
           return []
         }
       },
+      // @TODO
+      {
+        key: 'myDocuments',
+        label: 'Мои документы',
+        async fetch() {
+          return []
+        }
+      },
     ].filter(Boolean)));
 
-    const activeTab = ref(tabs.value[0]);
+    const activeTab = ref(substatus.value?.startsWith('statement') ? (
+      tabs.value.find(({key}) => key === 'egrn')
+    ) : tabs.value[0]);
     const selectTab = tab => {
       activeTab.value = tab;
     }
@@ -369,6 +388,11 @@ export default defineComponent({
           {key: 'executor_contact', label: 'Контакты пристава'},
           {key: 'status', label: 'Статус'},
         ],
+        // @TODO
+        myDocuments: [
+          {key: 'id', label: '№'},
+          {key: 'file', label: 'Наименование'},
+        ],
       }[activeTab.value.key] || []),
       {
         key: 'actions',
@@ -445,7 +469,37 @@ export default defineComponent({
       } catch (e) {
 
       } finally {
-        fetch()
+        await fetch()
+      }
+    }, {
+      deep: true,
+    })
+
+    const {
+      files: myDocuments,
+      selectFiles: selectMyDocuments,
+    } = useFileManager({
+      multiple: true,
+    })
+
+    watch(selectMyDocuments, async files => {
+      try {
+        await Promise.all(files.map(async file => {
+          const payload = new FormData();
+          payload.append('file', file);
+          payload.append('debtor', data.value.debtor.pk);
+          payload.append('production_type', productionType.value);
+          await axios({
+            method: 'post',
+            // @TODO
+            url: `${baseURL}/`,
+            data: payload,
+          })
+        }))
+      } catch (e) {
+
+      } finally {
+        await fetch()
       }
     }, {
       deep: true,
@@ -453,6 +507,7 @@ export default defineComponent({
 
     return {
       selectHousebookDocuments,
+      selectMyDocuments,
 
       activeTab,
       selectTab,

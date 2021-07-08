@@ -68,22 +68,28 @@
               >
                 <Icon
                   :class="[
-                  $style.accountIcon,
-                  $style[`accountIcon${{
-                    fees_paid: 'Green',
-                    statement_ordered: 'Blue',
-                    statement_ready: 'Blue',
-                    statement_received: 'Blue',
-                    fees_await_paid: 'Green',
-                  }[substatus]}`]
-                ]"
+                    $style.accountIcon,
+                    $style[`accountIcon${{
+                      fees_paid: 'Green',
+                      statement_ordered: 'Blue',
+                      statement_ready: 'Blue',
+                      statement_received: 'Blue',
+                      fees_await_paid: 'Green',
+                    }[substatus]}`]
+                  ]"
                   :icon="{
-                  fees_paid: 'coins',
-                  statement_ordered: 'egrn-excerpt',
-                  statement_ready: 'egrn-excerpt',
-                  statement_received: 'egrn-excerpt',
-                  fees_await_paid: 'coins',
-                }[substatus]"
+                    fees_paid: 'coins',
+                    statement_ordered: 'egrn-excerpt',
+                    statement_ready: 'egrn-excerpt',
+                    statement_received: 'egrn-excerpt',
+                    fees_await_paid: 'coins',
+                  }[substatus]"
+                  v-on="substatus.startsWith('statement') ? {
+                    click: (e) => {
+                      e.stopPropagation();
+                      showDebtorDialog({record, index, substatus})
+                    }
+                  } : {}"
                 />
               </TooltipWrapper>
             </template>
@@ -256,7 +262,7 @@ export default defineComponent({
       selectedItem,
     }) => {
       await showToast({
-        message: 'Формирование бланка пошлины...',
+        message: 'Формирование реестра для оплаты пошлины...',
         type: 'warning',
       });
 
@@ -281,7 +287,7 @@ export default defineComponent({
 
       if(link) {
         await showToast({
-          message: 'Документ сформирован и отправлен на почту',
+          message: 'Документ готов!',
           type: 'success',
         });
         await showDialog({
@@ -313,7 +319,7 @@ export default defineComponent({
 
     const current = ref();
 
-    const showDebtorDialog = async ({record: {debtor: {pk}}}) => {
+    const showDebtorDialog = async ({record: {debtor: {pk}}, substatus}) => {
       current.value = pk;
       await showDialog({
         component: 'debtorDialog',
@@ -321,6 +327,7 @@ export default defineComponent({
         payload: {
           id: current,
           type: type.value,
+          substatus,
           isNextAvailable: computed(() => (
             records.value.findIndex((r) => (
               r.debtor.pk === current.value

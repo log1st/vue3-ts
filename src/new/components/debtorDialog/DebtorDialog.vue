@@ -55,16 +55,19 @@ export default defineComponent({
     onPrevious: [Function, Boolean],
     isPreviousAvailable: Object,
     onNext: [Function, Boolean],
+    substatus: String,
   },
   setup(props, {emit}) {
     const data = ref();
     const type = computed(() => props.type);
+    const substatus = computed(() => props.substatus);
     const onSave = async () => {
       await fetchData()
     }
 
     provide('data', data);
     provide('productionType', type);
+    provide('substatus', substatus);
     provide('onSave', onSave);
 
     const isLoading = ref(false);
@@ -133,7 +136,9 @@ export default defineComponent({
       },*/
     ].filter(Boolean)));
 
-    const activeTab = ref(tabs.value[0]);
+    const activeTab = ref(props.substatus?.startsWith('statement') ? (
+      tabs.value.find(({key}) => key === 'documents')
+    ) : tabs.value[0]);
     const selectTab = tab => {
       activeTab.value = tab;
     }

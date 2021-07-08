@@ -263,7 +263,7 @@ export default defineComponent({
       try {
         const {file_pdf} = await promise;
         await showToast({
-          message: 'Документ сформирован и отправлен на почту',
+          message: 'Документ готов!',
           type: 'success',
         })
         await showDialog({

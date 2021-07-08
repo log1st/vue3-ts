@@ -88,7 +88,7 @@ export default defineComponent({
 
       if(document) {
         await showToast({
-          message: 'Документ сформирован и отправлен на почту',
+          message: 'Документ готов!',
           type: 'success',
         });
         await showDialog({

@@ -2,7 +2,6 @@ import {socketURL} from "@/settings/config";
 
 export const socketPlugins = [
   store => {
-    return;
     store.socket = null;
     const connect = () => {
       store.commit('socket/setIsConnected', false);
@@ -31,7 +30,7 @@ export const socketPlugins = [
           })
           connection = null;
           connect();
-        }, 5000);
+        }, 10000);
       }
 
       connection.addEventListener('close', retry)

@@ -145,7 +145,7 @@ export default defineComponent({
 
 
           await showToast({
-            message: 'Формирование выписки ЕГРН...',
+            message: 'Заказ выписки из ЕГРН',
             type: 'warning',
           });
 
@@ -173,7 +173,9 @@ export default defineComponent({
           } catch (e) {
             await showToast({
               title: 'Ошибка формирования запроса выписки',
-              message: Object.values(e?.stats?.errors || {}).map(({msg}) => msg).join(', '),
+              message: Object.values(e?.stats?.errors || {}).map(({msg}) => ({
+                'Cadnum not found': 'Кадастровый номер по адресу не найден'
+              }[msg]) || msg).join(', '),
               type: 'error',
             })
           }

@@ -24,8 +24,8 @@ export default defineComponent({
   },
   emits: ['click'],
   setup(props, { emit }) {
-    const onClick = () => {
-      emit('click');
+    const onClick = (e) => {
+      emit('click', e);
     };
 
     return {
