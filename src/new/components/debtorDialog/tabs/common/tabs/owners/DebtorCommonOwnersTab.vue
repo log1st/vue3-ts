@@ -3,6 +3,11 @@
     <div :class="$style.title">Сведения о характеристиках объекта недвижимости</div>
     <table :class="$style.table">
       <tbody>
+      <tr>
+        <th v-for="column in characteristicsColumns" :key="column.key">
+          {{column.label}}
+        </th>
+      </tr>
       <template  v-for="(characteristic, index) in characteristics">
         <tr :key="`${characteristic.id}-header`" v-if="index === 0">
           <td :colspan="characteristicsColumns.length">
@@ -32,11 +37,6 @@
             </div>
           </td>
         </tr>
-        <tr v-if="index === 0">
-          <th v-for="column in characteristicsColumns" :key="column.key">
-            {{column.label}}
-          </th>
-        </tr>
         <tr :key="`${characteristic.id}-data`">
           <td v-for="column in characteristicsColumns" :key="column.key">
             <template v-if="getDeepField(characteristic, column.key)">
@@ -59,46 +59,44 @@
     <div :class="$style.title">Сведения о переходе прав объекта недвижимости</div>
     <table :class="$style.table">
       <tbody>
-      <template  v-for="(group, index) in owners">
-        <tr v-if="index === 0">
-          <th v-for="column in ownersColumns" :key="column.key">
-            {{column.label}}
-          </th>
-        </tr>
-        <template v-for="group in owners">
-          <tr :key="`${group.date_from}-header`">
-            <td :colspan="ownersColumns.length">
-              <div :class="$style.fields">
-                <div :class="$style.field">
-                  <div :class="$style.fieldLabel">Период владения</div>
-                  <div :class="$style.fieldValue">
-                    <template v-if="!group.date_to">с</template>
-                    {{formatDbDate(group.date_from)}}
-                    <template v-if="group.date_to">
-                      - {{formatDbDate(group.date_to)}}
-                    </template>
-                    <template v-else>по настоящее время</template>
-                  </div>
+      <tr>
+        <th v-for="column in ownersColumns" :key="column.key">
+          {{column.label}}
+        </th>
+      </tr>
+      <template v-for="group in owners">
+        <tr :key="`${group.date_from}-header`">
+          <td :colspan="ownersColumns.length">
+            <div :class="$style.fields">
+              <div :class="$style.field">
+                <div :class="$style.fieldLabel">Период владения</div>
+                <div :class="$style.fieldValue">
+                  <template v-if="!group.date_to">с</template>
+                  {{formatDbDate(group.date_from)}}
+                  <template v-if="group.date_to">
+                    - {{formatDbDate(group.date_to)}}
+                  </template>
+                  <template v-else>по настоящее время</template>
                 </div>
               </div>
-            </td>
-          </tr>
-          <tr v-for="owner in group.data" :key="`${group.date_from}-${owner.id}-data`">
-            <td v-for="column in ownersColumns" :key="column.key">
-              <template v-if="getDeepField(owner, column.key)">
-                <template v-if="column.key.includes('date') && getDeepField(owner, column.key)">
-                  {{formatDate(getDeepField(owner, column.key))}}
-                </template>
-                <template v-else>
-                  {{getDeepField(owner, column.key)}}
-                </template>
+            </div>
+          </td>
+        </tr>
+        <tr v-for="owner in group.data" :key="`${group.date_from}-${owner.id}-data`">
+          <td v-for="column in ownersColumns" :key="column.key">
+            <template v-if="getDeepField(owner, column.key)">
+              <template v-if="column.key.includes('date') && getDeepField(owner, column.key)">
+                {{formatDate(getDeepField(owner, column.key))}}
               </template>
-              <span v-else :class="$style.na">
-              N/A
-            </span>
-            </td>
-          </tr>
-        </template>
+              <template v-else>
+                {{getDeepField(owner, column.key)}}
+              </template>
+            </template>
+            <span v-else :class="$style.na">
+            N/A
+          </span>
+          </td>
+        </tr>
       </template>
       </tbody>
     </table>
