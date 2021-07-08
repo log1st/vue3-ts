@@ -8,7 +8,7 @@ export const formatDate = (date) => dateIntl.format(new Date(date));
 
 export const formatDbDate = (date) => {
   const [year, month, day] = date.split('-');
-  return formatDate(Date.UTC(year, month, day))
+  return formatDate(Date.UTC(year, month - 1, day))
 }
 
 const dateTimeIntl = new Intl.DateTimeFormat(undefined, {
