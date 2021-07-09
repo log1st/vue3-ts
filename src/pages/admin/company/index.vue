@@ -95,9 +95,15 @@
                                   <span>{{ input.label }}</span>
                                 </div>
                                 <div class="compib__input" :key="input.action ? updateContentInner[input.key] + 'asdasd' : null">
-                                  <v-select :options="input.inputParams.items" @input="setTemplate($event, input)" label="name" v-model="input.inputParams.data"></v-select>
-                                  <!-- <search-input :params="input.inputParams" @changeInputValue="changeInputsValue($event, input.inputParams.type)"/> -->
+                                  <v-select class="main_company-template" :placeholder="input.inputParams.setItem" :options="input.inputParams.items" @input="setTemplate($event, input)" label="name" v-model="input.inputParams.data"></v-select>
                                 </div>
+                                <ur-btn
+                                  class="delete__template-btn"
+                                  @click="deleteLinkedTemplate()"
+                                  title="Удаление связи установленного шаблона"
+                                  >
+                                    X
+                                  </ur-btn>
                               </div>
                             </div>
                               <div class="draft__create"> 
@@ -525,9 +531,9 @@ export default {
         setReactiveCompanyData (payload) {
           const { inputsType, template } = payload
           if (!!template) {
-            this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `data`, template.template_obj)
+            this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `setItem`, template.template_obj.name)
           } else {
-            this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `data`, false)
+            this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `setItem`, 'Выберите шаблон из списка')
           }
             // this.updateCompanyData()
         },
