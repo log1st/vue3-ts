@@ -2,6 +2,10 @@
     <div>
         <div class="main-container__head">
           <div class="main-container__title">Шаблоны судов</div>
+            <div class="template__head-title-wrapper">
+                <div class="template__head-title-item">Судебный приказ</div>
+                <div class="template__head-title-item">Судебный приказ дольщики</div>
+            </div>
         </div>
         <div class="court-template">
             <div class="inputs__wrapper">
@@ -15,12 +19,25 @@
                     @input="setCourtTemplate($event, input.type, input.id, 1)" 
                     :placeholder="templateGetByCourtId(input.id, input.type, 1)">
                   </v-select>
-
+                    <ur-btn
+                        class="delete__template-btn"
+                        title="Удалить назначеный шаблон судебного приказа"
+                        @click="deleteTemplate({ type: 1, templateName: templateGetByCourtId(input.id, input.type, 1) })"
+                    >
+                        X
+                    </ur-btn>
                   <v-select :options="docsTemplatesShareholder" 
                     label="name" 
                     @input="setCourtTemplate($event, input.type, input.id, 2)"
                     :placeholder="templateGetByCourtIdShareholder(input.id, input.type, 2)">
                   </v-select>
+                   <ur-btn
+                        class="delete__template-btn"
+                        title="Удалить назначеный шаблон судебного приказа (дольщики)"
+                        @click="deleteTemplate({ type: 2, templateName: templateGetByCourtIdShareholder(input.id, input.type, 2) })"
+                    >
+                        X
+                    </ur-btn>
                 </div>
               </div>
             </div>
@@ -133,6 +150,45 @@ export default {
                 return result || 'Выберите шаблон суд приказа (дольщики)'
             }
 
+        },
+        /**
+         * Удалить уже установленный шаблон 
+         */
+        deleteTemplate (payload) {
+            const { type, templateName } = payload
+            let itemToDelete = this.templates.find( tmp => tmp.template_obj.name === templateName)
+            if (!!itemToDelete) {
+                this.$http({
+                    command: `/constructor/company/template/${itemToDelete.id}/`,
+                    method: 'DELETE'
+                })
+                .then( resp => {
+                    this.$toast.open({
+                        message: `Шаблон успешно отвязан от суда`,
+                        type: 'success',
+                        duration: 5000,
+                        dismissible: true,
+                        position: 'top-right'
+                    })
+                })
+                .catch( error => {
+                    this.$toast.open({
+                        message: error,
+                        type: 'error',
+                        duration: 5000,
+                        dismissible: true,
+                        position: 'top-right'
+                    })
+                }) 
+            } else {
+                this.$toast.open({
+                    message: 'Сначала назначте шаблон на суд!',
+                    type: 'warning',
+                    duration: 5000,
+                    dismissible: true,
+                    position: 'top-right'
+                })
+            }
         },
         /**
          * Запрос судов - Мировых и Региональных
@@ -285,5 +341,23 @@ export default {
                 display: block;
             }
         }
+    }
+    .template__head-title-wrapper {
+        display: flex;
+        justify-content: space-around;
+        width: 80%;
+        align-items: center;
+        font-weight: bold;
+    }
+    .delete__template-btn {
+        border-radius: 20%;
+        border: none;
+        background-color: rgb(209, 29, 29);
+        color: white;
+        transition: .4s all ease-in-out;
+        cursor: pointer;
+    }
+    .delete__template-btn:hover {
+        background-color: rgb(245, 53, 53);
     }
 </style>
