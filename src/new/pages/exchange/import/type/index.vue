@@ -123,6 +123,7 @@ import {convertFileToBase64} from "@/new/hooks/useFileManager";
 import Icon from "@/new/components/icon/Icon";
 import Btn from "@/new/components/btn/Btn";
 import {baseURL} from "@/settings/config";
+import {useToast} from "@/new/hooks/useToast";
 
 export default {
   name: "index",
@@ -265,6 +266,10 @@ export default {
 
     const globalModel = inject('globalModel');
 
+    const {
+      showToast,
+    } = useToast();
+
     const isUploading = ref(false);
     const uploaded = ref(0);
     const total = ref(0);
@@ -306,9 +311,17 @@ export default {
           })
         } catch (e) {
 
+        } finally {
+          uploaded.value += 1;
         }
       }));
       isUploading.value = false;
+      resetFiles();
+
+      await showToast({
+        title: `Файлы успешно загружены: ${uploaded.value}`,
+        type: 'success'
+      })
     }
 
     return {
