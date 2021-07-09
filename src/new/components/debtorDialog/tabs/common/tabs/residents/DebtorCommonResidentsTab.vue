@@ -58,8 +58,22 @@ export default defineComponent({
 
     const model = ref([]);
 
+    const formatTenants = tenants => (
+      tenants.map(tenant => {
+        if(tenant.birth_date) {
+          const [year, month, day] = tenant.birth_date.split('-');
+          return {
+            ...tenant,
+            birth_date: new Date(Date.UTC(year, month - 1, day))
+          }
+        } else {
+          return tenant
+        }
+      })
+    )
+
     watch(data, d => {
-      model.value = cloneDeep(d.debtor_tenant_profiles)
+      model.value = formatTenants(cloneDeep(d.debtor_tenant_profiles))
     }, {
       immediate: true,
       deep: true,
@@ -119,6 +133,9 @@ export default defineComponent({
                 ...(isNew ? {
                   debtor: data.value.debtor.pk,
                 } : {}),
+                birth_date: profile.birth_date ? (
+                  [profile.birth_date.getFullYear(), profile.birth_date.getMonth() + 1, profile.birth_date.getDate()].join('-')
+                ) : profile.birth_date
               },
             })
           } catch (e) {
@@ -132,7 +149,8 @@ export default defineComponent({
         }),
       ])
       toRemove.value = [];
-      if(!Object.keys(errorsMap).length) {
+      if(!Object.keys(errorsMap.value).length) {
+        console.log('lya');
         await onSave();
         await reset();
       }
@@ -143,7 +161,9 @@ export default defineComponent({
     const reset = async () => {
       clearErrors();
       toRemove.value = [];
-      model.value = cloneDeep(data.value.debtor_tenant_profiles)
+      model.value = [];
+      await new Promise(requestAnimationFrame)
+      model.value = formatTenants(cloneDeep(data.value.debtor_tenant_profiles))
       isEdit.value = +!isEdit.value
     }
 

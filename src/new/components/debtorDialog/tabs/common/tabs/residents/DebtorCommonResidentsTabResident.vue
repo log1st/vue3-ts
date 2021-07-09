@@ -15,7 +15,7 @@
         )">
           <TextInput
             :state="['primary', 'dark']"
-            v-if="['full_name', 'birth_place', 'citizenship', 'num_of_passport', 'inn', 'passport_issued_by', 'birth_date', 'registration_date', 'date_of_passport_issue'].includes(column.key)"
+            v-if="['full_name', 'birth_place', 'citizenship', 'num_of_passport', 'inn', 'passport_issued_by', 'registration_date', 'date_of_passport_issue'].includes(column.key)"
             v-model="model[column.key]"
             :placeholder="column.label"
             :error="errorsMap[column.key]"
@@ -27,6 +27,14 @@
             :placeholder="column.label"
             :options="registrations"
             @update:modelValue="partialSubmit('registration')"
+            :error="errorsMap[column.key]"
+          />
+          <DateInput
+            :state="['primary', 'dark']"
+            v-else-if="column.key === 'birth_date'"
+            v-model="model[column.key]"
+            :placeholder="column.label"
+            @update:modelValue="partialSubmit('birth_date')"
             :error="errorsMap[column.key]"
           />
           <SelectInput
@@ -68,7 +76,7 @@
           </span>
           <template v-else-if="model[column.key]">
             <template v-if="column.key.includes('date')">
-              {{formatDbDate(model[column.key])}}
+              {{formatDate(model[column.key])}}
             </template>
             <template v-else-if="column.key === 'registration'">
               {{registrationsMap[model[column.key]]}}
