@@ -287,3 +287,19 @@
        }
     }
   }
+  .delete__template-btn {
+    border-radius: 20%;
+    border: none;
+    background-color: rgb(209, 29, 29);
+    color: white;
+    transition: .4s all ease-in-out;
+    cursor: pointer;
+}
+.delete__template-btn:hover {
+    background-color: rgb(245, 53, 53);
+}
+.main_company-template {
+  .vs__search {
+    display: block;
+  }
+}
