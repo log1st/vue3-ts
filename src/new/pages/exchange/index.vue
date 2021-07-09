@@ -233,6 +233,7 @@ export default defineComponent({
             }
           }
         },
+        /*
         {
           key: 'bankruptcy',
           label: 'Банкротство',
@@ -253,6 +254,7 @@ export default defineComponent({
             }
           }
         },
+        */
         {
           key: 'payment-order',
           label: 'Платёжное поручение',
@@ -263,6 +265,7 @@ export default defineComponent({
             }
           }
         },
+        /*
         {
           key: 'judgment',
           label: 'Судебное решение',
@@ -313,9 +316,9 @@ export default defineComponent({
             }
           }
         },
+         */
       ].map(item => ({
         ...item,
-        isDisabled: !['payment-order', 'instruction'].includes(item.key),
       }))
     }[module.value.match(/exchange-(\w+)/)[1]]))
 
