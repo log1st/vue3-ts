@@ -328,6 +328,7 @@ export function createApp() {
     },
     setup() {
 	    provide('store', store);
+	    provide('router', router);
     }
 	})
 	return {app, router, store}

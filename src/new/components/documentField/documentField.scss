@@ -2,6 +2,18 @@
 
 }
 
+.label {
+  font-size: 14px;
+  line-height: 17px;
+  letter-spacing: 0.04em;
+  color: #000000;
+  text-align: center;
+
+  + * {
+    margin-top: 10px;
+  }
+}
+
 .field {
   border-radius: 10px;
   overflow: hidden;
@@ -61,6 +73,9 @@
   height: 30px;
   width: 30px;
   color: #21317A;
+
+  max-height: 50%;
+  max-width: 50%;
 }
 
 .controls {

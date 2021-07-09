@@ -1,12 +1,21 @@
 <template>
-  <div :class="$style.wrapper">
+  <div
+    :class="$style.wrapper"
+    v-on="dropZone ? {
+      drop: onDrop,
+      dragover: onDragover,
+    } : {}"
+  >
+    <div :class="$style.label" v-if="label">
+      {{label}}
+    </div>
     <div :class="$style.field">
       <div :class="$style.placeholder" @click="update" v-if="!file && isEditable">
         <Icon icon="add" :class="$style.placeholderIcon"/>
       </div>
       <template v-else>
         <div :class="$style.preview">
-          <Icon icon="file" :class="$style.previewIcon"/>
+          <Icon icon="file" :class="$style.previewIcon" v-if="file"/>
         </div>
         <div :class="$style.controls" v-if="isEditable">
           <Icon icon="download" @click="download" :class="$style.download"/>
@@ -51,11 +60,14 @@ export default {
   name: "DocumentField",
   components: {TextInput, Btn, Icon},
   props: {
+    label: String,
     file: String,
     name: String,
     withName: Boolean,
     isEditable: Boolean,
     isCreator: Boolean,
+    dropZone: Boolean,
+    isMultiple: Boolean,
   },
   setup(props, {emit}) {
     const localFile = useLocalProp(props, emit, 'file');
@@ -65,8 +77,11 @@ export default {
 
     const {
       file: selectedFile,
+      files: selectedFiles,
       selectFiles,
-    } = useFileManager();
+    } = useFileManager({
+      multiple: props.isMultiple,
+    });
 
     watch(selectedFile, async file => {
       if(!file) {
@@ -78,6 +93,17 @@ export default {
       }
       localFile.value = await convertFileToBase64(file)
       localName.value = file.name;
+    });
+
+    watch(selectedFiles, async files => {
+      if(!files.length) {
+        return;
+      }
+      emit('create', await Promise.all(files.map(async file => (
+        await convertFileToBase64(file)
+      ))));
+    }, {
+      deep: true,
     });
 
     watch(localFile, async file => {
@@ -121,7 +147,22 @@ export default {
       localName.value = props.name;
     }
 
+    const onDrop = (e) => {
+      e.preventDefault();
+      if(!e.dataTransfer.files[0]) {
+        return;
+      }
+      selectedFile.value = e.dataTransfer.files[0];
+    }
+
+    const onDragover = (e) => {
+      e.preventDefault();
+    }
+
     return {
+      onDrop,
+      onDragover,
+
       localFile,
       localName,
       preview,

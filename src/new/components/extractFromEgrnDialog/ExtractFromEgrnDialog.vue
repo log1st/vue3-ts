@@ -171,13 +171,19 @@ export default defineComponent({
               type: 'success',
             })
           } catch (e) {
-            await showToast({
-              title: 'Ошибка формирования запроса выписки',
-              message: Object.values(e?.stats?.errors || {}).map(({msg}) => ({
-                'Cadnum not found': 'Кадастровый номер по адресу не найден'
-              }[msg]) || msg).join(', '),
-              type: 'error',
-            })
+            const cadnumError = e?.stats?.errors.find(({msg}) => msg === 'Cadnum not found')?.msg
+            if(cadnumError)  {
+              await showToast({
+                title: cadnumError,
+                type: 'error'
+              })
+            } else {
+              await showToast({
+                title: 'Ошибка формирования запроса выписки',
+                message: Object.values(e?.stats?.errors || {}).map(({msg}) => (msg).join(', ')),
+                type: 'error',
+              })
+            }
           }
         emit('close');
       } catch (e) {

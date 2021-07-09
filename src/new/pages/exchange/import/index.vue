@@ -1,5 +1,6 @@
 <template>
   <div :class="$style.page">
+    <router-view :class="$style.view"/>
   </div>
 </template>
 
@@ -16,5 +17,5 @@ export default defineComponent({
 </script>
 
 <style lang="scss" module>
-@import "index.css";
+@import "./index";
 </style>
