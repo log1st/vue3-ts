@@ -33,7 +33,7 @@
             @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[0].id })"
           />
         </template>
-        <template v-else-if="module === 'pretrial'">
+        <template v-else-if="module === 'pretrial' && false">
           <DebtorStatus
             type="pretrial"
             v-if="record.debtor && record.debtor.pretrial_status.length"
@@ -977,7 +977,7 @@ export default defineComponent({
       columns: computed(() => ([
         {
           field: 'status',
-          width: type.value === 'executive' ? '80px' : `180px`,
+          width: type.value === 'judicial' ? '180px' : `80px`,
           isRequired: true,
           label: 'Статус',
           withTitle: false,
