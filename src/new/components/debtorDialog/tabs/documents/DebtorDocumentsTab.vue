@@ -459,6 +459,7 @@ export default defineComponent({
       selectFiles: selectHousebookDocuments,
     } = useFileManager({
       multiple: true,
+      accept: ['application/pdf']
     })
 
     watch(housebookDocuments, async files => {
