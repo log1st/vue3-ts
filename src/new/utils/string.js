@@ -7,3 +7,5 @@ export const copyToClipboard = async (somethingToCopy) => {
     console.error('Unable to copy', e);
   }
 };
+
+export const ucFirst = string => string[0].toUpperCase() + string.substr(1)

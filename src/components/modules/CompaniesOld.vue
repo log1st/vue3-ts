@@ -25,7 +25,7 @@
       <transition name="fade">
         <div v-show="searchOpen" class="companies__row companies__row-search">
           <div v-for="j in 4" class="companies__col" :key="'cmpsrch' + j">
-            <search-input :params="{ placeholder: 'Введите текст…' }" @changeInputValue="changeInputsValue($event, j - 1)" />
+            <search-input :params="{ placeholder: 'Введите текст...' }" @changeInputValue="changeInputsValue($event, j - 1)" />
           </div>
         </div>
       </transition>
