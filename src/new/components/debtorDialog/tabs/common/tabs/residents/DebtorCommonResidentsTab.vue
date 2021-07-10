@@ -1,5 +1,8 @@
 <template>
   <form @submit.prevent="submit" :class="$style.residents">
+    <Btn :class="$style.update" @click.prevent="refreshData" state="primary" type="button">
+      Обновить данные
+    </Btn>
     <table :class="$style.table">
       <thead>
       <tr>
@@ -47,6 +50,7 @@ import Btn from "@/new/components/btn/Btn";
 import {cloneDeep} from "lodash";
 import {baseURL} from "@/settings/config";
 import {useErrors} from "@/new/hooks/useErrors";
+import {useStore} from "@/new/hooks/useStore";
 
 export default defineComponent({
   name: "DebtorCommonResidentsTab",
@@ -167,7 +171,23 @@ export default defineComponent({
       isEdit.value = +!isEdit.value
     }
 
+    const store = useStore();
+
+    const refreshData = async () => {
+      await axios({
+        method: 'post',
+        url: `${baseURL}/debtor/update-inn/`,
+        data: {
+          production_type: productionType.value,
+          payload: [data.value.debtor.pk],
+          company: store.getters['defaultCompanyId']
+        }
+      })
+    }
+
     return {
+      refreshData,
+
       model,
       columns,
 
