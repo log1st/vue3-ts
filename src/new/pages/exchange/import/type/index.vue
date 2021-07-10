@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import {computed, inject, ref} from '@vue/composition-api';
+import {computed, inject, ref, watch} from '@vue/composition-api';
 import SelectInput from "@/new/components/selectInput/SelectInput";
 import ExchangeExamples from "@/new/components/exchangeExamples/ExchangeExamples";
 import DocumentField from "@/new/components/documentField/DocumentField";
@@ -133,40 +133,52 @@ export default {
   },
   setup(props) {
     const params = computed(() => ({
-      'payment-order': {
-        title: 'Загрузить платёжные поручения',
-        examples: {
-          linear: [
-            {
-              type: 'csv',
-              file: 'https://file-examples-com.github.io/uploads/2017/02/file_example_CSV_5000.csv',
-            },
-            {
-              type: 'xls',
-              file: 'https://file-examples-com.github.io/uploads/2017/02/file_example_XLS_10.xls',
-            },
-            {
-              type: 'xlsx',
-              file: 'https://file-examples-com.github.io/uploads/2017/02/file_example_XLSX_10.xlsx',
-            },
-          ],
-          cascade: [
-            {
-              type: 'csv',
-              file: 'https://file-examples-com.github.io/uploads/2017/02/file_example_CSV_5000.csv',
-            },
-            {
-              type: 'xls',
-              file: 'https://file-examples-com.github.io/uploads/2017/02/file_example_XLS_10.xls',
-            },
-            {
-              type: 'xlsx',
-              file: 'https://file-examples-com.github.io/uploads/2017/02/file_example_XLSX_10.xlsx',
-            },
-          ],
-        }
-      }
-    }[props.type]));
+
+      examples: {
+        linear: [
+          {
+            type: 'csv',
+            file: 'https://file-examples-com.github.io/uploads/2017/02/file_example_CSV_5000.csv',
+          },
+          {
+            type: 'xls',
+            file: 'https://file-examples-com.github.io/uploads/2017/02/file_example_XLS_10.xls',
+          },
+          {
+            type: 'xlsx',
+            file: 'https://file-examples-com.github.io/uploads/2017/02/file_example_XLSX_10.xlsx',
+          },
+        ],
+        cascade: [
+          {
+            type: 'csv',
+            file: 'https://file-examples-com.github.io/uploads/2017/02/file_example_CSV_5000.csv',
+          },
+          {
+            type: 'xls',
+            file: 'https://file-examples-com.github.io/uploads/2017/02/file_example_XLS_10.xls',
+          },
+          {
+            type: 'xlsx',
+            file: 'https://file-examples-com.github.io/uploads/2017/02/file_example_XLSX_10.xlsx',
+          },
+        ],
+      },
+      ...{
+        'judicial': {
+          title: 'Загрузить документы судебного производства',
+        },
+        'pretrial': {
+          title: 'Загрузить документы досудебного производства',
+        },
+        'executive': {
+          title: 'Загрузить документы исполнительного производства',
+        },
+        'payment-order': {
+          title: 'Загрузить платёжные поручения',
+        },
+      }[props.type]
+    }));
 
     const title = computed(() => params.value?.title);
     const linearExamples = computed(() => params.value?.examples?.linear || []);
@@ -323,6 +335,10 @@ export default {
         type: 'success'
       })
     }
+
+    watch(computed(() => props.type), () => {
+      resetFiles();
+    })
 
     return {
       isUploading,

@@ -3,6 +3,12 @@
   flex-direction: column;
 }
 
+.update {
+  margin: 0 0 20px auto;
+  height: 40px;
+  padding: 0 10px;
+}
+
 .table {
   flex-grow: 1;
 
@@ -41,7 +47,7 @@
       line-height: 15px;
       letter-spacing: 0.04em;
       color: #333333;
-      padding: 22.5px 10px;
+      padding: 10px 10px;
       min-width: 100px;
     }
   }
