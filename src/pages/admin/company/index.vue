@@ -99,7 +99,7 @@
                                 </div>
                                 <ur-btn
                                   class="delete__template-btn"
-                                  @click="deleteLinkedTemplate()"
+                                  @click="deleteLinkedTemplate(input.inputParams.existItem)"
                                   title="Удаление связи установленного шаблона"
                                   >
                                     X
@@ -531,7 +531,12 @@ export default {
         setReactiveCompanyData (payload) {
           const { inputsType, template } = payload
           if (!!template) {
-            this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `setItem`, template.template_obj.name)
+            // this.CompanyData[0].inputs[inputsType].inputParams.setItem = template
+            // this.CompanyData[0].inputs[inputsType].inputParams.setItem.template_obj.name = template.template_obj.name  
+            
+            this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `setItem`, template.template_obj.name)  
+            this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `existItem`, template)
+
           } else {
             this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `setItem`, 'Выберите шаблон из списка')
           }
@@ -546,7 +551,49 @@ export default {
               }
             })
         },
+        /**
+         * Удаление связи шаблонов
+         * @param {Object} payload объект уже установленного шаблона
+         */
+          deleteLinkedTemplate (payload) {
+            // console.log(payload)
+            this.$http({
+              command: `/constructor/company/template/${payload.id}/`,
+              method: 'DELETE'
+            })
+            .then ( resp => {
+                    this.$toast.open({
+                        message: `Шаблон успешно отвязан от типа шаблона компании`,
+                        type: 'success',
+                        duration: 5000,
+                        dismissible: true,
+                        position: 'top-right'
+                    })
+                    // this.updateCompanyData()
+                    this.getDocumentTemplate(this.selectedCompany.id)
+                    .then( result => {
+                     this.allDocsTypes.forEach( type => {
 
+                      let objectKey = type.name 
+                      let template = result.templates.find( tm => tm.template_obj.template_type === type.id)
+
+                      this.setReactiveCompanyData({inputsType: objectKey, template: template})
+                    })
+                      this.getCompanyBalance()
+                      this.updateCompanyData()
+                      this.getColumnTemplate({id:this.selectedCompany.id})
+                    })
+            })
+            .catch ( error => {
+                this.$toast.open({
+                        message: error,
+                        type: 'error',
+                        duration: 5000,
+                        dismissible: true,
+                        position: 'top-right'
+                  })
+            })
+          },
         /**
          * Добовление нового приложения
          * @description **Требует редактирование**
