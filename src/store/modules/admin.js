@@ -243,7 +243,7 @@ export default {
             }).then (resp => {
               resolve({status: true, item: resp})
               commit('setColumnTemplate', resp)
-              console.log(resp)
+              // console.log(resp)
             }).catch(err => {
               console.log(err)
               reject({status: false})
@@ -433,7 +433,10 @@ export default {
          */
         getCompanyBalance ({ state, commit }, payload) {
           return new Promise ((res, rej) => {
-            const { company_id } = payload
+            if (!!!payload) {
+              rej({status: false})
+            } else {
+              const { company_id } = payload
             let checkedCompany = state.UsersList.find( c => c.checked === true) 
             $http({
               command: `/api/finance/balance/${checkedCompany.owner}/`,
@@ -450,6 +453,7 @@ export default {
                 commit('setCompanyBalance', calc)
                 res(true)
             })
+            }
           })
         },
 

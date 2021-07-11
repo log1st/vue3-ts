@@ -121,26 +121,26 @@ export default {
                     title: 'Исполнительный модуль'
                 },
             ],
-            typesList: [
-              {type:'organisation',
-              title: 'Организация'
-              },
-              {type:'egrn_main',
-              title: 'ЕГРН'
-              },
-              {type:'egrn_movement',
-              title: 'ЕГРН - переход прав'
-              },
-              {type:'set_of_charges',
-              title: 'Свод начислений по Л/С'
-              }, 
-              {type:'penni_calculation',
-              title: 'Пеня'
-              }, 
-            {
-              type:'court_order',
-              title: 'Cyдебный приказ'
-            }],
+            // typesList: [
+            //   {type:'organisation',
+            //   title: 'Организация'
+            //   },
+            //   {type:'egrn_main',
+            //   title: 'ЕГРН'
+            //   },
+            //   {type:'egrn_movement',
+            //   title: 'ЕГРН - переход прав'
+            //   },
+            //   {type:'set_of_charges',
+            //   title: 'Свод начислений по Л/С'
+            //   }, 
+            //   {type:'penni_calculation',
+            //   title: 'Пеня'
+            //   }, 
+            // {
+            //   type:'court_order',
+            //   title: 'Cyдебный приказ'
+            // }],
             uploadedDoc: {
               id: '',
               name: ''
@@ -326,6 +326,17 @@ export default {
     },
     created () {
       this.getFiles()
+    },
+    computed: {
+      ...mapGetters(['allDocsTypes']),
+      typesList () {
+        return this.allDocsTypes.map( doc => {
+          return {
+              type: doc.name,
+              title: doc.description
+          }}
+        )
+      }
     }
 }
 </script>
