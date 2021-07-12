@@ -38,8 +38,11 @@
                                   <td v-if="item.email != ''">Email: {{item.email}}</td>
                                   <td v-if="item.email == ''">Нет данных</td>
                                   <td>ИНН: {{item.inn}}</td>
-                                  <!-- <td>Колличество должников:{{item.AllTotalDebt}}</td> -->
-                                  <!-- <td>Баланс:{{item.balance}}</td> -->
+                                  <td>ДС: {{0}}</td>
+                                  <td>СП: {{0}}</td>
+                                  <td>ИР: {{0}}</td>
+                                  <td>Баланс:{{0}}</td>
+
                           </tr>
                           </tbody>
                         </table>
@@ -60,8 +63,10 @@
                                   <td v-if="item.email">Email: {{item.email}}</td>
                                   <!-- <td v-if="!item.email">Нет данных о </td> -->
                                   <td>ИНН: {{item.inn}}</td>
-                                  <!-- <td>Колличество должников:{{item.AllTotalDebt}}</td>
-                                  <td>Баланс:{{item.Balance}}</td> -->
+                                  <td>ДС: {{0}}</td>
+                                  <td>СП: {{0}}</td>
+                                  <td>ИР: {{0}}</td>
+                                  <td>Баланс:{{0}}</td>
                           </tr>
                           </tbody>
                         </table>
