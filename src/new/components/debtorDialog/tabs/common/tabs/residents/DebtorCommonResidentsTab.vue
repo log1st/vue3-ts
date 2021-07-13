@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import {defineComponent, inject, computed, watch, ref} from "@vue/composition-api";
+import {defineComponent, inject, computed, watch, ref, onBeforeUnmount} from "@vue/composition-api";
 import DebtorCommonResidentsTabResident
   from "@/new/components/debtorDialog/tabs/common/tabs/residents/DebtorCommonResidentsTabResident";
 import Btn from "@/new/components/btn/Btn";
@@ -51,6 +51,8 @@ import {cloneDeep} from "lodash";
 import {baseURL} from "@/settings/config";
 import {useErrors} from "@/new/hooks/useErrors";
 import {useStore} from "@/new/hooks/useStore";
+import {asyncAction} from "@/new/utils/asyncAction";
+import {useToast} from "@/new/hooks/useToast";
 
 export default defineComponent({
   name: "DebtorCommonResidentsTab",
@@ -154,7 +156,6 @@ export default defineComponent({
       ])
       toRemove.value = [];
       if(!Object.keys(errorsMap.value).length) {
-        console.log('lya');
         await onSave();
         await reset();
       }
@@ -173,8 +174,20 @@ export default defineComponent({
 
     const store = useStore();
 
+    const {showToast} = useToast();
+
+    let unsub;
+    onBeforeUnmount(() => {
+      unsub();
+    })
+
     const refreshData = async () => {
-      await axios({
+      await showToast({
+        message: `Обновление данных`,
+        type: 'warning'
+      });
+
+      const {data: {uuid}} = await axios({
         method: 'post',
         url: `${baseURL}/debtor/update-inn/`,
         data: {
@@ -182,8 +195,42 @@ export default defineComponent({
           payload: [data.value.debtor.pk],
           company: store.getters['defaultCompanyId']
         }
-      })
+      });
+
+      const {promise, unsubscribe} = asyncAction(
+        async () => (await axios({
+          method: 'get',
+          url: `${baseURL}/api/datafile/status/${uuid}/`
+        })).data,
+        async(data) => {
+          const {state, status_text} = [...data].sort((a, b) => new Date(a.updated_at).getTime() > new Date(b.updated_at).getTime() ? -1 : 1)[0];
+          return {
+            3: {status: true},
+            4: {status: true, error: status_text},
+          }[state] || {status: false}
+        },
+        1000,
+      );
+
+      unsub = unsubscribe;
+
+      try {
+        await promise;
+
+        await showToast({
+          message: `Данные успешно обновлены`,
+          type: 'success'
+        });
+        await onSave();
+      } catch (e) {
+        await showToast({
+          title: `Ошибка обновления данных`,
+          message: e,
+          type: 'error'
+        });
+      }
     }
+
 
     return {
       refreshData,

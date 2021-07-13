@@ -350,7 +350,7 @@ export default {
 
       await Promise.all(toUpload.map(async (file, index) => {
         try {
-          const {data: {package: {uuid}}} = await axios({
+          const {data: {uuid, package: pkg}} = await axios({
             method: 'post',
             url: `${baseURL}/api/datafile/${isDebtor ? 'upload' : 'file'}/`,
             data: {
@@ -376,11 +376,11 @@ export default {
           })
           uploaded.value += 1;
           toCheck.value.push({
-            uuid,
+            uuid: uuid || pkg.uuid,
             name: file.name,
           })
         } catch (e) {
-
+          console.log(e, 'blya');
         } finally {
         }
       }));
@@ -392,16 +392,19 @@ export default {
         type: 'success'
       })
 
-      await Promise.all(toCheck.value.map(async ({uuid, name}) => {
+      await Promise.all(toCheck.value.map(async ({uuid, name}, index) => {
         const {promise, unsubscribe} = asyncAction(
           async () => (await axios({
             method: 'get',
             url: `${baseURL}/api/datafile/status/${uuid}/`
           })).data,
-          async([{state, status_text}]) => ({
-            3: {status: true},
-            4: {status: true, error: status_text},
-          }[state] || {status: true}),
+          async(data) => {
+            const {state, status_text} = [...data].sort((a, b) => new Date(a.updated_at).getTime() > new Date(b.updated_at).getTime() ? -1 : 1)[0];
+            return ({
+              3: {status: true},
+              4: {status: true, error: status_text},
+            }[state] || {status: true});
+          },
           1000,
         );
 
@@ -411,7 +414,7 @@ export default {
 
           await showToast({
             message: `Файл ${name} успешно обработан`,
-            type: 'info'
+            type: 'success'
           });
         } catch (e) {
           await showToast({
@@ -419,6 +422,8 @@ export default {
             message: e,
             type: 'error'
           });
+        } finally {
+          toCheck.value.splice(index, 1)
         }
       }))
     }
@@ -428,6 +433,8 @@ export default {
       if(!['pretrial', 'judicial', 'executive'].includes(value)) {
         selectPeriod('all')
       }
+    }, {
+      immediate: true,
     });
 
     return {

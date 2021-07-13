@@ -415,14 +415,14 @@ export default defineComponent({
             url: `${baseURL}/api/datafile/status/${uuid}/`
           })).data,
           async(data) => {
-            const {status_value_max, status_value, status_text, state} = data[0]
+            const {status_text, state} = [...data].sort((a, b) => new Date(a.updated_at).getTime() > new Date(b.updated_at).getTime() ? -1 : 1)[0];
             if(state === 2) {
               return {
                 status: true,
                 error: status_text
               }
             }
-            if(status_value === status_value_max) {
+            if(state === 3) {
               return {
                 status: true,
                 payload: {
