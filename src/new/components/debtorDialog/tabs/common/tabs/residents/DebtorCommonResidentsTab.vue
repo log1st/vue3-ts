@@ -178,7 +178,7 @@ export default defineComponent({
 
     let unsub;
     onBeforeUnmount(() => {
-      unsub();
+      unsub && unsub();
     });
 
     const isUpdating = ref(false);
