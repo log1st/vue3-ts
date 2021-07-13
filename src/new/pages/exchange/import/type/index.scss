@@ -139,8 +139,15 @@
   display: flex;
   margin: 0 -10px;
 
+  position: relative;
+  z-index: 1;
+
   + .periods {
     margin-top: 34px;
+  }
+
+  + .files {
+    margin-top: -32px;
   }
 }
 

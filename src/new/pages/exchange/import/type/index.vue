@@ -24,7 +24,7 @@
                 {{mode.label}}
               </div>
             </div>
-            <div :class="$style.periods" v-if="['executive', 'judicial', 'pretrial'].includes(type)">
+            <div :class="$style.periods" v-if="['executive', 'judicial', 'pretrial'].includes(type) && model.mode !== 'linear'">
               <div
                 :class="[
                   $style.period,
@@ -205,7 +205,7 @@ export default {
     const modes = computed(() => ([
       {
         key: 'table',
-        label: 'Каскадный',
+        label: 'Табличный',
       },
       {
         key: 'linear',
@@ -431,6 +431,15 @@ export default {
     watch(computed(() => props.type), (value) => {
       resetFiles();
       if(!['pretrial', 'judicial', 'executive'].includes(value)) {
+        selectPeriod('all')
+      }
+    }, {
+      immediate: true,
+    });
+
+    watch(computed(() => model.value.mode), (value) => {
+      resetFiles();
+      if(['linear'].includes(value)) {
         selectPeriod('all')
       }
     }, {
