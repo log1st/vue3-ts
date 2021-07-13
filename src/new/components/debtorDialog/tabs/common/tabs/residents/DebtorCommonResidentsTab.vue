@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="submit" :class="$style.residents">
+  <form @submit.prevent="submit" :class="$style.residents" v-if="!isUpdating">
     <Btn :class="$style.update" @click.prevent="refreshData" state="primary" type="button">
       Обновить данные
     </Btn>
@@ -179,7 +179,9 @@ export default defineComponent({
     let unsub;
     onBeforeUnmount(() => {
       unsub();
-    })
+    });
+
+    const isUpdating = ref(false);
 
     const refreshData = async () => {
       await showToast({
@@ -221,7 +223,10 @@ export default defineComponent({
           message: `Данные успешно обновлены`,
           type: 'success'
         });
+        isUpdating.value = true;
         await onSave();
+        await new Promise(requestAnimationFrame);
+        isUpdating.value = false;
       } catch (e) {
         await showToast({
           title: `Ошибка обновления данных`,
@@ -233,6 +238,8 @@ export default defineComponent({
 
 
     return {
+      isUpdating,
+
       refreshData,
 
       model,
