@@ -1008,17 +1008,17 @@ export default defineComponent({
           label: 'Адрес',
           width: 281,
         },
-        false && type.value === 'executive' && {
+        type.value === 'executive' && {
           field: 'number',
           label: '№ ИП',
           width: 281
         },
-        false && type.value === 'executive' && {
+        type.value === 'executive' && {
           field: 'started_at',
           label: 'Дата возбуждения ИП',
           width: 281
         },
-        false && type.value === 'executive' && {
+        type.value === 'executive' && {
           field: 'ended_at',
           label: 'Дата окончания ИП',
           width: 281
