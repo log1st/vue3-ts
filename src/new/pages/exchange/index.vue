@@ -160,10 +160,13 @@ export default defineComponent({
           params,
           cancelToken,
         });
+
+        const filteredData = data.filter(({name}) => !params.name || name.toLowerCase().indexOf(params.name.toLowerCase()) > -1);
+
         return {
           data: {
-            count: data.length,
-            results: data,
+            count: filteredData.length,
+            results: filteredData,
           }
         };
       }
@@ -177,6 +180,7 @@ export default defineComponent({
         isSearchable: true,
         searchPlaceholder: 'Начните ввод',
         options: regions.value,
+        forcedQuery: true,
         valueProp: 'id',
         displayProp: 'name',
         state: 'tertiary',

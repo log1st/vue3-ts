@@ -1,5 +1,5 @@
 <template>
-        <form action="#" class="sign-in__form-inner" @submit.prevent>
+        <form action="#" class="sign-in__form-inner" @submit.prevent="auth">
 
         <div class="sign-in__tab">
             <div class="tab-nav" role="tablist">
@@ -41,6 +41,7 @@
                     elId="sign-in-name"
                     :rules="loginRules"
                     :latin="true"
+                    name="login"
                     @blur="defineLoginType; validateField('login')"
                     elPlaceholder="Введите почту или телефон"
                     ref="login"
@@ -59,6 +60,7 @@
                     :latin="true"
                     @blur="defineLoginType; validateField('password')"
                     type="text"
+                    name="password"
                     ref="password"
                     large
                 >
@@ -101,7 +103,6 @@
 
                 <ur-btn
                 :loading="loading"
-                @click="auth()"
                 type="submit"
                 :disabled="disabled"
                 class="btn btn--login login-from-btn loader-opener">

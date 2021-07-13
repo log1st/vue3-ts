@@ -6,12 +6,12 @@
       <div :class="$style.body">
         <div :class="$style.content">
           <div :class="$style.header">
-            <SelectInput state="year" v-model="model.year" placeholder="Год" :options="years" :class="$style.year"/>
+            <SelectInput state="year" v-if="['executive', 'judicial', 'pretrial'].includes(type)" v-model="model.year" placeholder="Год" :options="years" :class="$style.year"/>
             <div :class="[$style.tab, $style.active]">Загрузить файлы</div>
             <div :class="[$style.tab, $style.disabled]">Интеграция по API</div>
           </div>
           <div :class="$style.main">
-            <div :class="$style.modes">
+            <div :class="$style.modes" v-if="['executive', 'judicial', 'pretrial'].includes(type)">
               <div
                 v-for="mode in modes"
                 :key="mode.key"
@@ -24,7 +24,7 @@
                 {{mode.label}}
               </div>
             </div>
-            <div :class="$style.periods">
+            <div :class="$style.periods" v-if="['executive', 'judicial', 'pretrial'].includes(type)">
               <div
                 :class="[
                   $style.period,
@@ -42,6 +42,7 @@
                 v-for="(month, index) in model.months"
                 :key="month.month"
                 :file.sync="model.months[index].file"
+                :name.sync="model.months[index].name"
                 :class="$style.month"
                 :label="month.label"
                 is-editable
@@ -59,6 +60,7 @@
                 v-for="(file, index) in model.files"
                 :key="file.id"
                 :file.sync="model.files[index].file"
+                :name.sync="model.files[index].name"
                 :class="$style.file"
                 is-editable
                 @remove="removeFile(index)"
@@ -98,21 +100,26 @@
               </div>
             </div>
           </div>
-          <Btn :is-disabled="isUploading" @click.prevent="submit" state="primary" :class="$style.action">
-            <template v-if="isUploading">
-              {{uploaded}} / {{total}} ({{Math.ceil(uploaded/total * 100)}}%)
-            </template>
-            <template v-else>
-              Загрузить
-            </template>
-          </Btn>
+          <div :class="$style.action">
+            <Btn :is-disabled="isUploading" @click.prevent="submit" state="primary" :class="$style.actionBtn">
+              <template v-if="isUploading">
+                {{uploaded}} / {{total}} ({{Math.ceil(uploaded/total * 100)}}%)
+              </template>
+              <template v-else>
+                Загрузить
+              </template>
+            </Btn>
+            <div :class="$style.error" v-if="'common' in errorsMap">
+              {{errorsMap.common}}
+            </div>
+          </div>
         </div>
       </div>
     </div>
 </template>
 
 <script>
-import {computed, inject, ref, watch} from '@vue/composition-api';
+import {computed, inject, onBeforeUnmount, ref, watch} from '@vue/composition-api';
 import SelectInput from "@/new/components/selectInput/SelectInput";
 import ExchangeExamples from "@/new/components/exchangeExamples/ExchangeExamples";
 import DocumentField from "@/new/components/documentField/DocumentField";
@@ -124,6 +131,8 @@ import Icon from "@/new/components/icon/Icon";
 import Btn from "@/new/components/btn/Btn";
 import {baseURL} from "@/settings/config";
 import {useToast} from "@/new/hooks/useToast";
+import {useErrors} from "@/new/hooks/useErrors";
+import {asyncAction} from "@/new/utils/asyncAction";
 
 export default {
   name: "index",
@@ -231,7 +240,8 @@ export default {
       model.value.months = Array(12).fill(null).map((i, index) => ({
         month: index + 1,
         file: null,
-        label: ucFirst(formatMonth(setMonth(new Date, index)))
+        label: ucFirst(formatMonth(setMonth(new Date, index))),
+        name: null,
       }));
       model.value.files = [];
     }
@@ -245,9 +255,10 @@ export default {
 
     const addFile = async (file) => {
       model.value.files.push(
-        ...(Array.isArray(file) ? file : [file]).map(f => ({
+        ...(Array.isArray(file) ? file : [file]).map(({file: f, name}) => ({
           id: getRandomString(),
           file: f,
+          name,
         }))
       )
     }
@@ -282,63 +293,142 @@ export default {
       showToast,
     } = useToast();
 
+    const {
+      errorsMap,
+      setErrors,
+      clearErrors,
+    } = useErrors();
+
+    const toCheck = ref([]);
+
     const isUploading = ref(false);
     const uploaded = ref(0);
     const total = ref(0);
+
+    const unsubs = [];
+    onBeforeUnmount(() => {
+      unsubs.forEach(unsub => unsub())
+    })
+
     const submit = async () => {
       if(isUploading.value) {
         return;
       }
-      isUploading.value = true;
       const toUpload = model.value.period === 'perMonth'
-        ? model.value.months.filter(({file}) => ({
+        ? model.value.months.filter(({file}) => (file))
+          .map(({file, name, month}) => ({
+            file,
+            month,
+            name,
+          }))
+        : model.value.files.map(({file, name}) => ({
           file,
-        })).map(({file, month}) => ({
-          file,
-          month,
+          name,
         }))
-        : model.value.files.map(({file}) => ({
-          file,
-        }))
+
+      clearErrors();
+
+      if(!toUpload.length) {
+        setErrors([
+          ['common', 'Необходимо выбрать файлы']
+        ]);
+        return
+      }
+
+      if(!globalModel.value.region) {
+        setErrors([
+          ['common', 'Необходимо выбрать регион']
+        ]);
+        return;
+      }
+
       total.value = toUpload.length;
+
+      isUploading.value = true;
+
+      const isDebtor = ['pretrial', 'judicial', 'executive'].includes(props.type)
 
       await Promise.all(toUpload.map(async (file, index) => {
         try {
-          await axios({
+          const {data: {package: {uuid}}} = await axios({
             method: 'post',
-            url: `${baseURL}/api/datafile/upload/`,
+            url: `${baseURL}/api/datafile/${isDebtor ? 'upload' : 'file'}/`,
             data: {
               ...file,
               company: globalModel.value.company,
-              name: `file ${new Date().toLocaleString()} #${index}`,
-              year: model.value.year,
-              region: globalModel.value.region,
-              module: {
-                pretrial: 1,
-                judicial: 2,
-                executive: 3,
-              }[props.type],
-              mode: model.value.mode,
+              last: true,
+
+              ...(isDebtor ? {
+                module: {
+                  pretrial: 1,
+                  judicial: 2,
+                  executive: 3,
+                }[props.type],
+                mode: model.value.mode,
+                region: globalModel.value.region,
+                year: model.value.year,
+              } : {
+                task_uuid: {
+                  'payment-order': '0574d4db-7cfa-42f0-be4e-0029302e8bf1'
+                }[props.type]
+              }),
             },
+          })
+          uploaded.value += 1;
+          toCheck.value.push({
+            uuid,
+            name: file.name,
           })
         } catch (e) {
 
         } finally {
-          uploaded.value += 1;
         }
       }));
       isUploading.value = false;
       resetFiles();
 
       await showToast({
-        title: `Файлы успешно загружены: ${uploaded.value}`,
+        title: `Файлы отправлены на обработку: ${uploaded.value}`,
         type: 'success'
       })
+
+      await Promise.all(toCheck.value.map(async ({uuid, name}) => {
+        const {promise, unsubscribe} = asyncAction(
+          async () => (await axios({
+            method: 'get',
+            url: `${baseURL}/api/datafile/status/${uuid}/`
+          })).data,
+          async([{state, status_text}]) => ({
+            3: {status: true},
+            4: {status: true, error: status_text},
+          }[state] || {status: true}),
+          1000,
+        );
+
+        unsubs.push(unsubscribe);
+        try {
+          await promise;
+
+          await showToast({
+            message: `Файл ${name} успешно обработан`,
+            type: 'info'
+          });
+        } catch (e) {
+          await showToast({
+            title: `Ошибка обработки файла ${name}`,
+            message: e,
+            type: 'error'
+          });
+        }
+      }))
     }
 
-    watch(computed(() => props.type), () => {
+    watch(computed(() => props.type), (value) => {
       resetFiles();
-    })
+      if(!['pretrial', 'judicial', 'executive'].includes(value)) {
+        selectPeriod('all')
+      }
+    });
 
     return {
       isUploading,
@@ -368,6 +458,8 @@ export default {
       years,
 
       model,
+
+      errorsMap,
     }
   }
 }

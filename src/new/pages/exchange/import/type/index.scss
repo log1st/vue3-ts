@@ -27,11 +27,19 @@
 
 .action {
   margin-top: auto;
-  height: 60px;
-  width: 100%;
   position: sticky;
 
   bottom: 10px;
+}
+
+.actionBtn {
+  height: 60px;
+  width: 100%;
+}
+
+.error {
+  margin-top: 10px;
+  color: #f03b3b;
 }
 
 .examples {
@@ -130,6 +138,10 @@
 .modes {
   display: flex;
   margin: 0 -10px;
+
+  + .periods {
+    margin-top: 34px;
+  }
 }
 
 .mode {
@@ -161,8 +173,15 @@
 }
 
 .periods {
-  margin: 34px -20px 0;
+  margin: 0 -20px;
   display: flex;
+
+  + .months {
+    margin-top: 10px;
+  }
+  + .files {
+    margin-top: -32px;
+  }
 }
 
 .period {
@@ -201,7 +220,7 @@
 }
 
 .months {
-  margin: 10px -30px 0;
+  margin: 0 -30px;
   display: flex;
   flex-wrap: wrap;
 }
@@ -213,7 +232,7 @@
 }
 
 .files {
-  margin: -32px -15px 0;
+  margin: -52px -15px 0;
   display: flex;
   flex-wrap: wrap;
 

@@ -52,13 +52,17 @@
         <template v-else>
           <span :class="[
             $style.passport,
-            model.passport_is_invalid && $style.invalid,
-            model.passport_is_valid && $style.valid,
-            (!model.passport_is_invalid && !model.passport_is_valid) && $style.checking
+            ...(
+              parseInt(model[column.key]) ? [
+                model.passport_is_invalid && $style.invalid,
+                model.passport_is_valid && (!model.passport_is_invalid) && $style.valid,
+                (!model.passport_is_invalid && !model.passport_is_valid) && $style.checking
+              ] : []
+            )
           ]" v-if="column.key === 'num_of_passport'">
-            <template v-if="model[column.key]">
+            <template v-if="!!parseInt(model[column.key])">
               {{model[column.key]}}
-              <TooltipWrapper :class="$style.passportHint" position="top" align="center" :text="(
+              <TooltipWrapper v-if="model.num_of_passport" :class="$style.passportHint" position="top" align="center" :text="(
                 model.passport_is_invalid ? 'Паспорт недействителен' : (
                   model.passport_is_valid ? 'Паспорт подтверждён' : ('На проверке')
                 )

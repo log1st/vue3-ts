@@ -33,7 +33,7 @@
             @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[0].id })"
           />
         </template>
-        <template v-else-if="module === 'pretrial' && false">
+        <template v-else-if="module === 'pretrial'">
           <DebtorStatus
             type="pretrial"
             v-if="record.debtor && record.debtor.pretrial_status.length"
@@ -235,9 +235,12 @@ export default defineComponent({
     }
 
     const showPrintDialog = async (payload) => {
+      const isActive = payload.allSelected
+        || payload.selectedItems?.length
+        || payload.selectedItem > -1
       await showDialog({
         component: 'printDebtors',
-        isWide: true,
+        isWide: isActive,
         payload: {
           ...payload,
           type: type.value,
@@ -977,7 +980,7 @@ export default defineComponent({
       columns: computed(() => ([
         {
           field: 'status',
-          width: type.value === 'judicial' ? '180px' : `80px`,
+          width: type.value !== 'executive' ? '180px' : `80px`,
           isRequired: true,
           label: 'Статус',
           withTitle: false,

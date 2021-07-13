@@ -99,9 +99,10 @@ export default {
       if(!files.length) {
         return;
       }
-      emit('create', await Promise.all(files.map(async file => (
-        await convertFileToBase64(file)
-      ))));
+      emit('create', await Promise.all(files.map(async file => ({
+        file: await convertFileToBase64(file),
+        name: file.name,
+      }))));
     }, {
       deep: true,
     });

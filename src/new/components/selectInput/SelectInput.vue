@@ -116,6 +116,8 @@ export default defineComponent({
     displayValueTemplate: String,
 
     error: String,
+
+    forcedQuery: Boolean,
   },
   setup(props, {emit}) {
     const queryRef = ref();
@@ -198,7 +200,7 @@ export default defineComponent({
     let queryTimeout;
     watch(query, newQuery => {
       clearTimeout(queryTimeout);
-      if(!newQuery) {
+      if(!newQuery && !props.forcedQuery) {
         return;
       }
       queryTimeout = setTimeout(() => {

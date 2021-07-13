@@ -125,6 +125,9 @@ export default defineComponent({
     const submit = async () => {
       clearErrors();
       try {
+
+        emit('close');
+
           const {data: {id: requestId}} = await axios({
             method: 'post',
             url: `${baseURL}/rosreestr/status/`,
@@ -148,8 +151,6 @@ export default defineComponent({
             message: 'Заказ выписки из ЕГРН',
             type: 'warning',
           });
-
-          emit('close');
 
           const {promise, unsubscribe} = asyncAction(
             async () => (await axios({
@@ -185,7 +186,6 @@ export default defineComponent({
               })
             }
           }
-        emit('close');
       } catch (e) {
         setErrors(
           Object.entries(e.response.data).reduce((acc, [key, [message]]) => ([
