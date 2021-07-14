@@ -121,26 +121,6 @@ export default {
                     title: 'Исполнительный модуль'
                 },
             ],
-            // typesList: [
-            //   {type:'organisation',
-            //   title: 'Организация'
-            //   },
-            //   {type:'egrn_main',
-            //   title: 'ЕГРН'
-            //   },
-            //   {type:'egrn_movement',
-            //   title: 'ЕГРН - переход прав'
-            //   },
-            //   {type:'set_of_charges',
-            //   title: 'Свод начислений по Л/С'
-            //   }, 
-            //   {type:'penni_calculation',
-            //   title: 'Пеня'
-            //   }, 
-            // {
-            //   type:'court_order',
-            //   title: 'Cyдебный приказ'
-            // }],
             uploadedDoc: {
               id: '',
               name: ''
@@ -222,7 +202,7 @@ export default {
                          docId = this.documentId
                   }
                   if (this.selected) {
-                      console.log(this.selected)
+                      console.log(this.selected)  
                       docId = this.selected.id
                   }
                   this.$http({
@@ -254,14 +234,30 @@ export default {
                     this.setPopupState(false)
                   })
                   .catch(err => {
-                      console.log(err)
-                      this.$toast.open({
-                        message: `Должен быть выбран документ и имя приложения`,
-                        type: 'error',
-                        duration: 5000,
-                        dismissible: true,
-                        position: 'top-right'
+                      console.log(err.response.data)
+                      const errorKey = Object.keys(err.response.data)
+                      errorKey.forEach( error => {
+                        let erMsg;
+                        if (error === 'type') {
+                          erMsg = 'Серверная ошибка: Не верный тип приложения'
+                        } else {
+                          erMsg = err.response.data[error][0]
+                        }
+                        this.$toast.open({
+                          message: erMsg,
+                          type: 'error',
+                          duration: 5000,
+                          dismissible: true,
+                          position: 'top-right'
+                        })
                       })
+                      // this.$toast.open({
+                      //   message: `Должен быть выбран документ и имя приложения`,
+                      //   type: 'error',
+                      //   duration: 5000,
+                      //   dismissible: true,
+                      //   position: 'top-right'
+                      // })
                       this.loading = false
                       this.disabled = false
                     })
