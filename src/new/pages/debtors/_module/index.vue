@@ -240,7 +240,7 @@ export default defineComponent({
         || payload.selectedItem > -1
       await showDialog({
         component: 'printDebtors',
-        isWide: isActive,
+        isWide: !!isActive,
         payload: {
           ...payload,
           type: type.value,
