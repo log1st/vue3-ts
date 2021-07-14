@@ -144,9 +144,17 @@ import IconEyeSolid    from '@/components/icons-svg/icons/IconEyeSolid'
 import IconSendSMS	   from '@/components/icons-svg/icons/IconSendSMS'
 import IconSendVoiceMsg from '@/components/icons-svg/icons/IconSendVoiceMsg'
 import IconNotifyBell	from '@/components/icons-svg/icons/IconNotifyBell'
+import IconPenNib 		from '@/components/icons-svg/icons/IconPenNib'
+import IconCompanyList  from '@/components/icons-svg/icons/IconCompanyList'
+import IconPieChart 	from '@/components/icons-svg/icons/IconPieChart'
+import IconAdminSettings from '@/components/icons-svg/icons/IconAdminSettingsBar'
 
+Vue.component('icon-setting-admin', IconAdminSettings)
+Vue.component('icon-company-list', IconCompanyList)
+Vue.component('icon-pie-chart', IconPieChart)
 Vue.component('icon-notify-bell', IconNotifyBell)
 Vue.component('icon-send-voice-msg', IconSendVoiceMsg)
+Vue.component('icon-pen-nib', IconPenNib)
 Vue.component('icon-send-sms', IconSendSMS)
 Vue.component('icon-plus', IconPlus);
 Vue.component('icon-courts', IconCourts);
