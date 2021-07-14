@@ -795,6 +795,11 @@ export default {
         this.documentArray = data.docs
       })
 
+      events.$on('update_data_after_delete', () => {
+        this.getDocumentTemplate(this.selectedCompany.id)
+        console.log('template: deleted')
+      })
+
       events.$on('update_data_company', () => {
         this.updateCompanyData()
       })

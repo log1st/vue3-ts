@@ -116,7 +116,7 @@ export default {
                 let result;
                 template.forEach( tmp => {
                     if (templateType === 1 && tmp.template_obj.template_type_obj.id != this.shareholderId ) {
-                        console.log(tmp, id)
+                        // console.log(tmp, id)
                         result = tmp.template_obj.name
                     } 
                     // else if (templateType === 1 && tmp.template_obj.template_type_obj.description === this.shareholderId) {
@@ -170,6 +170,7 @@ export default {
                         dismissible: true,
                         position: 'top-right'
                     })
+                    events.$emit('update_data_after_delete')
                 })
                 .catch( error => {
                     this.$toast.open({
