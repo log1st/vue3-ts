@@ -166,12 +166,12 @@ export default defineComponent({
         ...currentResponse.data,
         ...accountResponse.data
           .filter(({can_be_attached, id}) => can_be_attached && (currentResponse.data.findIndex(d => d.document === id) === -1))
-          .map((document) => ({
+          .map(({id, ...document}) => ({
             ...document,
             type: 'organisation',
             production_type: props.type,
             debtor_document_id: document.id,
-            document: document.id,
+            document: id,
           }))
       ]
 
