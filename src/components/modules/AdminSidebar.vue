@@ -20,6 +20,7 @@
                 :height="item.height"
                 :iconColor="item.route == $route.path ? '#495CFF' : '#949BAF'"
                 :hasStroke="item.hasStroke"
+                :viewbox="item.viewbox"
                 ><component :is="'icon-' + item.iconname" />
               </icon-base>
             </span>
@@ -32,7 +33,7 @@
       <transition name="fade">
         <div v-if="sidebarOpen" class="sidebar__footer">
           <p>&copy; Юрробот 2017-2021 </p>
-          <p title="Версия админ панели v1.6.0 | Версия редактора документов v2.0.0">Версия Админ панели 1.6.0</p>
+          <p title="Версия админ панели v1.6.3a | Версия редактора документов v2.0.0">Версия Админ панели 1.6.3a</p>
         </div>
       </transition>
     </div>
@@ -48,10 +49,10 @@ export default {
     return {
       isOpen: true,
       mainRoutes: [
-        { name: 'Конструктор документов', route: '/admin/editor', },
-        { name: 'Список организаций', route: '/admin/admin-panel', },
-        { name: 'Статистика', route: '/admin/stats' },
-        { name: 'Настройки', route: '/admin/admin-settings', }
+        { name: 'Конструктор документов', route: '/admin/editor', iconname: 'pen-nib', width: 30, height: 20, viewbox: '0 0 480 480'},
+        { name: 'Список организаций', route: '/admin/admin-panel', iconname: 'company-list', width: 30, height: 30, viewbox: '0 0 74 74' },
+        { name: 'Статистика', route: '/admin/stats', iconname: 'pie-chart', width: 30, height: 30, viewbox: '0 0 512 512' },
+        { name: 'Настройки', route: '/admin/admin-settings', iconname: 'setting-admin', width: 30, height: 30, viewbox: '0 0 456 456' }
       ]
     }
   },
