@@ -2,7 +2,7 @@
     <div class="config-data__wrapper template__wrapper">
         <div class="config-data__actions-btn-wrapper">
 
-            <div style="margin:1em 0">
+            <div class="display__select" style="margin:1em 0">
                 <v-select :options="allColumnTemplate" label="title" class="select_created_template" v-model="createdTemplated" placeholder="Выберите один из созданых шаблонов">
                 </v-select>
 
@@ -14,7 +14,7 @@
                 </ur-btn>
             </div>
                 <hr>
-            <div style="margin:1em 0 ">
+            <div class="display__select" style="margin:1em 0 ">
                 <v-select :options="productionType" label="title" v-model="selectedProductionType" placeholder="Выберите тип производвства">
                 </v-select>
             </div>
@@ -34,7 +34,7 @@
                 <span>Тип файла</span>
               </div>
               <div class="compib__input">
-                  <div class="search-input">
+                  <div class="search-input display__select">
                       <v-select :options="fileType" placeholder="Выберите тип файла" v-model="selctedFileType" />
                   </div>
               </div>
@@ -45,7 +45,7 @@
             </div>
         </div>
         <div class="config-data__form" v-show="openAddCol">
-            <div class="config-data__form-row">
+            <div class="config-data__form-row display__select">
                 <label for="">Наименование</label>
                     <!-- <input type="text" v-model="newVars.variable_name"> -->
                     <v-select style="width: 100%" :options="columnTypes" label="verbose_name" v-model="newVars.variable_name"/>
@@ -457,6 +457,11 @@ export default {
             border: none;
             width: 100%;
             overflow: hidden;
+        }
+    }
+    .display__select {
+        .vs__search {
+            display: block;
         }
     }
     .select_created_template {
