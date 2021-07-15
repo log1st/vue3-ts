@@ -279,7 +279,9 @@ export default {
 
         setUpdatedApplication ({state, commit}, payload) {
           let prod_type;
-          switch (payload) {
+          const { prod_type_num, type } = payload
+          console.log(payload)
+          switch (prod_type_num) {
             case 0:
               prod_type = 'pretrial'
               break;
@@ -313,14 +315,16 @@ export default {
             .then (response => {
               resolve({status: true})
               commit('setCompanyApplication', response.data)
-              this._vm.$toast.open({
-                    message: `Приложения успешно сохранены`,
-                    type: 'success',
-                    duration: 5000,
-                    dismissible: true,
-                    position: 'top-right'
-              })
-              console.log(response)
+              if (!type) {
+                this._vm.$toast.open({
+                  message: `Приложения успешно сохранены`,
+                  type: 'success',
+                  duration: 5000,
+                  dismissible: true,
+                  position: 'top-right'
+                })
+              }
+              // console.log(response)  
             })
             .catch (error => {
               console.log(error)
@@ -337,59 +341,68 @@ export default {
         },
 
         addDefaultApplicationToArray ({ state, commit, dispatch }, payload) {
-          return new Promise ((resolve, reject) =>{
-            $http({
-              command: '/document_attachments/defaults/',
-              method: 'GET'
-            })
-            .then( response => {
-              let attachment = response.attachments
-              const applicationKeys = Object.keys(response.attachments)
-              let arr = []
-              applicationKeys.forEach( d => {
-                attachment[d].is_active = true
-                attachment[d].is_show = true
-                attachment[d].type = d
-                attachment[d].company = state.checkedCompany.id
-                attachment[d].production_type = payload
-                arr.push(attachment[d])
+          if (payload === 'judicial') {
+              return new Promise ((resolve, reject) =>{
+                $http({
+                  command: '/document_attachments/defaults/',
+                  method: 'GET'
+                })
+                .then( response => {
+                  let attachment = response.attachments
+                  const applicationKeys = Object.keys(response.attachments)
+                  let arr = []
+                  applicationKeys.forEach( d => {
+                    if (d !== 'court_order') {
+                      attachment[d].is_active = true
+                      attachment[d].is_show = true
+                      attachment[d].type = d
+                      attachment[d].company = state.checkedCompany.id
+                      attachment[d].production_type = payload
+                      arr.push(attachment[d])
+                    }
+                  })
+                  let param = { prod_type_num: payload, type: true }
+                  commit('addDefaultCompanyApplication', arr)
+                  dispatch('setUpdatedApplication', param)
+                  resolve({status: true})
+                })
+                .catch( err => {
+                  reject({status: false})
+                })
               })
-              commit('addDefaultCompanyApplication', arr)
-              dispatch('setUpdatedApplication', payload)
-              resolve({status: true})
-            })
-            .catch( err => {
-              reject({status: false})
-            })
-          })
+          }
+          
         },
-        getDefaultApplicationAdmin ({commit}) {
-          return new Promise ((resolve, reject) =>{
-            $http({
-              command: '/document_attachments/defaults/',
-              method: 'GET'
-            })
-            .then( response => {
-              let attachment = response.attachments
-              const applicationKeys = Object.keys(response.attachments)
-              let arr = []
-              applicationKeys.forEach( d => {
-                if (d !== 'court_order') {
-                  attachment[d].is_active = true
-                  attachment[d].is_show = true
-                  attachment[d].type = d
-                  attachment[d].company = id
-                  attachment[d].production_type = 'judicial'
-                  arr.push(attachment[d])
-                }
+        getDefaultApplicationAdmin ({commit}, payload) {
+          if (payload === 'judicial') {
+            return new Promise ((resolve, reject) =>{
+              $http({
+                command: '/document_attachments/defaults/',
+                method: 'GET'
               })
-              commit('setCompanyApplication', arr)
-              resolve({status: true})
+              .then( response => {
+                let attachment = response.attachments
+                const applicationKeys = Object.keys(response.attachments)
+                let arr = []
+                applicationKeys.forEach( d => {
+                  if (d !== 'court_order') {
+                    attachment[d].is_active = true
+                    attachment[d].is_show = true
+                    attachment[d].type = d
+                    attachment[d].company = id
+                    attachment[d].production_type = 'judicial'
+                    arr.push(attachment[d])
+                  }
+                })
+                commit('setCompanyApplication', arr)
+                resolve({status: true})
+              })
+              .catch ( err => {
+                reject({status: false, msg: err})
+              })
             })
-            .catch ( err => {
-              reject({status: false, msg: err})
-            })
-          })
+          }
+          
         },
         /**
          * Получение приложений организации
@@ -397,6 +410,7 @@ export default {
          */
         getCompanyApplication ( {dispatch, commit}, payload ) {
           const { id, type } = payload
+          commit('clearCompanyApplication')
           return new Promise ((resolve, reject) => {
             axios({
               url: baseURL+'/document_attachments/company/',
@@ -406,23 +420,31 @@ export default {
               },
               method: 'GET'
             })
-            .then( async resp => {
+            .then( resp => {
               let items = resp.data
                if ( resp.data.length > 0) {
                 commit('setCompanyApplication', items)
                 resolve({applications: items, status: true})
               }
-             else if (resp.data.length === 0) {
-               await dispatch('getDefaultApplicationAdmin')
-               await dispatch('addDefaultApplicationToArray', type)
-                resolve({applications: items, status: true})
+              else if (resp.data.length === 0) {
+                console.log(type)
+                if (type === 'judicial') {
+                  dispatch('getDefaultApplicationAdmin', type)
+                  dispatch('addDefaultApplicationToArray', type)
+                  resolve({applications: items, status: true})
+                }  
+                else if (type === 'pretrial') {
+                  console.log('module: pretrial')
+                  resolve({applications: [], status: true})
+                } else if (type === 'executive') {
+                  console.log('module: executive')
+                }
               }
-              // console.log(resp)
             })
             .catch( err => {
               reject(err)
               commit('clearCompanyApplication')
-              dispatch('getDefaultApplicationAdmin')
+              // dispatch('getDefaultApplicationAdmin')
               console.log(err)
               
             })

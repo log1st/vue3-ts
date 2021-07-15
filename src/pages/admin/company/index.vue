@@ -342,7 +342,7 @@ export default {
       ]),
 
         saveApplicationState () {
-          this.setUpdatedApplication(this.currentActiveAppProd)
+          this.setUpdatedApplication({prod_type_num: this.currentActiveAppProd, type: false})
         },
         /**
          * Открытие модального окна перевода средств
