@@ -2,7 +2,6 @@ import {socketURL} from "@/settings/config";
 
 export const socketPlugins = [
   store => {
-    return;
     store.socket = null;
     const connect = () => {
       store.commit('socket/setIsConnected', false);

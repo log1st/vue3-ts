@@ -5,7 +5,7 @@
     </div>
     <form
       v-if="isActive"
-      @submit.prevent="print"
+      @submit.prevent="print(false)"
       :class="[$style.form, $style[type]]"
     >
       <div :class="$style.documents">
@@ -66,7 +66,7 @@
         <Btn :state="['tertiary', 'vertical']" :class="$style.action" type="submit" prepend-icon="printer">
           Формирование и печать
         </Btn>
-        <Btn :state="['tertiary', 'vertical']" :class="$style.action" @click="signAndSend" prepend-icon="flash-drive" v-if="['judicial', 'pretrial'].includes(type)">
+        <Btn :state="['tertiary', 'vertical']" :class="$style.action" @click="print(true)" prepend-icon="flash-drive" v-if="['judicial'].includes(type)">
           Подписать и отправить по ЭЦП
         </Btn>
       </div>
@@ -196,7 +196,7 @@ export default defineComponent({
     onBeforeUnmount(() => {
       // printUnsubscribe && printUnsubscribe()
     });
-    const print = async () => {
+    const print = async (encrypt = false) => {
       if (!isActive.value) {
         return;
       }
@@ -226,6 +226,7 @@ export default defineComponent({
         params: props.allSelected ? {...props.filters, filters: props.filters} : {},
         data: {
           production_type: props.type,
+          encrypt,
           company_id: store.getters['getDefaultCompanyId'],
           debtor_ids: props.selectedItems || [props.selectedItem],
           ...(model.value.allPeriod ? {} : {
@@ -282,14 +283,6 @@ export default defineComponent({
       }
     }
 
-    const signAndSend = async () => {
-      if(!isActive.value) {
-        return;
-      }
-
-      emit('close')
-    }
-
     watch(services, s => {
       model.value.services = s.reduce((acc, {value}) => ({
         ...acc,
@@ -310,7 +303,6 @@ export default defineComponent({
 
       services,
 
-      signAndSend,
       print,
 
       isActive,

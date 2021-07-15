@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import {computed, defineComponent, provide, ref} from '@vue/composition-api';
+import {computed, defineComponent, provide, ref, watch} from '@vue/composition-api';
 import Tabs from "@/new/components/tabs/Tabs";
 import {useStore} from "@/new/hooks/useStore";
 import SelectInput from "@/new/components/selectInput/SelectInput";
@@ -92,6 +92,19 @@ export default defineComponent({
       company: defaultCompanyId.value,
       region: null,
     });
+
+    watch(computed(() => model.value.company), async id => {
+      if(!id) {
+        return;
+      }
+
+      model.value.region = (await axios({
+        method: 'get',
+        url: `${baseURL}/api/account/company-settings/${id}`
+      })).data.default_region
+    }, {
+      immediate: true,
+    })
 
     provide('globalModel', model);
 

@@ -3,11 +3,6 @@
     <div :class="$style.title">Сведения о характеристиках объекта недвижимости</div>
     <table :class="$style.table">
       <tbody>
-      <tr>
-        <th v-for="column in characteristicsColumns" :key="column.key">
-          {{column.label}}
-        </th>
-      </tr>
       <template  v-for="(characteristic, index) in characteristics">
         <tr :key="`${characteristic.id}-header`" v-if="index === 0">
           <td :colspan="characteristicsColumns.length">
@@ -22,7 +17,7 @@
                   <template v-if="characteristic.request_date">
                     {{characteristic.request_date}}
                   </template>
-                  <span :class="$style.na" v-else>N/A</span>
+                  <span :class="$style.na" v-else>Н/Д</span>
                 </div>
               </div>
               <div :class="$style.field">
@@ -31,11 +26,16 @@
                   <template v-if="characteristic.last_request_date">
                     {{characteristic.last_request_date}}
                   </template>
-                  <span :class="$style.na" v-else>N/A</span>
+                  <span :class="$style.na" v-else>Н/Д</span>
                 </div>
               </div>
             </div>
           </td>
+        </tr>
+        <tr v-if="index === 0">
+          <th v-for="column in characteristicsColumns" :key="column.key">
+            {{column.label}}
+          </th>
         </tr>
         <tr :key="`${characteristic.id}-data`">
           <td v-for="column in characteristicsColumns" :key="column.key">
@@ -43,12 +43,16 @@
               <template v-if="column.key.includes('date') && getDeepField(characteristic, column.key)">
                 {{formatDate(getDeepField(characteristic, column.key))}}
               </template>
+              <template v-else-if="column.key.includes('num_of_passport') && !!parseInt(getDeepField(characteristic, column.key))">
+                {{String(getDeepField(characteristic, column.key).replace(/[^\d]/g, '')).substr(0, 4)}}
+                {{String(getDeepField(characteristic, column.key).replace(/[^\d]/g, '')).substr(4)}}
+              </template>
               <template v-else>
                 {{getDeepField(characteristic, column.key)}}
               </template>
             </template>
             <span v-else :class="$style.na">
-              N/A
+              Н/Д
             </span>
           </td>
         </tr>
@@ -59,12 +63,7 @@
     <div :class="$style.title">Сведения о переходе прав объекта недвижимости</div>
     <table :class="$style.table">
       <tbody>
-      <tr>
-        <th v-for="column in ownersColumns" :key="column.key">
-          {{column.label}}
-        </th>
-      </tr>
-      <template v-for="group in owners">
+      <template v-for="(group, index) in owners">
         <tr :key="`${group.date_from}-header`">
           <td :colspan="ownersColumns.length">
             <div :class="$style.fields">
@@ -82,6 +81,11 @@
             </div>
           </td>
         </tr>
+        <tr v-if="index === 0">
+          <th v-for="column in ownersColumns" :key="column.key">
+            {{column.label}}
+          </th>
+        </tr>
         <tr v-for="owner in group.data" :key="`${group.date_from}-${owner.id}-data`">
           <td v-for="column in ownersColumns" :key="column.key">
             <template v-if="getDeepField(owner, column.key)">
@@ -93,7 +97,7 @@
               </template>
             </template>
             <span v-else :class="$style.na">
-            N/A
+            Н/Д
           </span>
           </td>
         </tr>

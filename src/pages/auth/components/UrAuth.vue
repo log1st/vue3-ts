@@ -1,5 +1,5 @@
 <template>
-        <form action="#" class="sign-in__form-inner" @submit.prevent="auth">
+        <form class="sign-in__form-inner" @submit.prevent="auth">
 
         <div class="sign-in__tab">
             <div class="tab-nav" role="tablist">
@@ -185,7 +185,8 @@
                 immediate: true,
                 handler (val) {
                     if (val === true) {
-                        this.$router.push({ path: '/' }).catch(()=>{});
+                      location.href = '/'
+                        // this.$router.push({ path: '/' }).catch(()=>{});
                     }
                 }
             }
