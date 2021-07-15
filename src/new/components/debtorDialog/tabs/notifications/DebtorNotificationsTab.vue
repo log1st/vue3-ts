@@ -31,6 +31,9 @@
                 <template v-if="['created_at', 'send_at'].includes(column.key)">
                   {{formatDate(getDeepField(document, column.key))}}
                 </template>
+                <template v-else-if="['status'].includes(column.key)">
+                  {{statuses[getDeepField(document, column.key)]}}
+                </template>
                 <template v-else>
                   {{getDeepField(document, column.key)}}
                 </template>
@@ -39,7 +42,7 @@
                 <Btn :class="$style.action" prepend-icon="megaphone" state="quinary" @click="listenSound(document)" v-if="activeTab.key === 'voice'"/>
               </div>
               <span v-else :class="$style.na">
-                N/A
+                Н/Д
               </span>
             </td>
           </tr>
@@ -75,7 +78,7 @@ export default {
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/sms/`,
           });
 
-          return response.data;
+          return response.data.reverse();
         }
       },
       {
@@ -87,7 +90,7 @@ export default {
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/voice/`,
           });
 
-          return response.data;
+          return response.data.reverse();
         }
       },
     ]));
@@ -153,6 +156,18 @@ export default {
           file,
         }
       })
+    };
+
+    const statuses = {
+      new: 'Новое',
+      send: 'Отправлено',
+      notsend: 'Не отправлено',
+      machine: 'Автоответчик',
+      delivered: 'Доставлено',
+      ready: 'Готово',
+      none: 'Отказ',
+      failed: 'Ошибка отправки',
+      unknown: 'Неизвестный',
     }
 
     return {
@@ -173,6 +188,8 @@ export default {
       getDeepField,
 
       listenSound,
+
+      statuses,
     }
   }
 }

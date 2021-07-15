@@ -52,7 +52,7 @@
             <template v-else-if="document[column.key] || document[column.key] === 0">
               {{document[column.key]}}
             </template>
-            <span v-else :class="$style.na">N/A</span>
+            <span v-else :class="$style.na">Н/Д</span>
           </td>
         </tr>
         </tbody>

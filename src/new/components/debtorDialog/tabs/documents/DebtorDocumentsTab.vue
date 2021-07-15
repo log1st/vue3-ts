@@ -39,7 +39,7 @@
         <tbody>
         <tr v-for="document in documents" :key="document.id">
           <td v-for="column in columns" :key="column.key">
-            <div :class="$style.actions" v-if="column.key === 'actions'">
+            <div :class="$style.actions" v-if="column.key === 'actions' && !['sms', 'voice'].includes(activeTab.key)">
               <Btn :class="$style.action" prepend-icon="eye" state="quinary" :url="document.file" target="_blank"/>
               <Btn :class="$style.action" prepend-icon="megaphone" state="quinary" @click="listenSound(document)" v-if="activeTab.key === 'voice'"/>
               <Btn :class="$style.action" prepend-icon="download" state="quinary" @click="downloadDocument(document.file)" v-else/>
@@ -54,7 +54,7 @@
                     {{document.operator && document.operator.name}}
                   </template>
                   <div :class="$style.na" v-else>
-                    N/A
+                    Н/Д
                   </div>
                 </template>
                 <template v-else-if="activeTab.key === 'common' && column.key === 'document_formation_date'">
@@ -93,11 +93,14 @@
                 <template v-else-if="['sms', 'voice'].includes(activeTab.key) && column.key === 'send_at'">
                   {{formatDateTime(document[column.key])}}
                 </template>
+                <template v-else-if="['sms', 'voice'].includes(activeTab.key) && column.key === 'status'">
+                  {{notifyStatuses[document[column.key]]}}
+                </template>
                 <template v-else>
                   {{document[column.key]}}
                 </template>
               </template>
-              <span v-else :class="$style.na">N/A</span>
+              <span v-else :class="$style.na">Н/Д</span>
             </template>
           </td>
         </tr>
@@ -234,7 +237,7 @@ export default defineComponent({
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/sms/`,
           });
 
-          return response.data;
+          return response.data.reverse();
         }
       },
       productionType.value === 'pretrial' && {
@@ -246,7 +249,7 @@ export default defineComponent({
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/voice/`,
           });
 
-          return response.data;
+          return response.data.reverse();
         }
       },
       productionType.value === 'executive' && {
@@ -309,7 +312,7 @@ export default defineComponent({
         ],
         sms: [
           {key: 'phone_number', label: 'Телефон'},
-          {key: 'status_text', label: 'Статус'},
+          {key: 'status', label: 'Статус'},
           {key: 'operator', label: 'Оператор'},
           {key: 'send_at', label: 'Отправено'},
           {key: 'status_at', label: 'Статус измненен в'},
@@ -318,7 +321,7 @@ export default defineComponent({
         ],
         voice: [
           {key: 'phone_number', label: 'Телефон'},
-          {key: 'status_text', label: 'Статус'},
+          {key: 'status', label: 'Статус'},
           {key: 'operator', label: 'Оператор'},
           {key: 'send_at', label: 'Отправено'},
           {key: 'status_at', label: 'Статус измненен в'},
@@ -470,6 +473,7 @@ export default defineComponent({
           payload.append('debtor', data.value.debtor.pk);
           payload.append('production_type', productionType.value);
           payload.append('document_formation_date', (new Date).toISOString());
+          payload.append('can_be_attached', 'true');
           await axios({
             method: 'post',
             url: `${baseURL}/documents/extract_house_book/`,
@@ -512,7 +516,19 @@ export default defineComponent({
       }
     }, {
       deep: true,
-    })
+    });
+
+    const notifyStatuses = {
+      new: 'Новое',
+     send: 'Отправлено',
+     notsend: 'Не отправлено',
+     machine: 'Автоответчик',
+     delivered: 'Доставлено',
+     ready: 'Готово',
+     none: 'Отказ',
+     failed: 'Ошибка отправки',
+     unknown: 'Неизвестный',
+    }
 
     return {
       selectHousebookDocuments,
@@ -535,6 +551,8 @@ export default defineComponent({
 
       downloadDocument,
       listenSound,
+
+      notifyStatuses,
     }
   }
 })

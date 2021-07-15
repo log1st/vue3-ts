@@ -146,7 +146,7 @@
         </template>
         <template v-else>
           <div :class="$style.na">
-            N/A
+            Н/Д
           </div>
         </template>
       </template>
@@ -156,7 +156,7 @@
         </template>
         <template v-else>
           <div :class="$style.na">
-            N/A
+            Н/Д
           </div>
         </template>
       </template>

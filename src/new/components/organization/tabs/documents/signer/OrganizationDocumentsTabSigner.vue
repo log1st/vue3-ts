@@ -14,7 +14,7 @@
           {{model[field]}}
         </template>
         <div :class="$style.na" v-else>
-          N/A
+          Н/Д
         </div>
       </div>
       <TextInput v-else v-model="model[field]" :placeholder="label" :class="$style.input"/>

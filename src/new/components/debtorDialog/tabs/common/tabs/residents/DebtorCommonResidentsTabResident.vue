@@ -61,7 +61,8 @@
             )
           ]" v-if="column.key === 'num_of_passport'">
             <template v-if="!!parseInt(model[column.key])">
-              {{model[column.key]}}
+              {{String(model[column.key].replace(/[^\d]/g, '')).substr(0, 4)}}
+              {{String(model[column.key].replace(/[^\d]/g, '')).substr(4)}}
               <TooltipWrapper v-if="model.num_of_passport" :class="$style.passportHint" position="top" align="center" :text="(
                 model.passport_is_invalid ? 'Паспорт недействителен' : (
                   model.passport_is_valid ? 'Паспорт подтверждён' : ('На проверке')
@@ -75,7 +76,7 @@
               </TooltipWrapper>
             </template>
             <span v-else :class="$style.na">
-              N/A
+              Н/Д
             </span>
           </span>
           <template v-else-if="model[column.key]">
@@ -92,7 +93,7 @@
               {{model[column.key]}}
             </template>
           </template>
-          <span :class="$style.na" v-else>N/A</span>
+          <span :class="$style.na" v-else>Н/Д</span>
         </template>
       </template>
     </td>

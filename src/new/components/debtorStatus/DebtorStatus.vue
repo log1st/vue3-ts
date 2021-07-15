@@ -5,7 +5,7 @@
     @click="$emit('click', $event)"
   >
     <div :class="$style.label">
-      {{computedStatus.label || 'N/A'}}
+      {{computedStatus.label || 'Н/Д'}}
     </div>
     <div :class="$style.hint" v-if="computedSubStatus">
       {{computedSubStatus}}

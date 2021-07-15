@@ -42,7 +42,7 @@
                 </template>
               </template>
               <span v-else :class="$style.na">
-            N/A
+            Н/Д
           </span>
             </td>
           </tr>
