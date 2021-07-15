@@ -277,9 +277,10 @@ export default {
           commit('clearCompanyApplication')
         },
 
-        setUpdatedApplication ({state, commit}, payload, type) {
+        setUpdatedApplication ({state, commit}, payload) {
           let prod_type;
-          switch (payload) {
+          const { prod_type_num, type } = payload
+          switch (prod_type_num) {
             case 0:
               prod_type = 'pretrial'
               break;
@@ -313,7 +314,7 @@ export default {
             .then (response => {
               resolve({status: true})
               commit('setCompanyApplication', response.data)
-              if (type) {
+              if (!type) {
                 this._vm.$toast.open({
                   message: `Приложения успешно сохранены`,
                   type: 'success',
@@ -358,8 +359,9 @@ export default {
                   arr.push(attachment[d])
                 }
               })
+              let param = { prod_type_num: payload, type: true }
               commit('addDefaultCompanyApplication', arr)
-              dispatch('setUpdatedApplication', payload, true)
+              dispatch('setUpdatedApplication', param)
               resolve({status: true})
             })
             .catch( err => {
