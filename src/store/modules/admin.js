@@ -277,7 +277,7 @@ export default {
           commit('clearCompanyApplication')
         },
 
-        setUpdatedApplication ({state, commit}, payload) {
+        setUpdatedApplication ({state, commit}, payload, type) {
           let prod_type;
           switch (payload) {
             case 0:
@@ -313,13 +313,15 @@ export default {
             .then (response => {
               resolve({status: true})
               commit('setCompanyApplication', response.data)
-              this._vm.$toast.open({
-                    message: `Приложения успешно сохранены`,
-                    type: 'success',
-                    duration: 5000,
-                    dismissible: true,
-                    position: 'top-right'
-              })
+              if (type) {
+                this._vm.$toast.open({
+                  message: `Приложения успешно сохранены`,
+                  type: 'success',
+                  duration: 5000,
+                  dismissible: true,
+                  position: 'top-right'
+                })
+              }
               console.log(response)
             })
             .catch (error => {
@@ -347,15 +349,17 @@ export default {
               const applicationKeys = Object.keys(response.attachments)
               let arr = []
               applicationKeys.forEach( d => {
-                attachment[d].is_active = true
-                attachment[d].is_show = true
-                attachment[d].type = d
-                attachment[d].company = state.checkedCompany.id
-                attachment[d].production_type = payload
-                arr.push(attachment[d])
+                if (d !== 'court_order') {
+                  attachment[d].is_active = true
+                  attachment[d].is_show = true
+                  attachment[d].type = d
+                  attachment[d].company = state.checkedCompany.id
+                  attachment[d].production_type = payload
+                  arr.push(attachment[d])
+                }
               })
               commit('addDefaultCompanyApplication', arr)
-              dispatch('setUpdatedApplication', payload)
+              dispatch('setUpdatedApplication', payload, true)
               resolve({status: true})
             })
             .catch( err => {
@@ -397,6 +401,7 @@ export default {
          */
         getCompanyApplication ( {dispatch, commit}, payload ) {
           const { id, type } = payload
+          commit('clearCompanyApplication')
           return new Promise ((resolve, reject) => {
             axios({
               url: baseURL+'/document_attachments/company/',
@@ -406,15 +411,16 @@ export default {
               },
               method: 'GET'
             })
-            .then( async resp => {
+            .then( resp => {
               let items = resp.data
+               console.log(items)
                if ( resp.data.length > 0) {
                 commit('setCompanyApplication', items)
                 resolve({applications: items, status: true})
               }
-             else if (resp.data.length === 0) {
-               await dispatch('getDefaultApplicationAdmin')
-               await dispatch('addDefaultApplicationToArray', type)
+              else if (resp.data.length === 0) {
+                dispatch('getDefaultApplicationAdmin')
+                dispatch('addDefaultApplicationToArray', type)
                 resolve({applications: items, status: true})
               }
               // console.log(resp)
