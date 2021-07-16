@@ -282,7 +282,6 @@ export default defineComponent({
             }
           }
         },
-        /*
         {
           key: 'judgment',
           label: 'Судебное решение',
@@ -293,6 +292,7 @@ export default defineComponent({
             }
           }
         },
+        /*
         {
           key: 'housebook',
           label: 'Выписка из домовой книги',
