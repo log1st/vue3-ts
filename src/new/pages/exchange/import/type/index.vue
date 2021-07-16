@@ -6,7 +6,9 @@
       <div :class="$style.body">
         <div :class="$style.content">
           <div :class="$style.header">
-            <SelectInput state="year" v-if="['executive', 'judicial', 'pretrial'].includes(type)" v-model="model.year" placeholder="Год" :options="years" :class="$style.year"/>
+            <SelectInput state="year"
+                         v-if="['executive', 'judicial', 'pretrial'].includes(type) && (model.mode === 'table')"
+                         v-model="model.year" placeholder="Год" :options="years" :class="$style.year"/>
             <div :class="[$style.tab, $style.active]">Загрузить файлы</div>
             <div :class="[$style.tab, $style.disabled]">Интеграция по API</div>
           </div>
@@ -185,6 +187,9 @@ export default {
         },
         'payment-order': {
           title: 'Загрузить платёжные поручения',
+        },
+        'judgment': {
+          title: 'Загрузить судебные решения',
         },
       }[props.type]
     }));
@@ -369,7 +374,8 @@ export default {
                 year: model.value.year,
               } : {
                 task_uuid: {
-                  'payment-order': '0574d4db-7cfa-42f0-be4e-0029302e8bf1'
+                  'payment-order': '0574d4db-7cfa-42f0-be4e-0029302e8bf1',
+                  'judgment': '193ee6a2-f1c7-4437-a804-7f00ee29ae10',
                 }[props.type]
               }),
             },
