@@ -39,7 +39,7 @@
         <tbody>
         <tr v-for="document in documents" :key="document.id">
           <td v-for="column in columns" :key="column.key">
-            <div :class="$style.actions" v-if="column.key === 'actions' && !['sms', 'voice'].includes(activeTab.key)">
+            <div :class="$style.actions" v-if="column.key === 'actions' && !['voice'].includes(activeTab.key)">
               <Btn :class="$style.action" prepend-icon="eye" state="quinary" :url="document.file" target="_blank"/>
               <Btn :class="$style.action" prepend-icon="megaphone" state="quinary" @click="listenSound(document)" v-if="activeTab.key === 'voice'"/>
               <Btn :class="$style.action" prepend-icon="download" state="quinary" @click="downloadDocument(document.file)" v-else/>
