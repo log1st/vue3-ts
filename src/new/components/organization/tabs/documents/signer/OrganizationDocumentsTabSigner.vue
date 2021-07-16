@@ -19,11 +19,11 @@
       </div>
       <TextInput v-else v-model="model[field]" :placeholder="label" :class="$style.input"/>
     </div>
-    <DocumentField :is-editable="isEditing" :file.sync="model.file" :class="$style.document"/>
+    <DocumentField :is-editable="isEditing" :name.sync="model.name" :file.sync="model.file" :class="$style.document"/>
     <div :class="$style.actions">
       <Btn :class="$style.action" @click="toggleEditing" state="quaternary" label="Редактировать" v-if="!isEditing" />
-      <Btn :class="$style.action" @click="stopEditing" state="secondary" label="Отмена" v-if="isEditing" />
-      <Btn :class="$style.action" state="primary" type="submit" label="Сохранить" v-if="isEditing" />
+      <Btn :class="$style.action" @click="stopEditing" state="secondary" label="Отмена" v-if="isEditing && false" />
+      <Btn :class="$style.action" state="primary" type="submit" label="Сохранить" v-if="isEditing && false" />
     </div>
   </form>
 </template>
@@ -44,12 +44,12 @@ export default {
     modelValue: Object,
   },
   setup(props, {emit}) {
-    const model = ref({...props.modelValue});
+    const model = ref(props.modelValue);
     watch(computed(() => props.modelValue), newModel => {
-      model.value = {...newModel}
+      model.value = props.modelValue
     }, {
       immediate: true,
-    })
+    });
 
     const isEditing = ref(false);
     const toggleEditing = async () => {
@@ -66,6 +66,8 @@ export default {
       emit('update:modelValue', model.value);
       isEditing.value = false;
     }
+
+    watch(model, submit);
 
     return {
       model,

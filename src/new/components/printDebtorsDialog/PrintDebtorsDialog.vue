@@ -60,7 +60,7 @@
           <DateInput :with-days="false" auto-day="first" v-model="model.from" :is-disabled="model.allPeriod" placeholder="С" />
           <DateInput :with-days="false" auto-day="last" v-model="model.to" :is-disabled="model.allPeriod" placeholder="По" />
         </div>
-        <Checkbox v-if="type === 'judicial'" :class="$style.moratorium" v-model="model.moratorium_enabled" state="switch" label="Мораторий расчёта пени"/>
+        <Checkbox :class="$style.moratorium" v-model="model.moratorium_enabled" state="switch" label="Мораторий расчёта пени"/>
       </div>
       <div :class="$style.actions">
         <Btn :state="['tertiary', 'vertical']" :class="$style.action" type="submit" prepend-icon="printer">
@@ -272,7 +272,9 @@ export default defineComponent({
           component: 'downloadFile',
           payload: {
             title: 'Работа с документами',
-            url: file_pdf
+            url: file_pdf,
+            withPreview: !encrypt,
+            withCopy: !encrypt,
           }
         })
       } catch (e) {

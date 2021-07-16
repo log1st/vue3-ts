@@ -73,9 +73,10 @@ export default defineComponent({
   components: {Btn},
   setup() {
     const data = inject('data');
+    const productionType = inject('productionType');
 
     const tabs = computed(() => ([
-      {
+      productionType.value !== 'executive' && {
         key: 'accruals',
         label: 'Начислено',
         async fetch() {
@@ -84,6 +85,13 @@ export default defineComponent({
             date: record.date,
             amount: record.value,
           }))
+        }
+      },
+      productionType.value === 'executive' && {
+        key: 'accruals',
+        label: 'Общая сумма задолженности',
+        async fetch() {
+          return data.value.accruals;
         }
       },
       {
@@ -97,21 +105,21 @@ export default defineComponent({
           }));
         }
       },
-      {
+      productionType.value !== 'executive' && {
         key: 'debts',
         label: 'Задолженность',
         async fetch() {
           return data.value.debts_data;
         }
       },
-      {
+      productionType.value !== 'executive' && {
         key: 'penalties',
         label: 'Пеня',
         async fetch() {
           return data.value.penalties_data;
         }
       },
-    ]));
+    ].filter(Boolean)));
 
     const activeTab = ref(tabs.value[0]);
     const selectTab = tab => {

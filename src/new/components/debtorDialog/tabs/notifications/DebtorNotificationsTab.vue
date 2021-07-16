@@ -90,7 +90,7 @@ export default {
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/voice/`,
           });
 
-          return response.data.reverse();
+          return response.data;
         }
       },
     ]));

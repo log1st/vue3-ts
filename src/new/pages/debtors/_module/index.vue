@@ -240,7 +240,7 @@ export default defineComponent({
         || payload.selectedItem > -1
       await showDialog({
         component: 'printDebtors',
-        isWide: !!isActive,
+        isWide: !!isActive && (type.value !== 'executive'),
         payload: {
           ...payload,
           type: type.value,
@@ -1173,7 +1173,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        false && type.value === 'executive' && {
+        type.value === 'executive' && {
           key: 'fns',
           label: 'Выписка из ФНС',
           icon: 'fns',
@@ -1187,7 +1187,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        false && type.value === 'executive' && {
+        type.value === 'executive' && {
           key: 'bank',
           label: 'Запрос в банк',
           icon: 'bank',

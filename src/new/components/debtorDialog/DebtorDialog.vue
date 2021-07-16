@@ -44,6 +44,7 @@ import DebtorDocumentsTab from "@/new/components/debtorDialog/tabs/documents/Deb
 import DebtorFinanceTab from "@/new/components/debtorDialog/tabs/finance/DebtorFinanceTab";
 import DebtorCourtsTab from "@/new/components/debtorDialog/tabs/courts/DebtorCourtsTab";
 import DebtorNotificationsTab from "@/new/components/debtorDialog/tabs/notifications/DebtorNotificationsTab";
+import DebtorExecutionsTab from "@/new/components/debtorDialog/tabs/executions/DebtorExecutionsTab";
 
 export default defineComponent({
   name: "DebtorDialog",
@@ -124,10 +125,16 @@ export default defineComponent({
         component: DebtorCourtsTab,
       },
       type.value === 'pretrial' && {
-        key: 'notificaitons',
+        key: 'notifications',
         label: 'Карточка уведомлений',
         icon: 'bell',
         component: DebtorNotificationsTab,
+      },
+      type.value === 'executive' && {
+        key: 'executions',
+        label: 'Справочник ИП',
+        icon: 'guard',
+        component: DebtorExecutionsTab,
       },
       /*{
         key: 'history',
