@@ -80,10 +80,12 @@ export default {
       {
         key: 'main',
         async fetch() {
-          return data.value.debtor.writs_of_execution.map((i, __index) => ({
-            ...i,
-            __index,
-          }))
+          const response = await axios({
+            url: `${baseURL}/executive/debtor/${data.value.debtor.pk}/fssp/`,
+
+          })
+
+          return response.data.results;
         }
       },
     ]));
@@ -96,14 +98,13 @@ export default {
     const columns = computed(() => ([
       ...([
         {key: '__index', label: '№'},
-        {key: 'serial_number', label: '№ ИП'},
-        {key: 'case_number', label: 'Номер исполнительного документа'},
-        {key: 'case_date', label: 'Дата исполнительного документа'},
-        {key: 'start_date', label: 'Дата возбуждения ИП'},
+        {key: 'production_number', label: '№ ИП'},
+        {key: 'docnum', label: 'Номер исполнительного документа'},
+        {key: 'production_date', label: 'Дата возбуждения ИП'},
         {key: 'end_date', label: 'Дата прекращения ИП'},
-        {key: 'termination_ground', label: 'Основания прекращения ИП'},
-        {key: 'bailiff_full_name', label: 'ФИО судебного пристава'},
-        {key: 'bailiff_phone_number', label: 'Номер телефона'},
+        {key: 'end_reason1', label: 'Основания прекращения ИП'},
+        {key: 'amount', label: 'Сумма'},
+        {key: 'bailiff', label: 'ФИО пристава'},
       ]),
     ]));
 
