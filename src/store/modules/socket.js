@@ -9,7 +9,7 @@ export const socketPlugins = [
       store.socket = null;
 
       let connection = new WebSocket(
-        `${socketURL}/rosreestr/status/`
+        `${socketURL}/ws/`
       )
 
       connection.addEventListener('message', e => {

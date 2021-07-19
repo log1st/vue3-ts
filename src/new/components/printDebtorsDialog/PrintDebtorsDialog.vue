@@ -263,7 +263,6 @@ export default defineComponent({
             2: {status: true, error: true},
           }[status] || {status: false});
         },
-        1000,
       );
 
       printUnsubscribe = unsubscribe;

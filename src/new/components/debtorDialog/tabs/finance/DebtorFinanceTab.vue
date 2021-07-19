@@ -88,7 +88,7 @@ export default defineComponent({
         }
       },
       productionType.value === 'executive' && {
-        key: 'accruals',
+        key: 'debts',
         label: 'Общая сумма задолженности',
         async fetch() {
           return data.value.accruals;

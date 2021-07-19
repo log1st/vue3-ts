@@ -89,12 +89,12 @@ export default {
       ...([
         {key: '__index', label: '№'},
         {key: 'id', label: 'Идентификатор дела'},
-        {key: 'id', label: 'Дата возбуждения ИП'},
-        {key: 'id', label: 'Реквизиты исполнительного документа'},
-        {key: 'id', label: 'Дата прекращения ИП'},
-        {key: 'id', label: 'Основания прекращения ИП'},
-        {key: 'id', label: 'Статус оплаты'},
-        {key: 'id', label: 'История статусов'},
+        {key: 'start_date', label: 'Дата возбуждения ИП'},
+        {key: 'document', label: 'Реквизиты исполнительного документа'},
+        {key: 'end_date', label: 'Дата прекращения ИП'},
+        {key: 'reason', label: 'Основания прекращения ИП'},
+        {key: 'payment_status', label: 'Статус оплаты'},
+        {key: 'statuses_history', label: 'История статусов'},
       ]),
     ]));
 

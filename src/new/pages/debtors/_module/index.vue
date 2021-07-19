@@ -433,7 +433,6 @@ export default defineComponent({
               return {status: false}
             }
           },
-          1000,
         );
 
         sendUnsubscribe = unsubscribe;
@@ -1009,6 +1008,11 @@ export default defineComponent({
           width: 281,
         },
         type.value === 'executive' && {
+          field: 'number_case',
+          label: '№ Дела',
+          width: 281
+        },
+        type.value === 'executive' && {
           field: 'number',
           label: '№ ИП',
           width: 281
@@ -1173,7 +1177,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        type.value === 'executive' && {
+        false && type.value === 'executive' && {
           key: 'fns',
           label: 'Выписка из ФНС',
           icon: 'fns',
@@ -1187,7 +1191,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        type.value === 'executive' && {
+        false && type.value === 'executive' && {
           key: 'bank',
           label: 'Запрос в банк',
           icon: 'bank',
