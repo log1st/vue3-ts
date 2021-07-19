@@ -9,8 +9,13 @@ export const useRouter = () => {
     await router.push(where)
   }
 
+  const go = async (where) => {
+    router.go(where)
+  }
+
   return {
     currentRouter,
     redirect,
+    go,
   }
 }

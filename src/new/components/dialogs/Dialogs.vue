@@ -44,7 +44,6 @@ export default defineComponent({
     }
 
     const onEsc = (e) => {
-      console.log(e);
       if(e.key === 'Escape' && dialogs.value.length) {
         hideDialogById(dialogs.value[dialogs.value.length - 1].id);
       }

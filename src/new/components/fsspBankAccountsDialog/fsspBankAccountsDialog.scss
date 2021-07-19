@@ -1,0 +1,117 @@
+.owners {
+}
+
+.title {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: 0.04em;
+  color: #000000;
+
+  &:not(:first-child) {
+    margin-top: 55px;
+  }
+}
+
+.table {
+  flex-grow: 1;
+
+  align-self: normal;
+
+  th,
+  td {
+    &:first-child {
+      padding-left: 0;
+    }
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+
+  tbody {
+    th {
+      text-align: left;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 15px;
+      letter-spacing: 0.04em;
+      color: #000000;
+      padding: 0 10px 22.5px;
+    }
+
+    td {
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 15px;
+      letter-spacing: 0.04em;
+      color: #333333;
+      padding: 10px 10px;
+      min-width: 100px;
+    }
+  }
+
+  tfoot {
+    th {
+      padding: 0 10px;
+    }
+  }
+}
+
+.na {
+  font-weight: 300;
+  font-style: italic;
+  opacity: .6;
+}
+
+.fields {
+  display: flex;
+  align-items: center;
+  padding: 0 0 30px;
+}
+
+.field {
+  &:not(:first-child) {
+    margin-left: 60px;
+  }
+
+  display: flex;
+  align-items: center;
+}
+
+.fieldLabel {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  letter-spacing: 0.02em;
+  color: #000000;
+}
+
+.fieldValue {
+  margin-left: 17px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  letter-spacing: 0.02em;
+  color: #4F4F4F;
+}
+
+
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+.action {
+  height: 35px;
+  width: 35px;
+
+  &:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  &:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}

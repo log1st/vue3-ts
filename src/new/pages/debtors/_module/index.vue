@@ -150,9 +150,19 @@
           </div>
         </template>
       </template>
-      <template #cell(ended_at)="{record}" v-if="type === 'executive'">
-        <template v-if="record.ended_at">
-          {{formatDate(record.ended_at)}}
+      <template #cell(debtor.writs_of_execution.0.start_date)="{record}" v-if="type === 'executive'">
+        <template v-if="record.debtor.writs_of_execution[0].start_date">
+          {{formatDbDate(record.debtor.writs_of_execution[0].start_date)}}
+        </template>
+        <template v-else>
+          <div :class="$style.na">
+            Н/Д
+          </div>
+        </template>
+      </template>
+      <template #cell(debtor.writs_of_execution.0.end_date)="{record}" v-if="type === 'executive'">
+        <template v-if="record.debtor.writs_of_execution[0].end_date">
+          {{formatDbDate(record.debtor.writs_of_execution[0].end_date)}}
         </template>
         <template v-else>
           <div :class="$style.na">
@@ -194,7 +204,7 @@ import JudicialDebtorsAutomatizingDialog
 import PretrialDebtorsAutomatizingDialog
   from "@/new/components/pretrialDebtorsAutomatizingDialog/PretrialDebtorsAutomatizingDialog";
 import {useToast} from "@/new/hooks/useToast";
-import {formatDate} from "@/new/utils/date";
+import {formatDate, formatDbDate} from "@/new/utils/date";
 import {usePersistedSetting} from "@/new/hooks/usePersistedSetting";
 import {useStore} from "@/new/hooks/useStore";
 // @TODO: remove
@@ -1008,23 +1018,28 @@ export default defineComponent({
           width: 281,
         },
         type.value === 'executive' && {
-          field: 'number_case',
+          field: 'debtor.writs_of_execution.0.case_number',
           label: '№ Дела',
           width: 281
         },
         type.value === 'executive' && {
-          field: 'number',
+          field: 'debtor.writs_of_execution.0.serial_number',
           label: '№ ИП',
           width: 281
         },
         type.value === 'executive' && {
-          field: 'started_at',
+          field: 'debtor.writs_of_execution.0.start_date',
           label: 'Дата возбуждения ИП',
           width: 281
         },
         type.value === 'executive' && {
-          field: 'ended_at',
+          field: 'debtor.writs_of_execution.0.end_date',
           label: 'Дата окончания ИП',
+          width: 281
+        },
+        type.value === 'executive' && {
+          field: 'debtor.writs_of_execution.0.bailiff_full_name',
+          label: 'ФИО пристава',
           width: 281
         },
         ['pretrial', 'judicial'].includes(type.value) && {
@@ -1241,6 +1256,7 @@ export default defineComponent({
 
       formatMoney,
       formatDate,
+      formatDbDate,
 
       summaries,
       summariesFields,

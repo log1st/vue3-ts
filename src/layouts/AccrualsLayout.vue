@@ -1,6 +1,6 @@
 <template>
   <div class="accruals">
-    <slot/>
+    <router-view/>
   </div>
 </template>
 

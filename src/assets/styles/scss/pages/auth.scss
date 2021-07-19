@@ -61,7 +61,7 @@ body {
     }
 
     .sign-in {
-   
+
         text-align: right;
         padding: 20px;
         background-position: left bottom;
@@ -88,7 +88,7 @@ body {
             font-weight: 700;
             color: #fff;
             font-size: 24px;
-        
+
             letter-spacing: 0.04em;
             margin: 20px 0 40px;
         }
@@ -203,13 +203,13 @@ body {
         }
         .loader-finish{
             .logo{
-               
+
                 opacity: 0;
             }
             &.active{
-               
+
                 .logo{
-                   
+
                     animation: opacity 3s ease-in 0s 1 forwards;
                 }
             }
@@ -252,32 +252,7 @@ body {
             margin: 0 auto 5px;
         }
     }
-    
-    .custom-input {
-        font-weight: 500;
-        font-size: 12px;
-        outline: none;
-        color: #828282;
-        background-color: transparent;
-        padding: 10px;
-        width: 100%;
-        border-width: 0 0 1px 0;
-        border-color: #bdbdbd;
-        border-style: solid;
-        &.error {
-            border-color: #ff7d7d;
-        }   
-    }
-    .error-text {
-        font-weight: 500;
-        color: #ff7d7d;
-        text-align: left;
-        display: block;
-        padding: 3px 10px 0;
-        &.empty {
-            height: 17px;
-        }
-    }
+
     .toggle-password {
         position: absolute;
         top: 50%;
@@ -291,56 +266,7 @@ body {
             color: #495CFF;
         }
     }
-    .checkbox-custom {
-        &__input {
-            display: none;
-            &:checked {
-                + .checkbox-custom__label::before {
-                    transform: scale(1);
-                }
-                + .checkbox-custom__label::after {
-                    background-color: #cbd0e7;
-                }
-            }
-        }
-        &__label {
-            position: relative;
-            padding-left: 25px;
-            color: var(--text-color);
-            a {
-                color: inherit;
-                text-decoration: underline;
-            }
-            &::after,
-            &::before {
-                content: "";
-                position: absolute;
-            }
-            &::after {
-                top: 0;
-                left: 0;
-                width: 15px;
-                height: 15px;
-                border-radius: 3px;
-                background-color: #d2d2d2;
-                transition: background-color 0.1s linear;
-                cursor: pointer;
-            }
-            &::before {
-                width: 9px;
-                height: 9px;
-                border-radius: 9px;
-                background-color: #21317a;
-                top: 3px;
-                left: 3px;
-                z-index: 2;
-                transform: scale(0);
-                transition: transform 0.19s linear;
-            }
-        }
-    }
 
-    
     .tab {
         &-nav {
             margin: 0 -30px;
@@ -393,7 +319,7 @@ body {
             }
         }
 
-       
+
     }
 
     .forgot {
@@ -405,7 +331,7 @@ body {
                 text-decoration: none;
             }
         }
-        
+
         &-form {
             display: none;
             &.active {
@@ -464,7 +390,7 @@ align-items: center;
         background-size: 100% auto;
         padding: 0 10px 35px;
     }
-    
+
 }
 @media screen and (max-width: 430px) {
     .sign-in__welcome{

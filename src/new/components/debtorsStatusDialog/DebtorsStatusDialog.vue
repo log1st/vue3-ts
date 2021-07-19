@@ -24,8 +24,17 @@
           :class="$style.field"
           is-disabled
         />
-        <TextInput v-model="model.substatus" placeholder="Подстатус" :class="[$style.field, $style.primaryField]"/>
-        <TextInput v-model="model.substatus_label" placeholder="Комментарий" :class="$style.field" type="textarea" :rows="5"/>
+        <template v-for="(newSub, index) in model.newSubstatuses">
+          <TextInput
+            :key="`new-${index}`"
+            v-model="model.newSubstatuses[index].substatus" placeholder="Подстатус" :class="[$style.field, $style.primaryField]"
+          />
+          <TextInput
+            :key="`newLabel-${index}`"
+            v-model="model.newSubstatuses[index].substatus_label" placeholder="Комментарий" :class="$style.field" type="textarea" :rows="5"
+          />
+        </template>
+        <Btn @click="addNewSubstatus" :class="$style.addSubstatus" label="Добавить подстатус"/>
       </template>
       <template v-else>
         <SelectInput
@@ -78,11 +87,20 @@ export default defineComponent({
       pretrialSubStatuses,
     } = useDicts();
 
+    const getNewSubstatus = () => ({substatus: '', substatus_label: ''});
+
     const model = ref({
       status: null,
       substatus: '',
       substatusLabel: '',
+      newSubstatuses: [
+        getNewSubstatus(),
+      ],
     });
+
+    const addNewSubstatus = () => {
+      model.value.newSubstatuses.push(getNewSubstatus())
+    }
 
     const debtor = ref();
     const substatusesList = ref();
@@ -116,49 +134,131 @@ export default defineComponent({
       }
 
       if(props.allSelected || props.selectedItems?.length) {
-        await Promise.all((props.selectedItems || []).map(status => new Promise(resolve => {
-          axios({
-            method: 'post',
-            url: `${baseURL}/debtor_status/`,
-            params: props.allSelected ? {...props.filters, filters: props.filters} : {},
-            data: {
-              ...(props.allSelected ? {
-                filters: props.filters,
-                ...props.filters,
-              } : {}),
+        await Promise.all((props.selectedItems || []).map(debtorId => new Promise(async resolve => {
+          if(model.value.status === 'other') {
+            await Promise.all(model.value.newSubstatuses.map(newSub => new Promise(res => {
+              if(props.type === 'pretrial') {
+                axios({
+                  method: 'post',
+                  url: `${baseURL}/pretrial/company/${store.getters['getDefaultCompanyId']}/debtor_status/`,
+                  data: {
+                    status: model.value.status,
+                    substatus: model.value.newSubstatuses,
+                    ...(props.allSelected ? {
+                      filters: props.filters,
+                      ...props.filters,
+                    } : {
+                      debtors: [debtorId],
+                    }),
+                  }
+                }).then(res);
+              } else {
+                axios({
+                  method: 'post',
+                  url: `${baseURL}/debtor_status/`,
+                  params: props.allSelected ? {...props.filters, filters: props.filters} : {},
+                  data: {
+                    ...(props.allSelected ? {
+                      filters: props.filters,
+                      ...props.filters,
+                    } : {}),
 
-              status: model.value.status,
+                    [{
+                      judicial: 'status',
+                      pretrial: 'pretrial_status',
+                    }[props.type]]: model.value.status,
 
-              production_type: props.type,
+                    production_type: props.type,
 
-              debtor: debtor.value || status,
+                    debtor: debtor.value || debtorId,
 
-              company_id: store.getters['getDefaultCompanyId'],
+                    company_id: store.getters['getDefaultCompanyId'],
 
-              ...(model.value.status === 'other' ? {
-                new_substatus: model.value.substatus,
-                new_substatus_label: model.value.substatusLabel,
-              } : {})
-            }
-          }).then(resolve)
+                    new_substatus: newSub.substatus,
+                    new_substatus_label: newSub.substatusLabel,
+                  }
+                }).then(res)
+              }
+            })))
+          } else {
+            axios({
+              method: 'post',
+              url: `${baseURL}/debtor_status/`,
+              params: props.allSelected ? {...props.filters, filters: props.filters} : {},
+              data: {
+                ...(props.allSelected ? {
+                  filters: props.filters,
+                  ...props.filters,
+                } : {}),
+
+                status: model.value.status,
+
+                production_type: props.type,
+
+                debtor: debtor.value || debtorId,
+
+                company_id: store.getters['getDefaultCompanyId'],
+
+                ...(model.value.status === 'other' ? {
+                  new_substatus: model.value.substatus,
+                  new_substatus_label: model.value.substatus_label,
+                } : {})
+              }
+            }).then(resolve)
+          }
         })))
       } else {
-        await axios({
-          method: 'post',
-          url: `${baseURL}/debtor_status/`,
-          data: {
-            status: model.value.status,
-            debtor: debtor.value,
-            company_id: store.getters['getDefaultCompanyId'],
+        if(model.value.status === 'other') {
+          if(props.type === 'pretrial') {
+            await axios({
+              method: 'post',
+              url: `${baseURL}/pretrial/company/${store.getters['getDefaultCompanyId']}/debtor_status/`,
+              data: {
+                status: model.value.status,
+                substatus: model.value.newSubstatuses.map(({substatus, substatus_label}) => ({
+                  substatus,
+                  data: substatus_label,
+                })),
+                ...(props.allSelected ? {
+                  filters: props.filters,
+                  ...props.filters,
+                } : {
+                  debtors: [props.selectedItem],
+                }),
+              }
+            })
+          } else {
+            await Promise.all(model.value.newSubstatuses.map(newSub => new Promise(res => {
+              axios({
+                method: 'post',
+                url: `${baseURL}/debtor_status/`,
+                params: props.allSelected ? {...props.filters, filters: props.filters} : {},
+                data: {
+                  status: model.value.status,
+                  debtor: debtor.value,
+                  company_id: store.getters['getDefaultCompanyId'],
 
-            production_type: props.type,
+                  production_type: props.type,
 
-            ...(model.value.status === 'other' ? {
-              new_substatus: model.value.substatus,
-              new_substatus_label: model.value.substatusLabel,
-            } : {})
+                  new_substatus: newSub.substatus,
+                  new_substatus_label: newSub.substatus_label,
+                }
+              }).then(res)
+            })))
           }
-        })
+        } else {
+          await axios({
+            method: 'post',
+            url: `${baseURL}/debtor_status/`,
+            data: {
+              status: model.value.status,
+              debtor: debtor.value,
+              company_id: store.getters['getDefaultCompanyId'],
+
+              production_type: props.type,
+            }
+          })
+        }
       }
       emit('close')
     }
@@ -184,6 +284,8 @@ export default defineComponent({
 
       isActive,
       substatusesList,
+
+      addNewSubstatus,
     }
   }
 });
