@@ -886,19 +886,37 @@ export default defineComponent({
           width: 2,
         },
         type.value === 'pretrial' && {
-          field: 'sms_status',
+          field: 'pretrial_substatus',
           type: 'select',
           props: {
             placeholder: 'SMS-уведомление',
-            options: smsNotificationStatuses.value,
+            options: [
+              {
+                value: 'sms_sent',
+                label: 'Отправлено',
+              },
+              {
+                value: '!sms_sent',
+                label: 'Не отправлено',
+              },
+            ],
           },
         },
         type.value === 'pretrial' && {
-          field: 'voice_status',
+          field: 'pretrial_substatus',
           type: 'select',
           props: {
             placeholder: 'Голосовое уведомление',
-            options: voiceNotificationStatuses.value,
+            options: [
+              {
+                value: 'voice_sent',
+                label: 'Отправлено',
+              },
+              {
+                value: '!voice_sent',
+                label: 'Не отправлено',
+              },
+            ],
           },
         },
         type.value === 'judicial' && {
