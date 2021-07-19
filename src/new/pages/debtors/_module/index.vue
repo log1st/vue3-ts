@@ -847,6 +847,14 @@ export default defineComponent({
           },
         },
         {
+          field: 'phone_number',
+          type: 'text',
+          width: 2,
+          props: {
+            placeholder: 'Номер телефона',
+          },
+        },
+        {
           field: 'personal_account',
           type: 'text',
           width: 2,
@@ -1005,6 +1013,7 @@ export default defineComponent({
           field: 'phone_number',
           label: 'Телефон',
           width: 214,
+          isSortable: true,
         },
         {
           field: 'full_name',
