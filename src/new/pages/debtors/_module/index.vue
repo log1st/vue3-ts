@@ -151,7 +151,7 @@
         </template>
       </template>
       <template #cell(debtor.writs_of_execution.0.start_date)="{record}" v-if="type === 'executive'">
-        <template v-if="record.debtor.writs_of_execution[0].start_date">
+        <template v-if="record.debtor.writs_of_execution[0] && record.debtor.writs_of_execution[0].start_date">
           {{formatDbDate(record.debtor.writs_of_execution[0].start_date)}}
         </template>
         <template v-else>
@@ -161,7 +161,7 @@
         </template>
       </template>
       <template #cell(debtor.writs_of_execution.0.end_date)="{record}" v-if="type === 'executive'">
-        <template v-if="record.debtor.writs_of_execution[0].end_date">
+        <template v-if="record.debtor.writs_of_execution[0] && record.debtor.writs_of_execution[0].end_date">
           {{formatDbDate(record.debtor.writs_of_execution[0].end_date)}}
         </template>
         <template v-else>
