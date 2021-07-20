@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import {computed, getCurrentInstance, inject, ref, watch} from "@vue/composition-api";
+import {computed, getCurrentInstance, inject, onBeforeUnmount, ref, watch} from "@vue/composition-api";
 import TextInput from "@/new/components/textInput/TextInput";
 import FilterConfig from "@/new/components/filter/FilterConfig";
 import {getDeepField} from "@/new/utils/object";
@@ -296,6 +296,35 @@ export default {
       await new Promise(requestAnimationFrame);
       model.value[key] = model.value.legal_address
     }
+
+    let bicTimeout;
+    onBeforeUnmount(() => {
+      clearTimeout(bicTimeout);
+    })
+    watch(computed(() => model.value.bic), bic => {
+      clearTimeout(bicTimeout);
+      model.value.full_name_bank = '';
+      model.value.kor_schet = '';
+      if((bic || '').length !== 9) {
+        return;
+      }
+      bicTimeout = setTimeout(async () => {
+        const {data: [bank]} = await axios({
+          method: 'post',
+          url: `${baseURL}/lookup/bik/`,
+          data: {
+            bik: bic,
+          }
+        });
+        if(!bank) {
+          return;
+        }
+        model.value.full_name_bank = bank.value;
+        model.value.kor_schet = bank.data.correspondent_account;
+      }, 250)
+    }, {
+      immediate: true,
+    })
 
     return {
       model,

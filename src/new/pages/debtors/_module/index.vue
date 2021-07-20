@@ -151,7 +151,7 @@
         </template>
       </template>
       <template #cell(debtor.writs_of_execution.0.start_date)="{record}" v-if="type === 'executive'">
-        <template v-if="record.debtor.writs_of_execution[0].start_date">
+        <template v-if="record.debtor.writs_of_execution[0] && record.debtor.writs_of_execution[0].start_date">
           {{formatDbDate(record.debtor.writs_of_execution[0].start_date)}}
         </template>
         <template v-else>
@@ -161,7 +161,7 @@
         </template>
       </template>
       <template #cell(debtor.writs_of_execution.0.end_date)="{record}" v-if="type === 'executive'">
-        <template v-if="record.debtor.writs_of_execution[0].end_date">
+        <template v-if="record.debtor.writs_of_execution[0] && record.debtor.writs_of_execution[0].end_date">
           {{formatDbDate(record.debtor.writs_of_execution[0].end_date)}}
         </template>
         <template v-else>
@@ -894,19 +894,37 @@ export default defineComponent({
           width: 2,
         },
         type.value === 'pretrial' && {
-          field: 'sms_status',
+          field: 'has_sms',
           type: 'select',
           props: {
             placeholder: 'SMS-уведомление',
-            options: smsNotificationStatuses.value,
+            options: [
+              {
+                value: 'true',
+                label: 'Отправлено',
+              },
+              {
+                value: 'false',
+                label: 'Не отправлено',
+              },
+            ],
           },
         },
         type.value === 'pretrial' && {
-          field: 'voice_status',
+          field: 'has_voice',
           type: 'select',
           props: {
             placeholder: 'Голосовое уведомление',
-            options: voiceNotificationStatuses.value,
+            options: [
+              {
+                value: 'true',
+                label: 'Отправлено',
+              },
+              {
+                value: 'false',
+                label: 'Не отправлено',
+              },
+            ],
           },
         },
         type.value === 'judicial' && {
