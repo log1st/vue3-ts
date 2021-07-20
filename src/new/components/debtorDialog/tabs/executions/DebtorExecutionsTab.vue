@@ -158,8 +158,8 @@ export default {
         payload: {
           isEditable: false,
           model: {
-            name: 'Пример имени',
-            address: 'Пример адреса',
+            name: data.value.debtor_main_profile.bailiff?.name,
+            address: data.value.debtor_main_profile.bailiff?.address,
           },
           fields: [
             {key: 'name', label: 'Наименование'},
