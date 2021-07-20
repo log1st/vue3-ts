@@ -5,7 +5,7 @@
         Карточка истории ИП в ФССП
       </div>
       <div :class="$style.actions">
-        <Btn state="secondary" label="Банковские счета" @click="showBankAccounts" :class="$style.action"/>
+        <Btn v-if="false" state="secondary" label="Банковские счета" @click="showBankAccounts" :class="$style.action"/>
         <Btn state="secondary" label="Реквизиты участка ФССП" @click="showRequisites" :class="$style.action"/>
       </div>
     </div>
@@ -15,18 +15,18 @@
       <table :class="$style.table">
         <tbody>
         <template  v-for="(document, index) in documents">
-          <tr :key="`${document.id}-header`" v-if="index === 0">
+          <tr :key="`${document.id}-header`">
             <td :colspan="columns.length">
               <div :class="$style.fields">
                 <div :class="$style.field">
                   <div :class="$style.fieldLabel">Период</div>
                   <div :class="$style.fieldValue">
-                    <template v-if="!document.end_date && document.start_date">с</template>
-                    <template v-if="document.start_date">
-                      {{formatDbDate(document.start_date)}}
+                    <template v-if="!document.end_date && document.production_date">с</template>
+                    <template v-if="document.production_date">
+                      {{formatDbDate(document.production_date)}}
                     </template>
                     <template v-if="document.end_date">
-                      {{ document.start_date ? '-' : 'по' }} {{formatDbDate(document.end_date)}}
+                      {{ document.production_date ? '-' : 'по' }} {{formatDbDate(document.end_date)}}
                     </template>
                     <template v-else>по настоящее время</template>
                   </div>
@@ -44,6 +44,9 @@
               <template v-if="document[column.key]">
                 <template v-if="column.key.includes('date') && document[column.key]">
                   {{formatDbDate(document[column.key])}}
+                </template>
+                <template v-else-if="column.key === 'end_reason1'">
+                  {{[`ст. ${document.end_reason1}`, `ч. ${document.end_reason2}`, `п. ${document.end_reason3}`].join(' ')}}
                 </template>
                 <template v-else>
                   {{document[column.key]}}
@@ -85,7 +88,10 @@ export default {
 
           })
 
-          return response.data.results;
+          return [...response.data].reverse().filter(({id}, index, self) => self.findIndex((r) => r.id === id) === index).reverse().map((i, index) => ({
+            ...i,
+            __index: index + 1,
+          }));
         }
       },
     ]));
@@ -99,7 +105,12 @@ export default {
       ...([
         {key: '__index', label: '№'},
         {key: 'production_number', label: '№ ИП'},
-        {key: 'docnum', label: 'Номер исполнительного документа'},
+
+        {key: 'doctype', label: 'Вид документа'},
+        {key: 'docnum', label: '№ дела'},
+        {key: 'docdate', label: 'Дата дела'},
+        {key: 'court', label: 'Судебный участок'},
+
         {key: 'production_date', label: 'Дата возбуждения ИП'},
         {key: 'end_date', label: 'Дата прекращения ИП'},
         {key: 'end_reason1', label: 'Основания прекращения ИП'},
@@ -145,9 +156,10 @@ export default {
       await showDialog({
         component: 'editModel',
         payload: {
+          isEditable: false,
           model: {
-            name: 'Пример имени',
-            address: 'Пример адреса',
+            name: data.value.debtor_main_profile.bailiff?.name,
+            address: data.value.debtor_main_profile.bailiff?.address,
           },
           fields: [
             {key: 'name', label: 'Наименование'},

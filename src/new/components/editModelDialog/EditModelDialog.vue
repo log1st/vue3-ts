@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="submit" :class="$style.dialog">
-    <Icon v-if="!isEditing" icon="pencil" :class="$style.editIcon" @click="toggleEditing" />
+    <Icon v-if="!isEditing && isEditable" icon="pencil" :class="$style.editIcon" @click="toggleEditing" />
     <div :class="$style.field" v-for="field in fields" :key="field.key">
       <div :class="$style.label">{{field.label}}</div>
       <div :class="$style.value" v-if="!isEditing">
@@ -31,6 +31,10 @@ export default defineComponent({
     submitLabel: {
       type: String,
       default: 'Сохранить'
+    },
+    isEditable: {
+      type: Boolean,
+      default: true,
     },
   },
   setup(props, {emit}) {
