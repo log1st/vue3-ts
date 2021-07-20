@@ -21,7 +21,7 @@
       <div :class="$style.content">
         <slot :name="`cell(${column.field})`" :record="record" :index="index">
           <div :class="$style.noData" v-if="[null, undefined].includes(getDeepField(record, column.field))">
-            Нет данных
+            Н/Д
           </div>
           <template v-else>
             {{getDeepField(record, column.field)}}

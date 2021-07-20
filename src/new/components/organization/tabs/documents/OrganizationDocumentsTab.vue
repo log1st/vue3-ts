@@ -43,15 +43,17 @@ export default {
     const isEditing = inject('isEditing');
     const onSave = inject('onSave');
 
+    const getDefaultSigner = () => ({
+      "file": null,
+      "signer": "",
+      "signer_name": "",
+      "klass": "default",
+      "name": "",
+    })
+
     const originalDocuments = ref({});
     const documents = ref([]);
-    const signer = ref(
-      {
-        "file": null,
-        "signer": "",
-        "signer_name": ""
-      }
-    );
+    const signer = ref(getDefaultSigner());
 
     const isEdited = ref(false);
     watch(documents, () => {
@@ -84,7 +86,7 @@ export default {
         [cur.id]: cur
       }), {});
       documents.value = foundDocuments.filter(({signer}) => !signer);
-      signer.value = foundDocuments.find(({signer}) => !!signer);
+      signer.value = foundDocuments.find(({signer}) => !!signer) || getDefaultSigner();
       await new Promise(requestAnimationFrame)
       isEdited.value = false;
     }

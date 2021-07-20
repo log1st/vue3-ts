@@ -5,7 +5,6 @@
       </div>
     <sidebar :sidebarOpen="sidebarOpen" />
     <div class="root-content">
-      <Toasts/>
       <Dialogs/>
       <cabinet-header />
       <div class="header__menu" @click="sidebarOpen = !sidebarOpen">
@@ -23,7 +22,7 @@
         <app-loading-placeholder />
       </div>
 
-      <slot />
+      <router-view />
     </div>
     <transition name="fade">
       <popup v-if="getPopupOpen" :key="getPopupUpdate"></popup>
@@ -45,13 +44,11 @@ import serviceMessage from '@/components/elements/ServiceMessage.vue'
 import { getDocumentsOrderList, getServicesList } from '../store/modules/documents/statementsJudical';
 import Dialogs from "@/new/components/dialogs/Dialogs";
 import {storage} from "@/new/utils/storage";
-import Toasts from "@/new/components/toasts/Toasts";
 
 
 export default {
   name: 'CabinetLayout',
   components: {
-    Toasts,
     Dialogs,
     'cabinet-header': CabinetHeader,
     'global-percent-loader': globalPercentLoader,

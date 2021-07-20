@@ -47,6 +47,9 @@
         :class="$style.icon"
       />
     </div>
+    <div :class="$style.loader" v-if="isLoading">
+      <Icon spin icon="loader-2" :class="$style.loaderIcon"/>
+    </div>
   </component>
 </template>
 
@@ -65,6 +68,7 @@ export default defineComponent({
     },
     label: String,
     isDisabled: Boolean,
+    isLoading: Boolean,
     target: String,
     type: {
       type: String,

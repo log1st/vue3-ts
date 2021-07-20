@@ -411,7 +411,6 @@ export default {
               4: {status: true, error: status_text},
             }[state] || {status: true});
           },
-          1000,
         );
 
         unsubs.push(unsubscribe);

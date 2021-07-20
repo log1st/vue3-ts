@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import {defineComponent, ref} from '@vue/composition-api';
+import {defineComponent, onBeforeUnmount, onMounted, ref} from '@vue/composition-api';
 import {useDialog} from "@/new/hooks/useDialog";
 import Dialog from "@/new/components/dialog/Dialog";
 
@@ -42,6 +42,20 @@ export default defineComponent({
     const show = (id) => {
       hidden.value.splice(hidden.value.indexOf(id), 1)
     }
+
+    const onEsc = (e) => {
+      if(e.key === 'Escape' && dialogs.value.length) {
+        hideDialogById(dialogs.value[dialogs.value.length - 1].id);
+      }
+    }
+
+    onMounted(() => {
+      document.addEventListener('keyup', onEsc);
+    });
+
+    onBeforeUnmount(() => {
+      document.removeEventListener('keyup', onEsc);
+    })
 
     return {
       dialogs,

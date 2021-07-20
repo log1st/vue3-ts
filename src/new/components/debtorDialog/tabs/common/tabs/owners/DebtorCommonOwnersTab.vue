@@ -15,7 +15,7 @@
                 <div :class="$style.fieldLabel">Дата запроса</div>
                 <div :class="$style.fieldValue">
                   <template v-if="characteristic.request_date">
-                    {{characteristic.request_date}}
+                    {{formatDate(characteristic.request_date)}}
                   </template>
                   <span :class="$style.na" v-else>Н/Д</span>
                 </div>
@@ -24,7 +24,7 @@
                 <div :class="$style.fieldLabel">Дата последнего запроса</div>
                 <div :class="$style.fieldValue">
                   <template v-if="characteristic.last_request_date">
-                    {{characteristic.last_request_date}}
+                    {{formatDate(characteristic.last_request_date)}}
                   </template>
                   <span :class="$style.na" v-else>Н/Д</span>
                 </div>

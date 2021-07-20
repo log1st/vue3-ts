@@ -211,7 +211,6 @@ export default defineComponent({
             4: {status: true, error: status_text},
           }[state] || {status: false}
         },
-        1000,
       );
 
       unsub = unsubscribe;

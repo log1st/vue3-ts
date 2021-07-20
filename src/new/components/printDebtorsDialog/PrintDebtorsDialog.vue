@@ -60,7 +60,7 @@
           <DateInput :with-days="false" auto-day="first" v-model="model.from" :is-disabled="model.allPeriod" placeholder="С" />
           <DateInput :with-days="false" auto-day="last" v-model="model.to" :is-disabled="model.allPeriod" placeholder="По" />
         </div>
-        <Checkbox v-if="type === 'judicial'" :class="$style.moratorium" v-model="model.moratorium_enabled" state="switch" label="Мораторий расчёта пени"/>
+        <Checkbox :class="$style.moratorium" v-model="model.moratorium_enabled" state="switch" label="Мораторий расчёта пени"/>
       </div>
       <div :class="$style.actions">
         <Btn :state="['tertiary', 'vertical']" :class="$style.action" type="submit" prepend-icon="printer">
@@ -254,16 +254,20 @@ export default defineComponent({
           method: 'get',
           url: `${baseURL}/document_attachments/status/${requestId}/`
         })).data,
-        async({status, file_pdf}) => ({
-            1: {status: true, payload: {file_pdf}},
+        async({status, file, file_pdf}) => {
+          if(status === 1) {
+            console.log({file, file_pdf, encrypt})
+          }
+          return ({
+            1: {status: true, payload: {file: encrypt ? file : file_pdf}},
             2: {status: true, error: true},
-          }[status] || {status: false}),
-        1000,
+          }[status] || {status: false});
+        },
       );
 
       printUnsubscribe = unsubscribe;
       try {
-        const {file_pdf} = await promise;
+        const {file} = await promise;
         await showToast({
           message: 'Документ готов!',
           type: 'success',
@@ -272,7 +276,9 @@ export default defineComponent({
           component: 'downloadFile',
           payload: {
             title: 'Работа с документами',
-            url: file_pdf
+            url: file,
+            withPreview: !encrypt,
+            withCopy: !encrypt,
           }
         })
       } catch (e) {

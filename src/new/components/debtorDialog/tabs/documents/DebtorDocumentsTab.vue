@@ -39,7 +39,7 @@
         <tbody>
         <tr v-for="document in documents" :key="document.id">
           <td v-for="column in columns" :key="column.key">
-            <div :class="$style.actions" v-if="column.key === 'actions' && !['sms', 'voice'].includes(activeTab.key)">
+            <div :class="$style.actions" v-if="column.key === 'actions' && !['sms'].includes(activeTab.key)">
               <Btn :class="$style.action" prepend-icon="eye" state="quinary" :url="document.file" target="_blank"/>
               <Btn :class="$style.action" prepend-icon="megaphone" state="quinary" @click="listenSound(document)" v-if="activeTab.key === 'voice'"/>
               <Btn :class="$style.action" prepend-icon="download" state="quinary" @click="downloadDocument(document.file)" v-else/>
@@ -78,6 +78,12 @@
                 <template v-else-if="activeTab.key === 'homebook' && column.key === 'document_formation_date'">
                   {{formatDate(document[column.key])}}
                 </template>
+                <template v-else-if="activeTab.key === 'fns' && column.key.includes('date')">
+                  {{formatDate(document[column.key])}}
+                </template>
+                <template v-else-if="activeTab.key === 'banks' && column.key.includes('date')">
+                  {{formatDate(document[column.key])}}
+                </template>
                 <template v-else-if="activeTab.key === 'homebook' && column.key === 'file'">
                   {{decodeURIComponent(document[column.key].split('/').pop())}}
                 </template>
@@ -94,7 +100,10 @@
                   {{formatDateTime(document[column.key])}}
                 </template>
                 <template v-else-if="['sms', 'voice'].includes(activeTab.key) && column.key === 'status'">
-                  {{notifyStatuses[document[column.key]]}}
+                  {{pretrialSubStatusesMap[`${activeTab.key}_${document[column.key]}`]}}
+                </template>
+                <template v-else-if="['executionList'].includes(activeTab.key) && column.key.includes('date')">
+                  {{formatDbDate(document[column.key])}}
                 </template>
                 <template v-else>
                   {{document[column.key]}}
@@ -113,13 +122,14 @@
 <script>
 import {computed, defineComponent, inject, onMounted, ref, watch} from "@vue/composition-api";
 import {baseURL} from "@/settings/config";
-import {formatDate, formatDateTime} from "@/new/utils/date";
+import {formatDate, formatDateTime, formatDbDate} from "@/new/utils/date";
 import Btn from "@/new/components/btn/Btn";
 import {downloadFile} from "@/new/utils/file";
 import {formatMoney} from "@/new/utils/money";
 import Icon from "@/new/components/icon/Icon";
 import {useDialog} from "@/new/hooks/useDialog";
 import {useFileManager} from "@/new/hooks/useFileManager";
+import {useDicts} from "@/new/hooks/useDicts";
 
 export default defineComponent({
   name: "DebtorDocumentsTab",
@@ -249,28 +259,49 @@ export default defineComponent({
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/voice/`,
           });
 
-          return response.data.reverse();
+          return response.data;
         }
       },
       productionType.value === 'executive' && {
         key: 'fns',
         label: 'ФНС',
         async fetch() {
-          return []
+          const response = await axios({
+            method: 'get',
+            url: `${baseURL}/enforcements/executive_fns_history/`,
+            params: {
+              debtor_id: data.value.debtor.pk
+            }
+          });
+          return response.data
         }
       },
       productionType.value === 'executive' && {
         key: 'banks',
         label: 'Банки',
         async fetch() {
-          return []
+          const response = await axios({
+            method: 'get',
+            url: `${baseURL}/enforcements/executive_bank_history/`,
+            params: {
+              debtor_id: data.value.debtor.pk
+            }
+          });
+          return response.data
         }
       },
       productionType.value === 'executive' && {
         key: 'executionList',
         label: 'Исполнительный лист',
         async fetch() {
-          return []
+          const response = await axios({
+            method: 'get',
+            url: `${baseURL}/enforcements/writ_of_execution/`,
+            params: {
+              debtor_id: data.value.debtor.pk
+            }
+          });
+          return response.data.results;
         }
       },
       {
@@ -339,18 +370,18 @@ export default defineComponent({
           {key: 'status_tracking', label: '№ заказа выписки'},
           {key: 'file', label: 'Наименование'},
           {key: 'created_at', label: 'Дата запроса'},
-          {key: 'tracked_at', label: 'Дата выгрузки'},
-          {key: 'status', label: 'Статус'},
-          {key: 'statuses', label: 'История статусов'},
+          // {key: 'tracked_at', label: 'Дата выгрузки'},
+          // {key: 'status', label: 'Статус'},
+          // {key: 'statuses', label: 'История статусов'},
         ],
         egrnRights: [
           {key: 'id', label: '№'},
           {key: 'status_tracking', label: '№ заказа выписки'},
           {key: 'file', label: 'Наименование'},
           {key: 'created_at', label: 'Дата запроса'},
-          {key: 'tracked_at', label: 'Дата выгрузки'},
-          {key: 'status', label: 'Статус'},
-          {key: 'statuses', label: 'История статусов'},
+          // {key: 'tracked_at', label: 'Дата выгрузки'},
+          // {key: 'status', label: 'Статус'},
+          // {key: 'statuses', label: 'История статусов'},
         ],
         fee: [
           {key: 'id', label: '№'},
@@ -372,34 +403,32 @@ export default defineComponent({
         ],
         fns: [
           {key: 'id', label: '№'},
-          {key: 'case_id', label: 'Индефикатор запроса'},
-          {key: 'name', label: 'Наименование'},
-          {key: 'created_at', label: 'Дата запроса'},
-          {key: 'response_at', label: 'Дата ответа'},
-          {key: 'inspector_full_name', label: 'ФИО инспектора'},
-          {key: 'status', label: 'Статус'},
-          {key: 'statuses', label: 'История статусов'},
+          {key: 'request_id', label: 'Индефикатор запроса'},
+          {key: 'document_title', label: 'Наименование'},
+          {key: 'request_date', label: 'Дата запроса'},
+          {key: 'response_date', label: 'Дата ответа'},
+          {key: 'tax_inspector_full_name', label: 'ФИО инспектора'},
+          {key: 'status_current', label: 'Статус'},
+          {key: 'status_history', label: 'История статусов'},
         ],
         banks: [
           {key: 'id', label: '№'},
-          {key: 'case_id', label: 'Индефикатор запроса'},
-          {key: 'name', label: 'Наименование'},
-          {key: 'bank_name', label: 'Наименование банка'},
-          {key: 'created_at', label: 'Дата отправки'},
-          {key: 'response_at', label: 'Дата ответа'},
-          {key: 'inspector_full_name', label: 'ФИО инспектора'},
-          {key: 'status', label: 'Статус'},
-          {key: 'statuses', label: 'История статусов'},
+          {key: 'request_id', label: 'Индефикатор запроса'},
+          {key: 'bank_name', label: 'Название Банка'},
+          {key: 'request_date', label: 'Дата запроса'},
+          {key: 'response_date', label: 'Дата ответа'},
+          {key: 'status_current', label: 'Статус'},
+          {key: 'status_history', label: 'История статусов'},
         ],
         executionList: [
           {key: 'id', label: '№'},
-          {key: 'case_id', label: '№ дела'},
-          {key: 'created_at', label: 'Дата возбуждения ИП'},
-          {key: 'ended_at', label: 'Дата окончания ИП'},
-          {key: 'reason', label: 'Основание прекращения'},
-          {key: 'executor_full_name', label: 'ФИО судебного пристава'},
-          {key: 'executor_contact', label: 'Контакты пристава'},
-          {key: 'status', label: 'Статус'},
+          {key: 'case_number', label: '№ дела'},
+          {key: 'initiation_date', label: 'Дата возбуждения ИП'},
+          {key: 'completion_termination_date', label: 'Дата окончания ИП'},
+          {key: 'termination_ground', label: 'Основания прекращения'},
+          {key: 'bailiff_full_name', label: 'ФИО судебного пристава'},
+          {key: 'bailiff_email', label: 'Контакты пристава'},
+          {key: 'status_current', label: 'Статус'},
         ],
         myDocuments: [
           {key: 'id', label: '№'},
@@ -518,17 +547,7 @@ export default defineComponent({
       deep: true,
     });
 
-    const notifyStatuses = {
-      new: 'Новое',
-     send: 'Отправлено',
-     notsend: 'Не отправлено',
-     machine: 'Автоответчик',
-     delivered: 'Доставлено',
-     ready: 'Готово',
-     none: 'Отказ',
-     failed: 'Ошибка отправки',
-     unknown: 'Неизвестный',
-    }
+    const {pretrialSubStatusesMap} = useDicts();
 
     return {
       selectHousebookDocuments,
@@ -546,13 +565,14 @@ export default defineComponent({
 
       formatDate,
       formatDateTime,
+      formatDbDate,
 
       formatMoney,
 
       downloadDocument,
       listenSound,
 
-      notifyStatuses,
+      pretrialSubStatusesMap,
     }
   }
 })

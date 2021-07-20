@@ -89,6 +89,19 @@
       color: #333333;
     }
   }
+
+  &.dark {
+    align-items: flex-start;
+
+    .preLabel,
+    .label {
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 15px;
+      letter-spacing: 0.04em;
+      color: #333333;
+    }
+  }
 }
 
 .switch {
@@ -146,4 +159,11 @@
 .isDisabled {
   cursor: default;
   opacity: .7;
+}
+
+.label,
+.preLabel {
+  a {
+    color: inherit;
+  }
 }

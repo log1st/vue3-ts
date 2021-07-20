@@ -3,6 +3,8 @@
   align-items: center;
   justify-content: center;
 
+  position: relative;
+
   cursor: pointer;
 
   user-select: none;
@@ -219,6 +221,61 @@
   }
 }
 
+.danger {
+  color: #333333;
+
+  background: #FF7D7D;
+  border: 1px solid #FF7D7D;
+  border-radius: 10px;
+
+  .content {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.02em;
+  }
+
+  .prepend,
+  .append {
+    height: 20px;
+    width: 20px;
+  }
+
+  &:not(.isDisabled) {
+    &:hover,
+    &:focus {
+
+      .prepend,
+      .content,
+      .append {
+      }
+    }
+  }
+
+  &.isDisabled {
+  }
+}
+
 .isDisabled {
   cursor: default;
+}
+
+.loader {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(black, .5);
+  color: rgba(white, .7);
+  margin: 0;
+  border-radius: inherit;
+}
+
+.loaderIcon {
+  height: 20px;
+  width: 20px;
 }

@@ -161,7 +161,6 @@ export default defineComponent({
               1: {status: true, payload: {file_pdf}},
               2: {status: true, error: etc},
             }[status] || {status: false}),
-            1000,
           );
 
           printUnsubscribe = unsubscribe;

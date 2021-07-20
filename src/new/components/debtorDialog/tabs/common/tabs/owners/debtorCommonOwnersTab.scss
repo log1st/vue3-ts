@@ -49,7 +49,7 @@
       line-height: 15px;
       letter-spacing: 0.04em;
       color: #333333;
-      padding: 22.5px 10px;
+      padding: 10px 10px;
       min-width: 100px;
     }
   }
@@ -70,6 +70,7 @@
 .fields {
   display: flex;
   align-items: center;
+  padding: 20px 0 5px;
 }
 
 .field {
