@@ -48,11 +48,17 @@
             <div class="config-data__form-row display__select">
                 <label for="">Наименование</label>
                     <!-- <input type="text" v-model="newVars.variable_name"> -->
-                    <v-select style="width: 100%" :options="columnTypes" label="verbose_name" v-model="newVars.variable_name"/>
+                    <v-select 
+                     style="width: 100%"
+                     class="select_created_template"
+                     placeholder="Выберите наименование столбца"
+                     :options="columnTypes"
+                     label="verbose_name"
+                     v-model="newVars.variable_name"/>
             </div>
             <div class="config-data__form-row" v-if="newVars.variable_name.in_formula">
                 <label for="">Формула</label>
-                    <input type="text"  v-model="newVars.formula">
+                    <input type="text"  v-model="newVars.variable">
             </div>
             <div class="config-data__form-row">
                 <label for="">Активирован</label>
@@ -64,7 +70,7 @@
             </div>
             <div class="config-data__form-row">
                 <div class="btn btn-white"
-                @click="addNewWars">
+                @click="addNewVars">
                     Добавить столбец
                 </div>
             </div>
@@ -82,11 +88,10 @@
                 <div style="font-size: 1.5em; color: red; padding-left:40px; cursor: pointer" @click="addSpace(1)" title="Добавить отступ">
                    +
                 </div>
-
             </div>
             <ul class="config-data__list-wrapper" v-show="variablesList.length > 0">
                  <draggable
-                   :list="configList"
+                   :list="variablesList"
                    class="config-data__table"
                    ghost-class="ghost"
                    :move="checkMove"
@@ -106,7 +111,7 @@
                             <!-- <div class="application__spacer-right plus" @click="addSpace(3)">+</div> -->
                         </div>
                       <div class="application__index">{{index + 1}}. <input class="config-data__var-title" type="text" v-model="list.variable_name"></div>
-                      <div class="application__var"> <input type="text" v-model="list.variable" :placeholder="list.placeholder" :disabled="!list.in_formula"></div>  
+                      <div class="application__var"> <input type="text" v-model="list.variable" @keyup="validateFormul(list.variable, index)" :placeholder="list.placeholder" :disabled="!list.in_formula"></div>  
                     </li>
                  </draggable>
             </ul>
@@ -144,8 +149,7 @@ export default {
                     this.alphabet.push(this.generateAlphabet(this.variablesList.length))
                 }
               this.lastLength = this.variablesList.length
-            } 
-
+            }
            },
        } 
     },
@@ -162,74 +166,16 @@ export default {
                 {
                     type: 'judicial',
                     title: 'Судебное производство'
+                },
+                {
+                    type: 'executive',
+                    title: 'Исполнительное производство'
                 }
             ],
             lastLength: 0,
-            configList: [
-                {
-                    id: 1,
-                    name: 'Оплачено',
-                    sortNumber: 1,
-                    variable: null,
-                    placeholder: 'Ввeдите переменную'
-                },
-                {
-                    id: 2,
-                    name: 'Оплачено субсидий',
-                    sortNumber: 2,
-                    variable: null,
-                    placeholder: 'Ввeдите переменную'
-                },
-                {
-                    id: 3,
-                    name: 'Просрочено',
-                    sortNumber: 3,
-                    variable: null,
-                    placeholder: 'Ввeдите переменную'
-                },
-                {
-                    id: 4,
-                    name: 'Сальдо кредит',
-                    sortNumber: 4,
-                    variable: null,
-                    placeholder: 'Ввeдите переменную'
-                },
-                {
-                    id: 5,
-                    name: 'Входящее дебет',
-                    sortNumber: 5,
-                    variable: null,
-                    placeholder: 'Ввeдите переменную'
-                },
-                {
-                    id: 6,
-                    name: 'Дата рождения',
-                    sortNumber: 6,
-                    variable: null,
-                    placeholder: 'Ввeдите переменную'
-                },
-                {
-                    id: 7,
-                    name: 'Место рождения',
-                    sortNumber: 7,
-                    variable: null,
-                    placeholder: 'Ввeдите переменную'
-                },
-                {
-                    id: 8,
-                    name: 'Серия паспорта',
-                    sortNumber: 8,
-                    variable: null,
-                    placeholder: 'Ввeдите переменную'
-                },
-                {
-                    id: 9,
-                    name: 'Номер паспорта', 
-                    sortNumber: 9,
-                    variable: null,
-                    placeholder: 'Ввeдите переменную'
-                },
-            ],
+
+            existColumn: [],
+
             createdTemplated: undefined,
 
             fileType: [ 
@@ -252,14 +198,47 @@ export default {
                 is_active: true,
                 required: true,
                 position: 0,
-                column_id: 0
+                column_id: 0,
+                variable: null
             }
         }
     },
     methods: {
+        validateFormul (payload, index) {
+            console.log([payload])
+            if (payload.indexOf('+') + 1) {
+                if (payload.indexOf('-') + 1) { 
+                this.$set(this.variablesList[index], 'variable', payload.replace(/\-/g, ''))
+
+                this.$toast.open({
+                    message: 'В формуле уже есть знак переменной "+"',
+                    type: 'warning',
+                    duration: 5000,
+                    dismissible: true,
+                    position: 'top-right'
+                })}
+            } else if (payload.indexOf('-') + 1) {
+                if (payload.indexOf('+') + 1) { 
+                // payload.replace(/[-]/g, '');
+                this.$toast.open({
+                    message: 'В формуле уже есть знак переменной "-"',
+                    type: 'warning',
+                    duration: 5000,
+                    dismissible: true,
+                    position: 'top-right'
+                })
+                this.$set(this.variablesList[index], 'variable', payload.replace(/\+/g, ''))
+                }
+            }
+        },
+
         checkMove (e) {
-            this.configList[e.draggedContext.index].sortNumber = e.draggedContext.futureIndex
-            // console.log(e)
+            this.variablesList[e.draggedContext.index].position = e.draggedContext.futureIndex
+            setTimeout( () => {
+                this.variablesList.forEach( (item, index) => {
+                    item.position = index
+                })
+            }, 1000)
         },
         generateAlphabet (column) {
             let temp, letter = '';
@@ -298,19 +277,56 @@ export default {
                     break;
             }
         },
-        addNewWars () {
-            this.newVars.position = this.variablesList.length
-            this.newVars.in_formula = this.newVars.variable_name.in_formula
-            this.newVars.variable_name = this.newVars.variable_name.verbose_name
-            this.newVars.column_id = this.variablesList.length + 1
-            this.variablesList.push(this.newVars)
+        
+        getFinalFormul () {
+            let result = []
+            this.variablesList.forEach( item => {
+                let obj = {
+                    column_id: item.column_id,
+                    variable_name: !!item.variable ? item.variable : null 
+                }
+                result.push(obj)
+            })
+            this.$http({
+                command: '/api/document-parsing/debt-calculation-formula/',
+                method: 'POST',
+                data: result
+            })
+            .then( res => {
+                console.log(res)
+            })
+        },
+
+        /**
+         * Добавление нового столбца 
+         */
+        addNewVars () {
+            let column = this.existColumn.find(c => c.type === this.newVars.variable_name.name)
+
+            if ( !!column ) {
+                this.newVars.position = this.variablesList.length
+                this.newVars.in_formula = this.newVars.variable_name.in_formula
+                this.newVars.variable_name = this.newVars.variable_name.verbose_name
+                this.newVars.column_id = column.pk
+                this.variablesList.push(this.newVars)
+            } else {
+                this.newVars.position = this.variablesList.length
+                this.newVars.in_formula = this.newVars.variable_name.in_formula
+                this.newVars.variable_name = this.newVars.variable_name.verbose_name
+                this.newVars.column_id = this.variablesList.length + 1
+                this.variablesList.push(this.newVars)
+            }
+            
             this.newVars = {
                 variable_name: '',
                 is_active: true,
                 required: true,
                 position: 0,
-                column_id: 0
+                column_id: 0,
+                variable: null
             }
+            
+            this.getFinalFormul()
         },
 
         /**
@@ -409,6 +425,7 @@ export default {
                 })
             })
         },
+
         /**
          * Получение типов колонок
          */
@@ -421,9 +438,21 @@ export default {
             .then( resp => {
                 this.columnTypes = resp
             })
+        },
+
+        getAllExistColumn () {
+            this.$http({
+                command: '/api/document-parsing/columns/',
+                method: 'GET',
+                requestCode: 'none'
+            })
+            .then( res => {
+                this.existColumn = res
+            })
         }
     },
     created () {
+        this.getAllExistColumn()
         this.getColumnTypes()
     },
     computed: {
