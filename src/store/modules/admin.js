@@ -341,7 +341,7 @@ export default {
         },
 
         addDefaultApplicationToArray ({ state, commit, dispatch }, payload) {
-          if (payload === 'judicial') {
+          // if (payload === 'judicial') {
               return new Promise ((resolve, reject) =>{
                 $http({
                   command: '/document_attachments/defaults/',
@@ -350,7 +350,9 @@ export default {
                 .then( response => {
                   let attachment = response.attachments
                   const applicationKeys = Object.keys(response.attachments)
+                  const prodKeys = response.productions
                   let arr = []
+
                   applicationKeys.forEach( d => {
                     if (d !== 'court_order') {
                       attachment[d].is_active = true
@@ -361,20 +363,39 @@ export default {
                       arr.push(attachment[d])
                     }
                   })
+
+                  let resultArr = [];
+                  switch (payload) {
+                    case 'judicial':
+                      prodKeys.judicial.forEach( el => {
+                        resultArr.push(arr.find( elem => elem.type === el ))
+                      })
+                      break;
+                    case 'pretrial':
+                      prodKeys.pretrial.forEach( el => {
+                        resultArr.push(arr.find( elem => elem.type === el ))
+                      })
+                      break;
+                    case 'executive':
+                      prodKeys.executive.forEach( el => {
+                        resultArr.push(arr.find( elem => elem.type === el ))
+                      })
+                      break;
+                  }
+
                   let param = { prod_type_num: payload, type: true }
-                  commit('addDefaultCompanyApplication', arr)
-                  dispatch('setUpdatedApplication', param)
+                  commit('addDefaultCompanyApplication', resultArr)
+                  // dispatch('setUpdatedApplication', param)
                   resolve({status: true})
                 })
                 .catch( err => {
                   reject({status: false})
                 })
               })
-          }
-          
+          // }
         },
-        getDefaultApplicationAdmin ({commit}, payload) {
-          if (payload === 'judicial') {
+        getDefaultApplicationAdmin ({commit, state}, payload) {
+          // if (payload === 'judicial') {
             return new Promise ((resolve, reject) =>{
               $http({
                 command: '/document_attachments/defaults/',
@@ -383,25 +404,44 @@ export default {
               .then( response => {
                 let attachment = response.attachments
                 const applicationKeys = Object.keys(response.attachments)
+                const prodKeys = response.productions
                 let arr = []
                 applicationKeys.forEach( d => {
                   if (d !== 'court_order') {
                     attachment[d].is_active = true
                     attachment[d].is_show = true
                     attachment[d].type = d
-                    attachment[d].company = id
-                    attachment[d].production_type = 'judicial'
+                    attachment[d].company = state.checkedCompany.id
+                    attachment[d].production_type = payload
                     arr.push(attachment[d])
                   }
                 })
-                commit('setCompanyApplication', arr)
+                let resultArr = [];
+                  switch (payload) {
+                    case 'judicial':
+                      prodKeys.judicial.forEach( el => {
+                        resultArr.push(arr.find( elem => elem.type === el ))
+                      })
+                      break;
+                    case 'pretrial':
+                      prodKeys.pretrial.forEach( el => {
+                        resultArr.push(arr.find( elem => elem.type === el ))
+                      })
+                      break;
+                    case 'executive':
+                      prodKeys.executive.forEach( el => {
+                        resultArr.push(arr.find( elem => elem.type === el ))
+                      })
+                      break;
+                  }
+                commit('setCompanyApplication', resultArrarr)
                 resolve({status: true})
               })
               .catch ( err => {
                 reject({status: false, msg: err})
               })
             })
-          }
+          // }
           
         },
         /**
@@ -427,18 +467,9 @@ export default {
                 resolve({applications: items, status: true})
               }
               else if (resp.data.length === 0) {
-                console.log(type)
-                if (type === 'judicial') {
                   dispatch('getDefaultApplicationAdmin', type)
                   dispatch('addDefaultApplicationToArray', type)
                   resolve({applications: items, status: true})
-                }  
-                else if (type === 'pretrial') {
-                  console.log('module: pretrial')
-                  resolve({applications: [], status: true})
-                } else if (type === 'executive') {
-                  console.log('module: executive')
-                }
               }
             })
             .catch( err => {
