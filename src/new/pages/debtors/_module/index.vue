@@ -150,9 +150,19 @@
           </div>
         </template>
       </template>
-      <template #cell(ended_at)="{record}" v-if="type === 'executive'">
-        <template v-if="record.ended_at">
-          {{formatDate(record.ended_at)}}
+      <template #cell(debtor.writs_of_execution.0.start_date)="{record}" v-if="type === 'executive'">
+        <template v-if="record.debtor.writs_of_execution[0] && record.debtor.writs_of_execution[0].start_date">
+          {{formatDbDate(record.debtor.writs_of_execution[0].start_date)}}
+        </template>
+        <template v-else>
+          <div :class="$style.na">
+            Н/Д
+          </div>
+        </template>
+      </template>
+      <template #cell(debtor.writs_of_execution.0.end_date)="{record}" v-if="type === 'executive'">
+        <template v-if="record.debtor.writs_of_execution[0] && record.debtor.writs_of_execution[0].end_date">
+          {{formatDbDate(record.debtor.writs_of_execution[0].end_date)}}
         </template>
         <template v-else>
           <div :class="$style.na">
@@ -194,7 +204,7 @@ import JudicialDebtorsAutomatizingDialog
 import PretrialDebtorsAutomatizingDialog
   from "@/new/components/pretrialDebtorsAutomatizingDialog/PretrialDebtorsAutomatizingDialog";
 import {useToast} from "@/new/hooks/useToast";
-import {formatDate} from "@/new/utils/date";
+import {formatDate, formatDbDate} from "@/new/utils/date";
 import {usePersistedSetting} from "@/new/hooks/usePersistedSetting";
 import {useStore} from "@/new/hooks/useStore";
 // @TODO: remove
@@ -433,7 +443,6 @@ export default defineComponent({
               return {status: false}
             }
           },
-          1000,
         );
 
         sendUnsubscribe = unsubscribe;
@@ -838,6 +847,14 @@ export default defineComponent({
           },
         },
         {
+          field: 'phone_number',
+          type: 'text',
+          width: 2,
+          props: {
+            placeholder: 'Номер телефона',
+          },
+        },
+        {
           field: 'personal_account',
           type: 'text',
           width: 2,
@@ -877,19 +894,37 @@ export default defineComponent({
           width: 2,
         },
         type.value === 'pretrial' && {
-          field: 'sms_status',
+          field: 'has_sms',
           type: 'select',
           props: {
             placeholder: 'SMS-уведомление',
-            options: smsNotificationStatuses.value,
+            options: [
+              {
+                value: 'true',
+                label: 'Отправлено',
+              },
+              {
+                value: 'false',
+                label: 'Не отправлено',
+              },
+            ],
           },
         },
         type.value === 'pretrial' && {
-          field: 'voice_status',
+          field: 'has_voice',
           type: 'select',
           props: {
             placeholder: 'Голосовое уведомление',
-            options: voiceNotificationStatuses.value,
+            options: [
+              {
+                value: 'true',
+                label: 'Отправлено',
+              },
+              {
+                value: 'false',
+                label: 'Не отправлено',
+              },
+            ],
           },
         },
         type.value === 'judicial' && {
@@ -996,6 +1031,7 @@ export default defineComponent({
           field: 'phone_number',
           label: 'Телефон',
           width: 214,
+          isSortable: true,
         },
         {
           field: 'full_name',
@@ -1009,18 +1045,28 @@ export default defineComponent({
           width: 281,
         },
         type.value === 'executive' && {
-          field: 'number',
+          field: 'debtor.writs_of_execution.0.case_number',
+          label: '№ Дела',
+          width: 281
+        },
+        type.value === 'executive' && {
+          field: 'debtor.writs_of_execution.0.serial_number',
           label: '№ ИП',
           width: 281
         },
         type.value === 'executive' && {
-          field: 'started_at',
+          field: 'debtor.writs_of_execution.0.start_date',
           label: 'Дата возбуждения ИП',
           width: 281
         },
         type.value === 'executive' && {
-          field: 'ended_at',
+          field: 'debtor.writs_of_execution.0.end_date',
           label: 'Дата окончания ИП',
+          width: 281
+        },
+        type.value === 'executive' && {
+          field: 'debtor.writs_of_execution.0.bailiff_full_name',
+          label: 'ФИО пристава',
           width: 281
         },
         ['pretrial', 'judicial'].includes(type.value) && {
@@ -1173,7 +1219,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        type.value === 'executive' && {
+        false && type.value === 'executive' && {
           key: 'fns',
           label: 'Выписка из ФНС',
           icon: 'fns',
@@ -1187,7 +1233,7 @@ export default defineComponent({
           },
           asQuick: true,
         },
-        type.value === 'executive' && {
+        false && type.value === 'executive' && {
           key: 'bank',
           label: 'Запрос в банк',
           icon: 'bank',
@@ -1237,6 +1283,7 @@ export default defineComponent({
 
       formatMoney,
       formatDate,
+      formatDbDate,
 
       summaries,
       summariesFields,

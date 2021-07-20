@@ -13,6 +13,7 @@
           />
           <FilterConfig
             v-model="model.region"
+            @update:modelValue="onRegionChange"
             v-bind="regionFilter"
             :class="$style.control"
           />
@@ -93,6 +94,12 @@ export default defineComponent({
       region: null,
     });
 
+    watch(defaultCompanyId, id => {
+      model.value.company = id
+    }, {
+      immediate: true,
+    })
+
     watch(computed(() => model.value.company), async id => {
       if(!id) {
         return;
@@ -100,11 +107,11 @@ export default defineComponent({
 
       model.value.region = (await axios({
         method: 'get',
-        url: `${baseURL}/api/account/company-settings/${id}`
+        url: `${baseURL}/api/account/company-settings/${id}/`
       })).data.default_region
     }, {
       immediate: true,
-    })
+    });
 
     provide('globalModel', model);
 
@@ -337,7 +344,17 @@ export default defineComponent({
       ].map(item => ({
         ...item,
       }))
-    }[module.value.match(/exchange-(\w+)/)[1]]))
+    }[module.value.match(/exchange-(\w+)/)[1]]));
+
+    const onRegionChange = async (value) => {
+      await axios({
+        method: 'patch',
+        url: `${baseURL}/api/account/company-settings/${model.value.company}/`,
+        data: {
+          default_region: value,
+        }
+      })
+    }
 
     return {
       tabs,
@@ -348,6 +365,8 @@ export default defineComponent({
       companyFilter,
 
       regionFilter,
+
+      onRegionChange,
     }
   }
 });

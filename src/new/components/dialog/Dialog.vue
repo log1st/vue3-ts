@@ -36,6 +36,8 @@ import ConfirmDialog from "@/new/components/confirmDialog/ConfirmDialog";
 import ListenFileDialog from "@/new/components/listenFileDialog/ListenFileDialog";
 import OrganizationDialog from "@/new/components/organization/OrganizationDialog";
 import EmployeeDialog from "@/new/components/employee/EmployeeDialog";
+import EditModelDialog from "@/new/components/editModelDialog/EditModelDialog";
+import FsspBankAccountsDialog from "@/new/components/fsspBankAccountsDialog/FsspBankAccountsDialog";
 
 export default defineComponent({
   name: "Dialog",
@@ -84,6 +86,8 @@ export default defineComponent({
       listenFile: ListenFileDialog,
       organization: OrganizationDialog,
       employee: EmployeeDialog,
+      editModel: EditModelDialog,
+      fsspBankAccounts: FsspBankAccountsDialog,
     };
 
     const componentInstance = computed(() => (

@@ -32,7 +32,7 @@
                   {{formatDate(getDeepField(document, column.key))}}
                 </template>
                 <template v-else-if="['status'].includes(column.key)">
-                  {{statuses[getDeepField(document, column.key)]}}
+                  {{pretrialSubStatusesMap[`${activeTab.key}_${getDeepField(document, column.key)}`]}}
                 </template>
                 <template v-else>
                   {{getDeepField(document, column.key)}}
@@ -62,6 +62,7 @@ import {formatMoney} from "@/new/utils/money";
 import Btn from "@/new/components/btn/Btn";
 import {useDialog} from "@/new/hooks/useDialog";
 import {getDeepField} from "@/new/utils/object";
+import {useDicts} from "@/new/hooks/useDicts";
 export default {
   name: "DebtorNotificationsTab",
   components: {Btn, Icon},
@@ -158,19 +159,11 @@ export default {
       })
     };
 
-    const statuses = {
-      new: 'Новое',
-      send: 'Отправлено',
-      notsend: 'Не отправлено',
-      machine: 'Автоответчик',
-      delivered: 'Доставлено',
-      ready: 'Готово',
-      none: 'Отказ',
-      failed: 'Ошибка отправки',
-      unknown: 'Неизвестный',
-    }
+    const {pretrialSubStatusesMap} = useDicts();
 
     return {
+      pretrialSubStatusesMap,
+
       activeTab,
       selectTab,
       tabs,
@@ -188,8 +181,6 @@ export default {
       getDeepField,
 
       listenSound,
-
-      statuses,
     }
   }
 }

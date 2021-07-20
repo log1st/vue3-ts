@@ -39,7 +39,7 @@
         <tbody>
         <tr v-for="document in documents" :key="document.id">
           <td v-for="column in columns" :key="column.key">
-            <div :class="$style.actions" v-if="column.key === 'actions' && !['sms', 'voice'].includes(activeTab.key)">
+            <div :class="$style.actions" v-if="column.key === 'actions' && !['sms'].includes(activeTab.key)">
               <Btn :class="$style.action" prepend-icon="eye" state="quinary" :url="document.file" target="_blank"/>
               <Btn :class="$style.action" prepend-icon="megaphone" state="quinary" @click="listenSound(document)" v-if="activeTab.key === 'voice'"/>
               <Btn :class="$style.action" prepend-icon="download" state="quinary" @click="downloadDocument(document.file)" v-else/>
@@ -100,7 +100,7 @@
                   {{formatDateTime(document[column.key])}}
                 </template>
                 <template v-else-if="['sms', 'voice'].includes(activeTab.key) && column.key === 'status'">
-                  {{notifyStatuses[document[column.key]]}}
+                  {{pretrialSubStatusesMap[`${activeTab.key}_${document[column.key]}`]}}
                 </template>
                 <template v-else-if="['executionList'].includes(activeTab.key) && column.key.includes('date')">
                   {{formatDbDate(document[column.key])}}
@@ -129,6 +129,7 @@ import {formatMoney} from "@/new/utils/money";
 import Icon from "@/new/components/icon/Icon";
 import {useDialog} from "@/new/hooks/useDialog";
 import {useFileManager} from "@/new/hooks/useFileManager";
+import {useDicts} from "@/new/hooks/useDicts";
 
 export default defineComponent({
   name: "DebtorDocumentsTab",
@@ -546,17 +547,7 @@ export default defineComponent({
       deep: true,
     });
 
-    const notifyStatuses = {
-      new: 'Новое',
-     send: 'Отправлено',
-     notsend: 'Не отправлено',
-     machine: 'Автоответчик',
-     delivered: 'Доставлено',
-     ready: 'Готово',
-     none: 'Отказ',
-     failed: 'Ошибка отправки',
-     unknown: 'Неизвестный',
-    }
+    const {pretrialSubStatusesMap} = useDicts();
 
     return {
       selectHousebookDocuments,
@@ -581,7 +572,7 @@ export default defineComponent({
       downloadDocument,
       listenSound,
 
-      notifyStatuses,
+      pretrialSubStatusesMap,
     }
   }
 })

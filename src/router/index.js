@@ -4,248 +4,223 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
+  // @TODO: remove
   {
-    path: '/',
-    name: 'Home',
-    component: () => import('@/pages/home'),
-    redirect: 'debtors',
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/main',
-    name: 'Main',
-    component: () => import('../views/main/Main.vue'),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/companies',
-    name: 'Companies',
-    component: () => import('../pages/companies'),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/desktop',
-    name: 'Desktop',
-    component: () => import('../pages/desktop'),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/analitics',
-    name: 'Analitics',
-    component: () => import('../views/main/Analitics.vue'),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  // {
-  //   path: '/debtors',
-  //   name: 'Debtors',
-  //   component: () => import('../views/main/Debtors.vue'),
-  //   meta: {
-  //     requiresAuth: true
-  //   }
-  // },
-  {
-    path: '/debtors',
-    name: 'debtors',
+    path: '/login',
+    name: 'login',
     redirect: {
-      name: 'debtors-module',
-      params: {
-        module: 'judicial'
-      }
+      name: 'sign'
     },
-    component: () => import('@/new/pages/debtors/index.vue'),
+    meta: {
+      guest: true,
+    },
+  },
+  {
+    path: '/sign',
+    name: 'sign',
+    component: () => import('@/new/components/authLayout/AuthLayout.vue'),
+    redirect: {
+      name: 'sign-in'
+    },
+    meta: {
+      guest: true,
+    },
     children: [
       {
-        path: ':module',
-        name: 'debtors-module',
-        component: () => import('@/new/pages/debtors/_module/index.vue'),
-        props: true,
-      }
-    ],
-    meta: {
-      requiresAuth: true
-    },
-  },
-  {
-    path: '/organizations',
-    name: 'organizations',
-    component: () => import('@/new/pages/organizations/index.vue'),
-  },
-  {
-    path: '/exchange',
-    name: 'exchange',
-    redirect: {
-      name: 'exchange-import'
-    },
-    component: () => import('@/new/pages/exchange/index.vue'),
-    children: [
-      {
-        path: 'import',
-        name: 'exchange-import',
-        component: () => import('@/new/pages/exchange/import/index.vue'),
-        redirect: {
-          name: 'exchange-import-instruction'
-        },
-        children: [
-          {
-            path: 'instruction',
-            name: 'exchange-import-instruction',
-            component: () => import('@/new/pages/exchange/instruction.vue'),
-          },
-          {
-            path: ':type',
-            name: 'exchange-import-type',
-            component: () => import('@/new/pages/exchange/import/type/index.vue'),
-            props: true,
-          },
-        ]
+        path: 'in',
+        name: 'sign-in',
+        component: () => import('@/new/pages/sign/in/index.vue'),
       },
       {
-        path: 'export',
-        name: 'exchange-export',
-        component: () => import('@/new/pages/exchange/export/index.vue'),
+        path: 'up',
+        name: 'sign-up',
+        component: () => import('@/new/pages/sign/up/index.vue'),
       },
       {
-        path: 'integration',
-        name: 'exchange-integration',
-        component: () => import('@/new/pages/exchange/integration/index.vue'),
+        path: 'restore',
+        name: 'sign-restore',
+        component: () => import('@/new/pages/sign/restore/index.vue'),
+      },
+      {
+        path: 'confirm',
+        name: 'sign-confirm',
+        component: () => import('@/new/pages/sign/confirm/index.vue'),
+      },
+      {
+        path: 'password',
+        name: 'sign-password',
+        component: () => import('@/new/pages/sign/password/index.vue'),
       },
     ]
   },
   {
-    path: '/courts',
-    name: 'Courts',
-    component: () => import('../views/main/Courts.vue'),
+    path: '/',
+    component: () => import('@/layouts/CabinetLayout.vue'),
     meta: {
       requiresAuth: true
-    }
+    },
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: () => import('@/pages/home'),
+        redirect: 'debtors',
+      },
+      {
+        path: 'main',
+        name: 'Main',
+        component: () => import('../views/main/Main.vue'),
+      },
+      {
+        path: 'companies',
+        name: 'Companies',
+        component: () => import('../pages/companies'),
+      },
+      {
+        path: 'desktop',
+        name: 'Desktop',
+        component: () => import('../pages/desktop'),
+      },
+      {
+        path: 'analitics',
+        name: 'Analitics',
+        component: () => import('../views/main/Analitics.vue'),
+      },
+      {
+        path: 'debtors',
+        name: 'debtors',
+        redirect: {
+          name: 'debtors-module',
+          params: {
+            module: 'judicial'
+          }
+        },
+        component: () => import('@/new/pages/debtors/index.vue'),
+        children: [
+          {
+            path: ':module',
+            name: 'debtors-module',
+            component: () => import('@/new/pages/debtors/_module/index.vue'),
+            props: true,
+          }
+        ],
+      },
+      {
+        path: 'organizations',
+        name: 'organizations',
+        component: () => import('@/new/pages/organizations/index.vue'),
+      },
+      {
+        path: 'exchange',
+        name: 'exchange',
+        redirect: {
+          name: 'exchange-import'
+        },
+        component: () => import('@/new/pages/exchange/index.vue'),
+        children: [
+          {
+            path: 'import',
+            name: 'exchange-import',
+            component: () => import('@/new/pages/exchange/import/index.vue'),
+            redirect: {
+              name: 'exchange-import-instruction'
+            },
+            children: [
+              {
+                path: 'instruction',
+                name: 'exchange-import-instruction',
+                component: () => import('@/new/pages/exchange/instruction.vue'),
+              },
+              {
+                path: ':type',
+                name: 'exchange-import-type',
+                component: () => import('@/new/pages/exchange/import/type/index.vue'),
+                props: true,
+              },
+            ]
+          },
+          {
+            path: 'export',
+            name: 'exchange-export',
+            component: () => import('@/new/pages/exchange/export/index.vue'),
+          },
+          {
+            path: 'integration',
+            name: 'exchange-integration',
+            component: () => import('@/new/pages/exchange/integration/index.vue'),
+          },
+        ]
+      },
+      {
+        path: 'courts',
+        name: 'Courts',
+        component: () => import('../views/main/Courts.vue'),
+      },
+      {
+        path: 'documents',
+        name: 'Documents',
+        component: () => import('../views/main/Documents.vue'),
+      },
+      {
+        path: 'panel',
+        name: 'Panel',
+        component: () => import('../views/main/Panel.vue'),
+      },
+      {
+        path: 'settings',
+        name: 'Settings',
+        component: () => import('../views/main/Settings'),
+      },
+    ]
   },
   {
-    path: '/documents',
-    name: 'Documents',
-    component: () => import('../views/main/Documents.vue'),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/panel',
-    name: 'Panel',
-    component: () => import('../views/main/Panel.vue'),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/settings',
-    name: 'Settings',
-    component: () => import('../views/main/Settings'),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/admin/editor',
-    name: 'Admin',
-    component: () => import('@/pages/admin/editor'),
+    path: '/admin',
+    component: () => import('@/layouts/AdminLayout'),
     meta:{
-      layout: 'admin-layout',
       requiresAuth: true,
       adminRoute: true
-    }
+    },
+    children: [
+      {
+        path: 'editor',
+        name: 'Admin',
+        component: () => import('@/pages/admin/editor'),
+      },
+      {
+        path: 'stats',
+        name: 'AdminStatistic',
+        component: () => import('@/pages/admin/statistic'),
+      },
+      {
+        path: 'admin-panel',
+        name: 'AdminCompany',
+        component: () => import('@/pages/admin/company'),
+      },
+      {
+        path: 'admin-settings',
+        name: 'AdminSettings',
+        component: () => import('@/pages/admin/settings'),
+      },
+    ]
   },
-  {
-    path: '/admin/stats',
-    name: 'AdminStatistic',
-    component: () => import('@/pages/admin/statistic'),
-    meta:{
-      layout: 'admin-layout',
-      requiresAuth: true,
-      adminRoute: true
-    }
-  },
-  {
-    path: '/admin/admin-panel',
-    name: 'AdminCompany',
-    component: () => import('@/pages/admin/company'),
-    meta:{
-      layout: 'admin-layout',
-      requiresAuth: true,
-      adminRoute: true
-    }
-  },
-  {
-    path: '/admin/admin-settings',
-    name: 'AdminSettings',
-    component: () => import('@/pages/admin/settings'),
-    meta:{
-      layout: 'admin-layout',
-      requiresAuth: true,
-      adminRoute: true
-    }
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import('@/pages/auth'),
-    meta: {
-      layout: 'auth-layout',
-      guest: true
-    }
-  },
-  // {
-  //   path: '/login',
-  //   name: 'Login',
-  //   component: () => import('../views/auth/Login.vue'),
-  //   meta: {
-  //     layout: 'auth-layout',
-  //     guest: true
-  //   }
-  // },
   {
     path: '/accruals',
-    name: 'Accruals',
-    component: () => import('../views/accruals/PageAccruals.vue'),
+    component: () => import('@/layouts/AccrualsLayout'),
     meta: {
-      layout: 'accruals-layout',
       requiresAuth: true
-    }
-  },
-  {
-    path: '/accruals/fine',
-    name: 'AccrualsFine',
-    component: () => import('../views/accruals/PageAccrualsFine.vue'),
-    meta: {
-      layout: 'accruals-layout',
-      requiresAuth: true
-    }
-  },
-  // {
-  //   path: '/accruals/lists',
-  //   name: 'PagePretension',
-  //   component: () => import('../views/accruals/PagePretension.vue'),
-  //   // props: { params: JSON.stringify({ date: store.getters.getDebtorsDate, debtors: store.getters.debtorsChecked }) },
-  //   meta: {
-  //     layout: 'accruals-layout',
-  //     requiresAuth: true
-  //   }
-  // },
-  {
-    path: '*',
-    component: () => import('../views/auth/404.vue'),
-    meta: {
-      layout: 'auth-layout',
-      guest: true
-    }
+    },
+    children: [
+      {
+        path: '',
+        name: 'Accruals',
+        component: () => import('../views/accruals/PageAccruals.vue'),
+      },
+      {
+        path: 'fine',
+        name: 'AccrualsFine',
+        component: () => import('../views/accruals/PageAccrualsFine.vue'),
+      }
+    ]
   }
 ]
 const { isNavigationFailure, NavigationFailureType } = VueRouter
@@ -259,48 +234,15 @@ export function createRouter (store) {
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (typeof window !== 'undefined') {
-      if (store.getters.isLoggedIn) {
-        next()
-        return
-      }
+    if (!store.getters.isLoggedIn) {
+      return next({name: 'sign'});
     }
-    router.push('/login').catch(()=>{});
-  } else {
-    next()
+  } else if(to.matched.some(record => record.meta.guest)) {
+    if(store.getters.isLoggedIn) {
+      return next({name: 'Home'})
+    }
   }
+  next();
 })
 return router
 }
-
-// router.beforeEach((to, from, next) => {
-//   if (to.matched.some(record => record.meta.requiresAuth)) {
-//     if (localStorage.getItem('token') == null) {
-//       next({
-//         path: '/login',
-//         params: { nextUrl: to.fullPath }
-//       })
-//     } else {
-//       const user = JSON.parse(localStorage.getItem('user'))
-//       if (to.matched.some(record => record.meta.is_admin)) {
-//         if (user.is_admin === 1) {
-//           next()
-//         } else {
-//           next({ name: 'userboard' })
-//         }
-//       } else {
-//         next()
-//       }
-//     }
-//   } else if (to.matched.some(record => record.meta.guest)) {
-//     if (localStorage.getItem('jwt') == null) {
-//       next()
-//     } else {
-//       next({ name: 'userboard' })
-//     }
-//   } else {
-//     next()
-//   }
-// })
-
-// export default router

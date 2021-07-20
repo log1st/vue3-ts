@@ -195,7 +195,6 @@ export default {
         // this.setInitialized(false);
       }).catch(err => console.log(err))
       this.$store.commit('clearVisitedPages');
-      Chatra('hide')
     },
     messageMenuOpen (event) {
       this.eventMessage = event

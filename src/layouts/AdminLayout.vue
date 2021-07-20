@@ -17,7 +17,7 @@
       <div v-if="appLoading" class="root-content__loading">
         <app-loading-placeholder />
       </div>
-      <slot />
+      <router-view />
     </div>
     <transition name="fade">
       <popup v-if="getPopupOpen" :key="getPopupUpdate"></popup>
@@ -38,12 +38,12 @@ import serviceMessage from '@/components/elements/ServiceMessage.vue'
 
 export default {
   name: 'AdminLayout',
-  components: { 
-    'cabinet-header': CabinetHeader, 
+  components: {
+    'cabinet-header': CabinetHeader,
     popup,
     'admin-sidebar': AdminSidebar,
     appLoadingPlaceholder,
-    serviceMessage 
+    serviceMessage
   },
   data () {
     return {
@@ -59,7 +59,7 @@ export default {
     } else {
       userRole = 'company'
     }
-    
+
 
     if (userRole === 'admin') { // Роль пользователя для доступа в админку (перед загрузкой ставь admin)
       // this.$store.dispatch('rootInitData', null, { root: true })

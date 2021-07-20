@@ -1,11 +1,12 @@
 <template>
     <div class="form-group">
-        <input 
+        <input
         class="custom-input"
         :class="[elClass,
         isError ? 'error' : '',
         ]"
-        :id="elId" 
+        :id="elId"
+        :type="type"
         :placeholder="elPlaceholder"
         v-bind:value="value"
         v-bind="$attrs"
@@ -14,10 +15,10 @@
         @keyup="checkForLatinLetters($event)"
         v-on:focus="focusHandler"
         v-on:blur="blurHandler">
-        <span class="error-text" v-if="isError && showHint" >{{ errors[0] }}</span>
+        <span class="error-text" v-if="isError && showHint" >{{ error || errors[0] }}</span>
         <span class="error-text empty" v-else></span>
         <!-- <div > -->
-            <slot v-if="$slots['append']" name="append"></slot>
+            <slot name="append"></slot>
         <!-- </div> -->
     </div>
 </template>
@@ -65,6 +66,13 @@ export default {
             return []
           }
         },
+      type: {
+        type: String,
+        default: 'text',
+      },
+      error: {
+        type: String,
+      }
     },
     data() {
       return {
@@ -75,7 +83,7 @@ export default {
     },
     computed: {
       isError() {
-        return this.errors.length > 0
+        return (this.error || (this.errors.length > 0))
       }
     },
     methods: {
@@ -100,8 +108,84 @@ export default {
       checkForLatinLetters(e){
             if(this.latin == true){
                     this.value = this.value.replace(/[а-яА-Я]/g, '');
-            }    
+            }
         },
     },
 }
 </script>
+
+<style lang="scss">
+.custom-input {
+  font-weight: 500;
+  font-size: 12px;
+  outline: none;
+  color: #828282;
+  background-color: transparent;
+  padding: 10px;
+  width: 100%;
+  border-width: 0 0 1px 0;
+  border-color: #bdbdbd;
+  border-style: solid;
+  &.error {
+    border-color: #ff7d7d;
+  }
+}
+.error-text {
+  font-weight: 500;
+  color: #ff7d7d;
+  text-align: left;
+  display: block;
+  padding: 3px 10px 0;
+  &.empty {
+    height: 17px;
+  }
+}
+.checkbox-custom {
+  &__input {
+    display: none;
+    &:checked {
+      + .checkbox-custom__label::before {
+        transform: scale(1);
+      }
+      + .checkbox-custom__label::after {
+        background-color: #cbd0e7;
+      }
+    }
+  }
+  &__label {
+    position: relative;
+    padding-left: 25px;
+    color: var(--text-color);
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
+    &::after,
+    &::before {
+      content: "";
+      position: absolute;
+    }
+    &::after {
+      top: 0;
+      left: 0;
+      width: 15px;
+      height: 15px;
+      border-radius: 3px;
+      background-color: #d2d2d2;
+      transition: background-color 0.1s linear;
+      cursor: pointer;
+    }
+    &::before {
+      width: 9px;
+      height: 9px;
+      border-radius: 9px;
+      background-color: #21317a;
+      top: 3px;
+      left: 3px;
+      z-index: 2;
+      transform: scale(0);
+      transition: transform 0.19s linear;
+    }
+  }
+}
+</style>

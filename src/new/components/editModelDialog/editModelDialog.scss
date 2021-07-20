@@ -1,0 +1,37 @@
+.dialog {
+  width: 540px;
+}
+
+.field {
+  &:not(:first-child) {
+    margin-top: 18px;
+  }
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  grid-gap: 40px;
+}
+
+.label {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+  color: #000000;
+  display: flex;
+  align-items: center;
+}
+
+.editIcon {
+  position: absolute;
+  top: 9px;
+  right: 40px;
+  height: 16px;
+  width: 16px;
+  color: #4F4F4F;
+}
+
+.action {
+  height: 40px;
+  padding: 0 15px;
+  margin: 30px 0 0 auto;
+}

@@ -16,7 +16,7 @@ export default {
     repeatPassword: '',
     forgotData: '',
     newuser: false,
-    
+
     // ur-auth
     inn: '',
     userLogin: '', // общее поле
@@ -104,7 +104,7 @@ export default {
 
       if(state.userLogin.length === 0) return
       const validEmail = await dispatch('_validEmail', state.userLogin)
-      
+
       if (!validEmail) {
         let validPhone = await dispatch('_validPhone', state.userLogin);
         if(validPhone.length === 11) {
@@ -120,7 +120,7 @@ export default {
     checkUserExist ({state}) {
       let comandUrlEmail = '/api/check_user_email/',
       comandUrlPhone = '/api/check_user_phone/',
-      comandURL, 
+      comandURL,
       data = {};
       return new Promise ( (resolve, reject) => {
         // console.log(state)
@@ -153,28 +153,19 @@ export default {
             resolve(id)
           }
         })
-      } ) 
+      } )
     },
-    setNewPass ( { state, dispatch, commit } ) {
-        let data = {}
-
-        if (state.userPhone) {
-          data = {
-            phone_number: state.userPhone,
-          }
-        } else if (state.userEmail) {
-          data = {
-            email: state.userEmail,
-          }
-        }
-        data.password = state.repeatPassword
-        data.verification_code = state.code
-
+    setNewPass ( { state, dispatch, commit } , {field, value, code, password}) {
         axios({
         url: baseURL + '/api/account/restore/',
         method: 'PUT',
         data: {
-          ...data
+          [{
+            email: 'email',
+            phone: 'user_phone',
+          }[field]]: value,
+          password,
+          verification_code: code
         }
       })
       .then( res => {
@@ -207,7 +198,7 @@ export default {
           position: 'top-right'
       });
       })
-      
+
     },
     /**
      * Запрос регистрации
@@ -240,9 +231,9 @@ export default {
     },
     /**
      * Расшифрование данных
-     * @param {Object} state 
-     * @param {*} payload 
-     * @returns 
+     * @param {Object} state
+     * @param {*} payload
+     * @returns
      */
     async decryptCode({state}, payload) {
       const JSDecrypt = new JSEncrypt()
@@ -257,7 +248,7 @@ export default {
         let data = {}
         if (Phone) {
           data = {
-            phone_number: Phone,
+            user_phone: Phone,
           }
         } else if (Email) {
           data = {
@@ -265,7 +256,7 @@ export default {
           }
         }
         data.inn = Inn
-        
+
         return new Promise((resolve, reject) => {
           axios(
             {
@@ -281,9 +272,9 @@ export default {
                 if (data) {
                   resolve('Complete')
                 } else {
-                  reject({status: false})
+                  reject(resp)
                 }
-                
+
             })
             .catch ( err => {
               if (err.response.data.message) {
@@ -294,7 +285,7 @@ export default {
                   dismissible: true,
                   position: 'top-right'
               });
-              reject({status: false})
+              reject(err)
 
               } else if (err.response.data.inn) {
                 this._vm.$toast.open({
@@ -304,7 +295,7 @@ export default {
                   dismissible: true,
                   position: 'top-right'
                 });
-              reject({status: false})
+              reject(err)
 
               } else if (err.response.data.email || err.response.data.phone_number) {
                 this._vm.$toast.open({
@@ -314,15 +305,15 @@ export default {
                   dismissible: true,
                   position: 'top-right'
                 });
-                reject({status: false})
+                reject(resp)
               } else {
-                reject({status: false})
+                reject(err)
                 console.log(err)
               }
-            }) 
+            })
         })
     },
-    
+
     /**
      * Авторизация/Вход в личный кабинет
      * @param path
@@ -337,32 +328,25 @@ export default {
         commit('clearAuthForm');
         // так как router недосупен во vuex обращаемся к нему по типу events
         events.$emit('auth', true)
-        
+
       }).catch(err => {
         console.log('enter action error. auth state module', { err });
       });
     },
     // отправить повторный запрос
-    passwordRecoveryPhone ({ state, commit, dispatch }) {
+    passwordRecoveryPhone ({ state, commit, dispatch }, {field, value}) {
 
         let comandUrl = '/api/account/restore/'
-        let data = {}
-
-        if (state.userPhone) {
-          data = {
-            phone_number: state.userPhone,
-          }
-        } else if (state.userEmail) {
-          data = {
-            email: state.userEmail,
-          }
-        }
-        
       return new Promise((resolve, reject) => {
         axios({
           url: URL+comandUrl,
           method: 'POST',
-          data:{ ...data}
+          data: {
+            [{
+              email: 'email',
+              phone: 'user_phone',
+            }[field]]: value,
+          }
         }).then(res => {
           console.log(res)
           if (res.status === 201 || res.status === 200) {
@@ -396,7 +380,7 @@ export default {
     */
     passInstall ({ state, dispatch, commit }) {
       let commandUrl = '/api/api_to_fns/';
-      
+
       return dispatch('passwordInstall', {
         Email: state.userEmail,
         Phone: state.userPhone,
@@ -421,7 +405,7 @@ export default {
           method: 'POST',
           data
         }).then ( res => {
-        let user_company = JSON.stringify(res) 
+        let user_company = JSON.stringify(res)
         localStorage.setItem('user_company', user_company)
           commit('authResolve')
         })
@@ -437,7 +421,7 @@ export default {
           });
       })
   },
-    
+
     // timer
     setNewTimer ({ state, commit }) {
       commit('setStateField', { key: 'code', value: ''});
@@ -463,26 +447,17 @@ export default {
     /**
      * Активация аккаунта
      */
-    activatePhoneEmail ({ state, dispatch, commit }) {
-        let data = {}
-        if (state.userEmail !== '') {
-          data = {
-            email: state.userEmail
-          }
-        } else if (state.userPhone !== "") {
-          data = {
-            phone_number: state.userPhone
-          }
-        }
-
-        data.verification_code = state.code
-
+    activatePhoneEmail ({ state, dispatch, commit }, {field, value, code}) {
       return new Promise((resolve, reject) => {
         axios({
           url: baseURL + '/api/account/verificate/',
           method: 'POST',
           data: {
-            ...data
+            [{
+              email: 'email',
+              phone: 'user_phone',
+            }[field]]: value,
+            verification_code: code,
           }
         })
         .then (resp => {
@@ -491,7 +466,7 @@ export default {
           commit('setAuthLayout', 4); // change layout
           resolve('Account activated')
           } else {
-            reject('Error')
+            reject(resp)
             commit('clearCode')
             this._vm.$toast.open({
               message: `Код введен не верно`,
@@ -504,7 +479,7 @@ export default {
         })
         .catch ( err => {
           if ( err.response.data.message === 'verification code failed') {
-            reject('Error')
+            reject(err)
             commit('clearCode')
             this._vm.$toast.open({
               message: `Код введен не верно`,
@@ -514,7 +489,7 @@ export default {
               position: 'top-right'
             });
           }
-        }) 
+        })
       })
     },
       /**
@@ -576,9 +551,9 @@ export default {
           });
           }
         })
-          
-         
-        
+
+
+
     }
   },
   getters: {

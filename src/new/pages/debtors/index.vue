@@ -39,7 +39,7 @@ export default defineComponent({
           }
         }
       },
-      baseURL.includes('api-test') && {
+      {
         key: 'executive',
         label: 'Исполнительное\nпроизводство',
         url: {

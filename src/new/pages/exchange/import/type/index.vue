@@ -353,14 +353,6 @@ export default {
 
       const isDebtor = ['pretrial', 'judicial', 'executive'].includes(props.type)
 
-      await axios({
-        method: 'patch',
-        url: `${baseURL}/api/account/company-settings/${globalModel.value.company}`,
-        data: {
-          default_region: globalModel.value.region,
-        }
-      })
-
       await Promise.all(toUpload.map(async (file, index) => {
         try {
           const {data: {uuid, package: pkg}} = await axios({
@@ -419,7 +411,6 @@ export default {
               4: {status: true, error: status_text},
             }[state] || {status: true});
           },
-          1000,
         );
 
         unsubs.push(unsubscribe);

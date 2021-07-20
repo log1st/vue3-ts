@@ -1,8 +1,8 @@
 <template>
   <div
     v-if="computedStatus"
-    :class="[$style.status, $style[computedStatus.color]]"
-    @click="$emit('click', $event)"
+    :class="[$style.status, $style[computedStatus.color], $style[type]]"
+    @click="onClick"
   >
     <div :class="$style.label">
       {{computedStatus.label || 'Н/Д'}}
@@ -26,7 +26,7 @@ export default defineComponent({
     status: Object,
     type: String,
   },
-  setup(props) {
+  setup(props, {emit}) {
     const {
       judicialStatuses,
       judicialSubStatusesMap,
@@ -75,11 +75,20 @@ export default defineComponent({
           pretrial: pretrialSubStatusesMap,
         }[props.type]).value[props.status?.substatus[0]?.substatus] || null
       )
-    ))
+    ));
+
+    const onClick = (event) => {
+      if(props.type === 'pretrial') {
+        return;
+      }
+      emit('click', event)
+    }
 
     return {
       computedStatus,
       computedSubStatus,
+
+      onClick,
     }
   }
 })

@@ -1,23 +1,18 @@
 <template>
   <div id="app">
-    <component :is="layout">
-      <router-view/>
-    </component>
+    <router-view/>
     <IconsMap :style="{visibility: 'hidden', position: 'fixed', top: '200vh', left: '200vw'}"/>
+    <Toasts/>
   </div>
 </template>
 
 <script>
 import 'normalize.css'
 import IconsMap from "@/new/components/icon/IconsMap";
+import Toasts from "@/new/components/toasts/Toasts";
 
 export default {
-  components: {IconsMap},
-  computed: {
-    layout () {
-      return this.$route.meta.layout || 'cabinet-layout'
-    }
-  },
+  components: {Toasts, IconsMap},
   created () {
     if (this.$store.state.user.appTheme == 'day') {
         document.documentElement.setAttribute('data-theme', 'day');

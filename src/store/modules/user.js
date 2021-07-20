@@ -16,7 +16,7 @@ export default {
     },
     auth_success (state, { token, user }) {
       state.token = token
-      state.user = user ? user : ''  
+      state.user = user ? user : ''
     },
     logout (state) {
       state.token = null
@@ -33,14 +33,14 @@ export default {
   actions: {
     /**
      * Изменение цветовой темы
-     * @param {String}  
+     * @param {String}
      */
     changeAppTheme ({commit}, payload) {
       commit('changeTheme', payload)
     },
     demoLogin ( { commit }, { demo_role } ) {
       let role = demo_role
-      return new Promise ((resolve, rej) => { 
+      return new Promise ((resolve, rej) => {
         axios ( {
           method: 'POST',
           url: baseURL + '/auth/login/',
@@ -52,7 +52,7 @@ export default {
           if (res.data.demo) {
             let result = res.data
             delete axios.defaults.headers.common["X-Auth-Token"];
-            axios.defaults.headers.common['X-Auth-Token'] = result.auth_token 
+            axios.defaults.headers.common['X-Auth-Token'] = result.auth_token
             axios({
               url: `${baseURL}/api/account/user/${res.data.id}/`,
               method: 'GET',
@@ -64,7 +64,7 @@ export default {
                 role: userData.user_role,
                 INN: userData.user_inn,
                 Phone: userData.user_phone,
-                Email: userData.email 
+                Email: userData.email
               }
               if (typeof window !== 'undefined') {
                 localStorage.setItem('user', JSON.stringify(user));
@@ -87,7 +87,7 @@ export default {
             localStorage.removeItem('token');
           }
           // Отлавливаем текст ошибки с сервара при коде 4XX или 5XX
-          if (err.response) { 
+          if (err.response) {
             console.log(err.response)
             this._vm.$toast.open({
               message: err.response.data.error,
@@ -97,18 +97,18 @@ export default {
               position: 'top-right'
             })
             // Текста не даст но скажет что мы не можем стучаться к серверу
-          } else if (err.request) { 
+          } else if (err.request) {
             console.log(err.request)
           }
           rej(err)
         })
-      }) 
+      })
     },
     /**
-     * 
-     * @param {String} Email 
-     * @param {String} Phone 
-     * @param {String} Password 
+     *
+     * @param {String} Email
+     * @param {String} Phone
+     * @param {String} Password
      * @returns - При условии что пользователь прошел валидации и данные приняты то он будет перенаправлен в систему если же нет то пройдет обработка одной из ошибок
      */
     login ({ commit, dispatch }, { Email, Phone, Password }) {
@@ -129,7 +129,7 @@ export default {
             password: Password
           }
         }).then(res => {
-            
+
             if (res.data.error) {
               this._vm.$toast.open({
                 message: res.data.error,
@@ -142,7 +142,7 @@ export default {
             } else if (res.data.auth_token !== '' ) {
 
               let result = res.data
-              axios.defaults.headers.common['X-Auth-Token'] = result.auth_token 
+              axios.defaults.headers.common['X-Auth-Token'] = result.auth_token
 
               axios({
                 url: `${baseURL}/api/account/user/${res.data.id}/`,
@@ -155,7 +155,7 @@ export default {
                   role: userData.user_role,
                   INN: userData.user_inn,
                   Phone: userData.user_phone,
-                  Email: userData.email 
+                  Email: userData.email
                 }
                 if (typeof window !== 'undefined') {
                   localStorage.setItem('user', JSON.stringify(user));
@@ -165,15 +165,14 @@ export default {
                 commit('auth_success', { token: user.id, user });
                 commit( 'percentLoginLoader', {status:true, type: 2} )
 
-              })
-              resolve();
+              }).finally(resolve)
             }
         }).catch(e => {
           if (typeof window !== 'undefined') {
             localStorage.removeItem('token');
           }
           // Отлавливаем текст ошибки с сервара при коде 4XX или 5XX
-          if (e.response) { 
+          if (e.response) {
             const errorKey = Object.keys(e.response.data)
             const errors = e.response.data
             errorKey.forEach( err => {
@@ -195,9 +194,9 @@ export default {
                 position: 'top-right'
               })
             }
-           
+
             // Текста не даст но скажет что мы не можем стучаться к серверу
-          } else if (e.request) { 
+          } else if (e.request) {
             console.log(e.request)
           }
           delete axios.defaults.headers.common["X-Auth-Token"];
@@ -208,7 +207,7 @@ export default {
     },
     /**
      * Выход из приложения
-     * @returns 
+     * @returns
      */
     logout ({ dispatch, commit }) {
       return new Promise((resolve, reject) => {
@@ -232,11 +231,11 @@ export default {
       if (!document.cookie) {
         return null;
       }
-    
+
       const xsrfCookies = document.cookie.split(';')
         .map(c => c.trim())
         .filter(c => c.startsWith(name + '='));
-    
+
       if (xsrfCookies.length === 0) {
         return null;
       }
@@ -283,7 +282,7 @@ export default {
       if (Phone) {
         data.phone_number = parseInt(Phone)
       }
-        
+
       return new Promise((resolve, reject) => {
         axios({
           url:baseURL+comandUrl,
@@ -295,9 +294,9 @@ export default {
             if (resp.data.demo === false && resp.data.auth_token !== "") {
               let user = {
                 id: resp.data.id,
-                token: resp.data.auth_token 
+                token: resp.data.auth_token
               }
-              if (typeof window !== 'undefined') 
+              if (typeof window !== 'undefined')
                   {
                     localStorage.setItem('user', JSON.stringify(user));
                     localStorage.setItem('token', user.token);
@@ -305,7 +304,7 @@ export default {
                 dispatch( 'sendInnToFns', inn )
                 commit( 'auth_success', { token: user.token, user } );
                 commit( 'percentLoginLoader', {status:true, type: 1})
-              
+
               // console.log(resp)
 
               resolve('Install')
@@ -343,7 +342,7 @@ export default {
       }).then(res => {
         if(res.data[0].Errors) {
           const errors = Object.values(res.data[0].Errors);
-          
+
           this._vm.$toast.open({
               message: `${errors[0]}`,
               type: 'error',
@@ -360,7 +359,7 @@ export default {
             position: 'top-right'
           });
         }
-        
+
 
       }).catch(e => {
         console.error(e);
