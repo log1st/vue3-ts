@@ -155,6 +155,14 @@
           </div>
         </template>
       </template>
+      <template #cell(debtor.writs_of_execution.0.case_number)="{record}" v-if="type === 'executive'">
+        <template v-if="record.debtor.writs_of_execution[0] && record.debtor.writs_of_execution[0].case_number && (record.debtor.writs_of_execution[0].case_number !== '0')"g>
+          {{record.debtor.writs_of_execution[0].case_number}}
+        </template>
+        <div :class="$style.na" v-else>
+          Н/Д
+        </div>
+      </template>
       <template #cell(debtor.writs_of_execution.0.amount)="{record}" v-if="type === 'executive'">
         <template v-if="record.debtor.writs_of_execution[0] && record.debtor.writs_of_execution[0].amount">
           {{formatMoney(record.debtor.writs_of_execution[0].amount)}}
