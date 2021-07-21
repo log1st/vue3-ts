@@ -48,7 +48,7 @@ export default {
       "file": null,
       "signer": "",
       "signer_name": "",
-      "klass": "default",
+      "klass": "attorney",
       "name": "",
     })
 

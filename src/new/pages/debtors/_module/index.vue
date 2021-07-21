@@ -107,12 +107,12 @@
                   :class="[
                   $style.accountIcon,
                   $style[`accountIcon${
-                    substatus.includes('voice') ? 'Green' : (
+                    substatus.includes('voice') ? 'Blue' : (
                       substatus.includes('sms') ? 'Blue' : undefined
                     )
                   }`]
                 ]"
-                  :icon="substatus.includes('voice') ? 'megaphone' : (
+                  :icon="substatus.includes('voice') ? 'voice' : (
                     substatus.includes('sms') ? 'sms' : undefined
                   )"
                 />

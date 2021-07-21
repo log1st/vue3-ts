@@ -91,7 +91,7 @@ export default defineComponent({
         key: 'debts',
         label: 'Общая сумма задолженности',
         async fetch() {
-          return data.value.accruals;
+          return data.value.debts_data;
         }
       },
       {
