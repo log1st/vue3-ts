@@ -105,7 +105,12 @@ export default {
       ...([
         {key: '__index', label: '№'},
         {key: 'production_number', label: '№ ИП'},
-        {key: 'docnum', label: 'Номер исполнительного документа'},
+
+        {key: 'doctype', label: 'Вид документа'},
+        {key: 'docnum', label: '№ дела'},
+        {key: 'docdate', label: 'Дата дела'},
+        {key: 'court', label: 'Судебный участок'},
+
         {key: 'production_date', label: 'Дата возбуждения ИП'},
         {key: 'end_date', label: 'Дата прекращения ИП'},
         {key: 'end_reason1', label: 'Основания прекращения ИП'},
@@ -153,8 +158,8 @@ export default {
         payload: {
           isEditable: false,
           model: {
-            name: 'Пример имени',
-            address: 'Пример адреса',
+            name: data.value.debtor_main_profile.bailiff?.name,
+            address: data.value.debtor_main_profile.bailiff?.address,
           },
           fields: [
             {key: 'name', label: 'Наименование'},
