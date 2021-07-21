@@ -5,6 +5,7 @@
       <DocumentField
         :class="$style.document"
         v-for="(document, index) in documents"
+        :key="document.id"
         :file.sync="documents[index].file"
         :name.sync="documents[index].name"
         is-editable
