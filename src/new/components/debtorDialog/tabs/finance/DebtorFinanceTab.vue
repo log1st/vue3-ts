@@ -182,10 +182,12 @@ export default defineComponent({
     }
 
     const summaries = computed(() => (
-      [{label: 'Начислено', value: data.value.accrual},
-      {label: 'Оплачено', value: data.value.paid_up},
-      {label: 'Задолженность', value: data.value.debt},
-      {label: 'Пеня', value: data.value.penalty}]
+      [
+        productionType.value !== 'executive' && {label: 'Начислено', value: data.value.accrual},
+        {label: 'Оплачено', value: data.value.paid_up},
+        {label: 'Задолженность', value: data.value.debt},
+        productionType.value !== 'executive' && {label: 'Пеня', value: data.value.penalty},
+      ].filter(Boolean)
     ));
 
     const onceAmount = computed(() => data.value.total_recalculations)
