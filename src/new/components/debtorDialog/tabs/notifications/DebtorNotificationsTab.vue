@@ -32,7 +32,12 @@
                   {{formatDate(getDeepField(document, column.key))}}
                 </template>
                 <template v-else-if="['status'].includes(column.key)">
-                  {{pretrialSubStatusesMap[`${activeTab.key}_${getDeepField(document, column.key)}`]}}
+                  <template v-if="activeTab.key === 'sms'">
+                    {{pretrialSubStatusesMap[`${activeTab.key}_${getDeepField(document, column.key)}`]}}
+                  </template>
+                  <template v-else>
+                    {{document.status_text}}
+                  </template>
                 </template>
                 <template v-else>
                   {{getDeepField(document, column.key)}}
