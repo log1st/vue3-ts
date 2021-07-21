@@ -57,7 +57,8 @@
           </div>
           <div v-if="record.debtor.debtor_status && record.debtor.debtor_status.length" :class="[
             $style.accountIcons,
-            record.debtor.debtor_status[0].length > 1 && $style.accountIconsDense
+            record.substatuses.length > 1 && $style.accountIconsDense,
+            record.pretrial_substatuses.length > 1 && $style.accountIconsDense,
           ]">
             <template v-if="module === 'judicial'">
               <TooltipWrapper
@@ -93,23 +94,27 @@
                 />
               </TooltipWrapper>
             </template>
-            <template v-else-if="module === 'pretrial' && !!record.debtor.pretrial_status">
+            <template v-else-if="module === 'pretrial'">
               <TooltipWrapper
                 v-for="substatus in record.pretrial_substatuses"
                 :key="substatus"
-                :text="pretrialSubStatusesMap[substatus]"
-                v-if="['court'].includes(substatus)"
+                :text="substatus.includes('voice') ? 'Голосовое уведомление отправлено' : (
+                      substatus.includes('sms') ? 'СМС отправлено' : undefined
+                    )"
+                v-if="['voice', 'sms'].some(s => substatus.includes(s))"
               >
                 <Icon
                   :class="[
                   $style.accountIcon,
-                  $style[`accountIcon${{
-                    court: 'Green',
-                  }[substatus]}`]
+                  $style[`accountIcon${
+                    substatus.includes('voice') ? 'Green' : (
+                      substatus.includes('sms') ? 'Blue' : undefined
+                    )
+                  }`]
                 ]"
-                  :icon="{
-                    court: 'court',
-                  }[substatus]"
+                  :icon="substatus.includes('voice') ? 'megaphone' : (
+                    substatus.includes('sms') ? 'sms' : undefined
+                  )"
                 />
               </TooltipWrapper>
             </template>
@@ -823,10 +828,9 @@ export default defineComponent({
               ],
             },
             substatuses,
-            pretrial_substatuses: record.debtor.pretrial_status.reduce((acc, {substatus}) => ([
-              ...acc,
-              ...substatus.map(({status: s}) => s),
-            ]), []).filter((v, i, s) => s.indexOf(v) === i).filter(Boolean),
+            pretrial_substatuses: record.debtor.pretrial_status.find(({status}) => status)?.substatus?.map((s) => (
+              s?.data?.type
+            )).filter((c, i, s) => s.indexOf(c) === i).filter(Boolean),
           });
         });
         response.data.summaries = response.data.total;
