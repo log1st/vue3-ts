@@ -303,19 +303,16 @@ export default {
         addNewVars () {
             let column = this.existColumn.find(c => c.type === this.newVars.variable_name.name)
 
+                this.newVars.position = this.variablesList.length
+                this.newVars.in_formula = this.newVars.variable_name.in_formula
+                this.newVars.variable_name = this.newVars.variable_name.verbose_name
+
             if ( !!column ) {
-                this.newVars.position = this.variablesList.length
-                this.newVars.in_formula = this.newVars.variable_name.in_formula
-                this.newVars.variable_name = this.newVars.variable_name.verbose_name
                 this.newVars.column_id = column.pk
-                this.variablesList.push(this.newVars)
             } else {
-                this.newVars.position = this.variablesList.length
-                this.newVars.in_formula = this.newVars.variable_name.in_formula
-                this.newVars.variable_name = this.newVars.variable_name.verbose_name
                 this.newVars.column_id = this.variablesList.length + 1
-                this.variablesList.push(this.newVars)
             }
+                this.variablesList.push(this.newVars)
             
             this.newVars = {
                 variable_name: '',
