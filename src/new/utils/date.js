@@ -48,7 +48,7 @@ const weekdayIntl = new Intl.DateTimeFormat('ru-RU', {
 
 export const formatWeekday = (date) => weekdayIntl.format(date);
 
-const dayIntl = new Intl.DateTimeFormat('ru-RU'g, {
+const dayIntl = new Intl.DateTimeFormat('ru-RU', {
   day: 'numeric',
 });
 
