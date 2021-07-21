@@ -115,6 +115,9 @@
                     </li>
                  </draggable>
             </ul>
+            <div class="final-formul">
+                <strong v-if="finalFormul" >{{finalFormul}}</strong>
+            </div>
             <ur-btn
                 v-show="variablesList.length > 0"
                 @click="saveColTemplate"
@@ -155,9 +158,13 @@ export default {
     },
     data () {
         return {
+            resultFormul: {
+                items: []
+            },
             selectedProductionType: undefined,
             loading: false,
             disabled: false,
+            finalFormul: undefined,
             productionType: [
                 {
                     type: 'pretrial',
@@ -279,21 +286,23 @@ export default {
         },
         
         getFinalFormul () {
-            let result = []
+            this.resultFormul.items = []
             this.variablesList.forEach( item => {
                 let obj = {
                     column_id: item.column_id,
                     variable_name: !!item.variable ? item.variable : null 
                 }
-                result.push(obj)
+                this.resultFormul.items.push(obj)
             })
+
             this.$http({
                 command: '/api/document-parsing/debt-calculation-formula/',
                 method: 'POST',
-                data: result
+                data: this.resultFormul
             })
             .then( res => {
-                console.log(res)
+                this.finalFormul = res.formula
+                // console.log(res)
             })
         },
 
@@ -322,8 +331,9 @@ export default {
                 column_id: 0,
                 variable: null
             }
-            
-            this.getFinalFormul()
+            setTimeout(() => {
+                this.getFinalFormul()
+            }, 1000 )
         },
 
         /**
@@ -333,6 +343,8 @@ export default {
             const { index, list } = payload
             if ( !list.id ) {
                 this.variablesList.splice(index, 1)
+                let formulIndex = this.resultFormul.items.findIndex( i => i.column_id === list.column_id )
+                this.resultFormul.items.splice(formulIndex, 1)
             } else {
                 //
             }
@@ -462,6 +474,11 @@ export default {
 </script>
 <style lang="scss">
     .config-data {
+        .fina-formul {
+            padding-left: 40px;
+            font-size: 12pt;
+            margin-bottom: 1em;
+        }
         &__form {
             padding: 15px;
             &-row {
