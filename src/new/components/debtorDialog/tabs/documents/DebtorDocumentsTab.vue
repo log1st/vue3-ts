@@ -149,6 +149,7 @@ export default defineComponent({
             url: `${baseURL}/documents/general_document_flow/`,
             params: {
               debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(',')
             }
           });
 
