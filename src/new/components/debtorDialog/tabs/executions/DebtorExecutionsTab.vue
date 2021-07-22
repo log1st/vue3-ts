@@ -8,6 +8,9 @@
         <Btn v-if="false" state="secondary" label="Банковские счета" @click="showBankAccounts" :class="$style.action"/>
         <Btn state="secondary" label="Реквизиты участка ФССП" @click="showRequisites" :class="$style.action"/>
       </div>
+      <div :class="$style.filter">
+        <SelectInput v-model="filter.type" label="Фильтр" :options="typeOptions"/>
+      </div>
     </div>
     <div :class="$style.content">
       <Icon v-if="isLoading" icon="loader" spin :class="$style.loader"/>
@@ -73,11 +76,32 @@ import {formatMoney} from "@/new/utils/money";
 import Btn from "@/new/components/btn/Btn";
 import {useDialog} from "@/new/hooks/useDialog";
 import {useStore} from "@/new/hooks/useStore";
+import SelectInput from "@/new/components/selectInput/SelectInput";
 export default {
   name: "DebtorExecutionsTab",
-  components: {Btn, Icon},
+  components: {SelectInput, Btn, Icon},
   setup() {
     const data = inject('data');
+
+    const typeOptions = ref([
+      {
+        value: 'communal',
+        label: 'Коммунальные услуги',
+      }, {
+        value: 'credit',
+        label: 'Кредиты',
+      }, {
+        value: 'tax',
+        label: 'Налоги',
+      }, {
+        value: 'other',
+        label: 'Штрафы и пр.'
+      }
+    ]);
+
+    const filter = ref({
+      type: 'communal'
+    });
 
     const tabs = computed(() => ([
       {
@@ -86,7 +110,8 @@ export default {
           const response = await axios({
             url: `${baseURL}/executive/debtor/${data.value.debtor.pk}/fssp/`,
             params: {
-              ordering: '-production_date'
+              ordering: '-production_date',
+              debt_nature: filter.value.type,
             }
           })
 
@@ -152,6 +177,20 @@ export default {
       immediate: true,
     });
 
+    watch(filter, async () => {
+      isLoading.value = true;
+      await new Promise(requestAnimationFrame);
+      try {
+        documents.value = [];
+        documents.value = await activeTab.value.fetch()
+      } catch (e) {
+        //
+      }
+      isLoading.value = false;
+    }, {
+      deep: true,
+    });
+
     const {showDialog} = useDialog();
 
     const showRequisites = async () => {
@@ -183,9 +222,12 @@ export default {
           id: data.value.debtor.pk,
         }
       })
-    }
+    };
 
     return {
+      filter,
+      typeOptions,
+
       activeTab,
       selectTab,
       tabs,
