@@ -85,7 +85,9 @@ export default {
         async fetch() {
           const response = await axios({
             url: `${baseURL}/executive/debtor/${data.value.debtor.pk}/fssp/`,
-
+            params: {
+              ordering: '-production_date'
+            }
           })
 
           return [...response.data].reverse().filter(({id}, index, self) => self.findIndex((r) => r.id === id) === index).reverse().map((i, index) => ({
