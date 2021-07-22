@@ -9,7 +9,7 @@
         <Btn state="secondary" label="Реквизиты участка ФССП" @click="showRequisites" :class="$style.action"/>
       </div>
       <div :class="$style.filter">
-        <SelectInput v-model="filter.type" label="Фильтр" :options="typeOptions"/>
+        <SelectInput v-model="filter.type" :options="typeOptions"/>
       </div>
     </div>
     <div :class="$style.content">
