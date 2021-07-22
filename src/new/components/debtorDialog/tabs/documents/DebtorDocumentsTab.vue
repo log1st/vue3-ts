@@ -185,7 +185,7 @@ export default defineComponent({
             url: `${baseURL}/documents/extract_from_egrn/`,
             params: {
               debtor_id: data.value.debtor.pk,
-              active: 1,
+              // active: 1,
             },
           });
 
@@ -201,7 +201,7 @@ export default defineComponent({
             url: `${baseURL}/documents/extract_from_egrn_transfer_of_rights/`,
             params: {
               debtor_id: data.value.debtor.pk,
-              active: 1,
+              // active: 1,
             },
           });
 
