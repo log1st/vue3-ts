@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="submit" :class="$style.signer">
+  <form @submit.prevent="submit" :class="$style.signer" v-if="model">
     <div
       :class="$style.field"
       :style="{
