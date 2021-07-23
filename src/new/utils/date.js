@@ -1,4 +1,4 @@
-const dateIntl = new Intl.DateTimeFormat(undefined, {
+const dateIntl = new Intl.DateTimeFormat('ru-RU', {
   year: 'numeric',
   month: '2-digit',
   day: '2-digit',
@@ -11,7 +11,7 @@ export const formatDbDate = (date) => {
   return formatDate(Date.UTC(year, month - 1, day))
 }
 
-const dateTimeIntl = new Intl.DateTimeFormat(undefined, {
+const dateTimeIntl = new Intl.DateTimeFormat('ru-RU', {
   year: 'numeric',
   month: '2-digit',
   day: '2-digit',
@@ -23,32 +23,32 @@ const dateTimeIntl = new Intl.DateTimeFormat(undefined, {
 
 export const formatDateTime = (date) => dateTimeIntl.format(new Date(date));
 
-const monthAndYearIntl = new Intl.DateTimeFormat(undefined, {
+const monthAndYearIntl = new Intl.DateTimeFormat('ru-RU', {
   year: 'numeric',
   month: 'long',
 });
 
 export const formatMonthAndYear = (date) => monthAndYearIntl.format(date);
 
-const monthIntl = new Intl.DateTimeFormat(undefined, {
+const monthIntl = new Intl.DateTimeFormat('ru-RU', {
   month: 'long',
 });
 
 export const formatMonth = (date) => monthIntl.format(date);
 
-const yearIntl = new Intl.DateTimeFormat(undefined, {
+const yearIntl = new Intl.DateTimeFormat('ru-RU', {
   year: 'numeric',
 });
 
 export const formatYear = (date) => yearIntl.format(date);
 
-const weekdayIntl = new Intl.DateTimeFormat(undefined, {
+const weekdayIntl = new Intl.DateTimeFormat('ru-RU', {
   weekday: 'short',
 });
 
 export const formatWeekday = (date) => weekdayIntl.format(date);
 
-const dayIntl = new Intl.DateTimeFormat(undefined, {
+const dayIntl = new Intl.DateTimeFormat('ru-RU', {
   day: 'numeric',
 });
 

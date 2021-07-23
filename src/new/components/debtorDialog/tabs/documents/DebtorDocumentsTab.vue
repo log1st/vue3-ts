@@ -100,7 +100,12 @@
                   {{formatDateTime(document[column.key])}}
                 </template>
                 <template v-else-if="['sms', 'voice'].includes(activeTab.key) && column.key === 'status'">
-                  {{pretrialSubStatusesMap[`${activeTab.key}_${document[column.key]}`]}}
+                  <template v-if="activeTab.key === 'sms'">
+                    {{pretrialSubStatusesMap[`${activeTab.key}_${document[column.key]}`]}}
+                  </template>
+                  <template v-else>
+                    {{document.status_text}}
+                  </template>
                 </template>
                 <template v-else-if="['executionList'].includes(activeTab.key) && column.key.includes('date')">
                   {{formatDbDate(document[column.key])}}
@@ -149,6 +154,7 @@ export default defineComponent({
             url: `${baseURL}/documents/general_document_flow/`,
             params: {
               debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(',')
             }
           });
 
@@ -179,7 +185,7 @@ export default defineComponent({
             url: `${baseURL}/documents/extract_from_egrn/`,
             params: {
               debtor_id: data.value.debtor.pk,
-              active: 1,
+              // active: 1,
             },
           });
 
@@ -195,7 +201,7 @@ export default defineComponent({
             url: `${baseURL}/documents/extract_from_egrn_transfer_of_rights/`,
             params: {
               debtor_id: data.value.debtor.pk,
-              active: 1,
+              // active: 1,
             },
           });
 

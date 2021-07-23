@@ -78,9 +78,6 @@ export default defineComponent({
     ));
 
     const onClick = (event) => {
-      if(props.type === 'pretrial') {
-        return;
-      }
       emit('click', event)
     }
 
