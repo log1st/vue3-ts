@@ -115,8 +115,8 @@
                     </li>
                  </draggable>
             </ul>
-            <div class="final-formul">
-                <strong v-if="finalFormul" >{{finalFormul}}</strong>
+            <div class="final-formul" title="Финальная формула вычисления шаблона">
+                <span>Формула: </span> <strong v-if="finalFormul" >{{finalFormul}}</strong>
             </div>
             <ur-btn
                 v-show="variablesList.length > 0"
@@ -309,18 +309,18 @@ export default {
         /**
          * Добавление нового столбца 
          */
-        addNewVars () {
-            let column = this.existColumn.find(c => c.type === this.newVars.variable_name.name)
-
+        async addNewVars () {
+                let column = this.existColumn.find(c => c.type === this.newVars.variable_name.name)
                 this.newVars.position = this.variablesList.length
                 this.newVars.in_formula = this.newVars.variable_name.in_formula
-                this.newVars.variable_name = this.newVars.variable_name.verbose_name
 
             if ( !!column ) {
                 this.newVars.column_id = column.pk
             } else {
-                this.newVars.column_id = this.variablesList.length + 1
+                // this.newVars.column_id = this.variablesList.length + 1
+               await this.createNewColumn()
             }
+                this.newVars.variable_name = this.newVars.variable_name.verbose_name
                 this.variablesList.push(this.newVars)
             
             this.newVars = {
@@ -334,6 +334,29 @@ export default {
             setTimeout(() => {
                 this.getFinalFormul()
             }, 1000 )
+        },
+
+        createNewColumn () {
+            return new Promise ((resolve, reject) => {
+                this.$http({
+                    method: 'POST',
+                    command: '/api/document-parsing/columns/',
+                    data: {
+                        title: this.newVars.variable_name.verbose_name,
+                        type: this.newVars.variable_name.name,
+                        instructions: null
+                    }
+                })
+                .then ( resp => {
+                    console.log(resp)
+                    this.newVars.column_id = resp.pk
+                    resolve({status: true})
+                })
+                .catch( error => {
+                    this.newVars.column_id = this.variablesList.length + 1
+                    reject({status: false, msg: error})
+                })
+            })
         },
 
         /**
@@ -473,12 +496,13 @@ export default {
 }
 </script>
 <style lang="scss">
-    .config-data {
         .fina-formul {
             padding-left: 40px;
             font-size: 12pt;
             margin-bottom: 1em;
         }
+    .config-data {
+        
         &__form {
             padding: 15px;
             &-row {
