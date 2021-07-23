@@ -38,10 +38,10 @@
                                   <td v-if="item.email != ''">Email: {{item.email}}</td>
                                   <td v-if="item.email == ''">Нет данных</td>
                                   <td>ИНН: {{item.inn}}</td>
-                                  <td title="Количество должников в модуле досудебное производство">ДП: {{0}}</td>
-                                  <td title="Количество должников в модуле судебное производство">СП: {{0}}</td>
-                                  <td title="Количество должников в модуле исполнительное производство">ИП: {{0}}</td>
-                                  <td>Баланс:{{0}}</td>
+                                  <td title="Количество должников в модуле досудебное производство">ДП: {{item.total_debtors.pretrial}}</td>
+                                  <td title="Количество должников в модуле судебное производство">СП: {{item.total_debtors.judicial}}</td>
+                                  <td title="Количество должников в модуле исполнительное производство">ИП: {{item.total_debtors.executive}}</td>
+                                  <td>Баланс:{{item.balance}}</td>
 
                           </tr>
                           </tbody>
@@ -63,10 +63,10 @@
                                   <td v-if="item.email">Email: {{item.email}}</td>
                                   <!-- <td v-if="!item.email">Нет данных о </td> -->
                                   <td>ИНН: {{item.inn}}</td>
-                                  <td title="Количество должников в модуле досудебное производство">ДП: {{0}}</td>
-                                  <td title="Количество должников в модуле судебное производство">СП: {{0}}</td>
-                                  <td title="Количество должников в модуле исполнительное производство">ИП: {{0}}</td>
-                                  <td>Баланс:{{0}}</td>
+                                  <td title="Количество должников в модуле досудебное производство">ДП: {{item.total_debtors.pretrial}}</td>
+                                  <td title="Количество должников в модуле судебное производство">СП: {{item.total_debtors.judicial}}</td>
+                                  <td title="Количество должников в модуле исполнительное производство">ИП: {{item.total_debtors.executive}}</td>
+                                  <td>Баланс:{{item.balance}}</td>
                           </tr>
                           </tbody>
                         </table>
@@ -80,8 +80,10 @@
                               <span id="name1">{{selectedCompany.name_short}}</span>
                               <!-- <span id="phone__email" v-if="selectedCompany.Phone != ''">Телефон: {{selectedCompany.Phone}}</span> -->
                               <span id="phone__email" v-if="selectedCompany.email != ''">Email: {{selectedCompany.email}}</span>
-                              <span id="inn1">ИНН: {{selectedCompany.inn}}</span>
-                              <span id="debtcount1">Колличество должников: 0</span>
+                              <span id="inn1">ИНН: {{selectedCompany.inn}}</span> 
+                              <span id="debtcount1">Колличество должников ДП: {{selectedCompany.total_debtors.pretrial}}</span>
+                              <span id="debtcount2">Колличество должников СП: {{selectedCompany.total_debtors.judicial}}</span>
+                              <span id="debtcount3">Колличество должников ИП: {{selectedCompany.total_debtors.executive}}</span>
                               <span id="balance1">Баланс: {{selectedCompany.balance}} </span>
                               <span @click="addBalance()" style="cursor:pointer">
                                 <icon-base width="15" height="15" iconColor="#848aa1">
