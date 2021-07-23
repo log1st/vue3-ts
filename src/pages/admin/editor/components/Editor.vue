@@ -41,6 +41,7 @@
       <editor :apiKey="tinyAPIKey" :init="{
          height: 700,
          menubar: true,
+         language: 'ru',
          paste_data_images: true,
          content_css: '/constructor.css',
          fontsize_formats: '6pt 7pt 8pt 10pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 32pt 36pt 38pt 40pt',
