@@ -57,7 +57,8 @@
           </div>
           <div v-if="record.debtor.debtor_status && record.debtor.debtor_status.length" :class="[
             $style.accountIcons,
-            record.debtor.debtor_status[0].length > 1 && $style.accountIconsDense
+            record.substatuses.length > 1 && $style.accountIconsDense,
+            record.pretrial_substatuses.length > 1 && $style.accountIconsDense,
           ]">
             <template v-if="module === 'judicial'">
               <TooltipWrapper
@@ -93,23 +94,27 @@
                 />
               </TooltipWrapper>
             </template>
-            <template v-else-if="module === 'pretrial' && !!record.debtor.pretrial_status">
+            <template v-else-if="module === 'pretrial'">
               <TooltipWrapper
                 v-for="substatus in record.pretrial_substatuses"
                 :key="substatus"
-                :text="pretrialSubStatusesMap[substatus]"
-                v-if="['court'].includes(substatus)"
+                :text="substatus.includes('voice') ? 'Голосовое уведомление отправлено' : (
+                      substatus.includes('sms') ? 'СМС отправлено' : undefined
+                    )"
+                v-if="['voice', 'sms'].some(s => substatus.includes(s))"
               >
                 <Icon
                   :class="[
                   $style.accountIcon,
-                  $style[`accountIcon${{
-                    court: 'Green',
-                  }[substatus]}`]
+                  $style[`accountIcon${
+                    substatus.includes('voice') ? 'Blue' : (
+                      substatus.includes('sms') ? 'Blue' : undefined
+                    )
+                  }`]
                 ]"
-                  :icon="{
-                    court: 'court',
-                  }[substatus]"
+                  :icon="substatus.includes('voice') ? 'voice' : (
+                    substatus.includes('sms') ? 'sms' : undefined
+                  )"
                 />
               </TooltipWrapper>
             </template>
@@ -149,6 +154,22 @@
             Н/Д
           </div>
         </template>
+      </template>
+      <template #cell(debtor.writs_of_execution.0.case_number)="{record}" v-if="type === 'executive'">
+        <template v-if="record.debtor.writs_of_execution[0] && record.debtor.writs_of_execution[0].case_number && (record.debtor.writs_of_execution[0].case_number !== '0')"g>
+          {{record.debtor.writs_of_execution[0].case_number}}
+        </template>
+        <div :class="$style.na" v-else>
+          Н/Д
+        </div>
+      </template>
+      <template #cell(debtor.writs_of_execution.0.amount)="{record}" v-if="type === 'executive'">
+        <template v-if="record.debtor.writs_of_execution[0] && record.debtor.writs_of_execution[0].amount">
+          {{formatMoney(record.debtor.writs_of_execution[0].amount)}}
+        </template>
+        <div :class="$style.na" v-else>
+          Н/Д
+        </div>
       </template>
       <template #cell(debtor.writs_of_execution.0.start_date)="{record}" v-if="type === 'executive'">
         <template v-if="record.debtor.writs_of_execution[0] && record.debtor.writs_of_execution[0].start_date">
@@ -815,10 +836,9 @@ export default defineComponent({
               ],
             },
             substatuses,
-            pretrial_substatuses: record.debtor.pretrial_status.reduce((acc, {substatus}) => ([
-              ...acc,
-              ...substatus.map(({status: s}) => s),
-            ]), []).filter((v, i, s) => s.indexOf(v) === i).filter(Boolean),
+            pretrial_substatuses: record.debtor.pretrial_status.find(({status}) => status)?.substatus?.map((s) => (
+              s?.data?.type
+            )).filter((c, i, s) => s.indexOf(c) === i).filter(Boolean),
           });
         });
         response.data.summaries = response.data.total;
@@ -844,6 +864,14 @@ export default defineComponent({
           width: 2,
           props: {
             placeholder: 'Адрес',
+          },
+        },
+        {
+          field: 'phone_number',
+          type: 'text',
+          width: 2,
+          props: {
+            placeholder: 'Номер телефона',
           },
         },
         {
@@ -1023,6 +1051,7 @@ export default defineComponent({
           field: 'phone_number',
           label: 'Телефон',
           width: 214,
+          isSortable: true,
         },
         {
           field: 'full_name',
@@ -1087,6 +1116,12 @@ export default defineComponent({
         {
           field: 'total_debt',
           label: 'Общая задолженность',
+          // isSortable: true,
+          width: 237,
+        },
+        type.value === 'executive' && {
+          field: 'debtor.writs_of_execution.0.amount',
+          label: 'Задолженность по ИП',
           // isSortable: true,
           width: 237,
         },

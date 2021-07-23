@@ -5,6 +5,7 @@
       <DocumentField
         :class="$style.document"
         v-for="(document, index) in documents"
+        :key="document.id"
         :file.sync="documents[index].file"
         :name.sync="documents[index].name"
         is-editable
@@ -47,7 +48,7 @@ export default {
       "file": null,
       "signer": "",
       "signer_name": "",
-      "klass": "default",
+      "klass": "attorney",
       "name": "",
     })
 
@@ -101,7 +102,12 @@ export default {
       await new Promise(requestAnimationFrame)
       isEdited.value = false;
 
-      await Promise.all(toRemove.value.filter(Boolean).map(id => new Promise(resolve => {
+      await Promise.all(([
+        ...toRemove.value,
+        ...(!signer.value.file && signer.value.id ? [
+          signer.value.id
+        ] : []),
+      ]).filter(Boolean).map(id => new Promise(resolve => {
         axios({
           url: `${baseURL}/api/account/document/${id}/`,
           method: 'delete',
@@ -110,7 +116,9 @@ export default {
 
       await Promise.all([
         ...documents.value,
-        signer.value
+        ...(signer.value.file ? [
+          signer.value
+        ] : [])
       ].map(data => {
         return new Promise(resolve => {
           const newPayload = data.id ? (
