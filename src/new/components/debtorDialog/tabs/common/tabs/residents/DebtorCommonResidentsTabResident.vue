@@ -5,8 +5,8 @@
         <div :class="$style.controls">
           <Btn :class="$style.control" state="quaternary" prepend-icon="pencil" @click="toggle" v-if="!isEdit"/>
           <Btn :class="$style.control" state="quaternary" prepend-icon="close" @click="remove" v-if="!isEdit"/>
-          <Btn :class="$style.control" state="quaternary" prepend-icon="save" @click="submit" v-if="isEdit"/>
-          <Btn :class="$style.control" state="quaternary" prepend-icon="rollback" @click="reset" v-if="isEdit"/>
+<!--          <Btn :class="$style.control" state="quaternary" prepend-icon="save" @click="submit" v-if="isEdit"/>-->
+<!--          <Btn :class="$style.control" state="quaternary" prepend-icon="rollback" @click="reset" v-if="isEdit"/>-->
         </div>
       </template>
       <template v-else>
@@ -19,6 +19,7 @@
             v-model="model[column.key]"
             :placeholder="column.label"
             :error="errorsMap[column.key]"
+            @update:modelValue="partialSubmit(column.key)"
           />
           <SelectInput
             :state="['primary', 'dark']"
@@ -45,7 +46,7 @@
             :placeholder="column.label"
             :options="tenantRelationships"
             display-value-template="{n, plural, =1{Одна связь} one{# связь} few{# связи} other{# связей}}"
-            @update:modelValue="partialSubmit('relationships')"
+            @update:modelValue="partialSubmit(column.key)"
             :error="errorsMap[column.key]"
           />
         </template>
