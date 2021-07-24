@@ -66,6 +66,14 @@
                 <template v-else-if="activeTab.key === 'egrn' && column.key === 'created_at'">
                   {{formatDate(document[column.key])}}
                 </template>
+                <template v-else-if="['egrn', 'egrnRights'].includes(activeTab.key) && column.key === 'status'">
+                  {{ document.status.status }}
+                </template>
+                <template v-else-if="['egrn', 'egrnRights'].includes(activeTab.key) && column.key === 'history'">
+                  <div v-for="status in (document.history || [])">
+                    {{status.status}} ({{formatDate(status.created_at)}})
+                  </div>
+                </template>
                 <template v-else-if="activeTab.key === 'egrnRights' && column.key === 'file'">
                   {{decodeURIComponent(document[column.key].split('/').pop())}}
                 </template>
@@ -182,34 +190,65 @@ export default defineComponent({
         key: 'egrn',
         label: 'Выписка из ЕГРН',
         async fetch() {
-          const response = await axios({
+          const {data: results} = await axios({
             method: 'get',
             url: `${baseURL}/documents/extract_from_egrn/`,
             params: {
               debtor_id: data.value.debtor.pk,
               o: ['-created_at', '-id'].join(','),
-              // active: 1,
             },
           });
 
-          return response.data;
+          const {data: history} = await axios({
+            method: 'get',
+            url: `${baseURL}/rosreestr/single_status/`,
+          });
+
+          return await Promise.all(results.map(async record => {
+            const {data: status} = await axios({
+              method: 'get',
+              url: `${baseURL}/rosreestr/single_status/${record.status_tracking}/`,
+            });
+
+            return {
+              ...record,
+              status,
+              history: history.filter(({query_num}) => query_num === status.query_num),
+            }
+          }));
         }
       },
       productionType.value === 'judicial' && {
         key: 'egrnRights',
         label: 'Выписка ЕГРН о переходе прав',
         async fetch() {
-          const response = await axios({
+
+          const {data: results} = await axios({
             method: 'get',
             url: `${baseURL}/documents/extract_from_egrn_transfer_of_rights/`,
             params: {
               debtor_id: data.value.debtor.pk,
               o: ['-created_at', '-id'].join(','),
-              // active: 1,
             },
           });
 
-          return response.data;
+          const {data: history} = await axios({
+            method: 'get',
+            url: `${baseURL}/rosreestr/single_status/`,
+          });
+
+          return await Promise.all(results.map(async record => {
+            const {data: status} = await axios({
+              method: 'get',
+              url: `${baseURL}/rosreestr/single_status/${record.status_tracking}/`,
+            });
+
+            return {
+              ...record,
+              status,
+              history: history.filter(({query_num}) => query_num === status.query_num),
+            }
+          }));
         }
       },
       productionType.value === 'judicial' && {
@@ -399,18 +438,16 @@ export default defineComponent({
           {key: 'status_tracking', label: '№ заказа выписки'},
           {key: 'file', label: 'Наименование'},
           {key: 'created_at', label: 'Дата запроса'},
-          // {key: 'tracked_at', label: 'Дата выгрузки'},
-          // {key: 'status', label: 'Статус'},
-          // {key: 'statuses', label: 'История статусов'},
+          {key: 'status', label: 'Статус'},
+          {key: 'history', label: 'История статусов'},
         ],
         egrnRights: [
           {key: 'id', label: '№'},
           {key: 'status_tracking', label: '№ заказа выписки'},
           {key: 'file', label: 'Наименование'},
           {key: 'created_at', label: 'Дата запроса'},
-          // {key: 'tracked_at', label: 'Дата выгрузки'},
-          // {key: 'status', label: 'Статус'},
-          // {key: 'statuses', label: 'История статусов'},
+          {key: 'status', label: 'Статус'},
+          {key: 'history', label: 'История статусов'},
         ],
         fee: [
           {key: 'id', label: '№'},
@@ -480,7 +517,7 @@ export default defineComponent({
         documents.value = [];
         documents.value = await activeTab.value.fetch()
       } catch (e) {
-        //
+        console.log(e)
       }
       isLoading.value = false;
     }
