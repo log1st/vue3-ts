@@ -96,7 +96,7 @@
                 <template v-else-if="activeTab.key === 'fee' && column.key === 'amount'">
                   {{formatMoney(document[column.key])}}
                 </template>
-                <template v-else-if="['sms', 'voice'].includes(activeTab.key) && column.key === 'send_at'">
+                <template v-else-if="['sms', 'voice'].includes(activeTab.key) && ['status_at', 'send_at'].includes(column.key)">
                   {{formatDateTime(document[column.key])}}
                 </template>
                 <template v-else-if="['sms', 'voice'].includes(activeTab.key) && column.key === 'status'">
@@ -170,7 +170,8 @@ export default defineComponent({
             method: 'get',
             url: `${baseURL}/documents/extract_house_book/`,
             params: {
-              debtor_id: data.value.debtor.pk
+              debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(','),
             }
           });
 
@@ -186,6 +187,7 @@ export default defineComponent({
             url: `${baseURL}/documents/extract_from_egrn/`,
             params: {
               debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(','),
               // active: 1,
             },
           });
@@ -202,6 +204,7 @@ export default defineComponent({
             url: `${baseURL}/documents/extract_from_egrn_transfer_of_rights/`,
             params: {
               debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(','),
               // active: 1,
             },
           });
@@ -216,6 +219,9 @@ export default defineComponent({
           const response = await axios({
             method: 'get',
             url: `${baseURL}/judicial/debtor/${data.value.debtor.pk}/payments/`,
+            params: {
+              ordering: ['-created_at', '-id'].join(','),
+            }
           });
 
           return response.data.results;
@@ -228,6 +234,9 @@ export default defineComponent({
           const response = await axios({
             method: 'get',
             url: `${baseURL}/judicial/debtor/${data.value.debtor.pk}/decisions/`,
+            params: {
+              o: ['-created_at', '-id'].join(','),
+            }
           });
 
           return response.data.results;
@@ -240,6 +249,9 @@ export default defineComponent({
           const response = await axios({
             method: 'get',
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/claim/`,
+            params: {
+              o: ['-created_at', '-id'].join(','),
+            }
           });
 
           return response.data.results;
@@ -252,6 +264,9 @@ export default defineComponent({
           const response = await axios({
             method: 'get',
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/sms/`,
+            params: {
+              ordering: ['send_at', '-id'].join(','),
+            }
           });
 
           return response.data.reverse();
@@ -264,6 +279,9 @@ export default defineComponent({
           const response = await axios({
             method: 'get',
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/voice/`,
+            params: {
+              ordering: ['-status_at', '-id'].join(','),
+            }
           });
 
           return response.data;
@@ -277,7 +295,8 @@ export default defineComponent({
             method: 'get',
             url: `${baseURL}/enforcements/executive_fns_history/`,
             params: {
-              debtor_id: data.value.debtor.pk
+              debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(','),
             }
           });
           return response.data
@@ -291,7 +310,8 @@ export default defineComponent({
             method: 'get',
             url: `${baseURL}/enforcements/executive_bank_history/`,
             params: {
-              debtor_id: data.value.debtor.pk
+              debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(','),
             }
           });
           return response.data
@@ -305,7 +325,8 @@ export default defineComponent({
             method: 'get',
             url: `${baseURL}/enforcements/writ_of_execution/`,
             params: {
-              debtor_id: data.value.debtor.pk
+              debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(','),
             }
           });
           return response.data.results;
@@ -319,7 +340,8 @@ export default defineComponent({
             method: 'get',
             url: `${baseURL}/documents/debtor/`,
             params: {
-              debtor_id: data.value.debtor.pk
+              debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(','),
             }
           })
 
