@@ -70,7 +70,7 @@ export default defineComponent({
       isSubmitting.value = true;
 
       try {
-        await store.dispatch('setNewPass', {
+        await store.dispatch('passwordInstall', {
           ...placeholder,
           password: model.value.passwordConfirmation,
         })

@@ -95,7 +95,11 @@ export default defineComponent({
           Inn: model.value.inn,
         })
         await new Promise(requestAnimationFrame);
-        sessionStorage.setItem('register', JSON.stringify({field: field.toLowerCase(), value: model.value.login}));
+        sessionStorage.setItem('register', JSON.stringify({
+          field: field.toLowerCase(),
+          value: model.value.login,
+          inn: model.value.inn,
+        }));
         await redirect({
           name: 'sign-confirm',
         })
