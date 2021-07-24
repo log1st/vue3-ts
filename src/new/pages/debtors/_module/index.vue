@@ -1010,6 +1010,20 @@ export default defineComponent({
           },
           width: 2,
         },
+        type.value === 'executive' && {
+          field: 'case_number',
+          type: 'text',
+          props: {
+            placeholder: '№ дела',
+          },
+        },
+        type.value === 'executive' && {
+          field: 'serial_number',
+          type: 'text',
+          props: {
+            placeholder: '№ ИП',
+          },
+        },
         type.value === 'judicial' && {
           field: 'fee_status',
           type: 'select',
