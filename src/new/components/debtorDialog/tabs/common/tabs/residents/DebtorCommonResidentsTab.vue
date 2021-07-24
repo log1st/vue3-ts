@@ -139,9 +139,12 @@ export default defineComponent({
                 ...(isNew ? {
                   debtor: data.value.debtor.pk,
                 } : {}),
-                birth_date: profile.birth_date ? (
-                  [profile.birth_date.getFullYear(), profile.birth_date.getMonth() + 1, profile.birth_date.getDate()].join('-')
-                ) : profile.birth_date
+                ...['birth_date', 'registration_date', 'date_of_passport_issue'].reduce((acc, field) => ({
+                  ...acc,
+                  [field]: profile[field] ? (
+                    [profile[field].getFullYear(), profile[field].getMonth() + 1, profile[field].getDate()].join('-')
+                  ) : profile[field]
+                }), {})
               },
             })
           } catch (e) {
