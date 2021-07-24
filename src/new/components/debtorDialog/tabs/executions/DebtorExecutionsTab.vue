@@ -8,7 +8,7 @@
         <Btn v-if="false" state="secondary" label="Банковские счета" @click="showBankAccounts" :class="$style.action"/>
         <Btn state="secondary" label="Реквизиты участка ФССП" @click="showRequisites" :class="$style.action"/>
       </div>
-      <div :class="$style.filter">
+      <div :class="$style.filter" v-if="isFilterAvailable">
         <SelectInput v-model="filter.type" :options="typeOptions"/>
       </div>
     </div>
@@ -69,7 +69,7 @@
 
 <script>
 import Icon from "@/new/components/icon/Icon";
-import {computed, inject, ref, watch} from "@vue/composition-api";
+import {computed, inject, onMounted, ref, watch} from "@vue/composition-api";
 import {baseURL} from "@/settings/config";
 import {formatDate, formatDbDate} from "@/new/utils/date";
 import {formatMoney} from "@/new/utils/money";
@@ -123,6 +123,14 @@ export default {
       },
     ]));
 
+    const isFilterAvailable = ref(false);
+    const fetchFilterAvailability = async () => {
+      isFilterAvailable.value = false;
+      isFilterAvailable.value = (await axios({
+        url: `${baseURL}/executive/debtor/${data.value.debtor.pk}/fssp/`,
+      })).data.length > 0
+    }
+
     const activeTab = ref(tabs.value[0]);
     const selectTab = tab => {
       activeTab.value = tab;
@@ -152,6 +160,7 @@ export default {
     watch(computed(() => activeTab.value.key), async () => {
       isLoading.value = true;
       await new Promise(requestAnimationFrame);
+      await fetchFilterAvailability();
       try {
         documents.value = [];
         documents.value = await activeTab.value.fetch()
@@ -166,6 +175,7 @@ export default {
     watch(computed(() => data.value.debtor.pk), async () => {
       isLoading.value = true;
       await new Promise(requestAnimationFrame);
+      await fetchFilterAvailability();
       try {
         documents.value = [];
         documents.value = await activeTab.value.fetch()
@@ -173,8 +183,6 @@ export default {
         //
       }
       isLoading.value = false;
-    }, {
-      immediate: true,
     });
 
     watch(filter, async () => {
@@ -245,6 +253,7 @@ export default {
 
       showRequisites,
       showBankAccounts,
+      isFilterAvailable,
     }
   }
 }
