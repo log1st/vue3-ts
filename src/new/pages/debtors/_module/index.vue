@@ -722,7 +722,7 @@ export default defineComponent({
       }) {
         const sectors = await axios({
           method: 'get',
-          url: `${baseURL}/reference_books/regional_court_place/`,
+          url: `${baseURL}/reference_books/bailiff_place`,
           params,
           cancelToken,
         });
