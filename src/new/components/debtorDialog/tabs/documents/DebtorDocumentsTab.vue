@@ -145,7 +145,7 @@ export default defineComponent({
     const substatus = inject('substatus');
 
     const tabs = computed(() => ([
-      productionType.value !== 'executive' && {
+      {
         key: 'common',
         label: 'Общий',
         async fetch() {
@@ -154,7 +154,8 @@ export default defineComponent({
             url: `${baseURL}/documents/general_document_flow/`,
             params: {
               debtor_id: data.value.debtor.pk,
-              o: ['-created_at', '-id'].join(',')
+              o: ['-created_at', '-id'].join(','),
+              production_type: productionType.value,
             }
           });
 
