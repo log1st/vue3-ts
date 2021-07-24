@@ -67,10 +67,15 @@ export default defineComponent({
     const formatTenants = tenants => (
       tenants.map(tenant => {
         if(tenant.birth_date) {
-          const [year, month, day] = tenant.birth_date.split('-');
           return {
             ...tenant,
-            birth_date: new Date(Date.UTC(year, month - 1, day))
+            ...['birth_date', 'registration_date', 'date_of_passport_issue'].reduce((acc, field) => {
+              const [year, month, day] = tenant[field].split('-');
+              return ({
+                ...acc,
+                [field]: tenant[field] ? new Date(Date.UTC(year, month - 1, day)) : null
+              });
+            }, {}),
           }
         } else {
           return tenant

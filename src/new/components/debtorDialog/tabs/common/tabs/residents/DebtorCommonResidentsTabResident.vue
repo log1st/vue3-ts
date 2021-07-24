@@ -130,7 +130,8 @@ export default defineComponent({
     const model = useLocalProp(props, emit, 'modelValue', true);
 
     const isEdit = ref(false);
-    const toggle = () => {
+    const toggle = async () => {
+      await new Promise(requestAnimationFrame);
       isEdit.value = !isEdit.value;
     }
     const submit = async () => {
