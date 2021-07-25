@@ -266,21 +266,18 @@ export default {
           }
         })
     },
-    passwordInstall ({ commit, dispatch }, { Email, Phone, Password, inn, Code }) {
+    passwordInstall ({ commit, dispatch }, { field, value, password, inn, code }) {
       let comandUrl = '/api/account/register/'
       let data = {
-        inn: inn,
-        password: Password,
+        inn,
+        password,
         user_inn: parseInt(inn),
-        user_role:'company',
-        verification_code: Code
-      }
-
-      if (Email) {
-        data.email = Email
-      }
-      if (Phone) {
-        data.phone_number = parseInt(Phone)
+        user_role: 'company',
+        verification_code: code,
+        [{
+          email: 'email',
+          phone: 'user_phone',
+        }[field]]: value,
       }
 
       return new Promise((resolve, reject) => {

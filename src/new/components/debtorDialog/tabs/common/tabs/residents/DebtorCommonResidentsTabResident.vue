@@ -5,8 +5,8 @@
         <div :class="$style.controls">
           <Btn :class="$style.control" state="quaternary" prepend-icon="pencil" @click="toggle" v-if="!isEdit"/>
           <Btn :class="$style.control" state="quaternary" prepend-icon="close" @click="remove" v-if="!isEdit"/>
-          <Btn :class="$style.control" state="quaternary" prepend-icon="save" @click="submit" v-if="isEdit"/>
-          <Btn :class="$style.control" state="quaternary" prepend-icon="rollback" @click="reset" v-if="isEdit"/>
+<!--          <Btn :class="$style.control" state="quaternary" prepend-icon="save" @click="submit" v-if="isEdit"/>-->
+<!--          <Btn :class="$style.control" state="quaternary" prepend-icon="rollback" @click="reset" v-if="isEdit"/>-->
         </div>
       </template>
       <template v-else>
@@ -15,10 +15,11 @@
         )">
           <TextInput
             :state="['primary', 'dark']"
-            v-if="['full_name', 'birth_place', 'citizenship', 'num_of_passport', 'inn', 'passport_issued_by', 'registration_date', 'date_of_passport_issue'].includes(column.key)"
+            v-if="['full_name', 'birth_place', 'citizenship', 'num_of_passport', 'inn', 'passport_issued_by'].includes(column.key)"
             v-model="model[column.key]"
             :placeholder="column.label"
             :error="errorsMap[column.key]"
+            @update:modelValue="partialSubmit(column.key)"
           />
           <SelectInput
             :state="['primary', 'dark']"
@@ -26,15 +27,15 @@
             v-model="model[column.key]"
             :placeholder="column.label"
             :options="registrations"
-            @update:modelValue="partialSubmit('registration')"
+            @update:modelValue="partialSubmit(column.key)"
             :error="errorsMap[column.key]"
           />
           <DateInput
             :state="['primary', 'dark']"
-            v-else-if="column.key === 'birth_date'"
+            v-else-if="['date_of_passport_issue', 'birth_date', 'registration_date'].includes(column.key)"
             v-model="model[column.key]"
             :placeholder="column.label"
-            @update:modelValue="partialSubmit('birth_date')"
+            @update:modelValue="partialSubmit(column.key)"
             :error="errorsMap[column.key]"
           />
           <SelectInput
@@ -45,7 +46,7 @@
             :placeholder="column.label"
             :options="tenantRelationships"
             display-value-template="{n, plural, =1{Одна связь} one{# связь} few{# связи} other{# связей}}"
-            @update:modelValue="partialSubmit('relationships')"
+            @update:modelValue="partialSubmit(column.key)"
             :error="errorsMap[column.key]"
           />
         </template>
@@ -129,7 +130,8 @@ export default defineComponent({
     const model = useLocalProp(props, emit, 'modelValue', true);
 
     const isEdit = ref(false);
-    const toggle = () => {
+    const toggle = async () => {
+      await new Promise(requestAnimationFrame);
       isEdit.value = !isEdit.value;
     }
     const submit = async () => {
