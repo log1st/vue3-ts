@@ -66,6 +66,14 @@
                 <template v-else-if="activeTab.key === 'egrn' && column.key === 'created_at'">
                   {{formatDate(document[column.key])}}
                 </template>
+                <template v-else-if="['egrn', 'egrnRights'].includes(activeTab.key) && column.key === 'status'">
+                  {{ document.status.status }}
+                </template>
+                <template v-else-if="['egrn', 'egrnRights'].includes(activeTab.key) && column.key === 'history'">
+                  <div v-for="status in (document.history || [])">
+                    {{status.status}} ({{formatDate(status.created_at)}})
+                  </div>
+                </template>
                 <template v-else-if="activeTab.key === 'egrnRights' && column.key === 'file'">
                   {{decodeURIComponent(document[column.key].split('/').pop())}}
                 </template>
@@ -96,7 +104,7 @@
                 <template v-else-if="activeTab.key === 'fee' && column.key === 'amount'">
                   {{formatMoney(document[column.key])}}
                 </template>
-                <template v-else-if="['sms', 'voice'].includes(activeTab.key) && column.key === 'send_at'">
+                <template v-else-if="['sms', 'voice'].includes(activeTab.key) && ['status_at', 'send_at'].includes(column.key)">
                   {{formatDateTime(document[column.key])}}
                 </template>
                 <template v-else-if="['sms', 'voice'].includes(activeTab.key) && column.key === 'status'">
@@ -145,7 +153,7 @@ export default defineComponent({
     const substatus = inject('substatus');
 
     const tabs = computed(() => ([
-      productionType.value !== 'executive' && {
+      {
         key: 'common',
         label: 'Общий',
         async fetch() {
@@ -154,7 +162,8 @@ export default defineComponent({
             url: `${baseURL}/documents/general_document_flow/`,
             params: {
               debtor_id: data.value.debtor.pk,
-              o: ['-created_at', '-id'].join(',')
+              o: ['-created_at', '-id'].join(','),
+              production_type: productionType.value,
             }
           });
 
@@ -169,7 +178,8 @@ export default defineComponent({
             method: 'get',
             url: `${baseURL}/documents/extract_house_book/`,
             params: {
-              debtor_id: data.value.debtor.pk
+              debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(','),
             }
           });
 
@@ -180,32 +190,65 @@ export default defineComponent({
         key: 'egrn',
         label: 'Выписка из ЕГРН',
         async fetch() {
-          const response = await axios({
+          const {data: results} = await axios({
             method: 'get',
             url: `${baseURL}/documents/extract_from_egrn/`,
             params: {
               debtor_id: data.value.debtor.pk,
-              // active: 1,
+              o: ['-created_at', '-id'].join(','),
             },
           });
 
-          return response.data;
+          const {data: history} = await axios({
+            method: 'get',
+            url: `${baseURL}/rosreestr/single_status/`,
+          });
+
+          return await Promise.all(results.map(async record => {
+            const {data: status} = await axios({
+              method: 'get',
+              url: `${baseURL}/rosreestr/single_status/${record.status_tracking}/`,
+            });
+
+            return {
+              ...record,
+              status,
+              history: history.filter(({query_num}) => query_num === status.query_num),
+            }
+          }));
         }
       },
       productionType.value === 'judicial' && {
         key: 'egrnRights',
         label: 'Выписка ЕГРН о переходе прав',
         async fetch() {
-          const response = await axios({
+
+          const {data: results} = await axios({
             method: 'get',
             url: `${baseURL}/documents/extract_from_egrn_transfer_of_rights/`,
             params: {
               debtor_id: data.value.debtor.pk,
-              // active: 1,
+              o: ['-created_at', '-id'].join(','),
             },
           });
 
-          return response.data;
+          const {data: history} = await axios({
+            method: 'get',
+            url: `${baseURL}/rosreestr/single_status/`,
+          });
+
+          return await Promise.all(results.map(async record => {
+            const {data: status} = await axios({
+              method: 'get',
+              url: `${baseURL}/rosreestr/single_status/${record.status_tracking}/`,
+            });
+
+            return {
+              ...record,
+              status,
+              history: history.filter(({query_num}) => query_num === status.query_num),
+            }
+          }));
         }
       },
       productionType.value === 'judicial' && {
@@ -215,6 +258,9 @@ export default defineComponent({
           const response = await axios({
             method: 'get',
             url: `${baseURL}/judicial/debtor/${data.value.debtor.pk}/payments/`,
+            params: {
+              ordering: ['-created_at', '-id'].join(','),
+            }
           });
 
           return response.data.results;
@@ -227,6 +273,9 @@ export default defineComponent({
           const response = await axios({
             method: 'get',
             url: `${baseURL}/judicial/debtor/${data.value.debtor.pk}/decisions/`,
+            params: {
+              o: ['-created_at', '-id'].join(','),
+            }
           });
 
           return response.data.results;
@@ -239,6 +288,9 @@ export default defineComponent({
           const response = await axios({
             method: 'get',
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/claim/`,
+            params: {
+              o: ['-created_at', '-id'].join(','),
+            }
           });
 
           return response.data.results;
@@ -251,6 +303,9 @@ export default defineComponent({
           const response = await axios({
             method: 'get',
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/sms/`,
+            params: {
+              ordering: ['send_at', '-id'].join(','),
+            }
           });
 
           return response.data.reverse();
@@ -263,6 +318,9 @@ export default defineComponent({
           const response = await axios({
             method: 'get',
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/voice/`,
+            params: {
+              ordering: ['-status_at', '-id'].join(','),
+            }
           });
 
           return response.data;
@@ -276,7 +334,8 @@ export default defineComponent({
             method: 'get',
             url: `${baseURL}/enforcements/executive_fns_history/`,
             params: {
-              debtor_id: data.value.debtor.pk
+              debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(','),
             }
           });
           return response.data
@@ -290,7 +349,8 @@ export default defineComponent({
             method: 'get',
             url: `${baseURL}/enforcements/executive_bank_history/`,
             params: {
-              debtor_id: data.value.debtor.pk
+              debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(','),
             }
           });
           return response.data
@@ -304,7 +364,8 @@ export default defineComponent({
             method: 'get',
             url: `${baseURL}/enforcements/writ_of_execution/`,
             params: {
-              debtor_id: data.value.debtor.pk
+              debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(','),
             }
           });
           return response.data.results;
@@ -318,7 +379,8 @@ export default defineComponent({
             method: 'get',
             url: `${baseURL}/documents/debtor/`,
             params: {
-              debtor_id: data.value.debtor.pk
+              debtor_id: data.value.debtor.pk,
+              o: ['-created_at', '-id'].join(','),
             }
           })
 
@@ -376,18 +438,16 @@ export default defineComponent({
           {key: 'status_tracking', label: '№ заказа выписки'},
           {key: 'file', label: 'Наименование'},
           {key: 'created_at', label: 'Дата запроса'},
-          // {key: 'tracked_at', label: 'Дата выгрузки'},
-          // {key: 'status', label: 'Статус'},
-          // {key: 'statuses', label: 'История статусов'},
+          {key: 'status', label: 'Статус'},
+          {key: 'history', label: 'История статусов'},
         ],
         egrnRights: [
           {key: 'id', label: '№'},
           {key: 'status_tracking', label: '№ заказа выписки'},
           {key: 'file', label: 'Наименование'},
           {key: 'created_at', label: 'Дата запроса'},
-          // {key: 'tracked_at', label: 'Дата выгрузки'},
-          // {key: 'status', label: 'Статус'},
-          // {key: 'statuses', label: 'История статусов'},
+          {key: 'status', label: 'Статус'},
+          {key: 'history', label: 'История статусов'},
         ],
         fee: [
           {key: 'id', label: '№'},
@@ -457,7 +517,7 @@ export default defineComponent({
         documents.value = [];
         documents.value = await activeTab.value.fetch()
       } catch (e) {
-        //
+        console.log(e)
       }
       isLoading.value = false;
     }

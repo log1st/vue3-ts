@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.page"  v-if="companyId > 0">
+  <div :class="$style.page"  v-if="company">
     <div :class="$style.tabs">
       <Tabs :tabs="tabs"/>
     </div>
@@ -52,11 +52,11 @@ export default defineComponent({
     ].filter(Boolean)));
 
     const store = useStore();
-    const companyId = computed(() => store.getters['defaultCompanyId']);
+    const company = computed(() => store.getters['getDefaultCompany']);
 
     return {
       tabs,
-      companyId,
+      company,
     }
   }
 });

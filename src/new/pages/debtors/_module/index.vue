@@ -722,7 +722,7 @@ export default defineComponent({
       }) {
         const sectors = await axios({
           method: 'get',
-          url: `${baseURL}/reference_books/regional_court_place/`,
+          url: `${baseURL}/reference_books/bailiff_place`,
           params,
           cancelToken,
         });
@@ -902,6 +902,20 @@ export default defineComponent({
           props: {
             placeholder: 'Сумма долга до',
             type: 'number',
+          },
+        },
+        type.value === 'executive' && {
+          field: 'case_number',
+          type: 'text',
+          props: {
+            placeholder: '№ дела',
+          },
+        },
+        type.value === 'executive' && {
+          field: 'serial_number',
+          type: 'text',
+          props: {
+            placeholder: '№ ИП',
           },
         },
         {
