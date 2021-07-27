@@ -281,7 +281,7 @@ export default defineComponent({
           return response.data.results;
         }
       },
-      productionType.value === 'pretrial' && {
+      false && (productionType.value === 'pretrial') && {
         key: 'pretrials',
         label: 'Досудебное требование',
         async fetch() {
