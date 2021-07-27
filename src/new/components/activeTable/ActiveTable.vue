@@ -531,6 +531,9 @@ export default defineComponent({
               },
               onSubmit({limit, columns}) {
                 visibleColumns.value = [...columns];
+                if(limit !== localLimit.value) {
+                  localPage.value = 1;
+                }
                 localLimit.value = limit;
               },
               onReset() {

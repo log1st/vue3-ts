@@ -267,12 +267,19 @@ export default {
         })
     },
     passwordInstall ({ commit, dispatch }, { field, value, password, inn, code }) {
-      let comandUrl = '/api/account/register/'
-      let data = {
+      let comandUrl = inn ? '/api/account/register/' : '/api/account/restore/'
+      let data = inn ? {
         inn,
         password,
         user_inn: parseInt(inn),
         user_role: 'company',
+        verification_code: code,
+        [{
+          email: 'email',
+          phone: 'user_phone',
+        }[field]]: value,
+      } : {
+        password,
         verification_code: code,
         [{
           email: 'email',
@@ -323,31 +330,15 @@ export default {
           })
       })
     },
-    changePassword ({ commit, getters }, { Password, NewPassword }) {
-      const data = qs.stringify({
-        Comand: 'ChangePassword',
-        Email: getters.user.Email,
-        Phone: getters.user.Phone,
-        Password,
-        NewPassword,
-        SoccetEnd: 1
-      });
+    changePassword ({ commit, getters, state }, { password, newPassword }) {
       return axios({
-        method: 'post',
-        url: URL,
-        data: data
+        method: 'patch',
+        url: `${baseURL}/api/account/user/password/${state.user.user}`,
+        data: {
+          password: newPassword,
+          old_password: password,
+        }
       }).then(res => {
-        if(res.data[0].Errors) {
-          const errors = Object.values(res.data[0].Errors);
-
-          this._vm.$toast.open({
-              message: `${errors[0]}`,
-              type: 'error',
-              duration: 5000,
-              dismissible: true,
-              position: 'top-right'
-          });
-        } else {
           this._vm.$toast.open({
             message: 'Пароль был успешно изменен',
             type: 'success',
@@ -355,10 +346,16 @@ export default {
             dismissible: true,
             position: 'top-right'
           });
-        }
-
-
       }).catch(e => {
+        const errors = Object.values(e.response?.data || {});
+
+        this._vm.$toast.open({
+          message: `${errors[0]}`,
+          type: 'error',
+          duration: 5000,
+          dismissible: true,
+          position: 'top-right'
+        });
         console.error(e);
       })
     },

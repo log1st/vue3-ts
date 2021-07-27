@@ -348,7 +348,6 @@ export default {
             }[field]]: value,
           }
         }).then(res => {
-          console.log(res)
           if (res.status === 201 || res.status === 200) {
             if (res.data.email !== null ) {
               commit('setAuthLayout', 6); // change layout
@@ -361,7 +360,7 @@ export default {
             }
           }
         }).catch(err => {
-          if (err.respone.data.message) {
+          if (err.respone?.data?.message) {
             this._vm.$toast.open({
               message: `Лимит запросов привышен, повторите запрос через некоторое время`,
               type: 'error',
@@ -369,6 +368,15 @@ export default {
               dismissible: true,
               position: 'top-right'
           });
+          } else {
+            this._vm.$toast.open({
+              message: `Не удалось отправить проверочный код`,
+              type: 'error',
+              duration: 5000,
+              dismissible: true,
+              position: 'top-right'
+            });
+
           }
           commit('setAuthLayout', 1); // change layout
             reject(err)

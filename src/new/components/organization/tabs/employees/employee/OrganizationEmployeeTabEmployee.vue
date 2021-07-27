@@ -38,30 +38,10 @@
       </template>
     </td>
     <td>
-      <template v-if="isEditing">
-        <TextInput
-          :state="['primary', 'dark']"
-          v-model="model.user_phone"
-          placeholder="Номер телефона"
-          :error="errorsMap.user_phone"
-        />
-      </template>
-      <template v-else>
-        {{model.user_phone}}
-      </template>
+      {{model.user_phone}}
     </td>
     <td>
-      <template v-if="isEditing">
-        <TextInput
-          :state="['primary', 'dark']"
-          v-model="model.email"
-          placeholder="Email"
-          :error="errorsMap.email"
-        />
-      </template>
-      <template v-else>
-        {{model.email}}
-      </template>
+      {{model.email}}
     </td>
     <td>
       <div :class="$style.actions" v-if="isGlobalEditing">

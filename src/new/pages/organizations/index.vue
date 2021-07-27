@@ -42,6 +42,7 @@ import {useDialog} from "@/new/hooks/useDialog";
 import {useToast} from "@/new/hooks/useToast";
 import {useStore} from "@/new/hooks/useStore";
 import {daDataToken} from "@/new/utils/envHelpers";
+import {useErrors} from "@/new/hooks/useErrors";
 
 export default defineComponent({
   name: 'index',
@@ -58,6 +59,9 @@ export default defineComponent({
 
     const store = useStore();
 
+    const {errorsMap, clearErrors, setErrors} = useErrors();
+    const innError = computed(() => errorsMap.value.inn);
+
     const {
       records: newOrganizationRecords,
       filtersModel: newOrganizationFilterModel,
@@ -70,6 +74,7 @@ export default defineComponent({
       isImmediate: false,
       defaultLimit: ref(10),
       async fetch({params: {limit, query}, cancelToken}) {
+        clearErrors();
         const {data: {suggestions}} = await axios({
           method: 'get',
           url: `https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party`,
@@ -84,6 +89,10 @@ export default defineComponent({
           cancelToken,
         });
 
+        if(!suggestions.length) {
+          setErrors([['inn', 'Необходимо указать верный ИНН']]);
+        }
+
         return {
           data: {
             count: suggestions.length,
@@ -96,7 +105,7 @@ export default defineComponent({
           }
         }
       }
-    })
+    });
 
     const showAddOrganizationDialog = async () => {
       const {result, model} = await confirmDialog({
@@ -108,6 +117,7 @@ export default defineComponent({
             isSearchable: true,
             searchPlaceholder: 'Начните ввод',
             optionsRef: newOrganizationRecords,
+            error: innError,
             async onQuery({query}) {
               newOrganizationFilterModel.value.query = query
             }

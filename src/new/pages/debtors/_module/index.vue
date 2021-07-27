@@ -163,7 +163,7 @@
           Н/Д
         </div>
       </template>
-      <template #cell(debtor.writs_of_execution.0.amount)="{record}" v-if="type === 'executive'">
+      <template #cell(debt_entrepreneur)="{record}" v-if="type === 'executive'">
         <template v-if="record.debtor.writs_of_execution[0] && record.debtor.writs_of_execution[0].amount">
           {{formatMoney(record.debtor.writs_of_execution[0].amount)}}
         </template>
@@ -246,7 +246,7 @@ export default defineComponent({
     const type = computed(() => props.module);
 
     const summariesFields = computed(() => (
-      ['accrual', 'paid_up', 'debt', 'total_debt', 'penalty', type.value === 'judicial' && 'fee'].filter(Boolean)
+      ['accrual', 'paid_up', 'debt', 'total_debt', 'penalty', type.value === 'judicial' && 'fee', type.value === 'executive' && 'debt_entrepreneur'].filter(Boolean)
     ));
 
     const {
@@ -714,6 +714,11 @@ export default defineComponent({
         field: 'name',
         type: 'text',
         isHidden: true,
+      }, {
+        field: 'company_id',
+        type: 'text',
+        isHidden: true,
+        defaultValue: store.getters['defaultCompanyId']
       }]),
       defaultLimit: ref(10),
       async fetch({
@@ -1088,11 +1093,11 @@ export default defineComponent({
           label: '№ ИП',
           width: 281
         },
-        type.value === 'executive' && {
-          field: 'debtor.writs_of_execution.0.start_date',
-          label: 'Дата возбуждения ИП',
-          width: 281
-        },
+        // type.value === 'executive' && {
+        //   field: 'debtor.writs_of_execution.0.start_date',
+        //   label: 'Дата возбуждения ИП',
+        //   width: 281
+        // },
         type.value === 'executive' && {
           field: 'debtor.writs_of_execution.0.end_date',
           label: 'Дата окончания ИП',
@@ -1134,7 +1139,7 @@ export default defineComponent({
           width: 237,
         },
         type.value === 'executive' && {
-          field: 'debtor.writs_of_execution.0.amount',
+          field: 'debt_entrepreneur',
           label: 'Задолженность по ИП',
           // isSortable: true,
           width: 237,

@@ -7,6 +7,7 @@
       <div :class="$style.actions">
         <Btn v-if="false" state="secondary" label="Банковские счета" @click="showBankAccounts" :class="$style.action"/>
         <Btn state="secondary" label="Реквизиты участка ФССП" @click="showRequisites" :class="$style.action"/>
+        <Btn state="secondary" label="Реквизиты ФНС по адресу" @click="showFns" :class="$style.action" v-if="data.debtor_main_profile.ifns"/>
       </div>
       <div :class="$style.filter" v-if="isFilterAvailable">
         <SelectInput v-model="filter.type" :options="typeOptions"/>
@@ -221,6 +222,26 @@ export default {
       })
     }
 
+    const showFns = async () => {
+      await showDialog({
+        component: 'editModel',
+        payload: {
+          isEditable: false,
+          model: {
+            name: data.value.debtor_main_profile.ifns?.name,
+            address: data.value.debtor_main_profile.ifns?.address,
+          },
+          fields: [
+            {key: 'name', label: 'Наименование'},
+            {key: 'address', label: 'Адрес'},
+          ],
+          onSave: (model) => {
+            console.log(model)
+          }
+        }
+      })
+    }
+
     const showBankAccounts = async () => {
       await showDialog({
         component: 'fsspBankAccounts',
@@ -252,6 +273,7 @@ export default {
       formatMoney,
 
       showRequisites,
+      showFns,
       showBankAccounts,
       isFilterAvailable,
     }

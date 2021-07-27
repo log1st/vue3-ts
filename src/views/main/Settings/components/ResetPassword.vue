@@ -31,7 +31,7 @@
                     <div v-if="form[0].error" class="settings-error">{{ form[0].error }}</div>
                   </div>
                 </div>
-                
+
                 <div class="set-form__row justify-content-start">
                   <div class="set-form__label necessarily col-3">Новый пароль</div>
                   <div class="col-4">
@@ -56,7 +56,7 @@
                     <!-- <div v-if="passwordWrong && i == 1" class="login__input-warning">{{ 6 > password[1].length ? 'Длинна пароля не менее 6-ти символов' : 'Пароль должен состоять из букв латинского алфавита верхнего и нижнего регистра (цифры по желанию)' }}</div>
                     <div v-else-if="item.text" class="set-form__input-text_right">Например: QKJFKDUIjfdkj_1_454</div>
                     <div v-if="passwordWrong && i == 2 && password[1] !== password[2]" class="login__input-warning">Пароли не совпадают!!!</div> -->
-                  
+
                   </div>
                 </div>
 
@@ -116,12 +116,12 @@ export default {
         passwordRules: [
             value => !!value || 'Поле обязательно к заполнению',
             value => {
-                return !/[а-яА-ЯЁё]/.test(value) || 'Не используйте букв кириллицы' 
+                return !/[а-яА-ЯЁё]/.test(value) || 'Не используйте букв кириллицы'
             },
             // value => /^(?=.*[0-9]).{6,}/.test(value) || 'Пароль должен состоять из строчных и прописных букв латинского алфавита и цифр.'
         ],
         form: [
-            // старый пароль 
+            // старый пароль
             {
                 type: "password",
                 password: '',
@@ -129,7 +129,7 @@ export default {
                 disableChangingType: false,
                 error: ''
             },
-            // новый пароль 
+            // новый пароль
             {
                 type: "password",
                 password: '',
@@ -137,7 +137,7 @@ export default {
                 disableChangingType: false,
                 error: ''
             },
-            // новый пароль повтор 
+            // новый пароль повтор
             {
                 type: "password",
                 password: '',
@@ -164,15 +164,15 @@ export default {
         })
 
         if(this.form[1].password !== this.form[2].password) {
-            this.form[1].error = 'Пароли не совпадают'; 
+            this.form[1].error = 'Пароли не совпадают';
             this.form[2].error = 'Пароли не совпадают';
         }
 
         if(this.form.every(f => f.error.length <= 0 )) {
-            this.$store.dispatch('changePassword', 
-                { 
-                    Password: sha512(this.form[0].password), 
-                    NewPassword: this.form[1].password 
+            this.$store.dispatch('changePassword',
+                {
+                    password: sha512(this.form[0].password),
+                    newPassword: this.form[1].password
                 });
         }
     },
@@ -198,14 +198,14 @@ export default {
             this.disabled = this.$refs[refName].isError
         })
     },
-    // 
+    //
     async passwordInputHandler({ e, index }) {
         this.form[index].disableChangingType = true;
         if(e === '') {
             this.form[index].password = '';
             this.form[index].passwordComputed = '';
             this.form[index].disableChangingType = false;
-            return 
+            return
         }
         this.form[index].passwordComputed = e;
         this.hidePasswordChars({ e, index });
@@ -216,7 +216,7 @@ export default {
                 const end = this.form[index].passwordComputed.split('').filter(i => i !== '*').join('');
                 this.form[index].password = this.form[index].password + end;
             } else if(this.form[index].type === 'text') {
-                this.form[index].password = this.form[index].passwordComputed;  
+                this.form[index].password = this.form[index].passwordComputed;
             }
             this.form[index].passwordComputed = new Array(this.form[index].passwordComputed.length + 1).join('*');
             this.form[index].type = 'password';
@@ -224,7 +224,7 @@ export default {
         }, 500
     ),
     changeType(index) {
-        if(this.form[index].disableChangingType) return 
+        if(this.form[index].disableChangingType) return
         if(this.form[index].type === 'password') {
             this.form[index].type = 'text'
             this.form[index].passwordComputed = this.form[index].password;
