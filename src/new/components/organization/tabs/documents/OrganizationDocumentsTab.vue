@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.tab">
-    <OrganizationDocumentsTabSigner v-model="signer" :class="$style.signer"/>
+    <OrganizationDocumentsTabSigner v-model="signer" :class="$style.signer" :errors="pickErrors('signer')"/>
     <div :class="$style.documents">
       <DocumentField
         :class="$style.document"
@@ -11,6 +11,7 @@
         is-editable
         @remove="removeDocument(index)"
         with-name
+        :errors="pickErrors(index)"
       />
       <DocumentField
         is-editable
@@ -35,6 +36,8 @@ import OrganizationDocumentsTabSigner
 import DocumentField from "@/new/components/documentField/DocumentField";
 import {useStore} from "@/new/hooks/useStore";
 import Btn from "@/new/components/btn/Btn";
+import {useErrors} from "@/new/hooks/useErrors";
+import {useToast} from "@/new/hooks/useToast";
 
 export default {
   name: "OrganizationDocumentsTab",
@@ -98,9 +101,12 @@ export default {
       await fetchData()
     }
 
+    const { errorsMap, addErrors, clearErrors, pickErrors } = useErrors();
+    const {showToast} = useToast();
+
     const submit = async () => {
-      await new Promise(requestAnimationFrame)
-      isEdited.value = false;
+      await new Promise(requestAnimationFrame);
+      clearErrors();
 
       await Promise.all(([
         ...toRemove.value,
@@ -108,19 +114,26 @@ export default {
           signer.value.id
         ] : []),
       ]).filter(Boolean).map(id => new Promise(resolve => {
-        axios({
-          url: `${baseURL}/api/account/document/${id}/`,
-          method: 'delete',
-        }).then(resolve)
+        try {
+          axios({
+            url: `${baseURL}/api/account/document/${id}/`,
+            method: 'delete',
+          }).then(resolve)
+        } catch (e) {
+          showToast({
+            message: `Не удалось удалить #${id}`,
+            type: 'error',
+          });
+        }
       })));
 
-      await Promise.all([
+      const res = await Promise.all([
         ...documents.value,
         ...(signer.value.file ? [
           signer.value
         ] : [])
-      ].map(data => {
-        return new Promise(resolve => {
+      ].map((data, index) => {
+        return new Promise(async resolve => {
           const newPayload = data.id ? (
             Object.keys(data).filter(key => data[key] !== originalDocuments.value[data.id][key]).reduce((acc, cur) => ({
               ...acc,
@@ -133,14 +146,35 @@ export default {
             return;
           }
 
-          axios({
-            url: `${baseURL}/api/account/document/${data.id ? `${data.id}/` : ''}`,
-            method: data.id ? 'patch' : 'post',
-            data: newPayload,
-          }).then(resolve)
+          try {
+            await axios({
+              url: `${baseURL}/api/account/document/${data.id ? `${data.id}/` : ''}`,
+              method: data.id ? 'patch' : 'post',
+              data: newPayload,
+            });
+            resolve(true);
+          } catch (e) {
+            if(e?.response?.data) {
+              addErrors(Object.entries(e?.response?.data).reduce((acc, [field, errors]) => ([
+                ...acc,
+                ...errors.map(error => [`${data.signer ? 'signer' : index}-${field}`, error])
+              ]), []))
+            } else {
+              showToast({
+                message: `Не удалось сохранить файл ${data.signer || data.name || `#${index + 1}`}`,
+                type: 'error',
+              });
+            }
+            resolve(false);
+          }
         })
-      }))
+      }));
 
+      if(res.includes(false)) {
+        return;
+      }
+
+      isEdited.value = false;
       await fetchData()
 
       await onSave();
@@ -180,6 +214,9 @@ export default {
       isEdited,
       reset,
       submit,
+
+      errorsMap,
+      pickErrors,
     }
   }
 }

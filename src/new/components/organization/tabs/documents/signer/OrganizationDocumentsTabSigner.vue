@@ -17,9 +17,9 @@
           Н/Д
         </div>
       </div>
-      <TextInput v-else v-model="model[field]" :placeholder="label" :class="$style.input"/>
+      <TextInput :error="errors[field]" v-else v-model="model[field]" :placeholder="label" :class="$style.input"/>
     </div>
-    <DocumentField :is-editable="isEditing" :name.sync="model.name" :file.sync="model.file" :class="$style.document"/>
+    <DocumentField :errors="errors" :is-editable="isEditing" :name.sync="model.name" :file.sync="model.file" :class="$style.document"/>
     <div :class="$style.actions">
       <Btn :class="$style.action" @click="toggleEditing" state="quaternary" label="Редактировать" v-if="!isEditing" />
       <Btn :class="$style.action" @click="stopEditing" state="secondary" label="Отмена" v-if="isEditing && false" />
@@ -42,6 +42,10 @@ export default {
   },
   props: {
     modelValue: Object,
+    errors: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props, {emit}) {
     const model = ref(props.modelValue);
