@@ -165,7 +165,7 @@ const routes = [
         path: 'panel',
         name: 'Panel',
         component: () => import('../views/main/Panel.vue'),
-      },*/
+      },
       {
         path: 'panel',
         name: 'panel',
@@ -177,7 +177,7 @@ const routes = [
             component: () => import('../new/pages/panel/constructor/index.vue')
           }
         ]
-      },
+      },*/
 
       {
         path: 'settings',
