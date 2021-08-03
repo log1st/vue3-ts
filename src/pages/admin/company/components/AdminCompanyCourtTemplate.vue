@@ -14,9 +14,9 @@
                   <span>{{ input.name }}</span>
                 </div>
                 <div class="compib__input double_select">
-                  <v-select :options="docsTemplatesLocal"
-                    label="name"
-                    @input="setCourtTemplate($event, input.type, input.id, 1)"
+                  <v-select :options="docsTemplatesLocal" 
+                    label="name" 
+                    @input="setCourtTemplate($event, input.type, input.id, 1)" 
                     :placeholder="templateGetByCourtId(input.id, input.type, 1)">
                   </v-select>
                     <ur-btn
@@ -26,8 +26,8 @@
                     >
                         X
                     </ur-btn>
-                  <v-select :options="docsTemplatesShareholder"
-                    label="name"
+                  <v-select :options="docsTemplatesShareholder" 
+                    label="name" 
                     @input="setCourtTemplate($event, input.type, input.id, 2)"
                     :placeholder="templateGetByCourtIdShareholder(input.id, input.type, 2)">
                   </v-select>
@@ -64,7 +64,7 @@ export default {
             courts: []
         }
     },
-
+    
     mounted () {
         this.getCourt()
     },
@@ -95,7 +95,7 @@ export default {
                 case 'https://api-test.urrobot.net':
                     return 11
                     break;
-
+            
                 default:
                     break;
             }
@@ -145,7 +145,7 @@ export default {
 
         },
         /**
-         * Удалить уже установленный шаблон
+         * Удалить уже установленный шаблон 
          */
         deleteTemplate (payload) {
             const { type, templateName } = payload
@@ -173,7 +173,7 @@ export default {
                         dismissible: true,
                         position: 'top-right'
                     })
-                })
+                }) 
             } else {
                 this.$toast.open({
                     message: 'Сначала назначте шаблон на суд!',
@@ -236,7 +236,7 @@ export default {
 
         /**
          * @param event Событие установки шаблона
-         * @param {Int} type [1,2] 1 - суд приказ | 2 - суд пиказ дольщики
+         * @param {Int} type [1,2] 1 - суд приказ | 2 - суд пиказ дольщики 
          * @param {Int} courtId id суда на который будет происходить назначение
          */
         setCourtTemplate ( event, type, courtId, templateType ) {
@@ -246,7 +246,7 @@ export default {
                 company: this.company.id,
                 production_type: 'judicial'
             }
-
+            
             switch (type) {
                 case "m":
                     data.court = courtId

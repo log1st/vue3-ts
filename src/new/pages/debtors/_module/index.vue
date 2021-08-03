@@ -481,6 +481,7 @@ export default defineComponent({
           })
         }
       } catch (e) {
+        console.log(e);
         await showToast({
           message: 'Серверная ошибка',
           type: 'error',

@@ -3,7 +3,7 @@
         <div class="main-container__head">
             <div class="main-container__title">Список адресов</div>
         </div>
-
+        
         <div class="admin-adress__wrapper-table">
             <div class="admin-adress_add-btn">
                 <label
@@ -52,7 +52,7 @@ export default {
     mounted () {
         this.$nextTick(this.getAdressList())
     },
-
+    
     methods:{
         getAdressList () {
             this.loading = true
@@ -67,7 +67,7 @@ export default {
         },
 
         uploadFile () {
-
+            
         }
     }
 }

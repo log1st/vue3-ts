@@ -1,11 +1,11 @@
 import {socketURL} from "@/settings/config";
+import {getRandomString} from "@/new/utils/string";
 
 export const socketPlugins = [
   store => {
     store.socketSubscribers = [];
     store.socket = null;
     return;
-    store.socket = null;
     const connect = () => {
       store.commit('socket/setIsConnected', false);
       store.socket = null;

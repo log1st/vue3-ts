@@ -18,7 +18,7 @@
                         </icon-base>
                       </div>
                       <div class="placeholder">
-                        Поиск организации
+                        Поиск организации 
                       </div>
                     </div>
                     <transition name="fade">
@@ -80,7 +80,7 @@
                               <span id="name1">{{selectedCompany.name_short}}</span>
                               <!-- <span id="phone__email" v-if="selectedCompany.Phone != ''">Телефон: {{selectedCompany.Phone}}</span> -->
                               <span id="phone__email" v-if="selectedCompany.email != ''">Email: {{selectedCompany.email}}</span>
-                              <span id="inn1">ИНН: {{selectedCompany.inn}}</span>
+                              <span id="inn1">ИНН: {{selectedCompany.inn}}</span> 
                               <span id="debtcount1">Колличество должников ДП: {{selectedCompany.total_debtors.pretrial}}</span>
                               <span id="debtcount2">Колличество должников СП: {{selectedCompany.total_debtors.judicial}}</span>
                               <span id="debtcount3">Колличество должников ИП: {{selectedCompany.total_debtors.executive}}</span>
@@ -90,7 +90,7 @@
                                   <icon-edit />
                                 </icon-base>
                               </span>
-                              </div>
+                              </div> 
                           </div>
                           <div class="main-container__head">
                             <div class="main-container__title">Настройка клиента</div>
@@ -113,7 +113,7 @@
                                   </ur-btn>
                               </div>
                             </div>
-                              <div class="draft__create">
+                              <div class="draft__create"> 
                                   <div class="btn btn-primary"><router-link :to="{ name: 'Admin' }">Создать шаблон</router-link></div>
                                   <div class="btn btn-primary" style="margin-top: 0.5em" @click="setDocumentTemplate()">Применить выбранные шаблоны</div>
                               </div>
@@ -126,8 +126,8 @@
                                  <div class="main-container__title">Приложение</div>
                                  <!-- <div class="d-flex align-items-center">
                                     <div class="main-container__title">Режим администратора</div>
-                                    <checkBox
-                                      :checked="selectedCompany.AdminSettings.ApplicationsMode === 'Admin' ? true : false"
+                                    <checkBox 
+                                      :checked="selectedCompany.AdminSettings.ApplicationsMode === 'Admin' ? true : false" 
                                       @change="setCompanySettings({ e: $event, selectedCompany, settingsMode: 'ApplicationsMode' })" class="m-2"></checkBox>
                                   </div> -->
                                </div>
@@ -152,7 +152,7 @@
                                     :move="checkMove"
                                     @start="dragging = true"
                                     @end="dragging = false"
-                                  >
+                                  >                                 
                                     <li v-for="(list, index) in this.companyApplicationsList" :key="index">
                                       <span class="application__index">{{index + 1}}.</span>
                                       <!-- <span @click="setCheckApplicationToCompile(index, list)"><checkBox :checked="list.CompileSelect"></checkBox></span> -->
@@ -173,7 +173,7 @@
                                   <div class="content__btn-wrapper">
                                      <div class="btn btn-primary" @click="addNewApplication()">Добавить приложение</div>
                                      <div class="btn btn-primary" @click="editApplicationMod = !editApplicationMod">Редактировать</div>
-
+                                  
                                      <ur-btn
                                           class="btn btn-primary"
                                           :loading="loading"
@@ -191,8 +191,8 @@
                                   <div class="main-container__title">Выбор услуги</div>
                                   <!-- <div class="d-flex align-items-center">
                                     <div class="main-container__title">Режим администратора</div>
-                                    <checkBox
-                                      :checked="selectedCompany.AdminSettings.ServicesMode === 'Admin' ? true : false"
+                                    <checkBox 
+                                      :checked="selectedCompany.AdminSettings.ServicesMode === 'Admin' ? true : false" 
                                       @change="setCompanySettings({ e: $event, selectedCompany, settingsMode: 'ServicesMode' })" class="m-2"></checkBox>
                                   </div> -->
                                 </div>
@@ -224,7 +224,7 @@
                             </div>
                             <!-- устав, свидетельство о гос. регистрации, протокол -->
                             <admin-docs :company="this.selectedCompany" />
-
+                            
                         </div>
                     </div>
                 </div>
@@ -253,7 +253,7 @@ import AdminCompanyCourtTemplate from './components/AdminCompanyCourtTemplate.vu
 
 export default {
     name: 'AdminCompany',
-    components: {
+    components: { 
       searchInput,
       checkBox,
       'admin-company-court-template':AdminCompanyCourtTemplate,
@@ -319,11 +319,11 @@ export default {
     methods: {
       ...mapActions([
         'setAdminUserList',
-        'AdminUserListFilterData',
-        'checkCompany',
-        'setPopupState',
-        'setPopupComponent',
-        'openPopup',
+        'AdminUserListFilterData', 
+        'checkCompany', 
+        'setPopupState', 
+        'setPopupComponent', 
+        'openPopup', 
         'getCompanyBalance',
         'updateData',
         'getBalanceByUserId',
@@ -339,7 +339,7 @@ export default {
         ]),
 
       ...mapMutations([
-        'setCompanyTemplate',
+        'setCompanyTemplate', 
         'setCheckApplication'
       ]),
 
@@ -365,11 +365,11 @@ export default {
          * e - значение чекбокса, selectedCompany - текущая компания,  settingsMode - какой раздел настраивается
          */
         setCompanySettings(payload) {
-          payload.e = !payload.e
+          payload.e = !payload.e 
           this.selectedCompany.AdminSettings[payload.settingsMode] = payload.e ? 'Admin' : 'User';
           // debugger
           // запрос на изменение настроек
-          this.$store.dispatch('changeOrganizationAdminSettings', {
+          this.$store.dispatch('changeOrganizationAdminSettings', { 
             PhoneUser: this.selectedCompany.Phone,
             EmailUser: this.selectedCompany.Email,
             ApplicationsMode: this.selectedCompany.AdminSettings.ApplicationsMode,
@@ -386,7 +386,7 @@ export default {
         // Переименование приложения
         renameApplication (id, data) {
             this.setPopupComponent({component: 'AdminApplicationEdit', params:{
-              id: id,
+              id: id, 
               item: data,
               companyId: this.SelectedUserId
             }})
@@ -421,7 +421,7 @@ export default {
             if (data.FileID == "-1") {
               this.addFileToApplication(data)
             } else {
-              this.compileDocs.push(data.IdApplications)
+              this.compileDocs.push(data.IdApplications) 
             }
           }
           let index = id
@@ -516,7 +516,7 @@ export default {
               .then( result => {
                  this.allDocsTypes.forEach( type => {
 
-                    let objectKey = type.name
+                    let objectKey = type.name 
                     let template = result.templates.find( tm => tm.template_obj.template_type === type.id)
 
                     this.setReactiveCompanyData({inputsType: objectKey, template: template})
@@ -533,13 +533,13 @@ export default {
         /**
          * Установка реактивности полей выбора шаблона
          * @param {Object} payload inputsType и объект template
-         * @description v-select не принимает данные назначенные как value из вне из за чего приходиться перезапускать процесс
+         * @description v-select не принимает данные назначенные как value из вне из за чего приходиться перезапускать процесс 
          */
         setReactiveCompanyData (payload) {
           const { inputsType, template } = payload
           if (!!template) {
             this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `activeClass`, true)
-            this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `setItem`, template.template_obj.name)
+            this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `setItem`, template.template_obj.name)  
             this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `existItem`, template)
 
           } else {
@@ -582,7 +582,7 @@ export default {
                     .then( result => {
                      this.allDocsTypes.forEach( type => {
 
-                      let objectKey = type.name
+                      let objectKey = type.name 
                       let template = result.templates.find( tm => tm.template_obj.template_type === type.id)
 
                       this.setReactiveCompanyData({inputsType: objectKey, template: template})
@@ -608,7 +608,7 @@ export default {
          */
         addNewApplication () {
           this.setPopupComponent({component: 'AdminServiceApplication', params:{
-                title: 'приложения',
+                title: 'приложения', 
                 companyId: this.SelectedUserId,
                 Docs: this.documentArray,
                 type: 1
@@ -621,9 +621,9 @@ export default {
          */
         addFileToApplication(item){
           this.setPopupComponent({component: 'AdminServiceApplication', params:{
-              title: 'файла приложения',
-              PhoneUser: this.selectedCompany.Phone,
-              EmailUser: this.selectedCompany.Email,
+              title: 'файла приложения', 
+              PhoneUser: this.selectedCompany.Phone, 
+              EmailUser: this.selectedCompany.Email, 
               Email: this.$store.getters.user.Email,
               Phone: this.$store.getters.user.Phone,
               Password: this.$store.getters.user.token,
@@ -640,13 +640,13 @@ export default {
         addNewSevice(){
           this.setPopupComponent({component: 'AdminServiceApplication',
               params:{
-                title: 'сервиса',
-                PhoneUser: this.selectedCompany.Phone,
-                EmailUser: this.selectedCompany.Email,
+                title: 'сервиса', 
+                PhoneUser: this.selectedCompany.Phone, 
+                EmailUser: this.selectedCompany.Email, 
                 Email: this.$store.getters.user.Email,
                 Phone: this.$store.getters.user.Phone,
-                Password: this.$store.getters.user.token,
-                type: 2
+                Password: this.$store.getters.user.token, 
+                type: 2 
               }
             })
         },
@@ -693,7 +693,7 @@ export default {
         },
 
         /**
-         * Удаление приложения
+         * Удаление приложения 
          * @param {Int} id приложения
          */
         deleteApplication (payload) {
@@ -713,14 +713,14 @@ export default {
             //
         },
         // Установка данных пени
-        setCompanyData(){
+        setCompanyData(){ 
           this.CompanyData[0].inputs.TypePeniCalculation.inputParams.value = this.selectedCompany.TypePeniCalculation
           this.CompanyData[0].inputs.TypePeniCalculation.data = this.selectedCompany.TypePeniCalculation
         },
         // Drag отправляет состояние положения приложений
         checkMove (e) {
           this.companyApplications[e.draggedContext.index].order_number = e.draggedContext.futureIndex
-
+          
          setTimeout(() => { // ставим задержку чтобы index успел измениться
            this.companyApplications.forEach(r => {
             let indexNumber = this.companyApplications.findIndex( (o) => { return r.IdApplications == o.IdApplications})
@@ -733,11 +733,11 @@ export default {
     ...mapGetters([
       'regionsList',
       'getAdminUserListArray',
-      'getCompaniesNamesLists',
-      'getCompanyGeneralData',
-      'getCompany',
-      'minCompany',
-      'docsTemplates',
+      'getCompaniesNamesLists', 
+      'getCompanyGeneralData', 
+      'getCompany', 
+      'minCompany', 
+      'docsTemplates', 
       'allDocsTypes',
       'companyApplications',
       ]),
@@ -760,19 +760,19 @@ export default {
             result.types.forEach( type => {
                 let objectKey = type.name
                 let inpData = {
-                    placeholder: `Выберите шаблон ${type.description}`,
-                    isSelect: true,
-                    items: [],
+                    placeholder: `Выберите шаблон ${type.description}`, 
+                    isSelect: true, 
+                    items: [], 
                     type: type.id,
                     data: false
                 }
-                activities.inputs[objectKey] = {
-                  key: objectKey,
-                  label: `Назначить шаблон ${type.description}`,
-                  inputParams: {
-                    placeholder: `Выберите шаблон ${type.description}`,
-                    isSelect: true,
-                    items: [],
+                activities.inputs[objectKey] = { 
+                  key: objectKey, 
+                  label: `Назначить шаблон ${type.description}`, 
+                  inputParams: { 
+                    placeholder: `Выберите шаблон ${type.description}`, 
+                    isSelect: true, 
+                    items: [], 
                     type: type.id,
                     data: false
                   }

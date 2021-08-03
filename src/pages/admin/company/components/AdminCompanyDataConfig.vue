@@ -27,7 +27,7 @@
                 <v-select :options="productionType" label="title" v-model="selectedProductionType" placeholder="Выберите тип производвства">
                 </v-select>
             </div>
-
+            
             <div class="compib__row" >
               <div class="compib__row-label">
                 <span>Наименование шаблона</span>
@@ -47,7 +47,7 @@
                       <v-select :options="fileType" placeholder="Выберите тип файла" v-model="selctedFileType" />
                   </div>
               </div>
-            </div>
+            </div>            
             <div class="btn btn-primary"
             @click="openAddCol = !openAddCol">
                 Добавить столбец
@@ -57,7 +57,7 @@
             <div class="config-data__form-row display__select">
                 <label for="">Наименование</label>
                     <!-- <input type="text" v-model="newVars.variable_name"> -->
-                    <v-select
+                    <v-select 
                      style="width: 100%"
                      class="select_created_template"
                      placeholder="Выберите наименование столбца"
@@ -110,7 +110,7 @@
                                 X
                             </div>
                       <div class="application__index">{{index + 1}}. <input class="config-data__var-title" type="text" v-model="list.variable_name"></div>
-                      <div class="application__var"> <input type="text" v-model="list.variable" @keyup="validateFormul(list.variable, index)" :placeholder="list.placeholder" :disabled="!list.in_formula"></div>
+                      <div class="application__var"> <input type="text" v-model="list.variable" @keyup="validateFormul(list.variable, index)" :placeholder="list.placeholder" :disabled="!list.in_formula"></div>  
                     </li>
                  </draggable>
             </ul>
@@ -153,7 +153,7 @@ export default {
               this.lastLength = this.variablesList.length
             }
            },
-       }
+       } 
     },
     data () {
         return {
@@ -190,7 +190,7 @@ export default {
 
             createdTemplated: undefined,
 
-            fileType: [
+            fileType: [ 
                 'csv', 'excel'
             ],
             selctedFileType: undefined,
@@ -204,7 +204,7 @@ export default {
                 top: [],
                 left: [],
                 right: []
-            },
+            }, 
             newVars: {
                 variable_name: '',
                 is_active: true,
@@ -219,7 +219,7 @@ export default {
         validateFormul (payload, index) {
             console.log([payload])
             if (payload.indexOf('+') + 1) {
-                if (payload.indexOf('-') + 1) {
+                if (payload.indexOf('-') + 1) { 
                 this.$set(this.variablesList[index], 'variable', payload.replace(/\-/g, ''))
 
                 this.$toast.open({
@@ -230,7 +230,7 @@ export default {
                     position: 'top-right'
                 })}
             } else if (payload.indexOf('-') + 1) {
-                if (payload.indexOf('+') + 1) {
+                if (payload.indexOf('+') + 1) { 
                 this.$toast.open({
                     message: 'В формуле уже есть знак переменной "-"',
                     type: 'warning',
@@ -242,7 +242,7 @@ export default {
                 }
             }
         },
-
+        
         setColumnTemplateOnCompany () {
             return this.$http({
                 command: `/api/document-parsing/templates/assign/${this.selectedExistTemplate.pk}/`,
@@ -281,8 +281,8 @@ export default {
               letter = String.fromCharCode(temp + 65) + letter;
               column = (column - temp - 1) / 26;
             }
-
-            return letter;
+           
+            return letter; 
         },
         addSpace (position) {
             switch (position) {
@@ -290,10 +290,10 @@ export default {
                     this.spaces.top.push(false)
                     break;
                 case 2:
-
+                    
                     break;
                 case 3:
-
+                    
                     break;
             }
         },
@@ -303,20 +303,20 @@ export default {
                     this.spaces.top.pop()
                     break;
                 case 2:
-
+                    
                     break;
                 case 3:
-
+                    
                     break;
             }
         },
-
+        
         getFinalFormul () {
             this.resultFormul.items = []
             this.variablesList.forEach( item => {
                 let obj = {
                     column_id: item.column_id,
-                    variable_name: !!item.variable ? item.variable : null
+                    variable_name: !!item.variable ? item.variable : null 
                 }
                 this.resultFormul.items.push(obj)
             })
@@ -333,7 +333,7 @@ export default {
         },
 
         /**
-         * Добавление нового столбца
+         * Добавление нового столбца 
          */
         async addNewVars () {
                 let column = this.existColumn.find(c => c.type === this.newVars.variable_name.name)
@@ -347,7 +347,7 @@ export default {
             }
                 this.newVars.variable_name = this.newVars.variable_name.verbose_name
                 this.variablesList.push(this.newVars)
-
+            
             this.newVars = {
                 variable_name: '',
                 is_active: true,
@@ -451,7 +451,7 @@ export default {
                     })
             })
         },
-
+        
         assignTemplateToCompany (payload) {
             return this.$http({
                 command: `/api/document-parsing/templates/assign/${payload}/`,
