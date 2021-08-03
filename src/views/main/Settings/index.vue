@@ -91,7 +91,7 @@ import ResetPassword from './components/ResetPassword'
 export default {
   name: 'Settings',
   components: { btnGroup, mainContainer, searchInput,
-    'reset-password': ResetPassword 
+    'reset-password': ResetPassword
   },
   data () {
     return {
@@ -151,7 +151,7 @@ export default {
         this.passwordWrong = true
         return false
       }
-      this.$store.dispatch('changePassword', { Password: sha512(this.password[0]), NewPassword: this.password[1] }).then(res => {
+      this.$store.dispatch('changePassword', { Password: this.password[0], NewPassword: this.password[1] }).then(res => {
         this.$toast.open({
           message: 'Пароль был успешно изменен',
           type: 'success',

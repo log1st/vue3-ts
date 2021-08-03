@@ -3,14 +3,34 @@ import { URL, baseURL } from '@/settings/config';
 import qs from 'qs';
 import cloneDeep from 'lodash/cloneDeep';
 
+export const userPlugins = [
+  store => {
+    store.watch(state => state.user.user.user, async id => {
+      if(!id) {
+        store.commit('setUserData', null);
+        return;
+      }
+      const {data} = await axios({
+        method: 'get',
+        url: `${baseURL}/api/account/user/${id}/`
+      });
+      store.commit('setUserData', data);
+    })
+  }
+]
+
 export default {
   state: () => ( {
     token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
     user: typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : null,
     request: false,
-    appTheme: 'day'
+    appTheme: 'day',
+    userData: null,
   }),
   mutations: {
+    setUserData: (state, data) => {
+      state.userData = data;
+    },
     changeTheme(state, payload) {
         state.appTheme = payload
     },
@@ -330,10 +350,10 @@ export default {
           })
       })
     },
-    changePassword ({ commit, getters, state }, { password, newPassword }) {
+    changePassword ({ commit, getters, state, dispatch }, { password, newPassword }) {
       return axios({
         method: 'patch',
-        url: `${baseURL}/api/account/user/password/${state.user.user}`,
+        url: `${baseURL}/api/account/user/password/${state.user.user}/`,
         data: {
           password: newPassword,
           old_password: password,
@@ -349,14 +369,12 @@ export default {
       }).catch(e => {
         const errors = Object.values(e.response?.data || {});
 
-        this._vm.$toast.open({
-          message: `${errors[0]}`,
+        dispatch('toasts/showToast', {
+          message: errors[0]?.[0] || 'Не удалось сменить пароль',
           type: 'error',
-          duration: 5000,
-          dismissible: true,
-          position: 'top-right'
-        });
-        console.error(e);
+        }, {
+          root: true,
+        })
       })
     },
     /**
@@ -378,6 +396,7 @@ export default {
   },
   getters: {
     isLoggedIn: state => !!state.token,
-    user: state => state.user
+    user: state => state.user,
+    userData: state => state.userData,
   }
 }

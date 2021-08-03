@@ -48,7 +48,8 @@ export default {
 
     InfoINNContracts: null,
     defaultCompany: +(localStorage.getItem('defaultCompany') || null), // - организация по умолчанию
-    companyEmployees: []
+    companyEmployees: [],
+    isDefaultCompanyInitiated: false,
   }),
   mutations: {
     clearCompanies (state) {
@@ -67,6 +68,9 @@ export default {
      */
     setCompanyDefault ( state , index) {
       state.defaultCompany = index
+    },
+    setIsDefaultCompanyInitiated(state, value) {
+      state.isDefaultCompanyInitiated = value;
     },
     removeCompany (state, id) {
       state.companies.splice(id, 1)
@@ -162,6 +166,7 @@ export default {
         method: 'get',
         url: `${baseURL}/api/account/user/active-company/${user.id}/`,
       });
+      commit('setIsDefaultCompanyInitiated', true);
       commit('setCompanyDefault', default_company)
     },
     setCompanyChecked ({ commit }, payload) {
@@ -831,6 +836,7 @@ export default {
 
   },
   getters: {
+    isDefaultCompanyInitiated: state => state.isDefaultCompanyInitiated,
     /**
      * Отдает список приложений пользователя
      * @param state

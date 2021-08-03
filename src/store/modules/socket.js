@@ -2,18 +2,27 @@ import {socketURL} from "@/settings/config";
 
 export const socketPlugins = [
   store => {
+    store.socketSubscribers = [];
+    store.socket = null;
     return;
     store.socket = null;
     const connect = () => {
       store.commit('socket/setIsConnected', false);
       store.socket = null;
+      store.socketSubscribers = [];
 
       let connection = new WebSocket(
         `${socketURL}/ws/`
       )
 
       connection.addEventListener('message', e => {
-        store.dispatch('socket/')
+        const {payload} = JSON.parse(e.data);
+
+        store.socketSubscribers.forEach(({id, handler}) => {
+          if(id === payload.request_id) {
+            handler(payload);
+          }
+        })
       })
 
       connection.addEventListener('open', () => {
@@ -63,6 +72,41 @@ export default {
         ...payload
       }
       await this.socket.send(JSON.stringify(body));
-    }
+    },
+    async unsubscribe(context, id) {
+      this.socketSubscribers.splice(
+        this.socketSubscribers.find((subscriber) => subscriber.id === id),
+        1
+      )
+    },
+    async subscribe({dispatch}, {stream, payload, handler}) {
+      const id = payload?.request_id || getRandomString()
+      await dispatch('send', {
+        stream,
+        payload: {
+          request_id: id,
+          ...payload,
+        }
+      });
+      this.socketSubscribers.push({
+        id,
+        handler,
+      })
+
+      return () => {
+        dispatch('unsubscribe', id)
+      }
+    },
+    async fetch({dispatch}, {stream, payload}) {
+      return new Promise((resolve, reject) => {
+        dispatch('subscribe', {
+          stream,
+          payload,
+          handler: (e) => {
+            resolve(e);
+          }
+        })
+      });
+    },
   }
 }

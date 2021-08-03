@@ -4,18 +4,29 @@
     <div :class="$style.field" v-for="field in fields" :key="field.key">
       <div :class="$style.label">{{field.label}}</div>
       <div :class="$style.value" v-if="!isEditing">
-        {{value[field.key]}}
+        <template v-if="value[field.key]">
+          {{value[field.key]}}
+        </template>
+        <div v-else :class="$style.na">
+          Н/Д
+        </div>
       </div>
       <div :class="$style.input" v-else>
-        <TextInput :placeholder="field.label" v-model="value[field.key]"/>
+        <TextInput
+          :placeholder="field.label"
+          v-model="value[field.key]"
+          :is-disabled="field.blockedBy ? fields.some(({key}) => !!value[key] && key !== field.key) : false"
+          :error="errorsMap[field.key]"
+        />
       </div>
     </div>
+    <div :class="$style.error" v-if="'common' in errorsMap">{{errorsMap.common}}</div>
     <Btn v-if="isEditing" type="submit" :label="submitLabel" :class="$style.action" state="primary"/>
   </form>
 </template>
 
 <script>
-import {defineComponent, ref} from "@vue/composition-api";
+import {defineComponent, computed, ref} from "@vue/composition-api";
 import {cloneDeep} from "lodash";
 import TextInput from "@/new/components/textInput/TextInput";
 import Icon from "@/new/components/icon/Icon";
@@ -28,6 +39,10 @@ export default defineComponent({
     model: Object,
     fields: Array,
     onSave: Function,
+    errors: {
+      type: Object,
+      default: () => ({}),
+    },
     submitLabel: {
       type: String,
       default: 'Сохранить'
@@ -36,22 +51,32 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+    isInitiallyEditing: Boolean,
   },
   setup(props, {emit}) {
     const value = ref(cloneDeep(props.model));
 
-    const submit = () => {
-      props.onSave && props.onSave(value.value);
-      emit('close');
+    const submit = async () => {
+      if(props.onSave) {
+        const {errors, status} = await props.onSave(value.value);
+        if(status) {
+          emit('close');
+        }
+      } else {
+        emit('close');
+      }
     };
 
-    const isEditing = ref(false);
+    const isEditing = ref(props.isInitiallyEditing);
     const toggleEditing = async () => {
       await new Promise(requestAnimationFrame);
       isEditing.value = !isEditing.value;
     }
 
+    const errorsMap = computed(() => (props.errors?.value || {}))
+
     return {
+      errorsMap,
       submit,
       value,
 

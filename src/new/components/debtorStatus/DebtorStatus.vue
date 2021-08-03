@@ -73,7 +73,7 @@ export default defineComponent({
         ({
           judicial: judicialSubStatusesMap,
           pretrial: pretrialSubStatusesMap,
-        }[props.type]).value[props.status?.substatus[0]?.substatus] || null
+        }[props.type]).value[props.status?.substatus[0]?.substatus] || ({ judicial: null, pretrial: null })
       )
     ));
 

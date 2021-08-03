@@ -7,10 +7,11 @@
       <div :class="$style.actions">
         <Btn v-if="false" state="secondary" label="Банковские счета" @click="showBankAccounts" :class="$style.action"/>
         <Btn state="secondary" label="Реквизиты участка ФССП" @click="showRequisites" :class="$style.action"/>
-        <Btn state="secondary" label="Реквизиты ФНС по адресу" @click="showFns" :class="$style.action" v-if="data.debtor_main_profile.ifns"/>
+        <Btn state="secondary" label="Реквизиты ФНС по адресу" @click="showFns" :class="$style.action"/>
       </div>
-      <div :class="$style.filter" v-if="isFilterAvailable">
-        <SelectInput v-model="filter.type" :options="typeOptions"/>
+      <div :class="$style.filter">
+        <SelectInput :class="$style.type" v-model="filter.type" :options="typeOptions" v-if="isFilterAvailable"/>
+        <Btn :class="$style.add" @click="showAddDialog" label="Добавить дело"/>
       </div>
     </div>
     <div :class="$style.content">
@@ -78,6 +79,7 @@ import Btn from "@/new/components/btn/Btn";
 import {useDialog} from "@/new/hooks/useDialog";
 import {useStore} from "@/new/hooks/useStore";
 import SelectInput from "@/new/components/selectInput/SelectInput";
+import {useErrors} from "@/new/hooks/useErrors";
 export default {
   name: "DebtorExecutionsTab",
   components: {SelectInput, Btn, Icon},
@@ -222,19 +224,90 @@ export default {
       })
     }
 
+    const {
+      errorsMap: addErrorsMap,
+      clearErrors: clearAddErrors,
+      setErrors: setAddErrors,
+    } = useErrors();
+
+    const showAddDialog = async () => {
+      await showDialog({
+        component: 'editModel',
+        payload: {
+          isEditable: true,
+          model: {
+            name: '',
+            case_number: '',
+          },
+          fields: [
+            {key: 'serial_number', label: 'Номер ИП', blockedBy: ['case_number']},
+            {key: 'case_number', label: 'Номер судебного решения', blockedBy: ['serial_number']},
+          ],
+          errors: addErrorsMap,
+          isInitiallyEditing: true,
+          onSave: async (model) => {
+            try {
+              clearAddErrors();
+              const {data: res} = await axios({
+                method: 'post',
+                url: `${baseURL}/executive/debtor/${data.value.debtor.pk}/writoe/`,
+                data: Object.entries(model).filter(([, field]) => !!field).reduce((acc, [key, field]) => ({
+                  ...acc,
+                  [key]: field
+                }), {}),
+              });
+              documents.value = [];
+              activeTab.value.fetch().then(res => {
+                document.value = res;
+              })
+              axios({
+                method: 'patch',
+                url: `${baseURL}/executive/writoe/${res.id}/writoe_refresh/`
+              })
+              return {status: true}
+            } catch (e) {
+              if(e?.response?.data) {
+                setAddErrors(Object.entries(e.response.data).reduce((acc, [key, errors]) => ([
+                  ...acc,
+                  ...errors.map(error => ([key === 'non_field_errors' ? 'common' : key, error]))
+                ]), []))
+              } else {
+                setAddErrors([['common', 'Не удалось добавить дело']])
+              }
+              return {
+                status: false,
+                errors: addErrorsMap,
+              }
+            }
+          }
+        }
+      })
+    }
+
     const showFns = async () => {
       await showDialog({
         component: 'editModel',
         payload: {
           isEditable: false,
-          model: {
-            name: data.value.debtor_main_profile.ifns?.name,
-            address: data.value.debtor_main_profile.ifns?.address,
-          },
+          model: data.value.debtor_main_profile.ifns || {},
           fields: [
-            {key: 'name', label: 'Наименование'},
-            {key: 'address', label: 'Адрес'},
-          ],
+            ['code', 'Код ИФНС'],
+            ['name', 'Наименование'],
+            ['address', 'Адрес'],
+            ['inn', 'ИНН'],
+            ['kpp', 'КПП'],
+            ['payee', 'Получатель платежа'],
+            ['bank', 'Банк'],
+            ['bik', 'БИК'],
+            ['rs', 'р/с'],
+            ['ks', 'к/с'],
+            ['reg_code', 'Регистрирующий орган'],
+            ['phone', 'Номер телефона'],
+            ['description', 'дополнительная информация'],
+          ].map(([key, label]) => ({
+            key,
+            label,
+          })),
           onSave: (model) => {
             console.log(model)
           }
@@ -276,6 +349,8 @@ export default {
       showFns,
       showBankAccounts,
       isFilterAvailable,
+
+      showAddDialog,
     }
   }
 }

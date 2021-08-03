@@ -9,7 +9,7 @@
       :key="field"
     >
       <div :class="$style.label">{{ label }}</div>
-      <div :class="$style.value" v-if="!isEditing">
+      <div :class="$style.value" v-if="!isEditing || !isEditable">
         <template v-if="model[field]">
           {{model[field]}}
         </template>
@@ -19,8 +19,8 @@
       </div>
       <TextInput :error="errors[field]" v-else v-model="model[field]" :placeholder="label" :class="$style.input"/>
     </div>
-    <DocumentField :errors="errors" :is-editable="isEditing" :name.sync="model.name" :file.sync="model.file" :class="$style.document"/>
-    <div :class="$style.actions">
+    <DocumentField :errors="errors" :is-editable="isEditing && isEditable" :name.sync="model.name" :file.sync="model.file" :class="$style.document"/>
+    <div :class="$style.actions" v-if="isEditable">
       <Btn :class="$style.action" @click="toggleEditing" state="quaternary" label="Редактировать" v-if="!isEditing" />
       <Btn :class="$style.action" @click="stopEditing" state="secondary" label="Отмена" v-if="isEditing && false" />
       <Btn :class="$style.action" state="primary" type="submit" label="Сохранить" v-if="isEditing && false" />
@@ -46,6 +46,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    isEditable: Boolean,
   },
   setup(props, {emit}) {
     const model = ref(props.modelValue);

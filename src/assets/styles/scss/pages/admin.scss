@@ -303,3 +303,14 @@
     display: block;
   }
 }
+
+.active-template{
+  .vs__search::placeholder {
+    color: #000 !important;
+  }
+}
+.main_company-template{
+  .vs__search::placeholder {
+    color: #b9b9b9;
+  }
+}

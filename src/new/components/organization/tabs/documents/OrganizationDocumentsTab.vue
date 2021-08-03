@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.tab">
-    <OrganizationDocumentsTabSigner v-model="signer" :class="$style.signer" :errors="pickErrors('signer')"/>
+    <OrganizationDocumentsTabSigner v-model="signer" :class="$style.signer" :errors="pickErrors('signer')" :is-editable="isEditing"/>
     <div :class="$style.documents">
       <DocumentField
         :class="$style.document"
@@ -8,16 +8,17 @@
         :key="document.id"
         :file.sync="documents[index].file"
         :name.sync="documents[index].name"
-        is-editable
         @remove="removeDocument(index)"
         with-name
         :errors="pickErrors(index)"
+        :is-editable="isEditing"
       />
       <DocumentField
         is-editable
         is-creator
         @create="addDocument"
         :class="$style.document"
+        v-if="isEditing"
       />
     </div>
     <div :class="$style.actions" v-if="isEdited">
@@ -100,6 +101,12 @@ export default {
       originalDocuments.value = {};
       await fetchData()
     }
+
+    watch(isEditing, (value) => {
+      if(!value) {
+        reset();
+      }
+    })
 
     const { errorsMap, addErrors, clearErrors, pickErrors } = useErrors();
     const {showToast} = useToast();

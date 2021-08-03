@@ -37,8 +37,8 @@ export default {
         },
         /**
          * Установка шаблона колонок
-         * @param {*} state 
-         * @param {*} payload 
+         * @param {*} state
+         * @param {*} payload
          */
         setColumnTemplate (state, payload) {
           state.columnTemplate = payload
@@ -50,7 +50,7 @@ export default {
                 : user.done = false
             })
         },
-        setAdminUserList (state, payload) { 
+        setAdminUserList (state, payload) {
             state.UsersList = payload
           },
         setEditorVars ( state, payload ) {
@@ -71,7 +71,7 @@ export default {
             unselect.forEach((e) => {
                 e.checked = false
             })
-            const elem = state.UsersList.find(el => el.id === id); 
+            const elem = state.UsersList.find(el => el.id === id);
             elem.checked = !elem.checked;
         },
         setCheckApplication (state, payload) {
@@ -96,7 +96,7 @@ export default {
           state.documents = payload
         },
         setSelectedCompanySettings (state, payload) {
-          state.selectedCompanySettings = payload 
+          state.selectedCompanySettings = payload
         },
         setAllColumnTemplate ( state , payload ) {
           state.allColumnTemplate = payload
@@ -108,13 +108,13 @@ export default {
         },
 
         /**
-         * Установка выбранной компании 
+         * Установка выбранной компании
          * @param {*} id выбранной компании
          * @returns Promise
          */
         checkCompany({ commit, state, dispatch }, id){
           return new Promise ((resolve, rej) => {
-            const elem = state.UsersList.find(el => el.id === id); 
+            const elem = state.UsersList.find(el => el.id === id);
             commit('uncheckCompany', elem.id)
 
             if (elem.checked) {
@@ -151,7 +151,7 @@ export default {
             return new Promise((resolve, reject) => {
               let token = localStorage.getItem('token')
               axios.defaults.headers.common["X-Auth-Token"] = token
-              
+
               axios.get(URL+'/api/account/company/')
                 .then(resp => {
                   if (resp.data) {
@@ -211,7 +211,7 @@ export default {
           });
           })
         },
-        getAllColumnTemplate ({commit}, payload) {
+        getAllColumnTemplate ({commit, dispatch}, payload) {
           return $http({
             command: '/api/document-parsing/templates/',
             method: 'GET',
@@ -228,10 +228,10 @@ export default {
 
         /**
          * Полечение шаблона компании
-         * @param {*} commit 
-         * @param {*} dispatch 
-         * @param {*} payload 
-         * @returns 
+         * @param {*} commit
+         * @param {*} dispatch
+         * @param {*} payload
+         * @returns
          */
         getColumnTemplate ({commit, dispatch}, payload) {
           const { id } = payload
@@ -247,9 +247,9 @@ export default {
             }).catch(err => {
               console.log(err)
               reject({status: false})
-              dispatch('getDefautltColumnTemplate') 
+              dispatch('getDefautltColumnTemplate')
             })
-          }) 
+          })
         },
 
         getDefautltColumnTemplate ({commit}) {
@@ -324,7 +324,7 @@ export default {
                   position: 'top-right'
                 })
               }
-              // console.log(response)  
+              // console.log(response)
             })
             .catch (error => {
               console.log(error)
@@ -442,11 +442,11 @@ export default {
               })
             })
           // }
-          
+
         },
         /**
          * Получение приложений организации
-         * @returns 
+         * @returns
          */
         getCompanyApplication ( {dispatch, commit}, payload ) {
           const { id, type } = payload
@@ -477,7 +477,7 @@ export default {
               commit('clearCompanyApplication')
               // dispatch('getDefaultApplicationAdmin')
               console.log(err)
-              
+
             })
           })
         },
@@ -490,7 +490,7 @@ export default {
               rej({status: false})
             } else {
               const { company_id } = payload
-            let checkedCompany = state.UsersList.find( c => c.checked === true) 
+            let checkedCompany = state.UsersList.find( c => c.checked === true)
             $http({
               command: `/api/finance/balance/${checkedCompany.owner}/`,
               method: 'GET',
@@ -512,8 +512,8 @@ export default {
 
         /**
          * @param {*State} state объект state нужен ибо vue истерит
-         * @param {*} payload 
-         * @returns 
+         * @param {*} payload
+         * @returns
          */
         getBalanceByUserId ( { state }, payload) {
           return new Promise ((resolve, reject) => {
@@ -541,7 +541,7 @@ export default {
             })
           })
         },
-        
+
         getCompanySettingsById ( {commit}, payload ) {
           return new Promise ((res, rej) => {
             const { id } = payload
@@ -673,8 +673,8 @@ export default {
         },
         /**
          * Получение всех доступных документов (всех компаний)
-         * @param {*} commit 
-         * @returns 
+         * @param {*} commit
+         * @returns
          */
         getAllDocuments ( {commit} ) {
           return $http({
@@ -739,7 +739,7 @@ export default {
             })
           })
         },
-        
+
         editVariable ( { state }, payload ) {
           const { item, id } = payload
           return new Promise ((resolve, reject) => {
@@ -774,9 +774,9 @@ export default {
         },
 
         /**
-         * Получение шаблона документа на редактирование 
-         * @param {*} payload id шаблона 
-         * @returns 
+         * Получение шаблона документа на редактирование
+         * @param {*} payload id шаблона
+         * @returns
          */
         editDocumentTemplate ({dispatch}, payload) {
           return new Promise ((resolve, reject) => {
@@ -813,7 +813,7 @@ export default {
         /**
          * Удаленя шаблона по id
          * @param {*} payload id удаляемого шаблона
-         * @returns 
+         * @returns
          */
         deleteDocumentTemplate ( {dispatch}, payload ) {
           return new Promise ((resolve, reject) => {
@@ -889,18 +889,18 @@ export default {
               data: payload
               })
               .then ( resp => {
-                if (resp.RequestStatusCode === 200 || resp.RequestStatusCode === 201) { 
+                if (resp.RequestStatusCode === 200 || resp.RequestStatusCode === 201) {
                   dispatch('getDocumentTypes')
                   resolve(true)
                 }
-              }).catch( err => reject(false)) 
+              }).catch( err => reject(false))
             })
-            
+
           },
 
         /**
          * @param payload содержит id категории
-         * @description Получение переменных для конструктора по id категории документа  
+         * @description Получение переменных для конструктора по id категории документа
          */
          getEditorVars ( {commit}, payload ) {
           $http({
@@ -915,7 +915,7 @@ export default {
             commit('setEditorVars', res)
           })
         },
-        
+
     },
     getters:{
         /**
@@ -923,7 +923,7 @@ export default {
          * @param state
          */
         getAdminUserListArray: state => state.UsersList,
-        
+
         /**
          * Объект компании
          * @param state
@@ -931,13 +931,13 @@ export default {
         getCompany: state => state.checkedCompany,
 
         /**
-         * Минимизированный объект компании 
+         * Минимизированный объект компании
          * @param state
          */
         minCompany: state => state.UsersList.find(el => el.checked === true) || false,
 
         /**
-         * Все типы шаблонов документов 
+         * Все типы шаблонов документов
          * @param state
          */
         allDocsTypes: state => state.docsTypes,
@@ -968,7 +968,7 @@ export default {
         allGroupsVariables: state => state.allVars,
 
         /**
-         * Получение шаблона парсинга документа 
+         * Получение шаблона парсинга документа
          * @param state
          */
         columnTemplate: state => state.columnTemplate,
@@ -976,7 +976,7 @@ export default {
         /**
          * Получение документов по id компании
          * @param state
-         * @param {Integer} id компании 
+         * @param {Integer} id компании
          */
         documentsByCompanyId: (state) => (id) => {
             return state.documents.filter( doc => doc.company === id )

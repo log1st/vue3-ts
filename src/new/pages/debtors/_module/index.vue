@@ -765,10 +765,7 @@ export default defineComponent({
         const response = await axios({
           method: 'GET',
           url: `${baseURL}/api/debtors-data/`,
-          params: {
-            ...params,
-            company_id: store.getters['getDefaultCompanyId'],
-          },
+          params,
           cancelToken,
           paramsSerializer: ({
             fee_status,
@@ -854,6 +851,12 @@ export default defineComponent({
           field: 'production_type',
           defaultValue: type.value,
           isHidden: true,
+        },
+        {
+          field: 'company_id',
+          type: 'text',
+          isHidden: true,
+          defaultValue: store.getters['defaultCompanyId'],
         },
         {
           field: 'full_name',
@@ -1280,7 +1283,7 @@ export default defineComponent({
         },
         false && type.value === 'executive' && {
           key: 'bank',
-          label: 'Запрос в банк',
+          label: 'Запрос в банк о взыскании и аресте счета',
           icon: 'bank',
           handler: ({allSelected, selectedItems, index}) => {
             showBankDialog({

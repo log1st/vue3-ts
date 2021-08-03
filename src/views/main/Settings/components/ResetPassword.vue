@@ -171,7 +171,7 @@ export default {
         if(this.form.every(f => f.error.length <= 0 )) {
             this.$store.dispatch('changePassword',
                 {
-                    password: sha512(this.form[0].password),
+                    password: this.form[0].password,
                     newPassword: this.form[1].password
                 });
         }

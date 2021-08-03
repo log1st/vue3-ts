@@ -21,6 +21,12 @@
   align-items: center;
 }
 
+.na {
+  font-weight: 300;
+  font-style: italic;
+  opacity: .6;
+}
+
 .editIcon {
   position: absolute;
   top: 9px;
@@ -28,6 +34,11 @@
   height: 16px;
   width: 16px;
   color: #4F4F4F;
+}
+
+.error {
+  margin-top: 10px;
+  color: red;
 }
 
 .action {

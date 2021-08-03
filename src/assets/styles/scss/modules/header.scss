@@ -88,7 +88,7 @@
         &-data {
             display: flex;
             flex-direction: column;
-            
+
             &-count {
                 font-size: 16px;
                 font-weight: 600;
@@ -343,6 +343,10 @@
     &__user-balans {
         font-size: rem(16px);
         font-weight: 500;
+    }
+
+    &__user-user {
+        margin-top: 4px;
     }
 
     &__user-dropdown {

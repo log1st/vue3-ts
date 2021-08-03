@@ -179,7 +179,7 @@
                       :class="$style.recordAction"
                       v-for="action in recordActions"
                       :key="action.key"
-                      @click="action.handler({record, index})"
+                      @click.stop="action.handler({record, index})"
                     >
                       <Icon :icon="action.icon"/>
                     </TooltipWrapper>

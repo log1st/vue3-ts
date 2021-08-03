@@ -31,7 +31,7 @@
     <template
       v-if="withName"
     >
-      <div :class="$style.name" v-if="!isRenaming" :hint="localName">
+      <div :class="$style.name" v-if="!isRenaming && isEditable" :hint="localName">
         {{localName}}
       </div>
       <form @submit.prevent="toggleRenaming" v-else>

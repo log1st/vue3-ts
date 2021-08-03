@@ -89,6 +89,9 @@
       <div class="header__user-data" :class="{ 'is-open' : dropdownProfileOpen }" @click="dropdownProfileOpen = !dropdownProfileOpen">
         <div class="header__user-name" >{{$store.getters.getDefaultCompanyShortName}}</div>
         <div class="header__user-balans"> {{ balance ? balance : 0 | sepnum }}&nbsp;&#8381;</div>
+        <div class="header__user-user" v-if="$store.getters.userData">
+          {{[$store.getters.userData.first_name, $store.getters.userData.last_name].filter(Boolean).join(' ')}}
+        </div>
       </div>
       <transition name="fade">
         <div v-if="dropdownProfileOpen" class="dropdown-content">
