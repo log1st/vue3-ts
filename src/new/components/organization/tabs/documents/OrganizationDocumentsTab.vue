@@ -48,7 +48,7 @@ export default {
   },
   setup(props) {
     const data = inject('data');
-    const isEditing = inject('isEditing');
+    const isEditing = true;
     const onSave = inject('onSave');
 
     const getDefaultSigner = () => ({
