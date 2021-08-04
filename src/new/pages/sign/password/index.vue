@@ -70,14 +70,14 @@ export default defineComponent({
       isSubmitting.value = true;
 
       try {
-        await store.dispatch('passwordInstall', {
+        await store.dispatch('setNewPass', {
           ...placeholder,
           password: model.value.passwordConfirmation,
         })
         await new Promise(requestAnimationFrame);
         await redirect({name: 'sign-in'})
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         isSubmitting.value = false;
       }
     }

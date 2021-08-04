@@ -323,45 +323,7 @@ export default {
           })
       })
     },
-    changePassword ({ commit, getters }, { Password, NewPassword }) {
-      const data = qs.stringify({
-        Comand: 'ChangePassword',
-        Email: getters.user.Email,
-        Phone: getters.user.Phone,
-        Password,
-        NewPassword,
-        SoccetEnd: 1
-      });
-      return axios({
-        method: 'post',
-        url: URL,
-        data: data
-      }).then(res => {
-        if(res.data[0].Errors) {
-          const errors = Object.values(res.data[0].Errors);
-
-          this._vm.$toast.open({
-              message: `${errors[0]}`,
-              type: 'error',
-              duration: 5000,
-              dismissible: true,
-              position: 'top-right'
-          });
-        } else {
-          this._vm.$toast.open({
-            message: 'Пароль был успешно изменен',
-            type: 'success',
-            duration: 5000,
-            dismissible: true,
-            position: 'top-right'
-          });
-        }
-
-
-      }).catch(e => {
-        console.error(e);
-      })
-    },
+    
     /**
      * Установить настройки услуг
      * пока что передаю id организации и список настроек

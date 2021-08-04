@@ -155,7 +155,7 @@ export default {
         })
       } )
     },
-    setNewPass ( { state, dispatch, commit } , {field, value, code, password}) {
+    setNewPass ( { commit } , {field, value, code, password}) {
         axios({
         url: baseURL + '/api/account/restore/',
         method: 'PUT',
@@ -289,7 +289,7 @@ export default {
 
               } else if (err.response.data.inn) {
                 this._vm.$toast.open({
-                  message: 'Данный ИНН уже используется в системе',
+                  message: err.response.data.inn,
                   type: 'error',
                   duration: 5000,
                   dismissible: true,
@@ -334,9 +334,8 @@ export default {
       });
     },
     // отправить повторный запрос
-    passwordRecoveryPhone ({ state, commit, dispatch }, {field, value}) {
-
-        let comandUrl = '/api/account/restore/'
+    passwordRecoveryPhone ({ commit, dispatch }, {field, value}) {
+      let comandUrl = '/api/account/restore/'
       return new Promise((resolve, reject) => {
         axios({
           url: URL+comandUrl,
@@ -348,7 +347,7 @@ export default {
             }[field]]: value,
           }
         }).then(res => {
-          console.log(res)
+          // console.log(res)
           if (res.status === 201 || res.status === 200) {
             if (res.data.email !== null ) {
               commit('setAuthLayout', 6); // change layout
@@ -361,7 +360,7 @@ export default {
             }
           }
         }).catch(err => {
-          if (err.respone.data.message) {
+          if (err.respone?.data?.message) {
             this._vm.$toast.open({
               message: `Лимит запросов привышен, повторите запрос через некоторое время`,
               type: 'error',
@@ -369,6 +368,14 @@ export default {
               dismissible: true,
               position: 'top-right'
           });
+          } else {
+            this._vm.$toast.open({
+              message: `Не удалось отправить проверочный код`,
+              type: 'error',
+              duration: 5000,
+              dismissible: true,
+              position: 'top-right'
+            });
           }
           commit('setAuthLayout', 1); // change layout
             reject(err)

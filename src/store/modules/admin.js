@@ -211,7 +211,7 @@ export default {
           });
           })
         },
-        getAllColumnTemplate ({commit}, payload) {
+        getAllColumnTemplate ({commit, dispatch}, payload) {
           return $http({
             command: '/api/document-parsing/templates/',
             method: 'GET',
