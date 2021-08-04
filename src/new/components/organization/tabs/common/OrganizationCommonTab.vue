@@ -204,10 +204,6 @@ export default {
             label: 'Телефон',
           },
           {
-            key: 'fax',
-            label: 'Факс',
-          },
-          {
             key: 'site',
             label: 'Сайт',
           },
@@ -247,7 +243,7 @@ export default {
           },
           {
             key: 'postal_address_zip_code',
-            label: 'Почтовый индекс',
+            label: 'Почтовый адрес',
           },
         ]
       },
