@@ -32,7 +32,7 @@
         </div>
       </div>
       <div :class="$style.content">
-        <component :is="activeTab.component"/>
+        <component :is="activeTab.component" :company-id="id"/>
       </div>
     </template>
   </div>
