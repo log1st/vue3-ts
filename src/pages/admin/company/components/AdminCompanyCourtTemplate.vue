@@ -116,12 +116,8 @@ export default {
                 let result;
                 template.forEach( tmp => {
                     if (templateType === 1 && tmp.template_obj.template_type_obj.id != this.shareholderId ) {
-                        // console.log(tmp, id)
                         result = tmp.template_obj.name
-                    } 
-                    // else if (templateType === 1 && tmp.template_obj.template_type_obj.description === this.shareholderId) {
-                    //     result = 'Выберите шаблон суд приказа'
-                    // }
+                    }
                 })
                 return result || 'Выберите шаблон суд приказа'
             }
@@ -142,10 +138,7 @@ export default {
                 template.forEach( tmp => {
                     if (templateType === 2 && tmp.template_obj.template_type_obj.id === this.shareholderId) {
                         result = tmp.template_obj.name
-                    } 
-                    // else if (templateType === 2 && tmp.template_obj.template_type_obj.description != this.shareholderId) {
-                    //     result = 'Выберите шаблон суд приказа (дольщики)'
-                    // }
+                    }
                 })
                 return result || 'Выберите шаблон суд приказа (дольщики)'
             }

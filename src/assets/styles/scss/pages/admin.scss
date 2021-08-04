@@ -303,3 +303,55 @@
     display: block;
   }
 }
+
+.active-template{
+  .vs__search::placeholder {
+    color: #000 !important;
+  }
+}
+.main_company-template{
+  .vs__search::placeholder {
+    color: #b9b9b9;
+  }
+}
+
+.fina-formul {
+  padding-left: 40px;
+  font-size: 12pt;
+  margin-bottom: 1em;
+}
+.config-data {
+
+&__form {
+  padding: 15px;
+  &-row {
+      display: flex;
+      label {
+          width: 155px;
+      }
+  }
+  &-row + &-row {
+      margin: 0.5em 0;
+  }
+}
+&__wrapper{
+  &.template__wrapper {
+      padding: 0 22px;
+  }
+}
+&__var-title {
+  border: none;
+  width: 100%;
+  overflow: hidden;
+}
+}
+.display__select {
+.vs__search {
+  display: block;
+}
+}
+.select_created_template {
+  .vs__search {
+      display: block !important;
+  }
+}

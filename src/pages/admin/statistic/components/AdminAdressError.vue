@@ -3,11 +3,25 @@
         <div class="main-container__head">
             <div class="main-container__title">Список адресов</div>
         </div>
+        
         <div class="admin-adress__wrapper-table">
+            <div class="admin-adress_add-btn">
+                <label
+                for="update-file1"
+                class="btn btn-primary"
+                >
+                    Загрузить файл
+                </label>
+                <input style="display: none" @change="uploadFile($event)" type="file" id="update-file1">
+            </div>
             <div class="table__adress">
                 <div class="table__adress-head">
-                    <div>Наименование участа</div>
-                    <div>Статус ошибки</div>
+                    <div>Исходный адрес</div>
+                    <div>Стандартизированный</div>
+                    <div>Мировая подсудность</div>
+                    <div>Районная подсудность</div>
+                    <div>Использовалась ли Дадата</div>
+                    <div>Статус</div>
                 </div>
                 <div class="table__adress-rows">
                     <div class="table__adress-row" v-for="(item, index) in list" :key="index">
@@ -42,17 +56,18 @@ export default {
     methods:{
         getAdressList () {
             this.loading = true
-            this.$http({
-                data:{
-                    comand: 'ListUndisclosedCourtPrecincts',
-                    phone: this.company.Phone,
-                    email: this.company.Email
-                }
+            this.axios({
+                url: 'https://stand.api-asj.urrobot.net/standardize',
+                method: 'GET',
             }).then(res => {
                 this.list = res.result
                 console.log(res)
                 this.loading = false
             })
+        },
+
+        uploadFile () {
+            
         }
     }
 }
@@ -72,6 +87,13 @@ export default {
             color: #5e6476;
             width: 50%;
             font-weight: bold;
+        }
+    }
+    .admin {
+        &-adress {
+            &_add-btn {
+                padding: 0 14px;
+            }
         }
     }
 </style>

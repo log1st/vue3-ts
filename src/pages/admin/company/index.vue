@@ -102,7 +102,7 @@
                                   <span>{{ input.label }}</span>
                                 </div>
                                 <div class="compib__input" :key="input.action ? updateContentInner[input.key] + 'asdasd' : null">
-                                  <v-select class="main_company-template" :placeholder="input.inputParams.setItem" :options="input.inputParams.items" @input="setTemplate($event, input)" label="name" v-model="input.inputParams.data"></v-select>
+                                  <v-select class="main_company-template" v-bind:class="{ 'active-template': input.inputParams.activeClass }" :placeholder="input.inputParams.setItem" :options="input.inputParams.items" @input="setTemplate($event, input)" label="name" v-model="input.inputParams.data"></v-select>
                                 </div>
                                 <ur-btn
                                   class="delete__template-btn"
@@ -538,14 +538,15 @@ export default {
         setReactiveCompanyData (payload) {
           const { inputsType, template } = payload
           if (!!template) {
-            // this.CompanyData[0].inputs[inputsType].inputParams.setItem = template
-            // this.CompanyData[0].inputs[inputsType].inputParams.setItem.template_obj.name = template.template_obj.name  
-            
+            this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `activeClass`, true)
             this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `setItem`, template.template_obj.name)  
             this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `existItem`, template)
 
           } else {
+
             this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `setItem`, 'Выберите шаблон из списка')
+            this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `activeClass`, false)
+
           }
             // this.updateCompanyData()
         },
