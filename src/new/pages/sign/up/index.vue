@@ -100,8 +100,9 @@ export default defineComponent({
           value: model.value.login,
           inn: model.value.inn,
         }));
+        store.commit('setAuthTypeInstallPassword', 'signup')
         await redirect({
-          name: 'sign-confirm',
+          name: 'sign-confirm'
         })
       } catch (e) {
         console.log(e);

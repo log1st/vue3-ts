@@ -71,6 +71,7 @@ export default defineComponent({
         })
         await new Promise(requestAnimationFrame);
         sessionStorage.setItem('register', JSON.stringify({field: field.toLowerCase(), value: model.value.login}));
+        store.commit('setAuthTypeInstallPassword', 'restore')
         await redirect({name: 'sign-confirm'})
       } catch (e) {
         console.log(e);

@@ -68,9 +68,14 @@ export default defineComponent({
         return;
       }
       isSubmitting.value = true;
-
+      let dispatchName = 'setNewPass'
+      if (store.state.auth.authSetPasswordType === 'signup') {
+        dispatchName = 'passwordInstall'
+      } else if (store.state.auth.authSetPasswordType === 'restore') {
+        dispatchName = 'setNewPass'
+      }
       try {
-        await store.dispatch('setNewPass', {
+        await store.dispatch(dispatchName, {
           ...placeholder,
           password: model.value.passwordConfirmation,
         })
