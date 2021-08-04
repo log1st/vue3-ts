@@ -64,7 +64,7 @@ export default {
     if (userRole === 'admin') { // Роль пользователя для доступа в админку (перед загрузкой ставь admin)
       // this.$store.dispatch('rootInitData', null, { root: true })
     } else {
-        window.location.href = '/';
+        // window.location.href = '/';
     }
   },
   computed: {

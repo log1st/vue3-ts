@@ -31,6 +31,8 @@ export default {
     timerStart: null,
     time: '0:59',
 
+    authSetPasswordType: null,
+
     key: `-----BEGIN RSA PRIVATE KEY-----
     MIICXAIBAAKBgQDXqPJVrhbv9jtj37SQrflWw+sPxl9iEFUsN40Bi2v8uQl6lkUe
     b1qgeNivtpz+BBls5I9L/hzwfIAtReSQXBs/NIgbKEEFRnFbegHbxIzurgSfm4f9
@@ -86,7 +88,11 @@ export default {
 
     clearCode (state) {
       state.code = ''
-    }
+    },
+
+    setAuthTypeInstallPassword (state, payload) {
+      state.authSetPasswordType = payload
+    } 
 
   },
   actions: {
@@ -289,7 +295,7 @@ export default {
 
               } else if (err.response.data.inn) {
                 this._vm.$toast.open({
-                  message: err.response.data.inn,
+                  message: err.response.data.inn[0],
                   type: 'error',
                   duration: 5000,
                   dismissible: true,

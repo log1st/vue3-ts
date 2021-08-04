@@ -54,10 +54,16 @@ export default {
     sidebarOpen: Boolean
   },
   components: { iconAffiliate, iconAnalitics, iconCourts, iconDoc, iconHome, iconExchange, iconDebtors, iconDesktop },
-  data () {
-    return {
-      isOpen: true,
-      mainRoutes: [
+  computed: {
+    adminRole() {
+      // TODO: move to store
+      let user;
+      user = localStorage.getItem('user');
+      user = JSON.parse(user);
+      return user.role === 'admin'
+    },
+    mainRoutes() {
+      return [
         // { name: 'Рабочий стол', rout: '/desktop', iconname: 'desktop', width: 26, height: 26, viewBox: '0 0 26 26', hasStroke: true },
         // { name: 'Моя организация', rout: '/main', iconname: 'home', width: 15, height: 14 },
         { name: 'Организации', rout: '/organizations', iconname: 'affiliate', width: 28, height: 20, viewBox: '0 0 28 20' },
@@ -68,7 +74,12 @@ export default {
         // { name: 'Отчеты', rout: '/documents', iconname: 'doc', width: 18, height: 20 },
         // { name: 'Панель управления', rout: '/panel', iconname: 'panel', width: 30, height: 30, viewBox:"0 0 30 30" },
         // { name: 'Настройки', rout: '/settings', iconname: 'settings', width: 20, height: 20 }, // Переходит в панель управления
-      ]
+      ].filter(Boolean)
+    }
+  },
+  data () {
+    return {
+      isOpen: true,
     }
   },
   methods: {

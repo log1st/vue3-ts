@@ -70,11 +70,15 @@ export default defineComponent({
           return {
             ...tenant,
             ...['birth_date', 'registration_date', 'date_of_passport_issue'].reduce((acc, field) => {
-              const [year, month, day] = tenant[field].split('-');
-              return ({
-                ...acc,
-                [field]: tenant[field] ? new Date(Date.UTC(year, month - 1, day)) : null
-              });
+              try {
+                const [year, month, day] = tenant[field].split('-');
+                return ({
+                  ...acc,
+                  [field]: tenant[field] ? new Date(Date.UTC(year, month - 1, day)) : null
+                });
+              } catch (e) {
+                return {...acc}
+              }
             }, {}),
           }
         } else {

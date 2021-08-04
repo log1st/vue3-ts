@@ -42,6 +42,7 @@ import {useDialog} from "@/new/hooks/useDialog";
 import {useToast} from "@/new/hooks/useToast";
 import {useStore} from "@/new/hooks/useStore";
 import {daDataToken} from "@/new/utils/envHelpers";
+import {useErrors} from "@/new/hooks/useErrors";
 
 export default defineComponent({
   name: 'index',
@@ -58,6 +59,9 @@ export default defineComponent({
 
     const store = useStore();
 
+    const {errorsMap, clearErrors, setErrors} = useErrors();
+    const innError = computed(() => errorsMap.value.inn);
+
     const {
       records: newOrganizationRecords,
       filtersModel: newOrganizationFilterModel,
@@ -70,6 +74,7 @@ export default defineComponent({
       isImmediate: false,
       defaultLimit: ref(10),
       async fetch({params: {limit, query}, cancelToken}) {
+        clearErrors();
         const {data: {suggestions}} = await axios({
           method: 'get',
           url: `https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party`,
@@ -84,6 +89,61 @@ export default defineComponent({
           cancelToken,
         });
 
+        const validateInn = (sourceInn) => {
+          var error = { code: null, message: null };
+          var result = false;
+          const inn = String(sourceInn).trim() || '';
+          if (!inn.length) {
+            error.code = 1;
+            error.message = 'ИНН пуст';
+          } else if (/[^0-9]/.test(inn)) {
+            error.code = 2;
+            error.message = 'ИНН может состоять только из цифр';
+          } else if (![10, 12].includes(inn.length)) {
+            error.code = 3;
+            error.message = 'ИНН может состоять только из 10 или 12 цифр';
+          } else {
+            var checkDigit = function (inn, coefficients) {
+              var n = 0;
+              for (var i in coefficients) {
+                n += coefficients[i] * inn[i];
+              }
+              return parseInt(n % 11 % 10);
+            };
+            switch (inn.length) {
+              case 10:
+                var n10 = checkDigit(inn, [2, 4, 10, 3, 5, 9, 4, 6, 8]);
+                if (n10 === parseInt(inn[9])) {
+                  result = true;
+                }
+                break;
+              case 12:
+                var n11 = checkDigit(inn, [7, 2, 4, 10, 3, 5, 9, 4, 6, 8]);
+                var n12 = checkDigit(inn, [3, 7, 2, 4, 10, 3, 5, 9, 4, 6, 8]);
+                if ((n11 === parseInt(inn[10])) && (n12 === parseInt(inn[11]))) {
+                  result = true;
+                }
+                break;
+            }
+            if (!result) {
+              error.code = 4;
+              error.message = 'Неправильное контрольное число';
+            }
+          }
+          return {
+            result,
+            error: error.message,
+          }
+        }
+
+        const {result: innValid, error: innError} = validateInn(query);
+
+        if(!innValid) {
+          setErrors([['inn', innError]]);
+        } else if(!suggestions.length) {
+          setErrors([['inn', 'Необходимо указать верный ИНН']]);
+        }
+
         return {
           data: {
             count: suggestions.length,
@@ -96,7 +156,7 @@ export default defineComponent({
           }
         }
       }
-    })
+    });
 
     const showAddOrganizationDialog = async () => {
       const {result, model} = await confirmDialog({
@@ -108,6 +168,7 @@ export default defineComponent({
             isSearchable: true,
             searchPlaceholder: 'Начните ввод',
             optionsRef: newOrganizationRecords,
+            error: innError,
             async onQuery({query}) {
               newOrganizationFilterModel.value.query = query
             }

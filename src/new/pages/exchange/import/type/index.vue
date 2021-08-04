@@ -135,6 +135,7 @@ import {baseURL} from "@/settings/config";
 import {useToast} from "@/new/hooks/useToast";
 import {useErrors} from "@/new/hooks/useErrors";
 import {asyncAction} from "@/new/utils/asyncAction";
+import {useStore} from "@/new/hooks/useStore";
 
 export default {
   name: "index",
@@ -305,6 +306,8 @@ export default {
     } = useErrors();
 
     const toCheck = ref([]);
+
+    const store =  useStore();
 
     const isUploading = ref(false);
     const uploaded = ref(0);

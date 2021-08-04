@@ -25,10 +25,13 @@
         </div>
       </template>
     </div>
+    <div :class="$style.error" v-if="'file' in errors">
+      {{errors.file}}
+    </div>
     <template
       v-if="withName"
     >
-      <div :class="$style.name" v-if="!isRenaming" :hint="localName">
+      <div :class="$style.name" v-if="!isRenaming && isEditable" :hint="localName">
         {{localName}}
       </div>
       <form @submit.prevent="toggleRenaming" v-else>
@@ -37,6 +40,7 @@
           :class="$style.nameField"
           v-model="localName"
           placeholder="Название"
+          :error="errors.name"
         />
       </form>
     </template>
@@ -68,6 +72,10 @@ export default {
     isCreator: Boolean,
     dropZone: Boolean,
     isMultiple: Boolean,
+    errors: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props, {emit}) {
     const localFile = useLocalProp(props, emit, 'file');

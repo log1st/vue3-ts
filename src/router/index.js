@@ -161,11 +161,24 @@ const routes = [
         name: 'Documents',
         component: () => import('../views/main/Documents.vue'),
       },
-      {
+      /*{
         path: 'panel',
         name: 'Panel',
         component: () => import('../views/main/Panel.vue'),
       },
+      {
+        path: 'panel',
+        name: 'panel',
+        component: () => import('../new/pages/panel/index.vue'),
+        children: [
+          {
+            path: 'constructor',
+            name: 'panel-constructor',
+            component: () => import('../new/pages/panel/constructor/index.vue')
+          }
+        ]
+      },*/
+
       {
         path: 'settings',
         name: 'Settings',
@@ -179,6 +192,9 @@ const routes = [
     meta:{
       requiresAuth: true,
       adminRoute: true
+    },
+    redirect: {
+      name: 'Admin'
     },
     children: [
       {

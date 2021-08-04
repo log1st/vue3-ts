@@ -82,6 +82,9 @@ export default {
           const response = await axios({
             method: 'get',
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/sms/`,
+            params: {
+              ordering: ['created_at', '-id'].join(','),
+            }
           });
 
           return response.data.reverse();
@@ -94,6 +97,9 @@ export default {
           const response = await axios({
             method: 'get',
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/voice/`,
+            params: {
+              ordering: ['-status_at', '-id'].join(','),
+            }
           });
 
           return response.data;

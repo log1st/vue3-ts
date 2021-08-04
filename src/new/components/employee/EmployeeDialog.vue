@@ -51,7 +51,7 @@
           v-model="model.employee_role"
           label="Выберите роль сотрудника"
           :options="employeeRoles"
-          :error="errorsMap.employee_role"
+          :error="errorsMap.employee_role || errorsMap.detail"
         />
       </div>
       <div :class="$style.companies">
@@ -118,9 +118,9 @@ export default {
       } catch (e) {
         if(e?.response?.data) {
           setErrors(
-            Object.entries(e?.response?.data || {}).reduce((acc, [key, [message]]) => ([
+            Object.entries(e?.response?.data || {}).reduce((acc, [key, msg]) => ([
               ...acc,
-              [key, message]
+              [key, typeof msg === 'string' ? msg : msg[0]]
             ]), [])
           )
         }

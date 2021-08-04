@@ -281,7 +281,7 @@ export default defineComponent({
           return response.data.results;
         }
       },
-      productionType.value === 'pretrial' && {
+      false && (productionType.value === 'pretrial') && {
         key: 'pretrials',
         label: 'Досудебное требование',
         async fetch() {
@@ -304,7 +304,7 @@ export default defineComponent({
             method: 'get',
             url: `${baseURL}/pretrial/debtor/${data.value.debtor.pk}/sms/`,
             params: {
-              ordering: ['send_at', '-id'].join(','),
+              ordering: ['created_at', '-id'].join(','),
             }
           });
 
@@ -589,6 +589,7 @@ export default defineComponent({
       selectFiles: selectMyDocuments,
     } = useFileManager({
       multiple: true,
+      accept: ['application/pdf']
     })
 
     watch(myDocuments, async files => {

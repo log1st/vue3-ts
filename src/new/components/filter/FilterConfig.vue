@@ -5,6 +5,7 @@
       :state="props.state || ['primary', 'dark']"
       v-model="value"
       v-bind="(({onQuery, ...newProps}) => newProps)(props)"
+      :error="typeof props.error === 'object' ? props.error.value : props.error"
       v-on="{
         ...(props.onQuery ? {
           query: props.onQuery
@@ -19,6 +20,7 @@
         [`delay:${props.delay}`]: true,
       } : {}"
       v-bind="props"
+      :error="typeof props.error === 'object' ? props.error.value : props.error"
     />
   </div>
 </template>

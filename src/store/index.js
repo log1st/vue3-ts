@@ -6,7 +6,7 @@ import accounts from './modules/accounts'; // счета на оплату
 import desktop from './modules/desktop'; // рабочий стол
 import layout from './modules/layout'
 import popup from './modules/popup'
-import user from './modules/user'
+import user, {userPlugins} from './modules/user'
 import displaySettings from './modules/display-settings'
 import debtorsRoot from './modules/debtorsRoot'
 import debtors from './modules/debtors'
@@ -45,6 +45,7 @@ return new Vuex.Store({
     ...persistencePlugins,
     ...companiesPlugins,
     ...socketPlugins,
+    ...userPlugins,
   ],
   actions: {
     setGlobalLoader ({ dispatch }, promises) {
