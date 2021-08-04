@@ -2,15 +2,33 @@ import axios from 'axios'
 import { URL, baseURL } from '@/settings/config';
 import qs from 'qs';
 import cloneDeep from 'lodash/cloneDeep';
-
+export const userPlugins = [
+  store => {
+    store.watch(state => state.user.user.user, async id => {
+      if(!id) {
+        store.commit('setUserData', null);
+        return;
+      }
+      const {data} = await axios({
+        method: 'get',
+        url: `${baseURL}/api/account/user/${id}/`
+      });
+      store.commit('setUserData', data);
+    })
+  }
+]
 export default {
   state: () => ( {
     token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
     user: typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : null,
     request: false,
-    appTheme: 'day'
+    appTheme: 'day',
+    userData: null,
   }),
   mutations: {
+    setUserData: (state, data) => {
+      state.userData = data;
+    },
     changeTheme(state, payload) {
         state.appTheme = payload
     },
@@ -267,12 +285,19 @@ export default {
         })
     },
     passwordInstall ({ commit, dispatch }, { field, value, password, inn, code }) {
-      let comandUrl = '/api/account/register/'
-      let data = {
+      let comandUrl = inn ? '/api/account/register/' : '/api/account/restore/'
+      let data = inn ? {
         inn,
         password,
         user_inn: parseInt(inn),
         user_role: 'company',
+        verification_code: code,
+        [{
+          email: 'email',
+          phone: 'user_phone',
+        }[field]]: value,
+      } : {
+        password,
         verification_code: code,
         [{
           email: 'email',
@@ -323,7 +348,33 @@ export default {
           })
       })
     },
-    
+    changePassword ({ commit, getters, state, dispatch }, { password, newPassword }) {
+      return axios({
+        method: 'patch',
+        url: `${baseURL}/api/account/user/password/${state.user.user}/`,
+        data: {
+          password: newPassword,
+          old_password: password,
+        }
+      }).then(res => {
+          this._vm.$toast.open({
+            message: 'Пароль был успешно изменен',
+            type: 'success',
+            duration: 5000,
+            dismissible: true,
+            position: 'top-right'
+          });
+      }).catch(e => {
+        const errors = Object.values(e.response?.data || {});
+
+        dispatch('toasts/showToast', {
+          message: errors[0]?.[0] || 'Не удалось сменить пароль',
+          type: 'error',
+        }, {
+          root: true,
+        })
+      })
+    },
     /**
      * Установить настройки услуг
      * пока что передаю id организации и список настроек
@@ -343,6 +394,7 @@ export default {
   },
   getters: {
     isLoggedIn: state => !!state.token,
-    user: state => state.user
+    user: state => state.user,
+    userData: state => state.userData,
   }
 }
