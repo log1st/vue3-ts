@@ -1,20 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import {h} from '@vue/composition-api'
 
 Vue.use(VueRouter)
 
 const routes = [
-  // @TODO: remove
-  {
-    path: '/login',
-    name: 'login',
-    redirect: {
-      name: 'sign'
-    },
-    meta: {
-      guest: true,
-    },
-  },
   {
     path: '/sign',
     name: 'sign',
@@ -165,7 +155,7 @@ const routes = [
         path: 'panel',
         name: 'Panel',
         component: () => import('../views/main/Panel.vue'),
-      },
+      },*/
       {
         path: 'panel',
         name: 'panel',
@@ -173,11 +163,56 @@ const routes = [
         children: [
           {
             path: 'constructor',
-            name: 'panel-constructor',
-            component: () => import('../new/pages/panel/constructor/index.vue')
-          }
+            component: () => import('../new/pages/panel/constructor/index.vue'),
+            children: [
+              {
+                path: '',
+                name: 'panel-constructor',
+                component: () => import('../new/pages/panel/constructor/index/index.vue'),
+                props: true,
+              },
+              {
+                path: 'templates',
+                name: 'panel-constructor-templates',
+                component: () => import('../new/pages/panel/constructor/templates/index.vue'),
+              },
+              {
+                path: 'template/:id?',
+                name: 'panel-constructor-template',
+                component: () => import('../new/pages/panel/constructor/template/index.vue'),
+                props: true,
+              },
+            ]
+          },
+          {
+            path: 'data',
+            name: 'panel-data',
+            component: {
+              render() {
+                return h('div', 'data');
+              }
+            }
+          },
+          {
+            path: 'services',
+            name: 'panel-services',
+            component: {
+              render() {
+                return h('div', 'services');
+              }
+            }
+          },
+          {
+            path: 'financial',
+            name: 'panel-financial',
+            component: {
+              render() {
+                return h('div', 'financial');
+              }
+            }
+          },
         ]
-      },*/
+      },
 
       {
         path: 'settings',

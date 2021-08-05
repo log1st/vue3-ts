@@ -116,7 +116,7 @@ export default {
       {key: 'id', label: '№'},
       {key: 'operator.name', label: 'Оператор'},
       {key: 'created_at', label: 'Создано'},
-      {key: 'phone_number', label: 'Номер телефон'},
+      {key: 'phone_number', label: 'Номер телефона'},
       (activeTab.value.key === 'sms') && {key: 'message', label: 'Сообщение'},
       {key: 'send_at', label: 'Отправлено'},
       {key: 'status', label: 'Статус'},

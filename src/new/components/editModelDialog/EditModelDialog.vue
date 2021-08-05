@@ -13,7 +13,8 @@
       </div>
       <div :class="$style.input" v-else>
         <TextInput
-          :placeholder="field.label"
+          :placeholder="field.placeholder || field.label"
+          :hint="field.hint"
           v-model="value[field.key]"
           :is-disabled="field.blockedBy ? fields.some(({key}) => !!value[key] && key !== field.key) : false"
           :error="errorsMap[field.key]"

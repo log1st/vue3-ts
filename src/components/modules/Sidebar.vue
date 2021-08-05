@@ -72,7 +72,7 @@ export default {
         // { name: 'Справочник судов', rout: '/courts', iconname: 'courts', width: 19, height: 19, viewBox: '0 0 32 32' },
         // { name: 'Аналитика', rout: '/analitics', iconname: 'analitics', width: 25, height: 25 },
         // { name: 'Отчеты', rout: '/documents', iconname: 'doc', width: 18, height: 20 },
-        // { name: 'Панель управления', rout: '/panel', iconname: 'panel', width: 30, height: 30, viewBox:"0 0 30 30" },
+         { name: 'Панель управления', rout: '/panel', iconname: 'panel', width: 30, height: 30, viewBox:"0 0 30 30" },
         // { name: 'Настройки', rout: '/settings', iconname: 'settings', width: 20, height: 20 }, // Переходит в панель управления
       ].filter(Boolean)
     }

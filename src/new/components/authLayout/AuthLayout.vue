@@ -23,7 +23,7 @@
         </div>
       </div>
       <div :class="$style.links">
-        <a :href="link.url" v-for="link in links" :key="link.key" :class="$style.link">
+        <a :href="link.url" target="_blank" v-for="link in links" :key="link.key" :class="$style.link">
           {{link.label}}
         </a>
       </div>

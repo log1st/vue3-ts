@@ -48,7 +48,7 @@ export default {
   },
   setup(props) {
     const data = inject('data');
-    const isEditing = true;
+    const isEditing = true
     const onSave = inject('onSave');
 
     const getDefaultSigner = () => ({
@@ -203,7 +203,7 @@ export default {
         file,
         description: "",
         klass: "default",
-        company: store.getters['defaultCompanyId'],
+        company: props.companyId,
         signer: null,
         signer_name: null
       })

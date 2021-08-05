@@ -23,6 +23,10 @@
     letter-spacing: 0.02em;
     text-decoration: none;
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
 
     &.active {
       background: #21317A;
@@ -84,5 +88,40 @@
     letter-spacing: 0.02em;
     align-self: normal;
     text-align: center;
+  }
+}
+
+.tertiary {
+  .tab {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 12px 20px;
+    border-radius: 10px;
+
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    letter-spacing: 0.02em;
+
+    color: #000000;
+    box-shadow: 0 0 0 1px #21317A;
+
+    box-sizing: border-box;
+    text-decoration: none;
+
+    &.active {
+      background: #CAE3F3;
+      box-shadow: 0px 15px 15px rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+    }
+
+    &:not(:first-child) {
+      margin-left: 20px;
+    }
   }
 }

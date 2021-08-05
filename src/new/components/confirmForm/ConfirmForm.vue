@@ -7,7 +7,7 @@
         {{resendingLabel}}
       </div>
     </template>
-    <Btn :is-loading="isLoading" :class="$style.action" label="Назад" @click="goBack" v-if="!code.length"/>
+    <Btn :is-loading="isLoading" :class="$style.action" label="Назад" @click="goBack" v-if="!code.length || code.length < 6"/>
     <Btn :is-loading="isLoading" :class="$style.action" label="Отправить" type="submit" v-else/>
   </form>
 </template>

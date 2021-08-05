@@ -1,0 +1,66 @@
+@import "../index";
+
+.headline {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 29px;
+  /* identical to box height */
+
+  letter-spacing: 0.04em;
+
+  color: #21317A;
+
+}
+
+.list {
+  margin-top: 24px;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 20px;
+
+  &:not(:first-child) {
+    margin-top: 30px;
+  }
+}
+
+.itemLabel {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  letter-spacing: 0.04em;
+  color: #21317A;
+}
+
+.itemField {
+  display: flex;
+}
+
+.field {
+  width: 0;
+  flex-grow: 1;
+
+  > *:first-child {
+    height: 35px !important;
+  }
+}
+
+.itemReset {
+  margin-left: 16px;
+  flex-shrink: 0;
+  height: 35px;
+  width: 35px;
+}
+
+.wideBody {
+  overflow-y: auto;
+  height: 0;
+  margin-bottom: -36px;
+  padding-bottom: 36px;
+}

@@ -1,9 +1,9 @@
-import {inject, computed} from "@vue/composition-api";
+import {inject, computed, ref} from "@vue/composition-api";
 
 export const useRouter = () => {
   const router = inject('router');
 
-  const currentRouter = computed(() => (router.currentRoute));
+  const currentRoute = ref(router.currentRoute);
 
   const redirect = async (where) => {
     await router.push(where)
@@ -13,8 +13,12 @@ export const useRouter = () => {
     router.go(where)
   }
 
+  router.afterEach(to => {
+    currentRoute.value = to;
+  })
+
   return {
-    currentRouter,
+    currentRoute,
     redirect,
     go,
   }

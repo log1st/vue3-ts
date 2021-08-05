@@ -211,11 +211,11 @@ export default defineComponent({
     }));
 
     const {
-      currentRouter,
+      currentRoute,
     } = useRouter();
 
     const module = computed(() => (
-      currentRouter.value.name.match(/(exchange-\w+)(-.*|)/)[1]
+      currentRoute.value.name.match(/(exchange-\w+)(-.*|)/)[1]
     ))
 
     const sideLinks = computed(() => ({

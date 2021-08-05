@@ -265,7 +265,10 @@ export default defineComponent({
       type: String,
       default: 'primary',
     },
-    columns: Array,
+    columns: {
+      type: Array,
+      default: () => ([]),
+    },
     isLoading: Boolean,
     isSelectable: Boolean,
     selectableColumn: {
@@ -276,7 +279,10 @@ export default defineComponent({
       type: String,
       default: 'pk',
     },
-    records: Array,
+    records: {
+      type: Array,
+      default: () => ([]),
+    },
     summaries: {
       type: Object,
       default: () => ({}),
@@ -286,14 +292,29 @@ export default defineComponent({
       default: () => ([]),
     },
     summariesLabel: String,
-    sort: Array,
-    actions: Array,
-    contextActions: Array,
+    sort: {
+      type: Array,
+      default: () => ([]),
+    },
+    actions: {
+      type: Array,
+      default: () => ([]),
+    },
+    contextActions: {
+      type: Array,
+      default: () => ([]),
+    },
     total: Number,
     page: Number,
     limit: Number,
-    filters: Array,
-    filtersModel: Object,
+    filters: {
+      type: Array,
+      default: () => ([]),
+    },
+    filtersModel: {
+      type: Object,
+      default: () => ({}),
+    },
     withUniqueSelection: Boolean,
     withAllSelection: {
       type: Boolean,
@@ -319,7 +340,14 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
-    recordActions: Array,
+    recordActions: {
+      type: Array,
+      default: () => ([]),
+    },
+    actionsWidth: {
+      type: Number,
+      default: 30,
+    }
   },
   setup(props, {emit}) {
     const sortsMap = computed(() => (
@@ -449,7 +477,7 @@ export default defineComponent({
     const localFilters = useLocalProp(props, emit, 'filtersModel');
 
     const defaultFilter = computed(() => (
-      props.filters.reduce((acc, cur) => ({
+      (props.filters || []).reduce((acc, cur) => ({
         ...acc,
         [cur.field]: JSON.parse(JSON.stringify(cur.defaultValue || null))
       }), {})
@@ -605,7 +633,7 @@ export default defineComponent({
       ...(props.recordActions?.length ? [{
         field: '__actions',
         withLabel: false,
-        width: '30px',
+        width: `${props.actionsWidth}px`,
       }] : [])
     ]));
 
@@ -621,7 +649,7 @@ export default defineComponent({
     });
 
     const filtersMap = computed(() => (
-      props.filters.reduce((acc, filter) => ({
+      (props.filters || []).reduce((acc, filter) => ({
         ...acc,
         [filter.field] : filter
       }), {})

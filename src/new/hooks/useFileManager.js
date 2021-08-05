@@ -5,6 +5,7 @@ export const downloadFile = (file, name) => {
   document.body.appendChild(a);
   a.download = name || file.split('.').pop();
   a.href = file;
+  a.target = "_blank"
   a.click();
 }
 
