@@ -126,6 +126,22 @@
     }
   }
 
+  &.boldLabel {
+    .label {
+      font-family: Inter;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 19px;
+      letter-spacing: 0.04em;
+      color: #21317A;
+
+      + * {
+        margin-top: 10px;
+      }
+    }
+  }
+
   .error {
     margin-top: 10px;
     color: red;

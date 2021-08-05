@@ -1,6 +1,7 @@
 const URL = process.env.VUE_APP_API;
 const baseURL = process.env.VUE_APP_API;
 export const socketURL = process.env.VUE_APP_SOCKET;
+export const tinyApiKey = process.env.VUE_APP_TINY_API_KEY;
 
 const keys = [
   'GroundsPowersSignatory',

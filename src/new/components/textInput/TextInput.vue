@@ -31,6 +31,9 @@
         :placeholder="placeholder"
       />
     </label>
+    <div :class="$style.hint" v-if="hint">
+      {{hint}}
+    </div>
     <div v-if="error" :class="$style.error">
       {{error}}
     </div>
@@ -56,6 +59,7 @@ export default defineComponent({
     modelValue: [String, Number],
 
     placeholder: String,
+    hint: String,
     label: String,
 
     type: {

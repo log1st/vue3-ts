@@ -30,7 +30,7 @@
             v-if="record.debtor && record.debtor.debtor_status.length"
             :class="$style.status"
             :status="record.debtor.debtor_status[0]"
-            @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[0].id })"
+            @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[0].id, debtorId: record.debtor.pk })"
           />
         </template>
         <template v-else-if="module === 'pretrial'">
@@ -39,7 +39,7 @@
             v-if="record.debtor && record.debtor.pretrial_status.length"
             :class="$style.status"
             :status="record.debtor.pretrial_status[0]"
-            @click="showStatusDialog({ selectedItem: record.debtor.pretrial_status[0].id })"
+            @click="showStatusDialog({ selectedItem: record.debtor.pretrial_status[0].id, debtorId: record.debtor.pk })"
           />
         </template>
         <span/>
@@ -255,6 +255,7 @@ export default defineComponent({
     } = useDialog();
 
     const showStatusDialog = async (payload) => {
+      console.log(payload)
       await showDialog({
         component: 'debtorsStatus',
         payload: {
