@@ -18,6 +18,7 @@ export default defineComponent({
   components: {Tabs},
   setup() {
     const tabs = computed(() => ([
+      /*
       {
         key: 'data',
         label: 'Общие\nданные',
@@ -38,7 +39,7 @@ export default defineComponent({
         url: {
           name: 'panel-services',
         }
-      },
+      },*/
       {
         key: 'construct',
         label: 'Конструктор\nдокументов',
