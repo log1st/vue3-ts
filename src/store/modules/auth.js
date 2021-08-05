@@ -161,30 +161,32 @@ export default {
       } )
     },
     setNewPass ( { commit } , {field, value, code, password}) {
-        axios({
-        url: baseURL + '/api/account/restore/',
-        method: 'PUT',
-        data: {
-          [{
-            email: 'email',
-            phone: 'user_phone',
-          }[field]]: value,
-          password,
-          verification_code: code
-        }
-      })
-      .then( res => {
-        if (res.status === 200 || res.status === 201) {
-          commit('setAuthLayout', 0); // change layout
-          return {status: true, msg: 'Установка пароля прошла успешно'}
-        } else {
-          return ['Ошибка сервера, проверьте соединение с интренетом']
-        }
-      })
-      .catch ( err => {
-        console.log(err.response)
-        return err.response.data[0]
-      })
+        return new Promise ((resolve, reject) => {
+          axios({
+            url: baseURL + '/api/account/restore/',
+            method: 'PUT',
+            data: {
+              [{
+                email: 'email',
+                phone: 'user_phone',
+              }[field]]: value,
+              password,
+              verification_code: code
+            }
+          })
+          .then( res => {
+            if (res.status === 200 || res.status === 201) {
+              commit('setAuthLayout', 0); // change layout
+              resolve({status: true, msg: 'Установка пароля прошла успешно'})
+            } else {
+              reject(['Ошибка сервера, проверьте соединение с интренетом'])
+            }
+          })
+          .catch ( err => {
+            console.log(err.response)
+            reject(err.response.data)
+          })
+        })
 
     },
     /**

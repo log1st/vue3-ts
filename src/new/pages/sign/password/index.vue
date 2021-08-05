@@ -82,8 +82,8 @@ export default defineComponent({
         await store.dispatch(dispatchName, {
           ...placeholder,
           password: model.value.passwordConfirmation,
-        })
-        .then( async resp => {
+        }).then( async resp => {
+          // console.log(resp)
           await new Promise(requestAnimationFrame);
           await redirect({name: 'sign-in'})
           await showToast({
@@ -92,12 +92,17 @@ export default defineComponent({
           })
         })
         .catch( error => {
-          error.forEach( async err => {
-            await showToast({
-              message: `${err}`,
-              type: 'error',
-            });
+          // console.log(error)
+          let keys = Object.keys(error)
+          keys.forEach( key => {
+            error[key].forEach( async err => {
+              await showToast({
+                message: `${err}`,
+                type: 'error',
+              });
+            })
           })
+          isSubmitting.value = false;
         })
         
       } catch (e) {
