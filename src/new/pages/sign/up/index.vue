@@ -8,6 +8,7 @@
         el-placeholder="Введите ИНН"
         :class="$style.field"
         :error="errorsMap.inn"
+        @input="checkInn($event)"
       />
       <ur-input-x
         v-model="model.login"
@@ -25,7 +26,7 @@
       </router-link>
       <div :class="$style.actions">
         <Btn state="danger" :class="$style.action" @click="demo" label="Демо Вход" :is-loading="isSubmitting"/>
-        <Btn :class="$style.action" type="submit" label="Регистрация" :is-loading="isSubmitting"/>
+        <Btn :class="[$style.action, {'disabled-btn': !model.validationInn}]" :disabled="!model.validationInn"  type="submit" label="Регистрация" :is-loading="isSubmitting"/>
       </div>
     </form>
   </div>
@@ -42,6 +43,7 @@ import {useStore} from "@/new/hooks/useStore";
 import {useRouter} from "@/new/hooks/useRouter";
 import {useToast} from "@/new/hooks/useToast";
 import {baseURL} from "@/settings/config";
+import {daDataToken} from "@/new/utils/envHelpers";
 
 export default defineComponent({
   name: "index",
@@ -59,9 +61,47 @@ export default defineComponent({
       login: '',
       inn: '',
       agree: false,
+
+      validationInn: false
     });
 
-
+    const checkInn = async (event) => {
+        await showToast({
+                title: 'Проверка ИНН',
+                message: 'Проверка существования ИНН',
+                type: 'warning'
+              })
+        await axios({
+          method: 'GET',
+          url: `https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party`,
+          headers: {
+            'Authorization': `Token ${daDataToken}`,
+          },
+          params: {
+            count: 10,
+            query:event,
+            branch_type: 'MAIN',
+          },
+        })
+        .then (async response => {
+          if (response.data.suggestions.length > 0) {
+            model.value.validationInn = true;
+            await showToast({
+                title: 'ИНН верный!',
+                message: 'Данный ИНН может быть использован',
+                type: 'success'
+              })
+          } else {
+            model.value.validationInn = false;
+              await showToast({
+                title: 'ИНН не обнаружен',
+                message: 'Введите верный ИНН',
+                type: 'error'
+              })
+          }
+        });
+    };
+    
     const {
       errorsMap,
       clearErrors,
@@ -137,6 +177,7 @@ export default defineComponent({
       model,
       errorsMap,
 
+      checkInn,
       submit,
       demo,
 

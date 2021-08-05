@@ -1,5 +1,4 @@
 import { URL, baseURL } from '@/settings/config'
-import qs from 'qs'
 import cloneDeep from 'lodash/cloneDeep';
 import axios from 'axios'
 // Шифрование
@@ -177,32 +176,14 @@ export default {
       .then( res => {
         if (res.status === 200 || res.status === 201) {
           commit('setAuthLayout', 0); // change layout
-          this._vm.$toast.open({
-            message: `Пароль успешно изменен`,
-            type: 'success',
-            duration: 5000,
-            dismissible: true,
-            position: 'top-right'
-        });
+          return {status: true, msg: 'Установка пароля прошла успешно'}
         } else {
-          this._vm.$toast.open({
-            message: `Серверная ошибка, обновите страницу и попробуйте снова`,
-            type: 'erorr',
-            duration: 5000,
-            dismissible: true,
-            position: 'top-right'
-        });
+          return ['Ошибка сервера, проверьте соединение с интренетом']
         }
       })
       .catch ( err => {
-        console.log(err)
-        this._vm.$toast.open({
-          message: `Серверная ошибка, обновите страницу и попробуйте снова`,
-          type: 'erorr',
-          duration: 5000,
-          dismissible: true,
-          position: 'top-right'
-      });
+        console.log(err.response)
+        return err.response.data[0]
       })
 
     },
@@ -294,8 +275,14 @@ export default {
               reject(err)
 
               } else if (err.response.data.inn) {
+                let errMsg = err.response.data.inn
+                if (Array.isArray(err.response.data.inn)) {
+                  errMsg = err.response.data.inn[0]
+                } else {
+                  errMsg = err.response.data.inn
+                }
                 this._vm.$toast.open({
-                  message: err.response.data.inn[0],
+                  message: errMsg,
                   type: 'error',
                   duration: 5000,
                   dismissible: true,

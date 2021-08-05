@@ -54,6 +54,10 @@ export default defineComponent({
       setErrors,
     } = useErrors();
 
+    const {
+      showToast,
+    } = useToast();
+
     const placeholder = JSON.parse(sessionStorage.getItem('register') || '{}');
 
     const isSubmitting = ref(false);
@@ -79,8 +83,23 @@ export default defineComponent({
           ...placeholder,
           password: model.value.passwordConfirmation,
         })
-        await new Promise(requestAnimationFrame);
-        await redirect({name: 'sign-in'})
+        .then( async resp => {
+          await new Promise(requestAnimationFrame);
+          await redirect({name: 'sign-in'})
+          await showToast({
+            message: 'Пароль успешно изменен!',
+            type: 'success'
+          })
+        })
+        .catch( error => {
+          error.forEach( async err => {
+            await showToast({
+              message: `${err}`,
+              type: 'error',
+            });
+          })
+        })
+        
       } catch (e) {
         // console.log(e);
         isSubmitting.value = false;
