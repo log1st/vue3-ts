@@ -12,6 +12,9 @@
 
   color: #21317A;
 
+  &:not(:first-child) {
+    margin-top: 130px;
+  }
 }
 
 .list {

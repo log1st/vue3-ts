@@ -34,6 +34,37 @@
           </div>
         </div>
       </div>
+      <template v-for="[key, label, list, model, options] in courtsSchema">
+        <div :key="`${key}-label`" :class="$style.headline">
+          {{label}}
+        </div>
+        <div :key="`${key}-list`" :class="$style.list">
+          <div :class="$style.item">
+            <div :class="$style.label">Суд</div>
+            <div :class="$style.label">Судебный приказ</div>
+            <div :class="$style.label">Судебный приказ (дольщики)</div>
+          </div>
+          <div :class="$style.item" v-for="item in list" :key="item.id">
+            <div :class="$style.itemLabel">{{item.name}}</div>
+            <div :class="$style.itemField" v-for="field in ['court_order', 'court_order_p']" :key="field">
+              <SelectInput
+                v-if="model[item.id]"
+                :options="options"
+                value-prop="id"
+                display-prop="name"
+                :state="['dark', 'primary']"
+                :class="$style.field"
+                v-model="model[item.id][field]"
+                placeholder="Выберите шаблон"
+                @update:modelValue="submitCourt(key, item.id, field, $event)"
+                :is-disabled="isSubmitting"
+              />
+              <Btn state="quaternary" prepend-icon="close" :class="$style.itemReset" @click="resetCourt(key, item.id, field)"
+                   :is-disabled="isSubmitting"/>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -52,6 +83,28 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const companyId = computed(() => (store.getters['defaultCompanyId']));
+
+    const courts = ref([]);
+    const regionalCourts = ref([]);
+    const fetchCourts = async () => {
+      const {data: courtsData} = await axios({
+        method: 'get',
+        url: `${baseURL}/reference_books/magistrate_court_place/`,
+        params: {
+          company_id: companyId.value,
+        }
+      });
+      courts.value = courtsData;
+
+      const {data: regionalCourtsData} = await axios({
+        method: 'get',
+        url: `${baseURL}/reference_books/regional_court_place/`,
+        params: {
+          company_id: companyId.value,
+        }
+      });
+      regionalCourts.value = regionalCourtsData;
+    }
 
     const types = ref([]);
     const fetchTypes = async () => {
@@ -75,8 +128,14 @@ export default defineComponent({
 
       documents.value = data;
     }
-    watch(companyId, () => {
-      requestAnimationFrame(fetchDocuments)
+    watch(companyId, (id) => {
+      if(!id) {
+        return;
+      }
+      requestAnimationFrame(async () => {
+        await fetchCourts();
+        fetchDocuments();
+      })
     }, {
       immediate: true,
     });
@@ -93,15 +152,52 @@ export default defineComponent({
     onMounted(fetchTemplates);
 
     const map = ref({});
+    const courtsMap = ref({});
+    const regionalCourtsMap = ref({});
     watch(documents, (docs) => {
       map.value = {
         ...types.value.reduce((acc, {id}) => ({
           ...acc,
           [id]: null
         }), {}),
-        ...(docs.reduce((acc, cur) => ({
+        ...(docs.filter(({court, regional_court}) => (
+          !court && !regional_court
+        )).reduce((acc, cur) => ({
           ...acc,
           [cur.template_obj.template_type]: cur.template
+        }), {}))
+      }
+      courtsMap.value = {
+        ...docs.filter(({court}) => court).reduce((acc, cur) => ({
+          ...acc,
+          [cur.court]: (
+            ['court_order', 'court_order_p'].reduce((subAcc, subCur) => ({
+              ...subAcc,
+              [subCur]: cur.template_obj.template_type_obj.name === subCur ? (
+                cur.template
+              ) : (acc[cur.court]?.[subCur] || null)
+            }), acc[cur.court] || {})
+          )
+        }), courts.value.reduce((acc, {id}) => ({
+          ...acc,
+          [id]: ['court_order', 'court_order_p'].reduce((subAcc, subCur) => ({...subAcc, [subCur]: null}), {}),
+        }), {}))
+      };
+      regionalCourtsMap.value = {
+        ...docs.filter(({regional_court}) => regional_court).reduce((acc, cur) =>
+          ({
+            ...acc,
+            [cur.regional_court]: (
+              ['court_order', 'court_order_p'].reduce((subAcc, subCur) => ({
+                ...subAcc,
+                [subCur]: cur.template_obj.template_type_obj.name === subCur ? (
+                  cur.template
+                ) : (acc[cur.regional_court]?.[subCur] || null)
+              }), acc[cur.regional_court] || {})
+            )
+          }), regionalCourts.value.reduce((acc, {id}) => ({
+          ...acc,
+          [id]: ['court_order', 'court_order_p'].reduce((subAcc, subCur) => ({...subAcc, [subCur]: null}), {}),
         }), {}))
       }
     }, {
@@ -185,7 +281,65 @@ export default defineComponent({
       submit();
     }
 
+    const submitCourt = async (type, id, field, value) => {
+      const foundDocument = documents.value.find(({template_obj: {type}, court, regional_court}) => (
+        id === {courts: court, regionalCourts: regional_court}[field]
+      ));
+
+      if(!foundDocument) {
+        await axios({
+          method: 'post',
+          url: `${baseURL}/constructor/company/template/`,
+          data: {
+          company: store.getters['defaultCompanyId'],
+          production_type: 'judicial',
+          template: value,
+          [{courts: 'court', regionalCourts: 'regional_court'}[type]]: id,
+        }
+        })
+      } else {
+        if(!value) {
+          await axios({
+            method: 'delete',
+            url: `${baseURL}/constructor/company/template/${foundDocument.id}/`,
+          });
+        } else {
+          await axios({
+            method: 'patch',
+            url: `${baseURL}/constructor/company/template/${foundDocument.id}/`,
+            data: {
+              template: value,
+            }
+          });
+        }
+      }
+    }
+
+    const resetCourt = async (type, id, field) => {
+      ({
+        courts: courtsMap,
+        regionalCourts: regionalCourtsMap
+      }[type]).value[id][field] = null;
+      await submitCourt(type, id, field, null);
+    }
+
+    const courtOptions = computed(() => (
+      templates.value.filter(({template_type_obj: {name}}) => name === 'court_order')
+    ))
+
+    const regionalCourtOptions = computed(() => (
+      templates.value.filter(({template_type_obj: {name}}) => name === 'court_order_p')
+    ));
+
+    const courtsSchema = computed(() => (
+      [
+        ['courts', 'Выберите документ для участка мирового судьи', courts.value, courtsMap.value, courtOptions.value],
+        ['regionalCourts', 'Выберите документ для участка регионального суда', regionalCourts.value, regionalCourtsMap.value, regionalCourtOptions.value],
+      ]
+    ))
+
     return {
+      courtsSchema,
       documents,
       templates,
       types,
@@ -195,6 +349,18 @@ export default defineComponent({
       resetItem,
 
       isSubmitting,
+
+      courts,
+      courtsMap,
+
+      regionalCourts,
+      regionalCourtsMap,
+
+      submitCourt,
+      resetCourt,
+
+      courtOptions,
+      regionalCourtOptions,
     }
   }
 });
