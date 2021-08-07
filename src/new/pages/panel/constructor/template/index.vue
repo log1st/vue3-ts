@@ -265,7 +265,7 @@ export default defineComponent({
       immediate: true,
     });
 
-    const apiKey = tinyApiKey;
+    const apiKey = tinyApiKey || "mq1rr60ffnl7cslwz6lo4jt635t7axolbn6ycowpao8t6zhn";
     const editor = ref();
     const onEditorLoaded = (event, newEditor) => {
       editor.value = newEditor;

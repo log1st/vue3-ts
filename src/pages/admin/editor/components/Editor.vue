@@ -197,7 +197,7 @@ export default {
     },
 
     tinyAPIKey() {
-      return process.env.VUE_APP_TINY_API_KEY || 'no-api-key'
+      return process.env.VUE_APP_TINY_API_KEY || 'mq1rr60ffnl7cslwz6lo4jt635t7axolbn6ycowpao8t6zhn'
     },
 
   },
