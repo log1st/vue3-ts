@@ -15,6 +15,7 @@
         el-placeholder="Введите почту или телефон"
         :class="$style.field"
         :error="errorsMap.login"
+        @input="validatePhone($event)"
       />
       <Checkbox :state="['radio', 'dark']" v-model="model.agree" :class="$style.agree">
         <template #label>
@@ -42,7 +43,6 @@ import Checkbox from "@/new/components/checkbox/Checkbox";
 import {useStore} from "@/new/hooks/useStore";
 import {useRouter} from "@/new/hooks/useRouter";
 import {useToast} from "@/new/hooks/useToast";
-import {baseURL} from "@/settings/config";
 import {daDataToken} from "@/new/utils/envHelpers";
 
 export default defineComponent({
@@ -66,6 +66,8 @@ export default defineComponent({
     });
 
     const checkInn = async (event) => {
+      let queryStr = event.replace(/\s+/g, '');
+      model.value.inn = queryStr;
         await showToast({
                 title: 'Проверка ИНН',
                 message: 'Проверка существования ИНН',
@@ -79,7 +81,7 @@ export default defineComponent({
           },
           params: {
             count: 10,
-            query:event,
+            query:queryStr,
             branch_type: 'MAIN',
           },
         })
@@ -101,7 +103,7 @@ export default defineComponent({
           }
         });
     };
-    
+
     const {
       errorsMap,
       clearErrors,
@@ -113,6 +115,17 @@ export default defineComponent({
     } = useToast();
 
     const isSubmitting = ref(false);
+
+    const validatePhone = async (event) => {
+      const field = event.includes('@') ? 'Email' : 'Phone';
+      if (field === 'Phone') {
+        if (event.indexOf("8") === 0 || event.indexOf("8") === 1 ) {
+            let queryStrPhone = event.replace('8','+7');
+            model.value.login = queryStrPhone;
+        }
+      }
+    }
+
     const submit = async () => {
       clearErrors();
 
@@ -177,6 +190,7 @@ export default defineComponent({
       model,
       errorsMap,
 
+      validatePhone,
       checkInn,
       submit,
       demo,
