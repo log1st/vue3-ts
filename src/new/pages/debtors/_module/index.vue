@@ -255,7 +255,6 @@ export default defineComponent({
     } = useDialog();
 
     const showStatusDialog = async (payload) => {
-      console.log(payload)
       await showDialog({
         component: 'debtorsStatus',
         payload: {

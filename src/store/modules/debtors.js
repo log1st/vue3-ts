@@ -512,6 +512,8 @@ export default {
     |--------------------------------------------------------------------------
     */
     combinedRequests ({ dispatch, commit }, payload) {
+      dispatch('appLoadingChange', false, { root: true });
+      return;
       // dispatch('appLoadingChange', true, { root: true });
       let companyId = localStorage.getItem('defaultCompany')
       if (companyId === null) {

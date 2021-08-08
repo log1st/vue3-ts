@@ -9,7 +9,7 @@
       background-color: $colorBlue3;
     }
   }
-  
+
 }
 .config-data {
       &__add-space {
@@ -48,9 +48,9 @@
         &__spacer{
           &-left {
             position: relative;
-            font-size: 1.5em; 
-            color: red; 
-            // padding-left:40px; 
+            font-size: 1.5em;
+            color: red;
+            // padding-left:40px;
             cursor: pointer;
             margin-right: 1em;
           }
@@ -58,7 +58,7 @@
             position: relative;
             font-size: 1.5em;
             color: red;
-            margin-left:4.5em; 
+            margin-left:4.5em;
             cursor: pointer;
           }
         }
@@ -70,9 +70,9 @@
                 width: 100%;
                 font-size: 14px;
             }
-        } 
+        }
 
-    } 
+    }
     }
     &__table {
       // border: 1px solid #313234;
@@ -96,8 +96,8 @@
         cursor: move;
     }
     &__list-wrapper {
-        flex-wrap:nowrap; 
-        overflow-y: auto; 
+        flex-wrap:nowrap;
+        overflow-y: auto;
         padding-inline-end: 40px;
         div {
             display: flex;
@@ -108,7 +108,7 @@
             height: 1em;
         }
     }
-    
+
 }
 
 .admin__wrapper {
@@ -149,7 +149,7 @@
           }
           .admin__content{
               padding: 0 0 43px;
-              .main-container__body{ 
+              .main-container__body{
                display: flex;
                justify-content: space-between;
                 .inputs__wrapper{

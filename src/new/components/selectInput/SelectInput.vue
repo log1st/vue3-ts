@@ -67,7 +67,7 @@ import Icon from "@/new/components/icon/Icon";
 import ContextMenu from "@/new/components/contextMenu/ContextMenu";
 import {useLocalProp} from "@/new/hooks/useLocalProp";
 import {formatMessage} from "@/new/utils/messageFormat";
-import {arrayFrom} from "@/new/utils/object";
+import {arrayFrom, getDeepField} from "@/new/utils/object";
 
 export default defineComponent({
   name: "SelectInput",
@@ -170,7 +170,7 @@ export default defineComponent({
               value.value.map(i => arrayFrom(props.displayProp).map(f => optionsMap.value[i][f]).join(' ')).join(', ')
             )
           )
-          : arrayFrom(props.displayProp).map(i => optionsMap.value[value.value]?.[i]).join(' ')
+          : arrayFrom(props.displayProp).map(i => getDeepField(optionsMap.value[value.value], i)).join(' ')
       )
     ));
 
@@ -211,7 +211,7 @@ export default defineComponent({
     const computedOptions = computed(() => (
       (props.optionsRef?.value || props.options).map(option => ({
         key: option[props.valueProp],
-        label: arrayFrom(props.displayProp).map(i => option[i]).join(' '),
+        label: arrayFrom(props.displayProp).map(i => getDeepField(option, i)).join(' '),
       }))
     ))
 
