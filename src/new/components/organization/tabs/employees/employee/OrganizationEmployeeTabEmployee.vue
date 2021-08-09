@@ -48,7 +48,8 @@
         <Icon icon="pencil" :class="[$style.action, $style.edit]" @click="toggleEditing" v-if="!isEditing"/>
         <Icon icon="check" :class="[$style.action, $style.submit]" v-if="isEditing" @click="submit"/>
         <Icon icon="close" :class="$style.action" v-if="isEditing" @click="stopEditing"/>
-        <Icon icon="close" :class="[$style.action, $style.remove]" v-if="!isEditing && (model.employee_role !== 'owner')" @click="remove"/>
+        <!-- @TODO -->
+        <Icon icon="close" :class="[$style.action, $style.remove]" v-if="!isEditing && ![79, 74].includes(model.id)" @click="remove"/>
       </div>
     </td>
   </tr>
