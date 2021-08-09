@@ -597,7 +597,7 @@ export default defineComponent({
       try {
         await axios({
           method: 'delete',
-          url: `${baseURL}/document/debtor/${id}/`,
+          url: `${baseURL}/documents/debtor/${id}/`,
         })
       } finally {
         await fetch();
