@@ -31,7 +31,7 @@
                 {{formatDbDate(document[column.key])}}
               </template>
               <template v-else>
-                {{formatDate(new Date)}}
+                <span :class="$style.na">N/A</span>
               </template>
             </template>
             <template v-else-if="activeTab.key === 'accruals' && column.key !== 'date'">
@@ -79,6 +79,7 @@ export default defineComponent({
         async fetch() {
           return data.value.accruals_data.map((record, index) => ({
             id: index + 1,
+            date: record.date,
             ...data.value.accrual_columns.reduce((acc, key) => ({
               ...acc,
               [key]: record.parts.filter(({title}) => title === key).map(({value}) => value).reduce((a, c) => parseFloat(a) + parseFloat(c), 0)
@@ -99,6 +100,7 @@ export default defineComponent({
         async fetch() {
           return data.value.paid_ups_data.map((record, index) => ({
             id: index + 1,
+            date: record.date,
             ...data.value.paid_up_columns.reduce((acc, key) => ({
               ...acc,
               [key]: record.parts.filter(({title}) => title === key).map(({value}) => value).reduce((a, c) => parseFloat(a) + parseFloat(c), 0)
