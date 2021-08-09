@@ -601,6 +601,7 @@ export default defineComponent({
 
     const {
       judicialStatuses,
+      pretrialStatuses,
       judicialSubStatusesMap,
       judicialSubStatusesGroups,
       judicialSubStatusesGroupsMap,
@@ -919,12 +920,18 @@ export default defineComponent({
             placeholder: '№ ИП',
           },
         },
-        {
-          field: 'status_name',
+        type.value !== 'executive' && {
+          field: {
+            pretrial: 'status_name',
+            judicial: 'status_name',
+          }[type.value],
           type: 'select',
           props: {
             placeholder: 'Статус',
-            options: judicialStatuses.value,
+            options: {
+              pretrial: pretrialStatuses.value,
+              judicial: judicialStatuses.value,
+            }[type.value],
           },
           width: 2,
         },
