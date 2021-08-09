@@ -15,7 +15,6 @@
         el-placeholder="Введите почту или телефон"
         :class="$style.field"
         :error="errorsMap.login"
-        @input="validatePhone($event)"
       />
       <Checkbox :state="['radio', 'dark']" v-model="model.agree" :class="$style.agree">
         <template #label>
@@ -116,16 +115,6 @@ export default defineComponent({
 
     const isSubmitting = ref(false);
 
-    const validatePhone = async (event) => {
-      const field = event.includes('@') ? 'Email' : 'Phone';
-      if (field === 'Phone') {
-        if (event.indexOf("8") === 0 || event.indexOf("8") === 1 ) {
-            let queryStrPhone = event.replace('8','+7');
-            model.value.login = queryStrPhone;
-        }
-      }
-    }
-
     const submit = async () => {
       clearErrors();
 
@@ -143,6 +132,9 @@ export default defineComponent({
 
       try {
         const field = model.value.login.includes('@') ? 'Email' : 'Phone';
+        if(field === 'Phone') {
+          model.value.login = model.value.login.trim().replace(/^[78]/, '+7')
+        }
         await store.dispatch('registerNewAccount', {
           [field]: model.value.login,
           Inn: model.value.inn,
@@ -190,7 +182,6 @@ export default defineComponent({
       model,
       errorsMap,
 
-      validatePhone,
       checkInn,
       submit,
       demo,

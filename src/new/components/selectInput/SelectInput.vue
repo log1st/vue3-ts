@@ -152,7 +152,7 @@ export default defineComponent({
     const value = useLocalProp(props, emit, 'modelValue');
 
     const optionsMap = computed(() => (
-      (props.optionsRef?.value || props.options).reduce((acc, cur) => ({
+      (props.optionsRef?.value || props.options || []).reduce((acc, cur) => ({
         ...acc,
         [cur[props.valueProp]]: cur
       }), {})

@@ -21,6 +21,7 @@
         v-if="isEditing"
       />
     </div>
+    <Pagination :total="total" :limit.sync="limit" :page.sync="page" :class="$style.pagination"/>
     <div :class="$style.actions" v-if="isEdited">
       <Btn :class="$style.action" state="secondary" label="Отмена" @click="reset"/>
       <Btn :class="$style.action" state="primary" label="Сохранить" @click="submit"/>
@@ -39,16 +40,17 @@ import {useStore} from "@/new/hooks/useStore";
 import Btn from "@/new/components/btn/Btn";
 import {useErrors} from "@/new/hooks/useErrors";
 import {useToast} from "@/new/hooks/useToast";
+import Pagination from "@/new/components/pagination/Pagination";
 
 export default {
   name: "OrganizationDocumentsTab",
-  components: {Btn, DocumentField, OrganizationDocumentsTabSigner, TextInput},
+  components: {Btn, DocumentField, OrganizationDocumentsTabSigner, TextInput, Pagination},
   props: {
     companyId: Number
   },
   setup(props) {
     const data = inject('data');
-    const isEditing = true
+    const isEditing = ref(true);
     const onSave = inject('onSave');
 
     const getDefaultSigner = () => ({
@@ -78,24 +80,44 @@ export default {
 
     const toRemove = ref([]);
 
+    const total = ref(0);
+    const limit = ref(1);
+    const page = ref(1);
+
     const fetchData = async () => {
       documents.value = [];
       signer.value = null;
 
-      let {data: foundDocuments} = await axios({
+      const {data: {results: f}} = await axios({
         method: 'get',
-        url: `${baseURL}/api/account/company/${data.value.id}/documents/`
+        url: `${baseURL}/api/account/document/`,
+        params: {
+          company_id: data.value.id,
+          limit: 1,
+          klass: 'attorney'
+        }
       });
+      signer.value = f[0] || null;
+
+      let {data: {count, results: foundDocuments}} = await axios({
+        method: 'get',
+        url: `${baseURL}/api/account/document/`,
+        params: {
+          company_id: data.value.id,
+          limit: limit.value,
+          offset: (page.value - 1) * limit.value,
+          klass_not: 'attorney'
+        }
+      });
+      total.value = count;
       foundDocuments = foundDocuments.map(document => ({
         ...document,
-        file: document.file ? `${baseURL}${document.file}` : document.file
       }))
       originalDocuments.value = JSON.parse(JSON.stringify(foundDocuments)).reduce((acc, cur) => ({
         ...acc,
         [cur.id]: cur
       }), {});
       documents.value = foundDocuments.filter(({signer}) => !signer);
-      signer.value = foundDocuments.find(({signer}) => !!signer) || getDefaultSigner();
       await new Promise(requestAnimationFrame)
       isEdited.value = false;
     }
@@ -214,6 +236,9 @@ export default {
       documents.value.splice(index, 1)
     }
 
+    watch(limit, fetchData);
+    watch(page, fetchData);
+
     return {
       documents,
       signer,
@@ -228,6 +253,10 @@ export default {
 
       errorsMap,
       pickErrors,
+
+      total,
+      limit,
+      page,
     }
   }
 }

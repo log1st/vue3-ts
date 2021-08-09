@@ -34,13 +34,10 @@
                 {{formatDate(new Date)}}
               </template>
             </template>
-            <template v-else-if="activeTab.key === 'accruals' && column.key === 'amount'">
+            <template v-else-if="activeTab.key === 'accruals' && column.key !== 'date'">
               {{formatMoney(document[column.key])}}
             </template>
-            <template v-else-if="activeTab.key === 'accruals' && column.key === 'once_amount'">
-              {{formatMoney(onceAmount)}}
-            </template>
-            <template v-else-if="activeTab.key === 'paidUps' && column.key === 'amount'">
+            <template v-else-if="activeTab.key === 'paidUps' && column.key !== 'date'">
               {{formatMoney(document[column.key])}}
             </template>
             <template v-else-if="activeTab.key === 'debts' && column.key === 'value'">
@@ -82,8 +79,10 @@ export default defineComponent({
         async fetch() {
           return data.value.accruals_data.map((record, index) => ({
             id: index + 1,
-            date: record.date,
-            amount: record.value,
+            ...data.value.accrual_columns.reduce((acc, key) => ({
+              ...acc,
+              [key]: record.parts.filter(({title}) => title === key).map(({value}) => value).reduce((a, c) => parseFloat(a) + parseFloat(c), 0)
+            }), {}),
           }))
         }
       },
@@ -100,8 +99,10 @@ export default defineComponent({
         async fetch() {
           return data.value.paid_ups_data.map((record, index) => ({
             id: index + 1,
-            date: record.date,
-            amount: record.value,
+            ...data.value.paid_up_columns.reduce((acc, key) => ({
+              ...acc,
+              [key]: record.parts.filter(({title}) => title === key).map(({value}) => value).reduce((a, c) => parseFloat(a) + parseFloat(c), 0)
+            }), {}),
           }));
         }
       },
@@ -130,12 +131,17 @@ export default defineComponent({
       ...({
         accruals: [
           {key: 'date', label: 'Дата'},
-          {key: 'amount', label: 'Начислено'},
-          {key: 'once_amount', label: 'Начисления разовые'},
+          ...data.value.accrual_columns.map(label => ({
+            key: label,
+            label,
+          })),
         ],
         paidUps: [
           {key: 'date', label: 'Месяц оплаты'},
-          {key: 'amount', label: 'Сумма оплаты'},
+          ...data.value.paid_up_columns.map(label => ({
+            key: label,
+            label,
+          })),
         ],
         debts: [
           {key: 'start_date', label: 'Начало просрочки'},

@@ -43,6 +43,7 @@
               <Btn :class="$style.action" prepend-icon="eye" state="quinary" :url="document.file" target="_blank"/>
               <Btn :class="$style.action" prepend-icon="megaphone" state="quinary" @click="listenSound(document)" v-if="activeTab.key === 'voice'"/>
               <Btn :class="$style.action" prepend-icon="download" state="quinary" @click="downloadDocument(document.file)" v-else/>
+              <Btn :class="$style.action" prepend-icon="trash" state="quinary" @click="removeMyDocument(document.id)" v-if="activeTab.key === 'myDocuments'"/>
             </div>
             <template v-else>
               <template v-if="document[column.key]">
@@ -592,6 +593,17 @@ export default defineComponent({
       accept: ['application/pdf']
     })
 
+    const removeMyDocument = async (id) => {
+      try {
+        await axios({
+          method: 'delete',
+          url: `${baseURL}/document/debtor/${id}/`,
+        })
+      } finally {
+        await fetch();
+      }
+    }
+
     watch(myDocuments, async files => {
       try {
         await Promise.all(files.map(async file => {
@@ -636,6 +648,7 @@ export default defineComponent({
 
       formatMoney,
 
+      removeMyDocument,
       downloadDocument,
       listenSound,
 

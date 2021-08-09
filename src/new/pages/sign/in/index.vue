@@ -97,8 +97,12 @@ export default defineComponent({
       isSubmitting.value = true;
 
       try {
+        const field = model.value.login.includes('@') ? 'Email' : 'Phone';
+        if(field === 'Phone') {
+          model.value.login = model.value.login.trim().replace(/^[78]/, '+7')
+        }
         await store.dispatch('login', {
-          Email: model.value.login,
+          [field]: model.value.login,
           Password: model.value.password,
         })
         await new Promise(requestAnimationFrame);

@@ -476,6 +476,14 @@ export default defineComponent({
     const localPage = useLocalProp(props, emit, 'page');
     const localFilters = useLocalProp(props, emit, 'filtersModel');
 
+    watch(localFilters, () => {
+      allSelected.value = false;
+      wholeSelected.value = false;
+      selectedItems.value = [];
+    }, {
+      deep: true,
+    })
+
     const defaultFilter = computed(() => (
       (props.filters || []).reduce((acc, cur) => ({
         ...acc,

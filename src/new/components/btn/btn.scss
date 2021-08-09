@@ -66,6 +66,8 @@
   }
 
   &.isDisabled {
+    opacity: .6;
+    filter: grayscale(1);
   }
 
   &.active {
