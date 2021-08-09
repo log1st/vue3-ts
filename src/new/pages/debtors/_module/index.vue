@@ -1017,6 +1017,24 @@ export default defineComponent({
           },
         },
         type.value === 'executive' && {
+          field: 'has_writ_of_execution',
+          type: 'select',
+          width: 2,
+          props: {
+            placeholder: 'Наличие ИП',
+            options: [
+              {
+                value: 'true',
+                label: 'Есть',
+              },
+              {
+                value: 'false',
+                label: 'Нет',
+              },
+            ],
+          },
+        },
+        type.value === 'executive' && {
           field: 'bailiff_id',
           type: 'select',
           props: {
