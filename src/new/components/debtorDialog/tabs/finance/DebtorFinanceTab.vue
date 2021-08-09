@@ -80,7 +80,7 @@ export default defineComponent({
           return data.value.accruals_data.map((record, index) => ({
             id: index + 1,
             date: record.date,
-            ...data.value.accrual_columns.reduce((acc, key) => ({
+            ...(data.value.accrual_columns || []).reduce((acc, key) => ({
               ...acc,
               [key]: record.parts.filter(({title}) => title === key).map(({value}) => value).reduce((a, c) => parseFloat(a) + parseFloat(c), 0)
             }), {}),
@@ -101,7 +101,7 @@ export default defineComponent({
           return data.value.paid_ups_data.map((record, index) => ({
             id: index + 1,
             date: record.date,
-            ...data.value.paid_up_columns.reduce((acc, key) => ({
+            ...(data.value.paid_up_columns || []).reduce((acc, key) => ({
               ...acc,
               [key]: record.parts.filter(({title}) => title === key).map(({value}) => value).reduce((a, c) => parseFloat(a) + parseFloat(c), 0)
             }), {}),
@@ -133,14 +133,14 @@ export default defineComponent({
       ...({
         accruals: [
           {key: 'date', label: 'Дата'},
-          ...data.value.accrual_columns.map(label => ({
+          ...(data.value.accrual_columns || []).map(label => ({
             key: label,
             label,
           })),
         ],
         paidUps: [
           {key: 'date', label: 'Месяц оплаты'},
-          ...data.value.paid_up_columns.map(label => ({
+          ...(data.value.paid_up_columns || []).map(label => ({
             key: label,
             label,
           })),
