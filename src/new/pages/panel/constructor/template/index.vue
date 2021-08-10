@@ -90,7 +90,7 @@
                 <Icon :class="$style.variableCheckbox" icon="add"/>
                 <div :class="$style.variableName">
                   <span>
-                    {{variable.var}}
+                    {{variable.name}}
                   </span>
                   <TooltipWrapper align="end" :text="variable.description" :class="$style.variableHint">
                     <Icon icon="info-outline" :class="$style.variableHintIcon"/>

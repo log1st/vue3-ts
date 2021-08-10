@@ -48,7 +48,8 @@
         <Icon icon="pencil" :class="[$style.action, $style.edit]" @click="toggleEditing" v-if="!isEditing"/>
         <Icon icon="check" :class="[$style.action, $style.submit]" v-if="isEditing" @click="submit"/>
         <Icon icon="close" :class="$style.action" v-if="isEditing" @click="stopEditing"/>
-        <Icon icon="close" :class="[$style.action, $style.remove]" v-if="!isEditing" @click="remove"/>
+        <!-- @TODO -->
+        <Icon icon="close" :class="[$style.action, $style.remove]" v-if="!isEditing && ![79, 74].includes(model.id)" @click="remove"/>
       </div>
     </td>
   </tr>
@@ -64,7 +65,7 @@ import {useDialog} from "@/new/hooks/useDialog";
 import {useErrors} from "@/new/hooks/useErrors";
 import {baseURL} from "@/settings/config";
 export default {
-  name: "OrganizationEmployeeTabEmployee",
+    name: "OrganizationEmployeeTabEmployee",
   components: {SelectInput, Icon, TextInput},
   model: {
     prop: 'modelValue',
@@ -82,7 +83,8 @@ export default {
     const toggleEditing = () => {
       isEditing.value = true;
     };
-    const stopEditing = () => {
+    const stopEditing = async () => {
+      await new Promise(requestAnimationFrame);
       isEditing.value = false;
       model.value = JSON.parse(JSON.stringify(props.modelValue));
     }

@@ -1,6 +1,5 @@
 <template>
   <div
-    v-if="computedStatus"
     :class="[$style.status, $style[computedStatus.color], $style[type]]"
     @click="onClick"
   >
@@ -64,7 +63,10 @@ export default defineComponent({
       }), {})
     ));
 
-    const computedStatus = computed(() => computedStatuses.value[props.status?.status]);
+    const computedStatus = computed(() => computedStatuses.value[props.status?.status] || {
+      color: 'unknown',
+      label: 'Unknown',
+    });
 
     const computedSubStatus = computed(() => (
       props.status?.status === 'other' ? (

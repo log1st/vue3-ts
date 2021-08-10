@@ -44,7 +44,7 @@
             {{column.label}}
           </th>
           </tr>
-          <tr :key="`${document.id}-data`">
+          <tr :key="`${document.id}-data`" :class="'yes'">
             <td v-for="column in columns" :key="column.key">
               <template v-if="document[column.key]">
                 <template v-if="column.key.includes('date') && document[column.key]">

@@ -159,6 +159,9 @@ const routes = [
       {
         path: 'panel',
         name: 'panel',
+        redirect: {
+          name: 'panel-constructor'
+        },
         component: () => import('../new/pages/panel/index.vue'),
         children: [
           {

@@ -1,10 +1,8 @@
 <template>
   <div :class="[$style.page, $style.confirm]">
     <div :class="$style.title">Подтверждение</div>
-    <div :class="[$style.error, $style.subTitle]" v-if="'common' in errorsMap">
-      {{ {
-    'verification code failed': `Неверный код подтверждения.\nПопробуйте еще раз`
-    }[errorsMap.common] }}
+    <div :class="[$style.error, $style.subTitle]" v-if="'verification_code' in errorsMap">
+      {{ errorsMap.verification_code }}
     </div>
     <div :class="$style.subTitle" v-else>
       Мы отправили вам код подтверждения
@@ -33,6 +31,7 @@ import {useRouter} from "@/new/hooks/useRouter";
 import ConfirmForm from "@/new/components/confirmForm/ConfirmForm";
 import {useStore} from "@/new/hooks/useStore";
 import {useErrors} from "@/new/hooks/useErrors";
+import {arrayFrom} from "@/new/utils/object";
 
 export default defineComponent({
   name: "index",
@@ -77,8 +76,14 @@ export default defineComponent({
           name: 'sign-password'
         })
       } catch (e) {
+        console.log('blya', e);
         code.value = '';
-        setErrors([['common', e.response.data.message || e.message]])
+        if(e.response) {
+          setErrors(Object.entries(e?.response.data).reduce((acc, [field, errors]) => ([
+            ...acc,
+            ...(arrayFrom(errors)).map(error => ([field, error]))
+          ]), []))
+        }
       }
       isSubmitting.value = false;
     }

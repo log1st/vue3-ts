@@ -26,6 +26,13 @@ export default defineComponent({
         exact: true,
       },
       {
+        key: 'templates',
+        label: 'Шаблоны',
+        url: {
+          name: 'panel-constructor-templates',
+        }
+      },
+      {
         key: 'create',
         label: (
           currentRoute.value.name === 'panel-constructor-template'
@@ -34,13 +41,6 @@ export default defineComponent({
         url: {
           name: 'panel-constructor-template',
         },
-      },
-      {
-        key: 'templates',
-        label: 'Шаблоны',
-        url: {
-          name: 'panel-constructor-templates',
-        }
       },
     ]));
 

@@ -91,7 +91,7 @@ export default {
 
     setAuthTypeInstallPassword (state, payload) {
       state.authSetPasswordType = payload
-    } 
+    }
 
   },
   actions: {
@@ -480,17 +480,8 @@ export default {
           }
         })
         .catch ( err => {
-          if ( err.response.data.message === 'verification code failed') {
-            reject(err)
-            commit('clearCode')
-            this._vm.$toast.open({
-              message: `Код введен не верно`,
-              type: 'error',
-              duration: 5000,
-              dismissible: true,
-              position: 'top-right'
-            });
-          }
+          reject(err)
+          commit('clearCode')
         })
       })
     },

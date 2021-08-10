@@ -82,6 +82,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const onClick = (event) => {
       if (props.isDisabled) {
+        event.preventDefault();
         event.stopPropagation();
         return;
       }

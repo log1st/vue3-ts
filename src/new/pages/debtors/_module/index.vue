@@ -30,7 +30,7 @@
             v-if="record.debtor && record.debtor.debtor_status.length"
             :class="$style.status"
             :status="record.debtor.debtor_status[0]"
-            @click="showStatusDialog({ selectedItem: record.debtor.debtor_status[0].id, debtorId: record.debtor.pk })"
+            @click="showStatusDialog({ selectedItem: record.debtor.pk })"
           />
         </template>
         <template v-else-if="module === 'pretrial'">
@@ -39,7 +39,7 @@
             v-if="record.debtor && record.debtor.pretrial_status.length"
             :class="$style.status"
             :status="record.debtor.pretrial_status[0]"
-            @click="showStatusDialog({ selectedItem: record.debtor.pretrial_status[0].id, debtorId: record.debtor.pk })"
+            @click="showStatusDialog({ selectedItem: record.debtor.pk })"
           />
         </template>
         <span/>
@@ -64,8 +64,11 @@
               <TooltipWrapper
                 v-for="substatus in record.substatuses"
                 :key="substatus"
-                :text="judicialSubStatusesMap[substatus]"
-                v-if="['fees_paid', 'statement_received', 'statement_ready', 'fees_await_paid'].includes(substatus)"
+                :text="{
+                  ...judicialSubStatusesMap,
+                  ready_to_court: 'Документ готов к подаче'
+                }[substatus]"
+                v-if="['fees_paid', 'statement_received', 'statement_ready', 'fees_await_paid', 'ready_to_court'].includes(substatus)"
               >
                 <Icon
                   :class="[
@@ -76,6 +79,7 @@
                       statement_ready: 'Blue',
                       statement_received: 'Blue',
                       fees_await_paid: 'Green',
+                      ready_to_court: 'Green',
                     }[substatus]}`]
                   ]"
                   :icon="{
@@ -84,6 +88,7 @@
                     statement_ready: 'egrn-excerpt',
                     statement_received: 'egrn-excerpt',
                     fees_await_paid: 'coins',
+                    ready_to_court: 'file-check',
                   }[substatus]"
                   v-on="substatus.startsWith('statement') ? {
                     click: (e) => {
@@ -255,7 +260,6 @@ export default defineComponent({
     } = useDialog();
 
     const showStatusDialog = async (payload) => {
-      console.log(payload)
       await showDialog({
         component: 'debtorsStatus',
         payload: {
@@ -425,7 +429,7 @@ export default defineComponent({
       }
 
       try {
-        const {data: {uuid}} = await axios({
+        const {data: {id}} = await axios({
           method: 'post',
           url: `${baseURL}/pretrial/${notificationType}/`,
           data: {
@@ -441,46 +445,29 @@ export default defineComponent({
           type: 'success',
         })
 
-        const {promise, unsubscribe} = asyncAction(
-          async () => (await axios({
-            method: 'get',
-            url: `${baseURL}/api/datafile/status/${uuid}/`
-          })).data,
-          async(data) => {
-            const {status_text, state} = [...data].sort((a, b) => new Date(a.updated_at).getTime() > new Date(b.updated_at).getTime() ? -1 : 1)[0];
-            if(state === 2) {
-              return {
-                status: true,
-                error: status_text
-              }
-            }
-            if(state === 3) {
-              return {
-                status: true,
-                payload: {
-                  text: status_text
-                }
-              }
-            } else {
-              return {status: false}
-            }
+        /*
+        sendUnsubscribe = store.dispatch('socket/subscribe', {
+          stream: 'data_package_debtors_list',
+          payload: {
+            action: 'subscribe_instance',
+            pk: id
           },
-        );
-
-        sendUnsubscribe = unsubscribe;
-        try {
-          const {text} = await promise;
-          await showToast({
-            message: text,
-            type: 'success',
-          })
-        } catch (e) {
-          console.log(e);
-          await showToast({
-            message: 'Ошибка отправки уведомления',
-            type: 'error',
-          })
-        }
+          handler: async (e) => {
+            if(e.status === 3) {
+              const {text} = e.data || {};
+              await showToast({
+                message: text,
+                type: 'success',
+              })
+            } else if(e.status === 2) {
+              await showToast({
+                message: 'Ошибка отправки уведомления',
+                type: 'error',
+              })
+            }
+          }
+        })
+        */
       } catch (e) {
         console.log(e);
         await showToast({
@@ -614,6 +601,7 @@ export default defineComponent({
 
     const {
       judicialStatuses,
+      pretrialStatuses,
       judicialSubStatusesMap,
       judicialSubStatusesGroups,
       judicialSubStatusesGroupsMap,
@@ -814,7 +802,11 @@ export default defineComponent({
           const substatuses = debtor_status.reduce((acc, {substatus}) => ([
             ...acc,
             ...substatus.map(({substatus: s}) => s),
-          ]), [])
+          ]), [
+            ...(props.module === 'judicial' ? (
+              debtor_status.some(({status}) => status === 'ready_to_court') ? ['ready_to_court'] : []
+            ) : [])
+          ])
             .filter((v, i, s) => !!v && (s.indexOf(v) === i))
             .filter(v => !['statement_error', 'statement_ordered'].includes(v))
             .sort((a, b) => (
@@ -928,12 +920,18 @@ export default defineComponent({
             placeholder: '№ ИП',
           },
         },
-        {
-          field: 'status_name',
+        type.value !== 'executive' && {
+          field: {
+            pretrial: 'status_name',
+            judicial: 'status_name',
+          }[type.value],
           type: 'select',
           props: {
             placeholder: 'Статус',
-            options: judicialStatuses.value,
+            options: {
+              pretrial: pretrialStatuses.value,
+              judicial: judicialStatuses.value,
+            }[type.value],
           },
           width: 2,
         },
@@ -1014,6 +1012,24 @@ export default defineComponent({
               {
                 value: '!statement_ordered',
                 label: 'Не заказана',
+              },
+            ],
+          },
+        },
+        type.value === 'executive' && {
+          field: 'has_writ_of_execution',
+          type: 'select',
+          width: 2,
+          props: {
+            placeholder: 'Наличие ИП',
+            options: [
+              {
+                value: 'true',
+                label: 'Есть',
+              },
+              {
+                value: 'false',
+                label: 'Нет',
               },
             ],
           },
@@ -1247,6 +1263,20 @@ export default defineComponent({
           icon: 'microphone',
           handler: ({allSelected, selectedItems, index}) => {
             showNotifyDialog('voice', {
+              allSelected,
+              filters: filtersModel.value,
+              selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
+              selectedItem: records.value[index]?.debtor?.pk,
+            })
+          },
+          asQuick: true,
+        },
+        type.value === 'pretrial' && {
+          key: 'email',
+          label: 'Отправить увеомление на почту',
+          icon: 'envelope',
+          handler: ({allSelected, selectedItems, index}) => {
+            showNotifyDialog('email', {
               allSelected,
               filters: filtersModel.value,
               selectedItems: selectedItems.map(index => records.value[index].debtor.pk),
