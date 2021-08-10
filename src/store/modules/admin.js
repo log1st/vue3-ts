@@ -740,6 +740,21 @@ export default {
           })
         },
         
+        setEncoding ({dispatch}, payload) {
+            let { template } = payload;
+            return new Promise ((resolve, reject) => {
+                String.prototype.insert = function(index, string) {
+                    if (index > 0) {
+                      return this.substring(0, index) + string + this.substr(index);
+                    }
+                    return string + this;
+                  };
+                const utf8 = `<meta charset="UTF-8"><meta content="text/html; charset=utf-8" http-equiv="Content-Type">`;
+                let resultTemplate = template.insert(30, utf8);
+                resolve({result: resultTemplate});
+            })
+        },
+
         editVariable ( { state }, payload ) {
           const { item, id } = payload
           return new Promise ((resolve, reject) => {

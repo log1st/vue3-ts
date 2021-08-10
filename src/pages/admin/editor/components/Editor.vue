@@ -42,6 +42,7 @@
          height: 700,
          menubar: true,
          language: 'ru',
+         entity_encoding: 'raw',
          paste_data_images: true,
          content_css: '/constructor.css',
          fontsize_formats: '6pt 7pt 8pt 10pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 32pt 36pt 38pt 40pt',
@@ -100,10 +101,6 @@
           </div>
         </div>
       </div>
-
-
-      
-       
     </div>
   </div>
 </div>
@@ -111,6 +108,7 @@
 </template>
 <script>
 import Editor from '@tinymce/tinymce-vue';
+import { useConstructor } from '@/new/hooks/useConstructor';
 import { baseURL } from '@/settings/config'
 import searchInput from '@/components/elements/SearchInput'
 import checkBox from '@/components/elements/CheckBox'
@@ -206,13 +204,10 @@ export default {
       this.editMod = true
       this.templateDocsType = this.allDocsTypes.find( al => al.id === this.params.template_type)
       this.editedId = this.params.id
-      // this.templateModule = this.params.templateModule
-      //Пока статика !!
       this.changeInputsValue('Досудебное производство')
       this.input.value = 'Досудебное производство'
       this.templateName = this.params.name
       let toHtml = this.params.content
-
       this.template = toHtml
     }
   },
@@ -279,23 +274,28 @@ export default {
     TemplateToBase64(string) {
       return window.btoa(unescape(encodeURIComponent(string)));
     },
-    saveTemplate(){
+
+    saveTemplate () {
       this.editorValidation( 1 )
-      .then ( result => {
+      .then ( async result => {
         if (result.status) {
           this.loading = true
           this.disabled = true
+          let a = true
           // Обрезаем 38 символов от начала до конца </head>, tiny вставляет чистый head в разметку его и обрезаем
-          // и заменяем на свой head с charset и тогда истерики не будет.
+          // и заменяем на свой head с charset.
           let templateParse = this.template
-          templateParse = `${templateParse}`
+          await this.$store.dispatch("setEncoding", {template:templateParse})
+          .then( resp => {
+            // console.log(resp)
+          templateParse = `${resp.result}`
           if (templateParse.includes('zerotemplate!=0') == true) {  // Обрезаем дубль в конструкторе (если он есть)
             templateParse = templateParse.split('zerotemplate!=0')[0]
           } else {
             // console.log('2')
           }
           this.template = templateParse
-          axios({
+            axios({
             url:`${baseURL}/constructor/template/`,
             data:{
               name: this.templateName,
@@ -319,17 +319,19 @@ export default {
             }
           })
           .catch( err => {
-              this.$toast.open({
+            this.$toast.open({
                   message: err,
                   type: 'erorr',
                   duration: 5000,
                   dismissible: true,
                   position: 'top-right'
+                })
               })
-          }) 
-        }
+            })
+          }
       })
       .catch ( err => {
+        console.log(err)
         this.$toast.open({
             message: `поле ${err.msg} обязательно к заполнению`,
             type: 'warning',
@@ -338,8 +340,8 @@ export default {
             position: 'top-right'
         })
       }) 
-      
     },
+
     editTemplate () {
       this.loading = true
       this.disabled = true
