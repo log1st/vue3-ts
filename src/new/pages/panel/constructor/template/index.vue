@@ -116,6 +116,7 @@ import TooltipWrapper from "@/new/components/tooltip/TooltipWrapper";
 import Editor from '@tinymce/tinymce-vue';
 import {useDialog} from "@/new/hooks/useDialog";
 import {useToast} from "@/new/hooks/useToast";
+import {useConstructor} from "@/new/hooks/useConstructor";
 import {useErrors} from "@/new/hooks/useErrors";
 
 export default defineComponent({
@@ -297,7 +298,25 @@ export default defineComponent({
       setErrors,
     } = useErrors();
 
+    // const {setEncoding} = useConstructor();
+
+    const setEncoding = ({ template }) => {
+        String.prototype.insert = function(index, string) {
+            if (index > 0) {
+              return this.substring(0, index) + string + this.substr(index);
+            }
+            return string + this;
+          };
+        const utf8 = `<meta charset="UTF-8"><meta content="text/html; charset=utf-8" http-equiv="Content-Type">`;
+        let resultTemplate = template.insert(30, utf8);
+        return resultTemplate;
+    }
+
     const submit = async () => {
+      let contentUTF8 = model.value.content;
+      if (!props.id) {
+        contentUTF8 = await setEncoding({template: model.value.content});
+      }
       clearErrors();
       try {
         isLoading.value = true;
@@ -305,7 +324,7 @@ export default defineComponent({
           method: props.id ? 'patch' : 'post',
           url: `${baseURL}/constructor/template/${props.id ? `${props.id}/` : ''}`,
           data: {
-            content: model.value.content.replace(/(.*|)zerotemplate=!0(.*)/, '$1'),
+            content: contentUTF8.replace(/(.*|)zerotemplate=!0(.*)/, '$1'),
             name: model.value.name,
             template_type: model.value.template_type,
           }
