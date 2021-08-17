@@ -148,7 +148,11 @@ import IconPenNib 		from '@/components/icons-svg/icons/IconPenNib'
 import IconCompanyList  from '@/components/icons-svg/icons/IconCompanyList'
 import IconPieChart 	from '@/components/icons-svg/icons/IconPieChart'
 import IconAdminSettings from '@/components/icons-svg/icons/IconAdminSettingsBar'
+import IconAccept from '@/components/icons-svg/icons/IconAccept'
+import IconDecline from '@/components/icons-svg/icons/IconDecline'
 
+Vue.component('icon-accept', IconAccept)
+Vue.component('icon-decline', IconDecline)
 Vue.component('icon-setting-admin', IconAdminSettings)
 Vue.component('icon-company-list', IconCompanyList)
 Vue.component('icon-pie-chart', IconPieChart)
