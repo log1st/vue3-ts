@@ -44,6 +44,7 @@ import AdminAddDocumentType      from '@/components/popup/modules/AdminAddDocume
 import NotifyModal               from '@/components/popup/modules/NotifyModal'
 import AddCompanyApplication     from '@/components/popup/modules/AddCompanyApplication'
 import PrintTemplatePopup        from '@/components/popup/modules/PrintTemplatePopup'
+import AdminSetErrorAdress       from '@/components/popup/modules/AdminSetErrorAdress'
 
 export default {
   props:{
@@ -84,6 +85,7 @@ export default {
     AdminChangeModuleTemplate,
     AdminAddDocumentType,
     AddCompanyApplication,
+    AdminSetErrorAdress,
     'notify-modal': NotifyModal,
     'debtor-documents-print-modal': debtorDocumentsPrintModal,
     'debtor-set-of-charges-print-modal': debtorSetOfChargesPrintModal,
