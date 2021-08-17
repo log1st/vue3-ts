@@ -659,7 +659,7 @@ export default {
           .then(resp => {
             if (resp.status === 200 || resp.status === 201) {
               this._vm.$toast.open({
-                message: `Шаблон установлен`,
+                message: `Шаблон обновлен`,
                 type: 'success',
                 duration: 5000,
                 dismissible: true,

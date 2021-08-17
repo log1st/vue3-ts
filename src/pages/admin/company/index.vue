@@ -102,7 +102,13 @@
                                   <span>{{ input.label }}</span>
                                 </div>
                                 <div class="compib__input" :key="input.action ? updateContentInner[input.key] + 'asdasd' : null">
-                                  <v-select class="main_company-template" v-bind:class="{ 'active-template': input.inputParams.activeClass }" :placeholder="input.inputParams.setItem" :options="input.inputParams.items" @input="setTemplate($event, input)" label="name" v-model="input.inputParams.data"></v-select>
+                                  <v-select class="main_company-template" 
+                                  v-bind:class="{ 'active-template': input.inputParams.activeClass }"
+                                  :placeholder="input.inputParams.setItem"
+                                  :options="input.inputParams.items"
+                                  @input="setTemplate($event, input)"
+                                  label="name"
+                                  v-model="input.inputParams.data"></v-select>
                                 </div>
                                 <ur-btn
                                   class="delete__template-btn"
@@ -209,9 +215,9 @@
                               </div>
                             </div>
                             <div class="main-container__head" style="margin-top:2em">
-                              <div class="main-container__title">Настройка полей для вырузки</div>
+                              <div class="main-container__title">Настройка полей для загрузки</div>
                             </div>
-                            <admin-company-data-config :company="this.selectedCompany" />
+                            <admin-company-data-config :prod-buttons="prodButtons" :company="this.selectedCompany" />
                             <div class="main-container__head" style="margin-top:2em">
                               <div class="main-container__title">Изменение региона</div>
                             </div>
@@ -243,7 +249,7 @@ import AdminDocs from './components/AdminDocs'
 import AdminRegions from './components/AdminRegions'
 import AdminCompanySigner from './components/AdminCompanySigner'
 import AdminDeleteCourtNDebtorAdress from './components/AdminDeleteCourtNDebtorAdress'
-import AdminCompanyDataConfig from './components/AdminCompanyDataConfig'
+import AdminCompanyDataConfig from './components/AdminCompanyDataConfig/index'
 import AdminCreateCompany from './components/AdminCreateCompany'
 import AdminCompanyDelete from './components/AdminCompanyDelete'
 import { baseURL, URL } from '@/settings/config'
@@ -455,6 +461,9 @@ export default {
           keys.forEach( item => {
               if (this.CompanyData[0].inputs[item].inputParams.data) {
                 let templateItem = this.CompanyData[0].inputs[item].inputParams.data
+                if (this.CompanyData[0].inputs[item].inputParams.existItem) {
+                  templateItem.existId = this.CompanyData[0].inputs[item].inputParams.existItem.id
+                }
                 array.push(templateItem)
               }
           })
@@ -548,7 +557,6 @@ export default {
             this.$set(this.CompanyData[0].inputs[inputsType].inputParams, `activeClass`, false)
 
           }
-            // this.updateCompanyData()
         },
         updateCompanyData () {
             this.updateData()
@@ -577,7 +585,6 @@ export default {
                         dismissible: true,
                         position: 'top-right'
                     })
-                    // this.updateCompanyData()
                     this.getDocumentTemplate(this.selectedCompany.id)
                     .then( result => {
                      this.allDocsTypes.forEach( type => {
