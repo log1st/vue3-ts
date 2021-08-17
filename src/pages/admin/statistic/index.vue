@@ -5,17 +5,17 @@
         </div>
         <div class="main__content pt-20 admin-stats">
             <div class="admin-stats__wrapper">
-                <template v-if="!selected">
+                <!-- <template v-if="!selected">
                     <div class="admin-stats__info">
                         Для вывода статистики, выберите пользователя на вкладке <router-link :to="{ name: 'AdminCompany' }">"Список организаций"</router-link>
                     </div>
-                </template>
-                <div v-else class="admin-stats__content">
+                </template> -->
+                <div class="admin-stats__content">
                     <div class="admin-stats__head-title">
-                        Данные статистики по пользователю - {{company.AbbreviatedName}}
+                        Данные статистики по адресам
                     </div>
                 <!-- список ошибок в проверке адрессов должников -->
-                <admin-adress-error :company="this.company" v-if="selected"></admin-adress-error>
+                <admin-adress-error></admin-adress-error>
                 </div>
             </div>
         </div>
@@ -36,16 +36,6 @@ export default {
     },
     components:{
       'admin-adress-error':AdminAdressError,
-    },
-    mounted() {
-        if (this.$store.state.admin.checkedCompany != null && this.$store.state.admin.checkedCompany.checked) {
-            let preCloneData = this.$store.state.admin.checkedCompany
-            this.company = preCloneData
-            this.selected = true
-        } else {
-            this.company = null
-            this.selected = false
-        }
     },
 }
 </script>
