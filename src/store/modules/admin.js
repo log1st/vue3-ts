@@ -20,7 +20,10 @@ export default {
         columnTemplate: [],
         documents: [],
         allColumnTemplate: [],
-        selectedCompanySettings: false
+        selectedCompanySettings: false,
+
+        statisticURL: 'https://stand.api-asj-test.urrobot.net',
+        parsingFiles: []
     }),
     mutations:{
         checkCompany (state, payload) {
@@ -100,6 +103,9 @@ export default {
         },
         setAllColumnTemplate ( state , payload ) {
           state.allColumnTemplate = payload
+        },
+        setAdressFileLists (state, payload) {
+          state.parsingFiles = payload 
         }
     },
     actions:{
@@ -733,7 +739,7 @@ export default {
             })
             .catch( err => {
               if (err.status === 403) {
-                dispatch('logout')
+                // dispatch('logout')
                 reject(false)
               }
             })
@@ -887,7 +893,7 @@ export default {
               .catch( err => {
                 console.log(err)
                 if (err.response.status === 403) {
-                    dispatch('logout')
+                    // dispatch('logout')
                 }
                 dispatch('appLoadingChange', false, { root: true });
                 reject()
@@ -931,6 +937,28 @@ export default {
           })
         },
         
+        /**
+         * ==============================
+         * 
+         *  Модуль Статистики
+         * 
+         * ==============================
+         */
+
+         getAdressFileLists ( {state, commit} ) {
+            axios({
+              url: `${state.statisticURL}​/datafile/list`,
+              method: 'GET',
+              headers: {
+                Authorization: 'Bearer dar5byv3avE3UpBy'  //Токен всегда один ...
+              },
+            })
+            .then ( resp => {
+              console.log(resp)
+              commit('setAdressFileLists', resp.data.packs)
+            })
+         }
+
     },
     getters:{
         /**
@@ -998,6 +1026,8 @@ export default {
         },
 
         adminCompanySettings: state => state.selectedCompanySettings,
-        allColumnTemplate: state => state.allColumnTemplate
+        allColumnTemplate: state => state.allColumnTemplate,
+
+        adressFileList: state => state.parsingFiles
     }
 }
