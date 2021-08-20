@@ -37,6 +37,16 @@ export default {
     components:{
       'admin-adress-error':AdminAdressError,
     },
+    mounted() {
+        // if (this.$store.state.admin.checkedCompany != null && this.$store.state.admin.checkedCompany.checked) {
+        //     let preCloneData = this.$store.state.admin.checkedCompany
+        //     this.company = preCloneData
+        //     this.selected = true
+        // } else {
+        //     this.company = null
+        //     this.selected = false
+        // }
+    },
 }
 </script>
 <style lang="scss">

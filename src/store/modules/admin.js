@@ -954,7 +954,7 @@ export default {
               },
             })
             .then ( resp => {
-              console.log(resp)
+              // console.log(resp)
               commit('setAdressFileLists', resp.data.packs)
             })
          }

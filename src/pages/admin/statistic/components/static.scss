@@ -1,0 +1,88 @@
+$accessGreen: rgba(70, 233, 78, 0.726);
+$declineRed: rgba(233, 70, 70, 0.726);
+
+.btn__adress-status {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    &-item {
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        border-radius: 0.4rem;
+        transition: all .4s ease-in-out;
+
+        svg > g {
+            fill: #ffff;
+        }
+        &.access {
+            margin: 0 0.2em;
+            padding: 0.5em;
+            background-color: $accessGreen;
+
+            &:hover {
+                background-color: darken($accessGreen, 15%);
+            }
+        }
+
+        &.decline {
+            margin: 0 0.2em;
+            padding: 0.5em;
+            background-color: $declineRed;
+            &:hover {
+                background-color: darken($declineRed, 15%);
+            }
+        }
+    }
+
+}
+.table__adres-rows-wrapper {
+    max-height: 500px;
+    overflow-y: auto;
+}
+.table__adress-rows {
+    padding: 1em 22px;
+    max-height: 10em;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 0.2fr 1fr 1fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr;
+}
+.table__adress-row {
+    display: flex;
+    align-items: center;
+
+    .status__adress {
+        min-width: 90px;
+
+        &.on-error {
+            font-weight: bold;
+            color: $declineRed;
+        }
+
+        &.on-success {
+            font-weight: bold;
+            color: darken($accessGreen, 20%);
+        }
+    }
+}
+.table__adress-head {
+    padding: 1em 22px;
+    display: grid;
+    grid-template-columns: 0.2fr 1fr 1fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr;
+    border-bottom: 0.5px solid #f2f6fc;
+    div {
+        color: #5e6476;
+        font-weight: bold;
+    }
+}
+.admin {
+    &-adress {
+        &_add-btn {
+            display: grid;
+            grid-template-columns: 0.5fr 4fr;
+            padding: 0 14px;
+            .vs__search {
+                display: block !important;
+            }
+        }
+    }
+}

@@ -18,43 +18,66 @@
                 type="file" 
                 id="update-file1"
                 accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+
+                <v-select
+                    :options="adressFileList"
+                    placeholder="Выберите один из загруженных файлов"
+                    label="filename"
+                    @input="getList()"
+                    v-model="selectedFileList"
+                >
+                </v-select>
             </div>
+            <div style="padding: 0 1em">
+                <hr>
+            </div>
+            <!-- <div class="btn btn-primary" @click="getUploadedData({id: 33})">
+                Получить данные
+            </div> -->
             <div class="table__adress">
                 <div class="table__adress-head">
+                    <div></div>
                     <div>Исходный адрес</div>
-                    <div>Стандартизированный</div>
+                    <div>Альтернативный</div>
                     <div>Мировая подсудность</div>
                     <div>Районная подсудность</div>
-                    <div>Использовалась ли Дадата</div>
+                    <div>ФССП</div>
+                    <div>Дадата</div>
                     <div>Статус</div>
                 </div>
                 <div class="table__adres-rows-wrapper">
-                    <div class="table__adress-rows" v-for="(item, index) in list" :key="index">
-                        <div class="table__adress-row">
-                            Тестовый адрес Х
+                    <div class="table__adress-rows" v-for="(item, index) in adressList" :key="index">
+                        <div class="table__adress-row" @click='checkedAdress({index, item})'>
+                            <checkBox :checked="item.checked"></checkBox>
                         </div>
                         <div class="table__adress-row">
-                            Тестовый адрес А
+                            {{item.result.result}}
                         </div>
                         <div class="table__adress-row">
-                            Тест
+                            
                         </div>
                         <div class="table__adress-row">
-                            Тест 2
+                            Нет
+                        </div>
+                        <div class="table__adress-row">
+                            Нет
+                        </div>
+                        <div class="table__adress-row">
+                            {{ fsspData (item.result.baliff) }}
                         </div>
                         <div class="table__adress-row">
                             Нет
                         </div>
                         <div class="table__adress-row btn__adress-status">
                             <span class="status__adress" v-bind:class="{'on-error': statusItem.errorStatus, 'on-success': statusItem.status}"   title="Статус адреса">
-                                {{statusItem.title}}
+                                {{ adressStatus(item.status) }}
                             </span>
-                            <button class="btn__adress-status-item access" @click="setStatusAdress({status: true,item: { id: 1, title: 'Тестовый адрес Х', court: 'Данные мир суда', court_local: 'Данные районого суда и тд' } })">
+                            <button class="btn__adress-status-item access" @click="setStatusAdress({status: true,item: { id: item.id, data: item.result } })">
                                 <icon-base width="20" height="20" viewBox="0 0 384.97 384.97" iconColor="#848aa1">
                                   <icon-accept />
                                 </icon-base>
                             </button>
-                            <button class="btn__adress-status-item decline" @click="setStatusAdress({status: false,item: { id: 1, title: 'Тестовый адрес Х', court: 'Данные мир суда', court_local: 'Данные районого суда и тд' } })">
+                            <button class="btn__adress-status-item decline" @click="setStatusAdress({status: false,item: { id: item.id, data: item.result } })">
                                 <icon-base width="20" height="20" viewBox="0 0 511.995 511.995" iconColor="#848aa1">
                                   <icon-decline />
                                 </icon-base>
@@ -68,116 +91,19 @@
     </div>
 </template>
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
+import './static.scss'
+import checkBox from '@/components/elements/CheckBox'
 
 export default {
+    components: {
+        checkBox
+    },
     data () {
         return {
-            list: [
-                {
-                  "fias_level": 0,
-                  "region": "string",
-                  "region_type": "string",
-                  "region_with_type": "string",
-                  "region_fias_id": "string",
-                  "region_code": "string",
-                  "okrug": "string",
-                  "okrug_type": "string",
-                  "okrug_with_type": "string",
-                  "okrug_fias_id": 0,
-                  "area": "string",
-                  "area_type": "string",
-                  "area_with_type": "string",
-                  "area_fias_id": "string",
-                  "MO": "string",
-                  "MO_type": "string",
-                  "city": "string",
-                  "city_type": "string",
-                  "city_with_type": "string",
-                  "city_fias_id": "string",
-                  "inner_settlement": "string",
-                  "inner_settlement_type": "string",
-                  "inner_settlement_with_type": "string",
-                  "inner_settlement_fias_id": "string",
-                  "settlement": "string",
-                  "settlement_type": "string",
-                  "settlement_with_type": "string",
-                  "settlement_fias_id": "string",
-                  "plan_struct": "string",
-                  "plan_struct_type": "string",
-                  "plan_struct_with_type": "string",
-                  "plan_struct_fias_id": "string",
-                  "street": "string",
-                  "street_type": "string",
-                  "street_with_type": "string",
-                  "street_fias_id": "string",
-                  "court_link": "string",
-                  "court_link_msudrf": "string",
-                  "source": "string",
-                  "result": "string",
-                  "postal_code": "string",
-                  "okato": "string",
-                  "oktmo": "string",
-                  "aoguid": "string",
-                  "ifns_ul": "string",
-                  "district_court": "string",
-                  "house": "string",
-                  "block": "string",
-                  "block_type": "string",
-                  "flat": 0,
-                  "is_suggested_house": true,
-                  "mirsud_court_reqs": {
-                    "id": 0,
-                    "parsed_date": "string",
-                    "Name": "doggie",
-                    "EmailCourt": "string",
-                    "Address": "string",
-                    "duty_url": "string",
-                    "AssistantJusticeOfThePeace": "string",
-                    "BIC": "string",
-                    "FullRegion": "string",
-                    "HeadOfTheOffice": "string",
-                    "INN": "string",
-                    "KBK": "string",
-                    "KPP": "string",
-                    "Magistrate": "string",
-                    "NamePaymentRecipient": "string",
-                    "NameRecipientBank": "string",
-                    "OKTMO": "string",
-                    "RecipientAaccountNumber": "string",
-                    "Secretary": "string"
-                  },
-                  "district_court_reqs": {
-                    "id": 0,
-                    "parsed_date": "string",
-                    "Name": "doggie",
-                    "EmailCourt": "string",
-                    "Address": "string",
-                    "duty_url": "string",
-                    "AssistantJusticeOfThePeace": "string",
-                    "BIC": "string",
-                    "FullRegion": "string",
-                    "HeadOfTheOffice": "string",
-                    "INN": "string",
-                    "KBK": "string",
-                    "KPP": "string",
-                    "Magistrate": "string",
-                    "NamePaymentRecipient": "string",
-                    "NameRecipientBank": "string",
-                    "OKTMO": "string",
-                    "RecipientAaccountNumber": "string",
-                    "Secretary": "string",
-                    "district_judges": [
-                      {
-                        "id": 0,
-                        "court_id": 0,
-                        "fio": "string"
-                      }
-                    ]
-                  }
-                }
-            ],
+            selectedFileList: undefined,
+            adressList: [],
             loading: false,
             standUrl: 'https://stand.api-asj.urrobot.net',
             standUrlDev: 'https://stand.api-asj-test.urrobot.net',
@@ -188,15 +114,49 @@ export default {
                 }
         }
     },
-    mounted () {
-        // this.$nextTick(this.getAdressList())
+    computed: {
+        ...mapGetters(['adressFileList']),
+
+        adressStatus () {
+            return payload => {
+                let result;
+                if (payload === 1) {
+                    result = "Верный"
+                } else if (payload === 0) {
+                    result = "Ошибка"
+                } else {
+                    result = 'Н/Д'
+                }
+                return result
+            }
+        },
+
+        fsspData () {
+           return payload => {
+               if (payload?.name) {
+                    return payload.name
+                } else {
+                    return "Нет данных"
+                }
+           }
+        }
     },
-    
+
+    created () {
+        this.getAdressFileLists()
+    },
+
     methods:{
         ...mapActions([ 
         'setPopupComponent', 
-        'toBase64'
+        'toBase64',
+        'getAdressFileLists'
         ]),
+
+        checkedAdress ({index, item}) {
+            this.adressList[index].checked = !this.adressList[index].checked
+        },
+
         getAdressList () {
             this.loading = true
             this.axios({
@@ -208,6 +168,12 @@ export default {
                 this.loading = false
             })
         },
+
+        getList () {
+            // console.log(this.selectedFileList)
+            this.getUploadedData({id:this.selectedFileList.id})
+        },
+
         setStatusAdress (payload) {
             const { status, item } = payload
             if (status) {
@@ -220,12 +186,41 @@ export default {
                 this.setPopupComponent({component: "AdminSetErrorAdress", params: { item: item}})
             }
         },
+
+        getUploadedData ({id}) {
+            return axios({
+                url: `${this.standUrlDev}​/addresses/pack/${id}`,
+                method: 'GET',
+                headers: {
+                    Authorization: 'Bearer dar5byv3avE3UpBy'  //Токен всегда один ...
+                },
+            })
+            .then( resp => {
+                let resultArray = resp.data.map( (item) => {
+                   return {
+                        id: item.id,
+                        id_file: item.id_file,
+                        id_record: item.id_record,
+                        result: item.result,
+                        source: item.source,
+                        status: item.status,
+                        checked: false
+                   }
+                 })
+                this.adressList = resultArray
+            })
+        },
+
       async uploadFile (event) {
             let files = event.target.files
             let filesArray = new Array
+            let file = undefined
+            let toReplace = 'data:application/octet-stream;base64,'
             if (files.length > 0) {
                 for (let i = 0; i < files.length; i++) {
-                    filesArray.push({ content: await this.toBase64(files[i]), name: files[i].name })
+                    file = await this.toBase64(files[i])
+                    file = file.replace(new RegExp('\\b' + toReplace + '\\b', 'g'), '');
+                    filesArray.push({ content: file, name: files[i].name })
                 }
             }
             await axios({
@@ -244,93 +239,9 @@ export default {
                     message: 'Документ загружен',
                     type: 'success'
                 })
+                this.getUploadedData({id: resp.data.file_id})
             })
         }
     }
 }
 </script>
-<style lang="scss">
-    $accessGreen: rgba(70, 233, 78, 0.726);
-    $declineRed: rgba(233, 70, 70, 0.726);
-
-    .btn__adress-status {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        &-item {
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            border-radius: 0.4rem;
-            transition: all .4s ease-in-out;
-
-            svg > g {
-                fill: #ffff;
-            }
-            &.access {
-                margin: 0 0.2em;
-                padding: 0.5em;
-                background-color: $accessGreen;
-
-                &:hover {
-                    background-color: darken($accessGreen, 15%);
-                }
-            }
-
-            &.decline {
-                margin: 0 0.2em;
-                padding: 0.5em;
-                background-color: $declineRed;
-                &:hover {
-                    background-color: darken($declineRed, 15%);
-                }
-            }
-        }
-
-    }
-    .table__adres-rows-wrapper {
-        max-height: 500px;
-        overflow-y: auto;
-    }
-    .table__adress-rows {
-        padding: 1em 22px;
-        max-height: 10em;
-        overflow-y: auto;
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
-    }
-    .table__adress-row {
-        display: flex;
-        align-items: center;
-
-        .status__adress {
-            min-width: 90px;
-
-            &.on-error {
-                font-weight: bold;
-                color: $declineRed;
-            }
-
-            &.on-success {
-                font-weight: bold;
-                color: darken($accessGreen, 20%);
-            }
-        }
-    }
-    .table__adress-head {
-        padding: 1em 22px;
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
-        border-bottom: 0.5px solid #f2f6fc;
-        div {
-            color: #5e6476;
-            font-weight: bold;
-        }
-    }
-    .admin {
-        &-adress {
-            &_add-btn {
-                padding: 0 14px;
-            }
-        }
-    }
-</style>
