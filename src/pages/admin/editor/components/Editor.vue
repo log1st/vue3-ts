@@ -80,24 +80,55 @@
           Изменить шаблон
         </ur-btn>
       </div>
-      <div class="custom-sidebar__item" v-for="(group, index) in allGroupsVariables" :key="index">
-        <div class="custom-sidebar__checkboxes">
-          <div class="custom-sidebar__checkboxes-item">
-            <b>{{group.name}}</b>
-          </div>
-          <div class="custom-sidebar__checkboxes-item" :key="index" v-for="(el,index) in group.vars" @click="setVar(el)">
-            <checkBox :checked="variable == el.var" :isDisabled="!isSet" />
-            <span>{{el.name}}</span>
-            <div class="vardesc__info-icon" :title="el.description">
-               <icon-base width="3" height="10" iconColor="#fff">
-                  <icon-info />
-                </icon-base>
+      <div class="custom-sidebar__items-wrapper">
+        <div class="custom-sidebar__item">
+          <div class="custom-sidebar__checkboxes">
+            <div class="custom-sidebar__checkboxes-item">
+              <b>Пользовательская перменная</b>
             </div>
-                <div @click="editConstructorVariable(el)" style="cursor:pointer">
-                  <icon-base width="15" height="15" iconColor="#848aa1">
-                    <icon-edit></icon-edit>
-                  </icon-base>
+              <div class="custom-sidebar__checkboxes-item" @click="setVar({
+                description:'В появившемся поле введите свой текст',
+                group:0,
+                id:0,
+                is_func:true,
+                name:'Пользовательская переменная',
+                production_type:'',
+                var:'Введите свою переменную'
+              })">
+                <checkBox :checked="variable == 'Введите свою переменную'" :isDisabled="!isSet" />
+                <span>Пользовательская переменная</span>
+                <div class="vardesc__info-icon" :title="'В появившемся поле введите свой текст'">
+                   <icon-base width="3" height="10" iconColor="#fff">
+                      <icon-info />
+                    </icon-base>
                 </div>
+                  <!-- <div @click="editConstructorVariable(el)" style="cursor:pointer">
+                    <icon-base width="15" height="15" iconColor="#848aa1">
+                      <icon-edit></icon-edit>
+                    </icon-base>
+                  </div> -->
+              </div>            
+          </div>
+        </div>
+        <div class="custom-sidebar__item" v-for="(group, index) in allGroupsVariables" :key="index">
+          <div class="custom-sidebar__checkboxes">
+            <div class="custom-sidebar__checkboxes-item">
+              <b>{{group.name}}</b>
+            </div>
+              <div class="custom-sidebar__checkboxes-item" :key="index" v-for="(el,index) in group.vars" @click="setVar(el)">
+                <checkBox :checked="variable == el.var" :isDisabled="!isSet" />
+                <span>{{el.name}}</span>
+                <div class="vardesc__info-icon" :title="el.description">
+                   <icon-base width="3" height="10" iconColor="#fff">
+                      <icon-info />
+                    </icon-base>
+                </div>
+                  <div @click="editConstructorVariable(el)" style="cursor:pointer">
+                    <icon-base width="15" height="15" iconColor="#848aa1">
+                      <icon-edit></icon-edit>
+                    </icon-base>
+                  </div>
+              </div>            
           </div>
         </div>
       </div>
@@ -108,12 +139,10 @@
 </template>
 <script>
 import Editor from '@tinymce/tinymce-vue';
-import { useConstructor } from '@/new/hooks/useConstructor';
 import { baseURL } from '@/settings/config'
 import searchInput from '@/components/elements/SearchInput'
 import checkBox from '@/components/elements/CheckBox'
 import MultilevelAccordion from "vue-multilevel-accordion";
-// import chargesTable from './docs/setOfChargesTable.json'
 import { mapActions, mapGetters } from 'vuex';
  
 
@@ -287,12 +316,11 @@ export default {
           let templateParse = this.template
           await this.$store.dispatch("setEncoding", {template:templateParse})
           .then( resp => {
-            // console.log(resp)
           templateParse = `${resp.result}`
           if (templateParse.includes('zerotemplate!=0') == true) {  // Обрезаем дубль в конструкторе (если он есть)
             templateParse = templateParse.split('zerotemplate!=0')[0]
           } else {
-            // console.log('2')
+            // 
           }
           this.template = templateParse
             axios({
@@ -423,5 +451,11 @@ export default {
             display: none;
         }
     }
-
+.custom-sidebar__items-wrapper {
+  max-height: 635px;
+  padding: 0.8em;
+  border-radius: .4rem;
+  background: #ffffff4f;
+  overflow-y: auto;
+}
 </style>
