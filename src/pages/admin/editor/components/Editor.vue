@@ -91,12 +91,12 @@
                 group:0,
                 id:0,
                 is_func:true,
-                name:'Пользовательская переменная',
+                name:'Склонение текста на основании пола',
                 production_type:'',
                 var:'Введите свою переменную'
               })">
                 <checkBox :checked="variable == 'Введите свою переменную'" :isDisabled="!isSet" />
-                <span>Пользовательская переменная</span>
+                <span>Склонение текста на основании пола</span>
                 <div class="vardesc__info-icon" :title="'В появившемся поле введите свой текст'">
                    <icon-base width="3" height="10" iconColor="#fff">
                       <icon-info />
@@ -319,8 +319,6 @@ export default {
           templateParse = `${resp.result}`
           if (templateParse.includes('zerotemplate!=0') == true) {  // Обрезаем дубль в конструкторе (если он есть)
             templateParse = templateParse.split('zerotemplate!=0')[0]
-          } else {
-            // 
           }
           this.template = templateParse
             axios({
