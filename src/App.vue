@@ -21,7 +21,6 @@ export default {
     }
 
     if (window.location.pathname == '/login') {
-      console.log(window.location)
       this.$router.push('/sign/in');
     }
   },
