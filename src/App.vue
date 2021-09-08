@@ -18,8 +18,14 @@ export default {
         document.documentElement.setAttribute('data-theme', 'day');
     } else if (this.$store.state.user.appTheme == 'night'){
         document.documentElement.setAttribute('data-theme', 'night');
-      }
+    }
+
+    if (window.location.pathname == '/login') {
+      console.log(window.location)
+      this.$router.push('/sign/in');
+    }
   },
+  
 
 }
 </script>
