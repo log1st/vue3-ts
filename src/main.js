@@ -324,7 +324,7 @@ export function createApp() {
 		window.axios.interceptors.response.use(response => {
 			// Если пользователь не авторизован
 			if (response.data[0] && response.data[0].Errors && response.data[0].Errors[1007]) {
-				router.push('/login').catch(err => { err });
+				router.push('/sign/in').catch(err => { err });
 			}
 			return response
 			// return { ...response, cancelToken: source.token };
