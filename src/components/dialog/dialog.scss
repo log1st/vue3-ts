@@ -1,0 +1,126 @@
+@import "~@/assets/utils";
+
+.dialog {
+  overflow-y: auto;
+
+  background: rgba(var(--dialog-backdrop), .4);
+
+  display: flex;
+
+  &.addCompany {
+    .body {
+      max-width: rem(400px);
+    }
+  }
+  &.company,
+  &.debtor {
+    .body {
+      max-width: calc(100% - #{rem(60px)});
+      min-height: 100%;
+    }
+  }
+  &.addEmployee {
+    .body {
+      max-width: rem(900px);
+    }
+  }
+  &.confirm {
+    .body {
+      max-width: rem(490px);
+    }
+  }
+
+  &.tableDisplaySettings {
+    .body {
+      max-width: rem(720px);
+    }
+  }
+
+  &.model {
+    &:not(.wide) {
+      .body {
+        max-width: rem(520px);
+      }
+    }
+
+    &.wide {
+      .body {
+        max-width: rem(974px);
+      }
+    }
+  }
+
+  &.actionsSelector {
+    .body {
+      max-width: rem(560px);
+    }
+  }
+
+  &.debtorStatus {
+    .body {
+      max-width: rem(400px);
+    }
+  }
+
+  &.print {
+    .body {
+      max-width: rem(960px);
+
+      flex-grow: 1;
+      height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content {
+      flex-grow: 1;
+      height: 0;
+      overflow-y: auto;
+    }
+  }
+
+  &.file {
+    .body {
+      max-width: rem(460px);
+    }
+  }
+
+  &.egrn {
+    .body {
+      max-width: rem(670px);
+    }
+  }
+
+  &.listenFile {
+    .body {
+      max-width: rem(360px);
+    }
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.body {
+  margin: auto;
+  width: 100%;
+
+  position: relative;
+
+  padding: rem(20px) 0;
+}
+
+.close {
+  position: absolute;
+  top: rem(30px);
+  right: rem(15px);
+  color: rgba(var(--gray-3), 1);
+
+  height: rem(26px);
+  width: rem(26px);
+
+  cursor: pointer;
+}

@@ -1,0 +1,30 @@
+@import "~@/assets/utils";
+
+.container {
+  background: rgba(var(--dialog-bg), 1);
+  box-shadow: 0 rem(9px) rem(18px) rgba(var(--black), 0.18), 0 rem(5.5px) rem(5px) rgba(var(--black), 0.237602);
+  border-radius: rem(10px);
+
+  padding: rem(20px) rem(20px) rem(32px) rem(20px);
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+
+  margin: rem(-10px) rem(-5px) 0;
+}
+
+.field {
+  margin: rem(10px) 0 0;
+  padding: 0 rem(5px);
+}
+
+.actions {
+  margin-top: rem(20px);
+  display: grid;
+  height: rem(60px);
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: rem(20px);
+  justify-self: normal;
+}

@@ -1,0 +1,163 @@
+@import "~@/assets/utils";
+
+.wrapper {
+}
+
+.content {
+  margin-top: rem(30px);
+  display: grid;
+  grid-template-columns: 1fr rem(281px);
+  grid-gap: rem(20px);
+
+  flex-grow: 1;
+}
+
+
+.title {
+  @include heading(true);
+  color: rgba(var(--dark), 1);
+  white-space: pre-line;
+}
+
+.form {
+  background: rgba(var(--table-bg), .75);
+  border-radius: rem(10px);
+  box-shadow: 0 0 0 rem(1px) rgba(var(--input-second-color), 1);
+
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+}
+
+.headerYear,
+.headerTab {
+  width: percentage(1/3);
+  height: rem(60px);
+
+  [data-role="trigger"] {
+    height: rem(60px);
+    border-radius: rem(10px) 0 0 0 !important;
+    padding-right: rem(40px) !important;
+    padding-left: rem(30px) !important;
+  }
+}
+
+.headerTab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include subText;
+  color: rgba(var(--gray-2), 1);
+  background: rgba(var(--input-second-color), 1);
+
+  cursor: default;
+
+  &.active {
+    margin-left: rem(-10px);
+    margin-right: rem(-10px);
+    margin-bottom: rem(-10px);
+    width: calc(#{percentage(1/3)} + #{rem(20px)});
+    border-radius: 0 0 rem(10px) rem(10px);
+    z-index: 1;
+    font-weight: 600;
+    background: rgba(var(--purple-2), 1);
+    color: rgba(var(--white), 1);
+  }
+
+  &.active:first-child {
+    margin-left: 0;
+    width: calc(#{percentage(2/3)} + #{rem(20px)});
+  }
+
+  &:last-child {
+    border-radius: 0 rem(10px) 0 0;
+  }
+}
+
+.modes {
+  margin-top: rem(20px);
+  margin-left: rem(30px);
+}
+
+.periods {
+  margin-top: rem(34px);
+  margin-left: rem(30px);
+  display: flex;
+  align-items: center;
+}
+
+.period {
+  &:not(:first-child) {
+    margin-left: rem(40px);
+  }
+}
+
+.filesWrapper {
+  margin-top: rem(15px);
+  padding-top: rem(15px);
+  flex-grow: 1;
+  height: 0;
+  overflow-y: auto;
+}
+
+.files {
+  padding: 0 rem(20px) rem(30px);
+
+  position: relative;
+
+  display: grid;
+
+  &.all {
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: rem(20px) rem(30px);
+  }
+
+  &.monthly {
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: rem(20px) rem(30px);
+  }
+}
+
+.dropZone {
+  background: rgba(var(--dark), .75);
+  border-radius: rem(10px);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  color: rgba(var(--white), 1);
+
+  position: absolute;
+  top: rem(-10px);
+  right: rem(10px);
+  bottom: rem(20px);
+  left: rem(10px);
+
+  z-index: 1;
+}
+
+.dropZoneIcon {
+  height: rem(40px);
+  width: rem(40px);
+}
+
+.dropZoneLabel {
+  margin-top: rem(20px);
+  @include text;
+  text-align: center;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+}
+
+.submit {
+  margin-top: auto;
+  height: rem(60px);
+}

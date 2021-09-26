@@ -1,0 +1,70 @@
+@import "~@/assets/utils";
+
+@import "../commonDialog";
+
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  height: rem(45px);
+  width: rem(45px);
+  color: rgba(var(--btn-color), 1);
+}
+
+.caption {
+  margin-left: rem(30px);
+}
+
+.disclaimer {
+  margin-top: rem(15px);
+  @include text(true);
+  color: rgba(var(--btn-color), 1);
+}
+
+.fields {
+  margin-top: rem(25px);
+  display: flex;
+  flex-direction: column;
+}
+
+.field {
+  &:not(:first-child) {
+    margin-top: rem(22px);
+  }
+}
+
+.label {
+  @include text(true);
+  color: rgba(var(--dark), 1);
+
+  b {
+    color: rgba(var(--purple), 1);
+  }
+}
+
+.force {
+  align-self: flex-end;
+}
+
+.attention {
+  margin-top: rem(30px);
+}
+
+.attentionTitle {
+  @include caption(true);
+  color: rgba(var(--red), 1);
+}
+
+.attentionText {
+  margin-top: rem(10px);
+  @include subText;
+  color: rgba(var(--table-color), 1);
+}
+
+.submit {
+  margin: rem(37px) auto 0;
+  height: rem(60px);
+  padding: 0 rem(45px);
+}

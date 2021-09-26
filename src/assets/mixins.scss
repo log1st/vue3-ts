@@ -1,0 +1,13 @@
+@import "./variables";
+
+@mixin tighter($width) {
+  @media (max-width: #{$width - 1}px) {
+    @content;
+  }
+}
+
+@mixin wider($width) {
+  @media (min-width: #{$width}px) {
+    @content;
+  }
+}

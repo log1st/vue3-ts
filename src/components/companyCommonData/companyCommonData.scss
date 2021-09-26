@@ -1,0 +1,40 @@
+@import "~@/assets/utils";
+
+.container {
+  padding: rem(30px) rem(40px);
+}
+
+.name {
+  @include heading(true);
+  color: rgba(var(--dark), 1);
+}
+
+.title {
+  margin-top: rem(30px);
+  @include caption(true);
+  color: rgba(var(--blue), 1);
+}
+
+.fields {
+  margin-top: rem(40px);
+}
+
+.field {
+  display: grid;
+  grid-template-columns: 4fr 5fr;
+  grid-gap: rem(30px);
+
+  &:not(:first-child) {
+    margin-top: rem(30px);
+  }
+}
+
+.label {
+  @include text;
+  color: rgba(var(--blue), 1);
+}
+
+.value {
+  @include subText;
+  color: rgba(var(--black), 1);
+}

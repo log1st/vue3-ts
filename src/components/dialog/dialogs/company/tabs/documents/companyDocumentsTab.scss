@@ -1,0 +1,24 @@
+@import "~@/assets/utils.scss";
+
+.tab {
+  padding-top: rem(10px);
+}
+
+.documents {
+  margin-top: rem(30px);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-gap: rem(20px);
+}
+
+.actions {
+  margin: rem(30px) rem(-15px) 0;
+  display: flex;
+  justify-content: flex-end;
+  height: rem(60px);
+}
+
+.action {
+  margin: 0 rem(15px);
+  padding: 0 rem(42px);
+}

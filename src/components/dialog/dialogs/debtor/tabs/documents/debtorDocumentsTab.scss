@@ -1,0 +1,44 @@
+@import "~@/assets/utils";
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+
+}
+
+.table {
+  flex-grow: 1;
+  height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: rem(20px);
+
+  margin-top: rem(30px);
+
+  [data-role="action(preview)"] {
+    [data-role="icon"] {
+      color: rgba(var(--green), 1);
+    }
+  }
+
+  [data-role="action(download)"] {
+    [data-role="icon"] {
+      color: rgba(var(--blue), 1);
+    }
+  }
+
+  [data-role="action(remove)"] {
+    [data-role="icon"] {
+      color: rgba(var(--red), 1);
+    }
+  }
+
+  [data-role="action(listen)"] {
+    [data-role="icon"] {
+      color: rgba(var(--lightblue-3), 1);
+    }
+  }
+}

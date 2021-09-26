@@ -1,0 +1,24 @@
+@import "~@/assets/utils";
+
+.toasts {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  bottom: 0;
+  right: rem(40px);
+  visibility: hidden;
+
+  padding-top: rem(130px);
+
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+}
+
+.toast {
+  visibility: visible;
+  width: rem(320px);
+  &:not(:last-child) {
+    margin-top: rem(20px);
+  }
+}

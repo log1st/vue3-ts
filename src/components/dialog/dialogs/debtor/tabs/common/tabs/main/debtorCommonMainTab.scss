@@ -1,0 +1,27 @@
+@import "~@/assets/utils.scss";
+
+.field {
+  &:not(:first-child) {
+    margin-top: rem(16px);
+  }
+
+  [data-role="label"] {
+    flex-basis: rem(200px);
+  }
+}
+
+.actions {
+  margin: rem(30px) rem(-10px) 0;
+  display: flex;
+}
+
+.action {
+  height: rem(40px);
+  min-width: rem(40px);
+  padding: 0 rem(10px);
+  margin: 0 rem(10px);
+
+  &:first-child:last-child {
+    padding: 0;
+  }
+}

@@ -1,0 +1,84 @@
+@import "~@/assets/utils";
+
+.container {
+  padding: rem(30px);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  &.expanded {
+    .toggle {
+      transform: rotate(180deg);
+    }
+  }
+
+  + .header {
+    margin-top: rem(30px);
+  }
+}
+
+.title {
+  @include heading(true);
+  color: rgba(var(--dark), 1);
+  flex-grow: 1;
+}
+
+.subTitle {
+  @include caption(true);
+  color: rgba(var(--blue), 1);
+}
+
+.toggle {
+  height: rem(24px);
+  width: rem(24px);
+  color: rgba(var(--black), 1);
+}
+
+.fields {
+  margin-top: rem(30px);
+}
+
+.field {
+  display: flex;
+  align-items: center;
+
+  &:not(:first-child) {
+    margin-top: rem(20px);
+  }
+}
+
+.label {
+  width: rem(240px);
+  @include input;
+  font-weight: 500;
+  color: rgba(var(--black), 1);
+}
+
+.input,
+.value {
+  flex-grow: 1;
+}
+
+.value {
+  @include input;
+  font-weight: 500;
+  color: rgba(var(--black), 1);
+}
+
+.edit {
+  height: rem(24px);
+  width: rem(24px);
+  color: rgba(var(--blue), 1);
+  margin-left: auto;
+}
+
+.submit {
+  margin: rem(30px) 0 0 auto;
+  height: rem(40px);
+  padding: 0 rem(20px);
+}

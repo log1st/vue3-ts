@@ -1,0 +1,75 @@
+@import "~@/assets/utils";
+
+.header {
+  height: rem(90px);
+  display: flex;
+  align-items: normal;
+
+  background: rgba(var(--dark-2), 1);
+}
+
+.logo {
+  width: var(--side-width);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  [data-role="logo"] {
+    height: rem(60px);
+    width: rem(196px);
+  }
+}
+
+.content {
+  flex-grow: 1;
+
+  padding: 0 0 0 rem(55px);
+
+  display: flex;
+  align-items: normal;
+}
+
+.stats {
+  flex-grow: 1;
+  display: flex;
+}
+
+.actions {
+  flex-shrink: 0;
+  display: flex;
+  margin-left: rem(40px);
+}
+
+.user {
+  flex-shrink: 0;
+  display: flex;
+  max-width: rem(280px);
+  min-width: rem(240px);
+  margin-left: rem(40px);
+
+  margin-left: auto;
+
+  > * {
+    flex-grow: 1;
+  }
+}
+
+.signOut {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  width: rem(105px);
+
+  color: rgba(var(--white), 1);
+
+  [data-role="icon"] {
+    height: rem(25px);
+    width: rem(25px);
+  }
+}

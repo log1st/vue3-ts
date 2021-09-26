@@ -1,0 +1,44 @@
+@import "~@/assets/utils";
+
+.title {
+  @include text(true);
+  color: rgba(var(--table-color), 1);
+}
+
+.table {
+  margin-top: rem(20px);
+
+  + .title {
+    margin-top: rem(40px);
+  }
+}
+
+.data {
+  display: flex;
+  align-items: center;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+
+  @include subText;
+
+  &:not(:first-child) {
+    margin-left: rem(60px);
+  }
+}
+
+.label {
+  font-weight: 500;
+  color: rgba(var(--table-color), 1);
+}
+
+.value {
+  margin-left: rem(18px);
+  color: rgba(var(--gray-2), 1);
+}
+
+.cadastralSelector {
+  margin-top: rem(30px);
+}

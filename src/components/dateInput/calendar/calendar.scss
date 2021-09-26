@@ -1,0 +1,24 @@
+@import "~@/assets/utils";
+
+.calendar {
+  display: flex;
+  flex-direction: column;
+
+  background: rgba(var(--table-bg), 1);
+  box-shadow: 0 rem(15px) rem(15px) rgba(var(--black), 0.15);
+  border-radius: rem(10px);
+
+  padding: rem(35px) rem(40px) rem(36px);
+}
+
+.header {
+}
+
+.body {
+  border-left: none;
+  border-right: none;
+
+  flex-grow: 1;
+
+  margin-top: rem(17px);
+}

@@ -1,0 +1,101 @@
+@import "~@/assets/utils.scss";
+
+@import "../commonDialog";
+
+.label {
+  @include subText;
+  color: rgba(var(--table-color), 1);
+}
+
+.limit {
+  margin-top: rem(30px);
+}
+
+.drops {
+  margin-top: rem(30px);
+  display: grid;
+  grid-gap: 0 rem(30px);
+  grid-template-columns: 1fr rem(35px) 1fr;
+}
+
+.delimiter {
+  height: rem(35px);
+  padding: rem(7.5px);
+  background: rgba(var(--blue), 1);
+  color: rgba(var(--white), 1);
+
+  margin-top: rem(20px);
+
+  box-shadow: 0 rem(9px) rem(18px) rgba(var(--black), 0.18), 0 rem(5.5px) rem(5px) rgba(var(--black), 0.237602);
+  border-radius: rem(10px);
+}
+
+.hint {
+  @include subText;
+  font-weight: 500;
+  color: rgba(var(--dark), 1);
+  text-align: center;
+  margin-bottom: rem(20px);
+}
+
+.drop {
+  display: flex;
+  flex-direction: column;
+
+  padding: rem(10px) 0;
+
+  background: rgba(var(--table-bg), .8);
+  box-shadow: 0 rem(9px) rem(18px) rgba(var(--black), 0.18), 0 rem(5.5px) rem(5px) rgba(var(--black), 0.237602);
+  border-radius: rem(10px);
+}
+
+.column {
+  display: flex;
+  align-items: center;
+  padding: rem(12px) rem(30px);
+
+  &.disabled {
+    opacity: .7;
+  }
+
+  &:not(.disabled) {
+    cursor: move;
+  }
+
+  &.dragging {
+    background: rgba(var(--lightblue), 1);
+    border-radius: rem(10px);
+  }
+}
+
+.handle {
+  height: rem(20px);
+  width: rem(20px);
+  color: rgba(var(--table-color), 1);
+}
+
+.name {
+  @include subText;
+  font-weight: 500;
+  color: rgba(var(--dark), 1);
+  flex-grow: 1;
+  margin: 0 rem(10px);
+}
+
+.status {
+  height: rem(26px);
+  width: rem(26px);
+  color: rgba(var(--purple), 1);
+}
+
+.actions {
+  margin: rem(71px) rem(-10px) 0;
+  display: flex;
+  justify-content: flex-end;
+  height: rem(60px);
+}
+
+.action {
+  margin: 0 rem(10px);
+  padding: 0 rem(50px);
+}

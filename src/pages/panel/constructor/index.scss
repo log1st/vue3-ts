@@ -1,0 +1,33 @@
+@import "~@/assets/utils";
+
+.page {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  width: calc(#{percentage(2/3)} - #{rem(15px)});
+}
+
+.title {
+  @include caption(true);
+  color: rgba(var(--dark), 1);
+}
+
+.tabs {
+  margin-left: auto;
+}
+
+.container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+
+  margin-top: rem(54px);
+
+  > * {
+    flex-grow: 1;
+  }
+}

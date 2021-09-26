@@ -1,0 +1,89 @@
+@import "~@/assets/utils";
+
+.toast {
+  display: flex;
+  flex-direction: column;
+
+  padding: rem(16px) rem(20px);
+  border-radius: rem(10px);
+
+  word-break: break-word;
+
+  &.success {
+    background: rgba(var(--green), 1);
+    color: rgba(var(--gray-6), 1);
+  }
+
+  &.danger {
+    background: rgba(var(--red), 1);
+    color: rgba(var(--gray-6), 1);
+  }
+
+  &.warning {
+    background: rgba(var(--orange), 1);
+    color: rgba(var(--gray-6), 1);
+  }
+
+  &.info {
+    background: rgba(var(--blue-3), 1);
+    color: rgba(var(--gray-6), 1);
+  }
+}
+
+.label {
+  @include text;
+  font-weight: 600;
+}
+
+.message {
+  @include subText;
+  font-weight: 500;
+}
+
+.bars {
+  margin-top: rem(10px);
+}
+
+.bar {
+  &:not(:first-child) {
+    margin-top: rem(4px);
+  }
+}
+
+.barLabel {
+  @include input;
+  font-weight: 500;
+  color: rgba(var(--white), 1);
+}
+
+.barBody {
+  display: flex;
+  align-items: center;
+}
+
+.barLine {
+  position: relative;
+  flex-grow: 1;
+
+  border-radius: rem(10px);
+  background: rgba(var(--white), 1);
+
+  height: rem(5px);
+}
+
+.barProgress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: rem(10px);
+  background: rgba(var(--dark), 1);
+
+  transition: width .15s ease;
+}
+
+.barHint {
+  margin-left: rem(10px);
+  @include subText;
+  color: rgba(var(--dark), 1);
+}

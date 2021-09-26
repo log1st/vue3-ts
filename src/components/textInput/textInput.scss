@@ -1,0 +1,218 @@
+@import "~@/assets/utils.scss";
+
+.field {
+  display: flex;
+  flex-direction: column;
+
+  &.default {
+    --shadow-color: rgba(var(--gray-4), 1);
+    .trigger {
+      padding: 0 rem(10px) 0 0;
+      box-shadow: 0 rem(1px) 0 0 var(--shadow-color);
+      display: flex;
+      align-items: center;
+    }
+
+    .label {
+      padding: rem(7px) 0 rem(7px) rem(7px);
+    }
+
+    .input {
+      color: rgba(var(--dark), 1);
+
+      @include input();
+
+      &::placeholder {
+        color: rgba(var(--gray-3), 1);
+        opacity: 1;
+      }
+
+      + .action {
+        margin-left: 10px;
+      }
+
+
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus {
+        border: 1px solid transparent;
+        -webkit-text-fill-color: rgba(var(--dark), 1);
+        -webkit-box-shadow: 0 0 0 1000px transparent inset;
+        transition: background-color 5000s ease-in-out 0s;
+      }
+    }
+
+    .action {
+      &:not(:first-child) {
+        margin-left: rem(4px);
+        height: rem(20px);
+        width: rem(20px);
+        color: rgba(var(--gray-3), 1);
+      }
+
+      &:last-child {
+        margin-right: rem(-10px);
+      }
+    }
+
+    .errors {
+      padding: 0 rem(7px);
+    }
+
+    &.hasErrors {
+      .trigger {
+        --shadow-color: rgba(var(--red), 1);
+      }
+    }
+  }
+
+  &.primary {
+    .trigger {
+      padding: 0 rem(10px) 0 0;
+      background: rgba(var(--input-bg), 1);
+      border-radius: rem(10px);
+
+      display: flex;
+      align-items: center;
+    }
+
+    .label {
+      padding: rem(15px) 0 rem(15px) rem(10px);
+    }
+
+    &.tiny {
+      .trigger {
+        padding: 0 rem(10px) 0 0;
+      }
+      .label {
+        padding: rem(6px) 0 rem(6px) rem(10px);
+      }
+    }
+
+    .input {
+      color: rgba(var(--input-nobg-color), 1);
+
+      @include subText();
+
+      &::placeholder {
+        color: rgba(var(--input-nobg-color), 1);
+        opacity: .6;
+      }
+
+      + .action {
+        margin-left: 10px;
+      }
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus {
+        border: 1px solid transparent;
+        -webkit-text-fill-color: rgba(var(--input-nobg-color), 1);
+        -webkit-box-shadow: 0 0 0 1000px transparent inset;
+        transition: background-color 5000s ease-in-out 0s;
+      }
+    }
+
+    .action {
+      &:not(:first-child) {
+        margin-left: rem(4px);
+        height: rem(20px);
+        width: rem(20px);
+        color: rgba(var(--gray-3), 1);
+      }
+
+      &:last-child {
+        margin-right: rem(-10px);
+      }
+    }
+
+    .upLabel {
+      @include text(true);
+      color: rgba(var(--btn-color), 1);
+
+      + * {
+        margin-top: rem(10px);
+      }
+
+
+      + .hint {
+        margin-top: rem(15px);
+      }
+    }
+
+    .hint {
+      @include input;
+      color: rgba(var(--gray-3), 1);
+
+      + * {
+        margin-top: rem(5px);
+      }
+    }
+
+    .errors {
+      padding: 0 rem(10px);
+    }
+
+    &.hasErrors {
+      .trigger {
+        box-shadow: inset 0 0 0 rem(1px) rgba(var(--red), 1);
+      }
+    }
+
+    &.white {
+      .trigger {
+        background: rgba(var(--white), 1);
+        box-shadow: inset 0 0 0 rem(.5px) rgba(var(--gray-4), 1);
+      }
+      .label {
+        @include subText;
+      }
+    }
+
+    &.disabled {
+      opacity: .7;
+    }
+  }
+
+  &:not(.disabled) {
+    .trigger, .input {
+      cursor: text;
+    }
+    .action {
+      cursor: pointer;
+    }
+  }
+}
+
+.trigger {
+  display: flex;
+}
+
+.label {
+  flex-grow: 1;
+  display: flex;
+}
+
+.input {
+  width: 0;
+  flex-grow: 1;
+}
+
+.action {
+  flex-shrink: 0;
+}
+
+.errors {
+  color: rgba(var(--red), 1);
+
+  margin-top: rem(3px);
+
+  @include input;
+}
+
+.error {
+  &:not(:first-child) {
+    margin-top: 2px;
+  }
+}

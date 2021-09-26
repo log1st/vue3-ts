@@ -1,0 +1,66 @@
+@import "~@/assets/utils";
+
+.block {
+  &:not(:first-child) {
+    margin-top: rem(130px);
+  }
+}
+
+.title {
+  @include heading(true);
+
+  color: rgba(var(--btn-color), 1);
+}
+
+.lines {
+  margin-top: rem(41px);
+}
+
+.line {
+  display: grid;
+  align-items: center;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: rem(44px);
+
+  &:not(:first-child) {
+    margin-top: rem(30px);
+  }
+}
+
+.hint {
+  @include text;
+  color: rgba(var(--dark), 1);
+  font-weight: 600;
+}
+
+.label {
+  @include text(true);
+
+  color: rgba(var(--btn-color), 1);
+}
+
+.field {
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  flex-grow: 1;
+
+  [data-role="label"] {
+    padding-top: rem(7px) !important;
+    padding-bottom: rem(7px) !important;
+  }
+}
+
+.reset {
+  flex-shrink: 0;
+  margin-left: rem(16px);
+  height: rem(35px);
+  width: rem(35px);
+
+  [data-role="icon"] {
+    height: rem(20px);
+    width: rem(20px);
+  }
+}

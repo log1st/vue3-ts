@@ -1,0 +1,22 @@
+image: docker/compose:latest
+services:
+  - docker:dind
+stages:
+  - deploy
+
+step-deploy-prod:
+  stage: deploy
+  script:
+    - /usr/bin/docker rmi $(/usr/bin/docker images -f dangling=true -q)||true
+    - docker-compose up -d && docker-compose logs --follow
+    - docker stop balanser_nginx_1||true
+    - docker start balanser_nginx_1||true
+    #- docker exec -it balanser_nginx_1 sh -c "nginx -s reload"||true
+  artifacts:
+    paths:
+      - dist
+    expire_in: 1 week
+  only:
+    - dev
+  tags:
+    - dev

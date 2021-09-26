@@ -1,0 +1,34 @@
+@import "~@/assets/utils";
+
+.page {
+  padding: rem(91px) rem(105px) 0 rem(55px);
+}
+
+.title {
+  @include title(true);
+
+  color: rgba(var(--dark), 1);
+}
+
+.content {
+  margin-top: rem(40px);
+  padding-bottom:  rem(35px);
+}
+
+.table {
+  [data-role="action(view)"] {
+    [data-role="icon"] {
+      color: rgba(var(--green), 1);
+    }
+  }
+  [data-role="action(edit)"] {
+    [data-role="icon"] {
+      color: rgba(var(--blue), 1);
+    }
+  }
+  [data-role="action(delete)"] {
+    [data-role="icon"] {
+      color: rgba(var(--red), 1);
+    }
+  }
+}

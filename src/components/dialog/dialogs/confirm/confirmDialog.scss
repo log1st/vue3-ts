@@ -1,0 +1,44 @@
+@import "~@/assets/utils";
+
+@import "../commonDialog";
+
+.dialog.dialog {
+  padding-top: rem(40px);
+}
+
+.label {
+  @include subText;
+  color: rgba(var(--gray-2), 1);
+  text-align: center;
+
+  + * {
+    margin-top: rem(20px);
+  }
+}
+
+.message {
+  @include text(true);
+  color: rgba(var(--btn-color), 1);
+  text-align: center;
+  white-space: pre-line;
+
+  + * {
+    margin-top: rem(30px);
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: rem(-5px);
+  margin-right: rem(-5px);
+}
+
+.action {
+  margin: 0 rem(10px);
+  min-height: rem(60px);
+  padding: rem(10px) rem(20px);
+  flex-basis: 100%;
+  flex-grow: 1;
+}

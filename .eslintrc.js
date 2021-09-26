@@ -1,0 +1,45 @@
+module.exports = {
+  root: true,
+  env: {
+    node: true,
+  },
+  extends: [
+    'plugin:vue/vue3-recommended',
+    '@vue/airbnb',
+    '@vue/typescript/recommended',
+  ],
+  parserOptions: {
+    ecmaVersion: 2020,
+  },
+  rules: {
+    'vue/no-lone-template': [0],
+    'camelcase': [0],
+    'no-bitwise': [0],
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'import/prefer-default-export': [0],
+    'no-async-promise-executor': [0],
+    'no-throw-literal': [0],
+    'no-param-reassign': [
+      'error', {
+        props: true,
+        ignorePropertyModificationsFor: ['store', 'state'],
+      },
+    ],
+    'no-nested-ternary': [0],
+    'import/no-cycle': [0],
+    'linebreak-style': [0],
+    'no-shadow': [0],
+    'no-unused-expressions': [0],
+    '@typescript-eslint/member-delimiter-style': [1],
+    '@typescript-eslint/ban-ts-comment': [0],
+    '@typescript-eslint/explicit-module-boundary-types': [0],
+    '@typescript-eslint/no-non-null-assertion': [0],
+    '@typescript-eslint/no-empty-interface': [0],
+    'import/no-dynamic-require': [0],
+    '@typescript-eslint/no-var-requires': [0],
+    '@typescript-eslint/no-explicit-any': [0],
+    'global-require': [0],
+    'vue/require-default-prop': [0],
+  },
+};

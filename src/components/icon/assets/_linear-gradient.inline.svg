@@ -1,0 +1,26 @@
+<svg>
+    <defs>
+        <linearGradient
+                id="sidebarIconGradient"
+                x1="11.3749"
+                y1="0.5"
+                x2="11.3749"
+                y2="25.4996"
+                gradientUnits="userSpaceOnUse"
+        >
+            <stop stop-color="#07D6C1" />
+            <stop
+                    offset="0.270833"
+                    stop-color="#25B2D4"
+            />
+            <stop
+                    offset="0.703125"
+                    stop-color="#5080CD"
+            />
+            <stop
+                    offset="1"
+                    stop-color="#6169BF"
+            />
+        </linearGradient>
+    </defs>
+</svg>

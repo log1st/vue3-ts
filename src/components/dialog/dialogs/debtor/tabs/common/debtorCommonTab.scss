@@ -1,0 +1,20 @@
+@import "~@/assets/utils";
+
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  flex-shrink: 0;
+}
+
+.body {
+  flex-grow: 1;
+  height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  margin: rem(40px) rem(-25px) 0;
+  padding: 0 rem(25px);
+}

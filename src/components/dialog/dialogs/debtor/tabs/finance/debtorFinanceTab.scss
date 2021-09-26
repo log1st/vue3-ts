@@ -1,0 +1,64 @@
+@import "~@/assets/utils";
+
+.container {
+  display: flex;
+  flex-direction: column;
+
+  .table {
+    max-width: rem(1200px);
+  }
+}
+
+.tabs {
+
+}
+
+.summaries {
+  margin: rem(30px) rem(100px) 0 rem(-25px);
+  padding: 0 rem(55px);
+  height: rem(75px);
+  display: flex;
+  align-items: center;
+
+  flex-shrink: 0;
+
+  background: rgba(var(--dark-3), 1);
+  border-radius: 0 rem(10px) rem(10px) 0;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+
+  &:not(:first-child) {
+    margin-left: rem(40px);
+  }
+}
+
+.summaryLabel {
+  @include caption(true);
+  color: rgba(var(--white), 1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summaryValue {
+  @include subText;
+  font-weight: 500;
+  color: rgba(var(--white), 1);
+  margin-left: rem(20px);
+}
+
+.tableWrapper {
+  flex-grow: 1;
+  height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: rem(20px);
+
+  margin-top: rem(20px);
+}
+
+.table {
+}

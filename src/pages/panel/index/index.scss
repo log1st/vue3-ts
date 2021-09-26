@@ -1,0 +1,41 @@
+@import "~@/assets/utils";
+
+.page {
+  display: grid;
+  grid-template-areas:
+    "main balance contracts"
+    "main data data";
+  grid-template-columns: 733fr 533fr 239fr;
+  grid-template-rows: auto 1fr;
+  grid-gap: rem(20px);
+}
+
+.main,
+.balance,
+.contracts,
+.data {
+  background: rgba(var(--white), 0.2);
+  border: rem(0.5px) solid rgba(var(--white), 0.6);
+  border-radius: rem(10px);
+  display: flex;
+
+  > * {
+    flex-grow: 1;
+  }
+}
+
+.main {
+  grid-area: main;
+}
+
+.balance {
+  grid-area: balance;
+}
+
+.contracts {
+  grid-area: contracts;
+}
+
+.data {
+  grid-area: data;
+}

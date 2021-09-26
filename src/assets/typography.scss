@@ -1,0 +1,45 @@
+@import "functions.scss";
+
+@mixin t($size, $height, $bold: false, $spacing: 0px) {
+  font-size: rem($size);
+  line-height: rem($height);
+  letter-spacing: $spacing;
+
+  @if $bold {
+    font-weight: 600;
+  }
+}
+
+@mixin small($bold: false) {
+  @include t(10, 12, $bold, .04em);
+}
+
+@mixin subText($bold: false) {
+  @include t(14, 17, $bold, .02em);
+}
+
+@mixin text($bold: false) {
+  @include t(16, 21, $bold);
+}
+
+@mixin input($bold: false) {
+  font-weight: 500;
+  @include t(12, 21, $bold, .04em);
+}
+
+@mixin subInput($bold: false) {
+  font-weight: 500;
+  @include t(12, 15, $bold, .04em);
+}
+
+@mixin heading($bold: false) {
+  @include t(24, 29, $bold, .04em);
+}
+
+@mixin title($bold: false) {
+  @include t(36, 44, $bold, .04em);
+}
+
+@mixin caption($bold: false) {
+  @include t(18, 22, $bold);
+}

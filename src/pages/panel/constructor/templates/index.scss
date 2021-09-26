@@ -1,0 +1,20 @@
+@import "~@/assets/utils";
+
+.page {
+  background: rgba(var(--table-bg), .2);
+  box-shadow:
+          inset 0 0 0 rem(.5px) rgba(var(--table-bg), .6),
+          inset rem(-30px) rem(-30px) rem(30px) rgba(var(--table-bg), .1);
+  border-radius: rem(10px);
+
+  padding: rem(22px) rem(30px);
+}
+
+.title {
+  @include caption(true);
+  color: rgba(var(--table-color), 1);
+}
+
+.table {
+  margin: rem(25px) rem(-30px) 0;
+}

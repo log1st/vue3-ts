@@ -1,0 +1,140 @@
+@import "~@/assets/utils";
+
+@import "../commonDialog";
+
+.form {
+  margin-top: rem(20px);
+
+  &.executive {
+    .actions {
+      margin-top: rem(52px);
+      flex-direction: row;
+      justify-content: center;
+    }
+    .action {
+      flex-grow: 0;
+      flex-basis: auto;
+      padding: rem(10px) rem(20px);
+
+      &:not(:first-child) {
+        margin-left: rem(30px);
+        margin-top: 0;
+      }
+    }
+  }
+
+  &.judicial,
+  &.pretrial {
+    display: grid;
+    grid-template-areas: (
+            'documents period'
+            'documents actions'
+            'services services'
+    );
+    grid-template-columns: 612fr 508fr;
+    grid-gap: rem(52px) rem(30px);
+
+    .documents {
+      grid-area: documents;
+    }
+    .period {
+      grid-area: period;
+    }
+    .services {
+      grid-area: services;
+    }
+    .actions {
+      grid-area: actions;
+      margin-top: auto;
+      padding-left: rem(100px);
+    }
+  }
+}
+
+.label {
+  @include caption(true);
+  color: rgba(var(--btn-color), 1);
+  + * {
+    margin-top: rem(20px);
+  }
+}
+
+.documentsHeader,
+.document {
+  display: grid;
+  grid-template-columns: rem(80px) 1fr;
+}
+.documentIcons {
+  height: rem(20px);
+  display: flex;
+  align-items: center;
+}
+.documentIcon {
+  color: rgba(var(--gray-3), 1);
+
+  &:not(:first-child) {
+    margin-left: rem(4px);
+  }
+}
+.documentsLabel {
+  margin-left: rem(20px);
+  @include input;
+  color: rgba(var(--table-color), 1);
+  word-break: break-all;
+}
+.document {
+  &:not(:first-child) {
+    margin-top: rem(20px);
+  }
+}
+.documentsList {
+  margin-top: rem(30px);
+}
+.documentControls {
+  display: flex;
+  align-items: center;
+}
+.documentHandle {
+  height: rem(20px);
+  width: rem(20px);
+  flex-shrink: 0;
+  cursor: move;
+}
+.documentControl {
+  color: rgba(var(--gray-3), 1);
+
+  &:not(:first-child) {
+    margin-left: rem(12px);
+  }
+}
+
+.periods {
+  margin-top: rem(20px);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: rem(20px);
+}
+
+.moratorium {
+  margin-top: rem(20px);
+  display: flex;
+  align-items: center;
+}
+
+.moratoriumLabel {
+  margin-left: rem(20px);
+  @include subText;
+  color: rgba(var(--dark), 1);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+}
+
+.action {
+  padding: rem(10px) rem(14px);
+  &:not(:first-child) {
+    margin-top: rem(20px);
+  }
+}

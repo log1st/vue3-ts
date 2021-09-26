@@ -1,0 +1,48 @@
+@import "~@/assets/utils";
+
+.fields {
+  display: flex;
+}
+
+.field {
+  flex-basis: 100%;
+  flex-grow: 1;
+
+  &:not(:first-child) {
+    [data-role="trigger"] {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      box-shadow: inset rem(1px) 0 0 0 rgba(var(--gray-1), 1);
+    }
+  }
+
+  &:not(:last-child) {
+    [data-role="trigger"] {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+}
+
+.table {
+  [data-role="action(edit)"] {
+    [data-role="icon"] {
+      color: rgba(var(--blue), 1);
+    }
+  }
+  [data-role="action(submit)"] {
+    [data-role="icon"] {
+      color: rgba(var(--green), 1);
+    }
+  }
+  [data-role="action(remove)"] {
+    [data-role="icon"] {
+      color: rgba(var(--red), 1);
+    }
+  }
+  [data-role="action(cancel)"] {
+    [data-role="icon"] {
+      color: rgba(var(--gray-4), 1);
+    }
+  }
+}

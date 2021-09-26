@@ -1,0 +1,46 @@
+@import "~@/assets/utils";
+
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: rem(30px);
+}
+
+.title {
+  @include heading(true);
+  color: rgba(var(--dark), 1);
+}
+
+.contracts {
+  margin-top: rem(30px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.contract {
+  cursor: pointer;
+  display: block;
+  &:not(:first-child) {
+    margin-top: rem(30px);
+  }
+}
+
+.icon {
+  height: rem(40px);
+  width: rem(40px);
+  background: no-repeat center;
+  background-size: contain;
+
+  &.pdf {
+    background-image: url(./assets/pdf.png);
+  }
+}
+
+.label {
+  margin-top: rem(10px);
+  @include input;
+  font-weight: 500;
+  color: rgba(var(--black), 1);
+  white-space: pre-line;
+}
