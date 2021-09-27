@@ -86,8 +86,6 @@ export default defineComponent({
       substatus: substatus.value?.substatus,
       statusLabel,
       substatusLabel,
-      statuses_: getDictMap(DictType.debtorStatuses).value,
-      substatuses_: getDictMap(DictType.debtorSubstatuses).value,
     };
   },
 });

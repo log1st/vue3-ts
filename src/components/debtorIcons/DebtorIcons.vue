@@ -83,64 +83,84 @@ export default defineComponent({
       label: string;
     }
 
-    const icons = computed(() => (([
-      substatuses.value.some((item) => item.includes('voice')) && {
-        key: 'voice',
-        icon: 'voice',
-        color: 'blue',
-        label: t('voice', {
-          status: substatusesMap.value.voice_delivered,
-        }),
-      },
-      substatuses.value.some((item) => item.includes('sms')) && {
-        key: 'sms',
-        icon: 'sms',
-        color: 'green',
-        label: t('sms', {
-          status: substatusesMap.value.sms_delivered,
-        }),
-      },
-      substatuses.value.some((item) => item.includes('fees_paid')) && {
-        key: 'fees_paid',
-        icon: 'coins',
-        color: 'green',
-        label: substatusesMap.value.fees_paid,
-      },
-      substatuses.value.some((item) => item.includes('fees_await_paid')) && {
-        key: 'fees_await_paid',
-        icon: 'coins',
-        color: 'green',
-        label: substatusesMap.value.fees_await_paid,
-      },
-      substatuses.value.some((item) => item.includes('statement_ordered')) && {
-        key: 'statement_ordered',
-        icon: 'egrn-excerpt',
-        color: 'blue',
-        label: substatusesMap.value.statement_ordered,
-      },
-      substatuses.value.some((item) => item.includes('statement_ready')) && {
-        key: 'statement_ready',
-        icon: 'egrn-excerpt',
-        color: 'blue',
-        label: substatusesMap.value.statement_ready,
-      },
-      substatuses.value.some((item) => item.includes('statement_received')) && {
-        key: 'statement_received',
-        icon: 'egrn-excerpt',
-        color: 'blue',
-        label: substatusesMap.value.statement_received,
-      },
-      statuses.value.some((item) => item.status === 'ready_to_court') && {
-        key: 'ready_to_court',
-        icon: 'file-check',
-        color: 'green',
-        label: statusesMap.value.ready_to_court,
-      },
-    ] as Array<DebtorIcon | boolean>)
-      .filter(Boolean) as Array<DebtorIcon>)
-      .filter(({ key }, i, s) => (key.includes('statement')
-        ? s.findIndex((f) => f.key.includes('statement')) === i
-        : true)));
+    const icons = computed(() => {
+      const smsStatus = [...substatuses.value].reverse().find((item) => item.includes('sms'));
+      const voiceStatus = [...substatuses.value].reverse().find((item) => item.includes('voice'));
+      const emailStatus = [...substatuses.value].reverse().find((item) => item.includes('email'));
+
+      return (([
+        voiceStatus && {
+          key: 'voice',
+          icon: 'voice',
+          color: ['voice_delivered', 'voice_ready'].includes(voiceStatus) ? 'green' : 'gray',
+          label: t('voice', {
+            status: substatusesMap.value[voiceStatus],
+          }),
+        },
+        smsStatus && {
+          key: 'sms',
+          icon: 'sms',
+          color: 'green',
+          label: t('sms', {
+            status: substatusesMap.value[smsStatus],
+          }),
+        },
+        emailStatus && {
+          key: 'email',
+          icon: 'envelope',
+          color: ['email_delivered'].includes(emailStatus) ? 'green' : 'gray',
+          label: t('email', {
+            status: substatusesMap.value[emailStatus],
+          }),
+        },
+        substatuses.value.some((item) => item.includes('fees_paid')) && {
+          key: 'fees_paid',
+          icon: 'coins',
+          color: 'green',
+          label: substatusesMap.value.fees_paid,
+        },
+        substatuses.value.some((item) => item.includes('fees_await_paid')) && {
+          key: 'fees_await_paid',
+          icon: 'coins',
+          color: 'gray',
+          label: substatusesMap.value.fees_await_paid,
+        },
+        substatuses.value.some((item) => item.includes('statement_ordered')) && {
+          key: 'statement_ordered',
+          icon: 'egrn-excerpt',
+          color: 'blue',
+          label: substatusesMap.value.statement_ordered,
+        },
+        substatuses.value.some((item) => item.includes('statement_ready')) && {
+          key: 'statement_ready',
+          icon: 'egrn-excerpt',
+          color: 'blue',
+          label: substatusesMap.value.statement_ready,
+        },
+        substatuses.value.some((item) => item.includes('statement_error')) && {
+          key: 'statement_error',
+          icon: 'egrn-excerpt',
+          color: 'gray',
+          label: substatusesMap.value.statement_error,
+        },
+        substatuses.value.some((item) => item.includes('statement_received')) && {
+          key: 'statement_received',
+          icon: 'egrn-excerpt',
+          color: 'green',
+          label: substatusesMap.value.statement_received,
+        },
+        statuses.value.some((item) => item.status === 'ready_to_court') && {
+          key: 'ready_to_court',
+          icon: 'file-check',
+          color: 'green',
+          label: statusesMap.value.ready_to_court,
+        },
+      ] as Array<DebtorIcon | boolean>)
+        .filter(Boolean) as Array<DebtorIcon>)
+        .filter(({ key }, i, s) => (key.includes('statement')
+          ? s.findIndex((f) => f.key.includes('statement')) === i
+          : true));
+    });
 
     const sortedIcons = computed(() => {
       const localIcons = [...icons.value];
