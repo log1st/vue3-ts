@@ -1,5 +1,10 @@
 <template>
-  <div :class="$style.page">
+  <div
+    :class="[
+      $style.page,
+      $style[$route.name]
+    ]"
+  >
     <div :class="$style.header">
       <div :class="$style.title">
         {{ title }}

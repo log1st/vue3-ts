@@ -6,10 +6,12 @@
       errors?.length && $style.hasErrors,
       isDisabled && $style.disabled,
     ]"
+    data-role="label"
   >
     <div
       v-if="label"
       :class="$style.upLabel"
+      data-role="up-label"
     >
       {{ label }}
     </div>

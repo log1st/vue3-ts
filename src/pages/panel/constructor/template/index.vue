@@ -33,12 +33,6 @@
           state="primary"
           :errors="errorsMap.name"
         />
-        <Btn
-          :class="$style.addType"
-          :label="t('addType.title')"
-          state="primary"
-          @click="showAddTypeDialog"
-        />
       </div>
       <div
         :class="$style.editor"
@@ -61,11 +55,19 @@
       </div>
     </div>
     <div :class="$style.side">
-      <Btn
-        :class="$style.submit"
-        type="submit"
-        :label="t(`${id ? 'update' : 'create'}Submit`)"
-      />
+      <div :class="$style.actions">
+        <Btn
+          :class="$style.action"
+          type="submit"
+          :label="t(`${id ? 'update' : 'create'}Submit`)"
+        />
+        <Btn
+          :class="$style.action"
+          :label="t('addType.title')"
+          state="primary"
+          @click="showAddTypeDialog"
+        />
+      </div>
       <div :class="$style.variablesWrapper">
         <template
           v-for="group in variableGroups"

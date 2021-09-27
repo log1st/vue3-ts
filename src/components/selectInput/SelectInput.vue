@@ -13,6 +13,7 @@
     <div
       v-if="label"
       :class="$style.upLabel"
+      data-role="up-label"
     >
       {{ label }}
     </div>

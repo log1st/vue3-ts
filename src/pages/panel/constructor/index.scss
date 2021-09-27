@@ -3,6 +3,20 @@
 .page {
   display: flex;
   flex-direction: column;
+  position: relative;
+
+  &.panel-constructor-template {
+    .title {
+      display: none;
+    }
+    .header {
+      position: absolute;
+      left: 0;
+      right: 0;
+      transform: translateY(rem(-50px));
+    }
+    margin-top: rem(-40px);
+  }
 }
 
 .header {
@@ -25,7 +39,7 @@
   display: flex;
   flex-direction: column;
 
-  margin-top: rem(54px);
+  margin-top: rem(24px);
 
   > * {
     flex-grow: 1;
