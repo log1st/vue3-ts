@@ -1,0 +1,52 @@
+@import "~@/assets/utils";
+
+@import "../commonDialog";
+
+.dialog {
+  min-height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  //&.hasPrevious {
+    .content {
+      padding-left: rem(50px);
+    }
+  //}
+
+  //&.hasNext {
+    .content {
+      padding-right: rem(50px);
+    }
+  //}
+}
+
+.content {
+  flex-grow: 1;
+  height: 0;
+  overflow-y: auto;
+
+  margin: 0 rem(-25px);
+  padding: rem(25px) rem(25px) 0;
+}
+
+.navigate {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  height: rem(32px);
+  width: rem(32px);
+
+  color: rgba(var(--dark), 1);
+
+  cursor: pointer;
+
+  &.previous {
+    left: rem(10px);
+  }
+
+  &.next {
+    right: rem(10px);
+  }
+}

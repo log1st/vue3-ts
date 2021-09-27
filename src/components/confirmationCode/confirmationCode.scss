@@ -1,0 +1,51 @@
+@import "~@/assets/utils.scss";
+
+.field {
+  display: flex;
+  flex-direction: column;
+
+  &.hasErrors {
+    .input {
+      --shadow-color: rgba(var(--red), 1);
+    }
+  }
+}
+
+.inputs {
+  display: flex;
+  align-items: center;
+  height: rem(40px);
+  margin: 0 rem(-7.5px);
+}
+
+.input {
+  --shadow-color: rgba(var(--purple), 1);
+  width: 0;
+  flex-basis: 100%;
+  margin: 0 rem(7.5px);
+
+  height: rem(40px);
+
+  box-shadow: inset 0 0 0 rem(1px) var(--shadow-color);
+  border-radius: rem(10px);
+
+  text-align: center;
+
+  @include text(true);
+
+  color: rgba(var(--dark), 1);
+}
+
+.errors {
+  color: rgba(var(--red), 1);
+
+  margin-top: rem(3px);
+
+  @include input;
+}
+
+.error {
+  &:not(:first-child) {
+    margin-top: 2px;
+  }
+}

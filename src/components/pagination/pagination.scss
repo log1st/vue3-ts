@@ -1,0 +1,72 @@
+@import "~@/assets/utils";
+
+.pagination {
+  display: flex;
+
+  &.default {
+    //background: rgba(var(--white), 1);
+    height: rem(36px);
+    .page {
+      min-width: rem(24px);
+      padding: 0 rem(4px);
+
+      color: rgba(var(--table-color), .3);
+      @include subInput(true);
+
+      &.active {
+        color: rgba(var(--table-color), 1);
+      }
+
+      &.disabled {
+        opacity: .5;
+      }
+    }
+
+    .icon {
+      height: 16px;
+      width: 16px;
+    }
+
+    .spacer {
+
+      margin: 0 rem(2px);
+
+      div {
+        border-radius: 100%;
+        background: rgba(var(--table-color), .3);
+        height: rem(2px);
+        width: rem(2px);
+
+        &:not(:first-child) {
+          margin-left: rem(2px);
+        }
+      }
+    }
+  }
+}
+
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  user-select: none;
+
+  .disabled {
+    cursor: default;
+  }
+}
+
+.spacer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  div {
+    content: '';
+    display: block;
+  }
+}
+

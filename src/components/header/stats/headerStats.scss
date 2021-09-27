@@ -1,0 +1,22 @@
+@import "~@/assets/utils";
+
+.stats {
+  display: flex;
+  align-items: center;
+  margin: 0 rem(-40px);
+}
+
+.stat {
+  margin: 0 rem(40px);
+}
+
+.statValue {
+  @include caption(true);
+  color: rgba(var(--white), 1);
+}
+
+.statLabel {
+  @include subText;
+  color: rgba(var(--gray-5), 1);
+  margin-top: rem(5px);
+}

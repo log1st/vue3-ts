@@ -1,0 +1,26 @@
+@import "~@/assets/utils";
+
+@import "../commonDialog";
+
+.name {
+  @include text;
+  font-weight: 300;
+  color: rgba(var(--dark), 1);
+}
+
+.duration {
+  margin-top: rem(5px);
+  @include subText;
+  color: rgba(var(--dark), 1);
+}
+
+.player {
+  margin-top: rem(15px);
+}
+
+.error {
+  @include input;
+  color: rgba(var(--red), 1);
+  font-weight: bold;
+  margin-top: rem(10px);
+}

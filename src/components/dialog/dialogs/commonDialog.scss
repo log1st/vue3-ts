@@ -1,0 +1,31 @@
+@import "~@/assets/utils.scss";
+
+.dialog {
+  &.default {
+    padding: rem(30px) rem(25px);
+    background: rgba(var(--dialog-bg), 1);
+    box-shadow:
+            0 0 rem(14px) rgba(var(--black), 0.12),
+            0 rem(14px) rem(14px) rgba(var(--black), 0.237602);
+    border-radius: rem(10px);
+  }
+}
+
+.title {
+  @include heading;
+  font-weight: 600;
+  color: rgba(var(--dark), 1);
+}
+
+.tabs {
+  margin-top: rem(23px);
+}
+
+.content {
+  margin-top: rem(30px);
+}
+
+.caption {
+  @include subText;
+  color: rgba(var(--table-color), 1);
+}

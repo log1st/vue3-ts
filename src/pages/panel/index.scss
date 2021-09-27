@@ -1,0 +1,26 @@
+@import "~@/assets/utils";
+
+.page {
+  padding: rem(20px) rem(40px) 0 rem(55px);
+
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  position: relative;
+  z-index: 1;
+}
+
+.container {
+  margin-top: rem(40px);
+  padding-bottom: rem(35px);
+  flex-grow: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  > * {
+    flex-grow: 1;
+  }
+}

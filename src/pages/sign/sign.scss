@@ -1,0 +1,73 @@
+@import "~@/assets/utils";
+
+.page {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+
+  margin-top: rem(-5px);
+}
+
+.title {
+  @include caption(true);
+  color: rgba(var(--purple), 1);
+  text-align: center;
+}
+
+.forgot,
+.wrong {
+  margin-top: rem(32px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-decoration: underline;
+
+  @include subText;
+
+  color: rgba(var(--dark), 1);
+
+  cursor: pointer;
+}
+
+.form {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.field {
+  &:not(:first-child) {
+    margin-top: rem(32px);
+  }
+}
+
+.checkbox {
+  margin-top: rem(20px);
+}
+
+.actions {
+  margin: auto rem(-20px) 0;
+  height: rem(60px);
+
+  display: flex;
+}
+
+.action {
+  margin: 0 rem(20px);
+
+  flex-basis: 100%;
+}
+
+.subTitle {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  @include text;
+
+  color: rgba(var(--dark), 1);
+}

@@ -1,34 +1,73 @@
 <template>
-  <div id="app">
-    <router-view/>
-    <IconsMap :style="{visibility: 'hidden', position: 'fixed', top: '200vh', left: '200vw'}"/>
-    <Toasts/>
+  <div
+    :class="[
+      $style.app,
+      $style[theme]
+    ]"
+  >
+    <RouterView />
+    <IconsMap />
+    <Toasts />
+    <transition
+      :enter-active-class="$style.enterActive"
+      :leave-active-class="$style.leaveActive"
+      :leave-to-class="$style.leave"
+      :enter-from-class="$style.enter"
+    >
+      <GlobalLoader
+        v-if="isPreloaderVisible"
+        v-model="isPreloaderVisible"
+        :class="$style.loader"
+      />
+    </transition>
   </div>
 </template>
 
-<script>
-import 'normalize.css'
-import IconsMap from "@/new/components/icon/IconsMap";
-import Toasts from "@/new/components/toasts/Toasts";
+<script lang="ts">
+import '@/assets/drop.scss';
+import '@/assets/root.scss';
 
-export default {
-  components: {Toasts, IconsMap},
-  created () {
-    if (this.$store.state.user.appTheme == 'day') {
-        document.documentElement.setAttribute('data-theme', 'day');
-    } else if (this.$store.state.user.appTheme == 'night'){
-        document.documentElement.setAttribute('data-theme', 'night');
-    }
+import { defineComponent, onBeforeUnmount, onMounted } from 'vue';
+import IconsMap from '@/components/icon/IconsMap.vue';
+import { useLayout } from '@/hooks/useLayout';
+import Toasts from '@/components/toasts/Toasts.vue';
+import GlobalLoader from '@/components/globalLoader/GlobalLoader.vue';
 
-    if (window.location.pathname == '/login') {
-      this.$router.push('/sign/in');
-    }
+export default defineComponent({
+  components: { GlobalLoader, Toasts, IconsMap },
+  setup() {
+    const calcVh = () => {
+      document.documentElement.style.setProperty('--vh', `${window.innerHeight / 100}px`);
+    };
+
+    let vhTimeout: number;
+    const handleVh = () => {
+      clearTimeout(vhTimeout);
+      vhTimeout = setTimeout(calcVh, 500);
+    };
+    onMounted(() => {
+      calcVh();
+      window.addEventListener('resize', handleVh);
+      window.addEventListener('orientationchange', handleVh);
+    });
+    onBeforeUnmount(() => {
+      window.removeEventListener('resize', handleVh);
+      window.removeEventListener('orientationchange', handleVh);
+    });
+
+    const {
+      theme,
+      isPreloaderVisible,
+    } = useLayout();
+
+    return {
+      theme,
+      isPreloaderVisible,
+    };
   },
-  
-
-}
+});
 </script>
 
-<style lang="scss">
-  @import 'src/assets/styles/scss/style.scss';
+<style lang="scss" module>
+@import "./app";
 </style>

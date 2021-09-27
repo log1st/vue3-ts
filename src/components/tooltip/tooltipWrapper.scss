@@ -1,0 +1,31 @@
+@import "~@/assets/utils";
+
+.wrapper {
+  position: relative;
+
+  &:not(:hover) {
+    .tooltip {
+      display: none;
+    }
+  }
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  right: 0;
+
+  transform: translateX(-50%) translateY(rem(-10px));
+
+  background: rgba(var(--gray-5), 1);
+  border: rem(.5px) solid rgba(var(--gray-4), 1);
+  border-radius: rem(5px);
+  padding: rem(6px) rem(10px);
+  @include small;
+  color: rgba(var(--gray-3), 1);
+  text-align: center;
+  white-space: pre-line;
+  user-select: none;
+  width: rem(150px);
+}

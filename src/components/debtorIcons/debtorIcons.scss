@@ -1,0 +1,28 @@
+@import "~@/assets/utils";
+
+.icons {
+  display: flex;
+  align-items: center;
+  max-width: rem(70px);
+}
+
+.icon {
+  height: rem(24px);
+  width: rem(24px);
+
+  &:not(:first-child) {
+    margin-left: rem(2px);
+  }
+
+  &.blue {
+    color: rgba(var(--blue-4), 1);
+  }
+
+  &.green {
+    color: rgba(var(--green), 1);
+  }
+
+  &.gray {
+    color: rgba(var(--gray-3), 1);
+  }
+}

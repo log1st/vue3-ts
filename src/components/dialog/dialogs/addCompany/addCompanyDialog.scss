@@ -1,0 +1,26 @@
+@import "~@/assets/utils.scss";
+
+@import "../commonDialog";
+
+.dialog {
+
+}
+
+.form {
+  margin-top: rem(40px);
+  display: flex;
+  flex-direction: column;
+}
+
+.actions {
+  margin: rem(55px) rem(-15px) 0;
+  display: flex;
+  align-self: normal;
+  height: rem(60px);
+}
+
+.action {
+  flex-basis: 100%;
+  margin: 0 rem(15px);
+  flex-grow: 1;
+}

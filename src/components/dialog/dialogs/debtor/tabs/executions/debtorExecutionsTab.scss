@@ -1,0 +1,34 @@
+@import "~@/assets/utils";
+
+.title {
+  @include caption(true);
+  color: rgba(var(--dark), 1);
+  margin-top: rem(20px);
+}
+
+.table {
+  margin-top: rem(30px);
+}
+
+
+.table {
+  margin-top: rem(30px);
+
+  [data-role="action(preview)"] {
+    [data-role="icon"] {
+      color: rgba(var(--green), 1);
+    }
+  }
+
+  [data-role="action(download)"] {
+    [data-role="icon"] {
+      color: rgba(var(--blue), 1);
+    }
+  }
+
+  [data-role="action(listen)"] {
+    [data-role="icon"] {
+      color: rgba(var(--lightblue-3), 1);
+    }
+  }
+}

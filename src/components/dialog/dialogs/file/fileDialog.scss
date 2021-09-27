@@ -1,0 +1,31 @@
+@import "~@/assets/utils";
+
+@import "../commonDialog";
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.actions {
+  margin: rem(20px) rem(-10px) 0;
+  display: flex;
+  align-self: normal;
+}
+
+.action {
+  flex-grow: 1;
+  flex-basis: 100%;
+  margin: 0 rem(10px);
+  padding: rem(10px) 0;
+}
+
+.copy {
+  margin: rem(20px) auto 0;
+  @include subText;
+  color: rgba(var(--btn-color), 1);
+  text-decoration: underline;
+  cursor: pointer;
+}

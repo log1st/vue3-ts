@@ -1,0 +1,23 @@
+@import "~@/assets/utils";
+
+@import "../commonDialog";
+
+.form {
+  margin-top: rem(40px);
+
+  display: grid;
+  grid-template-areas:
+    "first_name last_name email user_phone"
+    "position position linked_companies linked_companies"
+    "employee_role employee_role action action"
+  ;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: rem(20px);
+}
+
+.action {
+  padding: 0 rem(42px);
+  height: calc(100% - #{rem(31px)});
+  margin-top: rem(31px);
+  margin-left: auto;
+}

@@ -1,0 +1,110 @@
+@import "~@/assets/utils";
+
+.container {
+  border-radius: rem(10px);
+  padding: rem(4px) rem(10px);
+
+  min-height: rem(40px);
+
+  display: flex;
+  align-items: center;
+
+  &.pretrial {
+    color: rgba(var(--white), 1);
+    &.new {
+      background: rgba(var(--purple), 1);
+    }
+    &.in_progress {
+      background: rgba(var(--gray-3), 1);
+    }
+    &.message {
+      background: rgba(var(--lightblue-3), 1);
+    }
+    &.court {
+      background: rgba(var(--green), 1);
+    }
+    &.other {
+      background: rgba(var(--dark), 1);
+    }
+  }
+
+  &.judicial {
+    color: rgba(var(--white), 1);
+    &.new {
+      background: rgba(var(--purple), 1);
+    }
+    &.in_progress {
+      background: rgba(var(--purple), 1);
+    }
+    &.filed_in_court {
+      background: rgba(var(--lightblue-3), 1);
+    }
+    &.fees_await_paid {
+      background: rgba(var(--gray-3), 1);
+    }
+    &.statement_ordered {
+      background: rgba(var(--purple), 1);
+    }
+    &.ready_to_court {
+      background: rgba(var(--green), 1);
+    }
+    &.fees_paid {
+      background: rgba(var(--green), 1);
+    }
+    &.statement_received {
+      background: rgba(var(--purple), 1);
+    }
+    &.cadnum_not_found {
+      background: rgba(var(--red), 1);
+    }
+    &.accepted_for_production {
+      background: rgba(var(--purple), 1);
+    }
+    &.judgment_rendered {
+      background: rgba(var(--green), 1);
+    }
+    &.entered_into_force {
+      background: rgba(var(--green), 1);
+    }
+    &.judgment_canceled {
+      background: rgba(var(--red), 1);
+    }
+    &.left_movement {
+      background: rgba(var(--purple), 1);
+    }
+    &.returned {
+      background: rgba(var(--red), 1);
+    }
+    &.transfer_to_proceed {
+      background: rgba(var(--green), 1);
+    }
+    &.error {
+      background: rgba(var(--red), 1);
+    }
+    &.other {
+      background: rgba(var(--dark), 1);
+    }
+  }
+}
+
+.content {
+  flex-grow: 1;
+}
+
+.status {
+  @include subInput;
+  font-weight: 500;
+}
+
+.substatus {
+  @include small;
+  font-weight: 300;
+  margin-top: rem(4px);
+}
+
+.icon {
+  height: rem(10px);
+  width: rem(10px);
+  flex-shrink: 0;
+  margin-left: rem(10px);
+}

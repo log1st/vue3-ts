@@ -1,95 +1,58 @@
 <template>
-  <div class="main loc_overflow">
-    <template v-if="debtorsModuleActive === -1">
-      <div class="main__head">
-        <div class="main__head-title mt-6">Услуги не подключены</div>
-      </div>
-    </template>
-
-    <template v-else>
-      <div class="main__head court__modules-btn">
-        <btn-group
-          :active="debtorsModuleActive"
-          @change="setActiveModule($event)" 
-          :buttons="debtorsModulesButtons"
-          class="debtors__page-btn-wrapper"
-        />
-        <!-- <main-select
-          :items="actionsForSelectItem(debtorsModuleActive)"
-          @selectAction="mainSelectHandler($event)"
-        /> -->
-      </div>
-    </template>
-    <component
-      :is="debtorComponentModule(debtorsModuleActive)"
-      ref="activeDebtorModule"
+  <div :class="$style.page">
+    <Tabs
+      state="quaternary"
+      :tabs="tabs"
     />
+    <div :class="$style.content">
+      <router-view />
+    </div>
   </div>
 </template>
 
-<script>
-import { mapGetters, mapMutations, mapActions } from 'vuex';
+<script lang="ts">
+import { computed, defineComponent } from 'vue';
+import Tabs from '@/components/tabs/Tabs.vue';
+import { useLocalI18n } from '@/hooks/useLocalI18n';
+import { ITabs } from '@/components/tabs/useTabs';
+import { ProductionType } from '@/hooks/useConstructor';
+import { DataTypeKey } from '@/hooks/useExchange';
 
-// модули "работа с должниками"
-import CourtProceedings      from './components/CourtProceedings';
-import PreTrialProceedings   from './components/PreTrialProceedings'; // Хрен знает почему но eslint с ума cходил пока я не указал index
-import EnforcementProceeding from './components/EnforcementProceeding';
- 
+export default defineComponent({
+  name: 'Index',
+  components: { Tabs },
+  beforeRouteEnter(to, from, next) {
+    if (!to.params.module) {
+      next({ ...to, params: { ...to.params, module: DataTypeKey.judicial } });
+      return;
+    }
+    next();
+  },
+  setup() {
+    const { t } = useLocalI18n('debtors');
 
-export default {
-  name: 'DebtorsPage',
-  components: {
-    'court-proceedings' : CourtProceedings,
-    'pre-trial-proceedings' : PreTrialProceedings,
-    'enforcement-proceeding' : EnforcementProceeding
+    const tabs = computed<ITabs['tabs']>(() => ([
+      ProductionType.pretrial,
+      ProductionType.judicial,
+      ProductionType.executive,
+    ].map((key) => ({
+      key,
+      label: t(`${key}.tab`),
+      to: {
+        name: 'debtors-module',
+        params: {
+          module: key,
+        },
+      },
+    }))));
+
+    return {
+      tabs,
+    };
   },
-  computed: {
-    ...mapGetters([
-      'debtorsModuleActive',
-      'debtorsModulesButtons',
-      'actionsForSelectItem',
-      'debtorComponentModule',
-      'checkedDebtors'
-    ]),
-  },
-  created () {
-       //
-  },
-  methods: {
-    ...mapMutations(['setDebtorsModuleActive']),
-    ...mapActions(['setPopupComponent']),
-    /**
-     * Устанавливает активный модуль задолжника
-     * @param index
-     */
-    setActiveModule (index) {
-      this.setDebtorsModuleActive(index);
-    },
-    /**
-     * Обработчик события selectAction компонента <main-select/>
-     * @param e функция/action
-     */
-    mainSelectHandler (e) {
-      if (this.checkedDebtors.length > 0) {
-        this.runAction(e)
-      } else {
-        this.setPopupComponent({
-          component: 'popupAlert',
-          params: {
-            title: 'Действие отмененно',
-            text: 'Выберите пожалуйста должников'
-          }
-        });
-      }
-    },
-    /**
-     *
-     * @param action
-     * @param data
-     */
-    runAction (e) {
-      this.$refs['activeDebtorModule'].runActionFromIconHandler(e);
-    },
-  }
-}
+});
 </script>
+
+<style lang="scss" module>
+@import "./index";
+</style>

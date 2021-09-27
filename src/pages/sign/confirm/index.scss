@@ -1,0 +1,57 @@
+@import "../sign";
+
+.subTitle {
+  @include subText;
+  margin-top: rem(30px);
+
+  white-space: pre-line;
+}
+
+.wrong {
+  margin-top: rem(15px);
+}
+
+.code {
+  margin: rem(40px) rem(23px) 0;
+}
+
+.duration {
+  margin-top: rem(30px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  color: rgba(var(--purple), 1);
+
+  @include input;
+  font-weight: 500;
+}
+
+.actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  height: rem(60px);
+}
+
+.action {
+  flex-basis: auto;
+  width: rem(160px);
+}
+
+.resend {
+  margin-top: rem(30px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: underline;
+
+  @include input;
+  font-weight: 500;
+
+  color: rgba(var(--dark), 1);
+
+  cursor: pointer;
+}

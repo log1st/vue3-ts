@@ -1,0 +1,38 @@
+@import "~@/assets/utils";
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control {
+  height: rem(15px);
+  width: rem(15px);
+
+  flex-shrink: 0;
+
+  cursor: pointer;
+
+  user-select: none;
+
+  color: rgba(var(--table-color), 1);
+}
+
+.previousControl {
+}
+
+.nextControl {
+}
+
+.label {
+  width: rem(160px);
+  text-align: center;
+
+  cursor: pointer;
+
+  margin: 0 rem(10px);
+
+  @include subText;
+  color: rgba(var(--table-color), 0.872566);
+}

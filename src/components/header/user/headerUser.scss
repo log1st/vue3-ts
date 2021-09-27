@@ -1,0 +1,110 @@
+@import "~@/assets/utils";
+
+.user {
+  display: flex;
+  position: relative;
+}
+
+.trigger {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+
+  background: rgba(var(--blue-2), 1);
+
+  padding: 0 rem(20px);
+
+  cursor: pointer;
+}
+
+.avatar {
+  height: rem(40px);
+  width: rem(40px);
+  flex-shrink: 0;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+
+  flex-grow: 1;
+
+  margin: 0 rem(15px);
+}
+
+.company {
+  @include subText;
+
+  color: rgba(var(--gray-5), 1);
+
+  white-space: nowrap;
+}
+
+.balance {
+  margin-top: rem(4px);
+
+  @include text(true);
+
+  color: rgba(var(--white), 1);
+}
+
+.user {
+  margin-top: rem(2px);
+
+  @include subText;
+
+  color: rgba(var(--white), 1);
+}
+
+.caret {
+  height: rem(15px);
+  width: rem(15px);
+  color: rgba(var(--white), 1);
+}
+
+.menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  padding: rem(9px) 0;
+  border-radius: 0 0 rem(10px) rem(10px);
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  background: rgba(var(--blue-2), 1);
+  box-shadow:
+          0 rem(9px) rem(18px) rgba(var(--black), 0.18),
+          0 rem(5.5px) rem(5px) rgba(var(--black), 0.237602);
+}
+
+.item {
+  padding: rem(10px) rem(30px);
+  display: flex;
+  align-items: center;
+  align-self: normal;
+  text-align: left;
+
+  &.hoverable {
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: 0 rem(9px) rem(18px) rgba(var(--black), 0.18);
+      background: rgba(var(--blue), 1);
+    }
+  }
+}
+
+.itemLabel {
+  @include input;
+
+  color: rgba(var(--gray-5), 1);
+
+  flex-grow: 1;
+}
+
+.itemSide {
+  flex-shrink: 0;
+}

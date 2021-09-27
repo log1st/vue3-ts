@@ -1,0 +1,28 @@
+@import "~@/assets/utils";
+
+.signer {
+  display: flex;
+  align-items: center;
+  max-width: 40%;
+}
+
+.fields {
+  flex-grow: 1;
+}
+
+.field {
+  &:not(:first-child) {
+    margin-top: rem(16px);
+  }
+
+  [data-role="label"] {
+    flex-basis: rem(200px);
+  }
+}
+
+.file {
+  flex-shrink: 0;
+  margin-left: rem(40px);
+
+  width: rem(82px);
+}

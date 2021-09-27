@@ -1,0 +1,12 @@
+@import "~@/assets/utils.scss";
+
+.templates {
+  display: flex;
+  margin: 0 rem(-15px);
+}
+
+.template {
+  margin: 0 rem(15px);
+  height: rem(60px);
+  width: rem(60px);
+}

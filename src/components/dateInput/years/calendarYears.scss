@@ -1,0 +1,31 @@
+@import "~@/assets/utils";
+
+.years {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.year {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  margin: rem(10px) 0;
+  padding: rem(10px) rem(4px);
+
+  color: rgba(var(--table-color), 1);
+
+  &:not(.activeYear) {
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      text-decoration: underline;
+    }
+  }
+}
+
+.activeYear {
+  font-weight: bold;
+}

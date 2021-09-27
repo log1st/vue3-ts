@@ -1,0 +1,136 @@
+@import "~@/assets/utils";
+
+@function extractRgb($color) {
+  @return "#{red($color), green($color), blue($color)}";
+}
+
+.app {
+
+  &.light {
+    --black: #{extractRgb($black)};
+    --dark: #{extractRgb($dark)};
+    --dark-3: #{extractRgb($dark-3)};
+    --purple: #{extractRgb($purple)};
+    --ash-gray: #{extractRgb($ash-gray)};
+    --blue: #{extractRgb($blue)};
+    --blue-2: #{extractRgb($blue-2)};
+    --red: #{extractRgb($red)};
+    --white: #{extractRgb($white)};
+    --gray-1: #{extractRgb($gray-1)};
+    --gray-2: #{extractRgb($gray-2)};
+    --gray-3: #{extractRgb($gray-3)};
+    --gray-4: #{extractRgb($gray-4)};
+    --gray-5: #{extractRgb($gray-5)};
+    --gray-6: #{extractRgb($gray-6)};
+    --gray-7: #{extractRgb($gray-7)};
+    --gray-8: #{extractRgb($gray-8)};
+    --gray-9: #{extractRgb($gray-9)};
+    --bg: #{extractRgb($gray-7)};
+    --bg-2: #{extractRgb($gray-8)};
+    --dark-2: #{extractRgb($dark-2)};
+    --menu: #{extractRgb($gray-2)};
+    --menu-active: #{extractRgb($blue)};
+    --menu-indicator: #{extractRgb($blue)};
+    --lightblue: #{extractRgb($lightblue)};
+    --dialog-backdrop: #{extractRgb($dialog-backdrop)};
+    --dialog-bg: #{extractRgb($white)};
+    --blue-3: #{extractRgb($blue-3)};
+    --green: #{extractRgb($green)};
+    --blue-4: #{extractRgb($blue-4)};
+    --lightblue-2: #{extractRgb($lightblue-2)};
+    --lightblue-3: #{extractRgb($lightblue-3)};
+    --purple-2: #{extractRgb($purple-2)};
+    --orange: #{extractRgb($orange)};
+    --table-bg: #{extractRgb($white)};
+    --table-color: #{extractRgb($black)};
+    --btn-color: #{extractRgb($blue)};
+    --input-color: #{extractRgb($gray-2)};
+    --input-second-color: #{extractRgb($lightblue-2)};
+
+    --input-bg: #{extractRgb($gray-5)};
+    --input-nobg-color: #{extractRgb($gray-2)};
+  }
+
+  &.dark {
+
+    // Для показательности
+    --black: #{extractRgb($black)};
+    --dark: #{extractRgb(invert($dark))};
+    --purple: #{extractRgb($purple)};
+    --ash-gray: #{extractRgb($ash-gray)};
+    --blue: #{extractRgb($blue)};
+    --blue-2: #{extractRgb($blue-2)};
+    --dark-3: #{extractRgb($dark)};
+    --red: #{extractRgb($red)};
+    --white: #{extractRgb($white)};
+    --gray-1: #{extractRgb($gray-1)};
+    --gray-2: #{extractRgb(invert($gray-2))};
+    --gray-3: #{extractRgb(invert($gray-3))};
+    --gray-4: #{extractRgb(invert($gray-4))};
+    --gray-5: #{extractRgb($gray-5)};
+    --gray-6: #{extractRgb($gray-6)};
+    --gray-7: #{extractRgb(invert($gray-7))};
+    --gray-8: #{extractRgb(invert($gray-8))};
+    --gray-9: #{extractRgb(invert($gray-9))};
+    --bg: #{extractRgb(#131826)};
+    --bg-2: #{extractRgb($dark-2)};
+    --dark-2: #{extractRgb($dark-2)};
+    --menu: #{extractRgb($gray-2)};
+    --menu-active: #{extractRgb($white)};
+    --menu-indicator: #{extractRgb($white)};
+    --lightblue: #{extractRgb(#312F2D)};
+    --dialog-backdrop: #{extractRgb($dialog-backdrop)};
+    --dialog-bg: #{extractRgb(#231F20)};
+    --blue-3: #{extractRgb($blue-3)};
+    --green: #{extractRgb($green)};
+    --blue-4: #{extractRgb($blue-4)};
+    --lightblue-2: #{extractRgb($lightblue-2)};
+    --lightblue-3: #{extractRgb($lightblue-3)};
+    --purple-2: #{extractRgb($purple-2)};
+    --orange: #{extractRgb(invert($orange))};
+    --table-bg: #{extractRgb(#2D2C2B)};
+    --table-color: #{extractRgb($gray-6)};
+    --btn-color: #{extractRgb($gray-6)};
+    --input-color: #{extractRgb($dark-2)};
+    --input-second-color: #{extractRgb($gray-3)};
+
+    --input-bg: #{extractRgb($gray-2)};
+    --input-nobg-color: #{extractRgb($gray-6)};
+  }
+
+  * {
+    scrollbar-color: steelblue transparent;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+      width: rem(3px);
+      height: rem(3px);
+      border-radius: rem(3px);
+    }
+    &::-webkit-scrollbar-track {
+      margin: rem(10px) 0;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(var(--blue-3), 1);
+    }
+  }
+}
+
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000000;
+
+  &.enterActive,
+  &.leaveActive {
+    transition: opacity .5s ease;
+  }
+
+  &.leave,
+  &.enter {
+    opacity: 0;
+  }
+}

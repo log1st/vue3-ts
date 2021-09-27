@@ -1,94 +1,44 @@
-const VueSSRServerPlugin = require('vue-server-renderer/server-plugin')
-const VueSSRClientPlugin = require('vue-server-renderer/client-plugin')
-const nodeExternals = require('webpack-node-externals')
-const merge = require('lodash.merge')
-const { DefinePlugin } = require('webpack')
-// import merge from 'lodash/merge'
-const TARGET_NODE = process.env.WEBPACK_TARGET === 'node'
-
-console.log(process.env, 'envs here')
-
-const createApiFile = TARGET_NODE
-  ? './create-api-server.js'
-  : './create-api-client.js'
-
-const target = TARGET_NODE
-  ? 'server'
-  : 'client'
+const title = require('./package.json').description;
 
 module.exports = {
   devServer: {
-    historyApiFallback: true,
-    hot: true,
-    inline: true,
-    stats: true,
-    noInfo: true,
-    quiet: true,
-    stats: 'errors-only',
-    compress: true,
-    disableHostCheck: true,
-    headers: {
-      'Access-Control-Allow-Origin': '*'
+    proxy: {
+      '/(api|media)': {
+        target: process.env.VUE_APP_LOCAL_API_URL,
+        pathRewrite: {
+          '^/api/': '/',
+        },
+        logLevel: 'debug',
+      },
+      '/ws': {
+        target: process.env.VUE_APP_LOCAL_WS_URL,
+        pathRewrite: {
+          '^/ws/': '/',
+        },
+        logLevel: 'debug',
+        ws: true,
+      },
     },
   },
-  css: {
-    extract: process.env.NODE_ENV === 'production'
-  },
-  configureWebpack: () => ({
-    entry: `./src/entry-${target}`,
-    target: TARGET_NODE ? 'node' : 'web',
-    node: TARGET_NODE ? undefined : false,
-    plugins: [
-      TARGET_NODE
-        ? new VueSSRServerPlugin()
-        : new VueSSRClientPlugin(),
-      new DefinePlugin({
-        VUE_APP_API: process.env.VUE_APP_API,
-        VUE_APP_SOCKET: process.env.VUE_APP_SOCKET,
-      })
-    ],
-    externals: TARGET_NODE ? nodeExternals({
-      whitelist: /\.css$/
-    }) : undefined,
-    output: {
-      filename: process.env.production ? 'bundle-[chunkHash].js' : 'bundle-[hash].js',
-      libraryTarget: TARGET_NODE
-        ? 'commonjs2'
-        : undefined
-    },
-    optimization: {
-      splitChunks: TARGET_NODE ? false : undefined
-      // splitChunks: {
-      //   minSize: 10000,
-      //   maxSize: 250000,
-      // }
-    },
-    resolve: {
-      alias: {
-        'create-api': createApiFile
-      }
-    }
-  }),
-  chainWebpack: config => {
-    config.module
-      .rule('vue')
-      .use('vue-loader')
-      .tap(options =>
-        merge(options, {
-          optimizeSSR: false
-        })
-      )
+  chainWebpack(config) {
+    config.module.rule('csv')
+      .test(/\.(csv|xls|xlsx)$/)
+      .use('file-loader')
+      .loader('file-loader');
 
     config.module.rule('svg')
-      .exclude.add(/\.inline\./)
+      .exclude.add(/\.inline\./);
 
     config.module.rule('vue-svg')
       .test(/\.inline\.svg/)
       .use('vue-loader')
-      .loader('vue-loader')
+      .loader('vue-loader-v16')
       .end()
-      .use('svg-to-vue-component')
-      .loader('svg-to-vue-component/loader')
+      .use('vue-svg-loader')
+      .loader('vue-svg-loader')
+      .options({
+        svgo: false,
+      });
 
     config.module.rule('scss')
       .oneOf('vue-modules')
@@ -98,9 +48,98 @@ module.exports = {
         modules: {
           localIdentName:
             process.env.NODE_ENV === 'development'
-              ? options.modules.localIdentName
-              : '[hash:base64:5]'
-        }
-      }))
-  }
-}
+              ? '[local]_[hash:base64:5]'
+              : '[hash:base64:5]',
+        },
+      }));
+
+    config.plugin('html').tap((args) => ([
+      { ...args[0], title },
+      ...args.slice(1),
+    ]));
+
+    return config;
+  },
+  pwa: {
+    themeColor: '#130f40',
+    msTileColor: '#130f40',
+    name: require('./package.json').description,
+    manifestOptions: {
+      icons: [
+        {
+          src: './img/icons/android-chrome-192x192.png',
+          sizes: '192x192',
+          type: 'image/png',
+        },
+        {
+          src: './img/icons/android-chrome-512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+        },
+        {
+          src: './img/icons/android-chrome-maskable-192x192.png',
+          sizes: '192x192',
+          type: 'image/png',
+          purpose: 'maskable',
+        },
+        {
+          src: './img/icons/android-chrome-maskable-512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'maskable',
+        },
+        {
+          src: './img/icons/apple-touch-icon-60x60.png',
+          sizes: '60x60',
+          type: 'image/png',
+        },
+        {
+          src: './img/icons/apple-touch-icon-76x76.png',
+          sizes: '76x76',
+          type: 'image/png',
+        },
+        {
+          src: './img/icons/apple-touch-icon-120x120.png',
+          sizes: '120x120',
+          type: 'image/png',
+        },
+        {
+          src: './img/icons/apple-touch-icon-152x152.png',
+          sizes: '152x152',
+          type: 'image/png',
+        },
+        {
+          src: './img/icons/apple-touch-icon-180x180.png',
+          sizes: '180x180',
+          type: 'image/png',
+        },
+        {
+          src: './img/icons/apple-touch-icon.png',
+          sizes: '180x180',
+          type: 'image/png',
+        },
+        {
+          src: './img/icons/favicon-16x16.png',
+          sizes: '16x16',
+          type: 'image/png',
+        },
+        {
+          src: './img/icons/favicon-32x32.png',
+          sizes: '32x32',
+          type: 'image/png',
+        },
+        {
+          src: './img/icons/msapplication-icon-144x144.png',
+          sizes: '144x144',
+          type: 'image/png',
+        },
+        {
+          src: './img/icons/mstile-150x150.png',
+          sizes: '150x150',
+          type: 'image/png',
+        },
+      ],
+    },
+  },
+
+};

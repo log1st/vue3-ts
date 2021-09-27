@@ -1,6 +1,0 @@
-server {
-        server_name                     84.201.128.83;
-        listen 80                       default;
-        return                          444;
-}
-

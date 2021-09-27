@@ -1,0 +1,22 @@
+@import "../sign";
+
+.page {
+  padding-top: rem(40px);
+}
+
+.form {
+  margin-top: rem(32px);
+}
+
+.actions {
+  margin: auto rem(-20px) 0;
+  height: rem(60px);
+
+  display: flex;
+}
+
+.action {
+  margin: 0 rem(20px);
+
+  flex-basis: 100%;
+}

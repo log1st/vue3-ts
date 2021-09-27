@@ -1,0 +1,58 @@
+@import "~@/assets/utils";
+
+@import "../commonDialog";
+
+.dialog {
+}
+
+.actions {
+  align-self: normal;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: rem(30px);
+
+  margin-top: rem(30px);
+}
+
+.action {
+  height: rem(140px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  background: rgba(var(--table-bg), .5);
+  box-shadow: inset 0 0 0 rem(1px) rgba(var(--gray-4), 1);
+
+  border-radius: rem(10px);
+
+  &.active {
+    .icon {
+      color: rgba(var(--purple), 1);
+    }
+
+    box-shadow: 0 rem(15px) rem(15px) rgba(var(--black), 0.15);;
+  }
+}
+
+.icon {
+  height: rem(40px);
+  width: rem(40px);
+  color: rgba(var(--table-color), 1);
+}
+
+.label {
+  margin-top: rem(10px);
+  @include subText;
+  color: rgba(var(--dark), 1);
+}
+
+.submit {
+  margin: rem(40px) auto 0;
+  padding: 0 rem(70px);
+  height: rem(60px);
+}

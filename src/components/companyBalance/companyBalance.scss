@@ -1,0 +1,75 @@
+@import "~@/assets/utils";
+
+.container {
+  padding: rem(30px);
+
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  @include heading(true);
+  color: rgba(var(--dark), 1);
+}
+
+.date {
+  margin-left: auto;
+
+  @include text(true);
+  color: rgba(var(--dark), 1);
+}
+
+.chart {
+  flex-grow: 1;
+  margin: rem(20px) 0 0;
+  max-height: rem(260px);
+
+  position: relative;
+}
+
+.chartSource {
+  height: 100%;
+  width: 100%;
+}
+
+.chartValue {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateY(rem(-10px)) translateX(-50%);
+
+  @include heading(true);
+  letter-spacing: -0.04em;
+
+  background-image: linear-gradient(180deg, #07D6C1 0%, #25B2D4 27.08%, #5080CD 70.31%, #6169BF 100%);
+  background-clip: text;
+  color: transparent;
+}
+
+.footer {
+  display: flex;
+  align-items: flex-end;
+}
+
+.value {
+  @include caption(true);
+  color: rgba(var(--purple), 1);
+}
+
+.hint {
+  margin-top: rem(10px);
+  @include text(true);
+  color: rgba(var(--dark), 1);
+  white-space: pre-line;
+}
+
+.action {
+  margin-left: auto;
+  height: rem(60px);
+  padding: 0 rem(30px);
+}

@@ -1,0 +1,32 @@
+@import "~@/assets/utils";
+
+.page {
+  max-width: rem(360px);
+}
+
+.title {
+  @include caption(true);
+  color: rgba(var(--btn-color), 1);
+}
+
+.form {
+  margin-top: rem(40px);
+}
+
+.field {
+  &:not(:first-child) {
+    margin-top: rem(30px);
+  }
+}
+
+.actions {
+  margin: rem(60px) rem(-20px) 0;
+  display: flex;
+  height: rem(60px);
+}
+
+.action {
+  flex-grow: 1;
+  flex-basis: 100%;
+  margin: 0 rem(20px);
+}

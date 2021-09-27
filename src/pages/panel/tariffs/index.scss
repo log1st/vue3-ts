@@ -1,0 +1,25 @@
+@import "~@/assets/utils";
+
+.container {
+  display: grid;
+  grid-template-columns: 1051fr 462fr;
+  grid-gap: rem(30px);
+}
+
+.content,
+.tariffs {
+  background: rgba(var(--white), 0.2);
+  border: rem(0.5px) solid rgba(var(--white), 0.6);
+  border-radius: rem(10px);
+  display: flex;
+  padding: rem(34px) rem(32px);
+
+  > * {
+    flex-grow: 1;
+  }
+}
+
+.title {
+  @include heading(true);
+  color: rgba(var(--dark), 1);
+}

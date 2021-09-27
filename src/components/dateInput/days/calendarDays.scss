@@ -1,0 +1,131 @@
+@import "~@/assets/utils";
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  min-width: rem(315px);
+}
+
+.weekday {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: percentage(1/7);
+
+  @include input;
+  text-align: center;
+  color: rgba(var(--table-color), 0.543337);
+
+  margin-bottom: rem(17px);
+
+  flex-shrink: 0;
+}
+
+.day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+
+  width: percentage(1/7);
+
+  height: 45px;
+
+  @include input;
+  text-align: center;
+  color: rgba(var(--table-color), 0.867782);
+
+  flex-shrink: 0;
+
+  &:not(.selectedDay) {
+    cursor: pointer;
+  }
+  &:after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+
+  span {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.today {
+  color: rgba(var(--green), 1);
+}
+
+.fromDay {
+  color: #fff;
+  &:after {
+    border-radius: 100% 0 0 100%;
+    background: rgba(var(--purple), 1);
+  }
+
+  &:not(.n0) {
+    &:after {
+    }
+  }
+}
+
+.toDay {
+  color: #fff;
+  &:after {
+    border-radius: 0 100% 100% 0;
+    background: rgba(var(--purple), 1);
+  }
+
+  &:not(.n1) {
+    &:after {
+    }
+  }
+}
+
+.selectedDay {
+  color: rgba(var(--white), 1);
+  &:after {
+    border-radius: 100%;
+    background: rgba(var(--purple), 1);
+  }
+}
+
+.betweenDay {
+  color: rgba(var(--white), .7);
+  &:after {
+    border-radius: 0;
+
+    background: rgba(var(--purple), 1);
+  }
+
+  &.n0 {
+    &:after {
+      right: 0;
+      border-top-right-radius: rem(15px);
+      border-bottom-right-radius: rem(15px);
+    }
+  }
+  &.n1 {
+    &:after {
+      left: 0;
+      border-top-left-radius: rem(15px);
+      border-bottom-left-radius: rem(15px);
+    }
+  }
+}
+
+.disabledDay {
+
+  &.betweenDay,
+  &.selectedDay,
+  &.toDay,
+  &.fromDay {
+    &:after {
+      opacity: .4;
+    }
+  }
+}

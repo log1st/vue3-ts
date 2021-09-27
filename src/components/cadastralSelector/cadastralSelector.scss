@@ -1,0 +1,101 @@
+@import "~@/assets/utils";
+
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  @include caption(true);
+  color: rgba(var(--black), 1);
+  white-space: pre-line;
+}
+
+.actions {
+  margin-left: auto;
+}
+
+.action {
+  @include subText;
+  color: rgba(var(--blue), 1);
+
+  cursor: pointer;
+
+  &:not(:first-child) {
+    margin-left: rem(72px);
+  }
+}
+
+.variants {
+  margin-top: rem(24px);
+
+  background: rgba(var(--gray-5), .3);
+  padding: rem(20px) rem(30px);
+}
+
+.variant {
+  cursor: pointer;
+
+  background: rgba(var(--white), 1);
+  box-shadow: rem(2px) 0 rem(10px) rgba(var(--gray-5), 1);
+
+  padding: rem(22px) rem(25px);
+
+  &:not(.expanded) {
+    .toggle {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+}
+
+.name {
+  flex-grow: 1;
+  margin-left: rem(20px);
+}
+
+.toggle {
+  height: rem(24px);
+  width: rem(24px);
+  color: rgba(var(--black), 1);
+  padding: rem(4px);
+}
+
+.address {
+  @include subText;
+  color: rgba(var(--gray-2), 1);
+  margin-top: rem(20px);
+}
+
+.data {
+  margin-top: rem(12px);
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  @include subText;
+  color: rgba(var(--gray-2), 1);
+
+  &:not(:first-child) {
+    margin-top: rem(12px);
+  }
+}
+
+.label {
+  width: rem(220px);
+}
+
+.value {
+  flex-grow: 1;
+}
+
+.submit {
+  margin: rem(30px) 0 0 auto;
+  height: rem(40px);
+  padding: 0 rem(20px);
+}

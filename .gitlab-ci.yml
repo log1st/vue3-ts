@@ -7,45 +7,16 @@ stages:
 step-deploy-prod:
   stage: deploy
   script:
-    - docker stop node-server || true
-    - docker rm node-server || true
-    - docker build --build-arg VUE_APP_API="$VUE_APP_API" --build-arg VUE_APP_SOCKET="$VUE_APP_SOCKET" -t app/node-web-app .
-    - docker run --name node-server -p 49162:8080 -p 49164:8081 -d app/node-web-app:latest sh -c 'tail -f'
-    - docker cp node-server:/app/dist/ /home/gitlab-runner/
-    - docker stop node-server
-    - docker rm node-server
+    - /usr/bin/docker rmi $(/usr/bin/docker images -f dangling=true -q)||true
+    - docker-compose up -d && docker-compose logs --follow
+    - docker stop balanser_nginx_1||true
+    - docker start balanser_nginx_1||true
+    #- docker exec -it balanser_nginx_1 sh -c "nginx -s reload"||true
   artifacts:
     paths:
       - dist
     expire_in: 1 week
   only:
-    - master
+    - dev
   tags:
-    - master
-  variables:
-    VUE_APP_API: https://api-2.urrobot.net
-    VUE_APP_SOCKET: wss://api-2.urrobot.net/ws
-    ENVIRONMENT: production
-
-step-deploy-dev:
-  stage: deploy
-  script:
-    - docker stop node-server || true
-    - docker rm node-server || true
-    - docker build --build-arg VUE_APP_API="$VUE_APP_API" --build-arg VUE_APP_SOCKET="$VUE_APP_SOCKET" -t app/node-web-app .
-    - docker run --name node-server -p 49162:8080 -p 49164:8081 -d app/node-web-app:latest sh -c 'tail -f'
-    - docker cp node-server:/app/dist/ /home/gitlab-runner/
-    - docker stop node-server
-    - docker rm node-server
-  artifacts:
-    paths:
-      - dist
-    expire_in: 1 week
-  only:
-    - DEV
-  tags:
-    - DEV
-  variables:
-    VUE_APP_API: https://api-test.urrobot.net
-    VUE_APP_SOCKET: wss://api-test.urrobot.net/ws
-    ENVIRONMENT: development
+    - dev

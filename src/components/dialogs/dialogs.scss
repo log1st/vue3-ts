@@ -1,0 +1,21 @@
+@import "~@/assets/utils";
+
+.dialogs {
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.dialog {
+  pointer-events: initial;
+  visibility: initial;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  &.hidden {
+    display: none;
+  }
+}

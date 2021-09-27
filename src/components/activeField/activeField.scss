@@ -1,0 +1,44 @@
+@import "~@/assets/utils";
+
+.field {
+  display: flex;
+  flex-direction: column;
+
+  &.primary {
+
+    .label {
+      @include input;
+      font-weight: 500;
+      color: rgba(var(--table-color), 1);
+      margin-bottom: rem(10px);
+    }
+
+    .value {
+      @include input;
+      font-weight: 500;
+      color: rgba(var(--gray-2), 1);
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    &.horizontal {
+      flex-direction: row;
+      align-items: center;
+
+      .label {
+        margin-bottom: 0;
+      }
+
+      .input,
+      .value {
+        flex-grow: 1;
+        margin-left: rem(20px);
+      }
+    }
+  }
+}
+
+.label {
+
+}

@@ -1,0 +1,74 @@
+@import "~@/assets/utils";
+
+.title {
+  @include text(true);
+
+  color: rgba(var(--table-color), 1);
+}
+
+.group {
+  &:not(:first-child) {
+    margin-top: rem(20px);
+    padding-top: rem(20px);
+    box-shadow: 0 rem(-1px) 0 0 rgba(var(--gray-5), .5);
+  }
+}
+
+.fields {
+  margin-top: rem(25px);
+}
+
+.field {
+  display: grid;
+  grid-gap: rem(40px);
+  grid-template-columns: 150fr 696fr;
+
+  &:not(:first-child) {
+    margin-top: rem(20px);
+  }
+}
+
+.label {
+  @include input;
+  font-weight: 500;
+  color: rgba(var(--table-color), 1);
+
+  display: flex;
+  align-items: center;
+
+  position: relative;
+
+  .action {
+    padding: rem(4px) rem(6px);
+
+    [data-role="label"] {
+      @include input;
+    }
+    margin-left: auto;
+  }
+}
+
+.value {
+  @include input;
+  font-weight: 500;
+  color: rgba(var(--gray-2), 1);
+  display: flex;
+  align-items: center;
+}
+
+.input {
+
+}
+
+.actions {
+  margin: rem(60px) rem(-15px) 0;
+  height: rem(60px);
+  display: flex;
+  align-items: normal;
+  justify-content: center;
+}
+
+.action {
+  padding: 0 rem(40px);
+  margin: 0 rem(15px);
+}
