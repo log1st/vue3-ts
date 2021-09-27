@@ -1129,7 +1129,8 @@ export default {
     email: 'Отправить Email-уведомление?',
     confirm: 'Отправить',
     toast: {
-      progress: '{current} из {max}',
+      progress: 'Прогресс: {current} из {max}',
+      sentProgress: 'Отправлено: {current} из {max}',
       message: 'Отправка уведомлений',
       success: 'Уведомление успешно отправлено',
       failure: 'Ошибка отправки уведомления',

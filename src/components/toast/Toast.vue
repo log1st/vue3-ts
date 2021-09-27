@@ -28,7 +28,6 @@
         :class="$style.bar"
       >
         <div
-          v-if="max"
           :class="$style.barLabel"
         >
           {{ t(barLabel, {max, current}) }}

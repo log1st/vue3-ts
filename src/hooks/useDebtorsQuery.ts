@@ -575,16 +575,31 @@ export const useDebtorsQuery = ({
       label: 'notification.toast.progress',
       current: 0,
       max: 0,
+    }, {
+      key: 'progress',
+      label: 'notification.toast.sentProgress',
+      current: 0,
+      max: 0,
     }]),
     voice: ref([{
       key: 'progress',
       label: 'notification.toast.progress',
       current: 0,
       max: 0,
+    }, {
+      key: 'progress',
+      label: 'notification.toast.sentProgress',
+      current: 0,
+      max: 0,
     }]),
     email: ref([{
       key: 'progress',
       label: 'notification.toast.progress',
+      current: 0,
+      max: 0,
+    }, {
+      key: 'progress',
+      label: 'notification.toast.sentProgress',
       current: 0,
       max: 0,
     }]),
@@ -621,6 +636,8 @@ export const useDebtorsQuery = ({
 
       progressMap[type].value[0].current = 0;
       progressMap[type].value[0].max = 0;
+      progressMap[type].value[1].current = 0;
+      progressMap[type].value[1].max = 0;
 
       const localFilters = await awaitSignalResponse<Record<any, any>
         >(
@@ -654,11 +671,18 @@ export const useDebtorsQuery = ({
               progressMap[type].value[0].max = payload.data.obj.total;
 
               if (progressMap[type].value[0].current !== progressMap[type].value[0].max) {
-                progressMap[type].value[0].current = payload.data.obj.step;
+                progressMap[type].value[0].current = payload.data.obj.status_value;
+              }
+
+              if (progressMap[type].value[1].current !== progressMap[type].value[1].max) {
+                progressMap[type].value[1].current = payload.data.obj.sent;
               }
             } else {
-              progressMap[type].value[0].max = payload.data.obj.total;
+              progressMap[type].value[0].max = payload.data.obj.status_value_max;
               progressMap[type].value[0].current = progressMap[type].value[0].max;
+
+              progressMap[type].value[1].max = payload.data.obj.total;
+              progressMap[type].value[1].current = progressMap[type].value[1].max;
 
               if (payload?.data?.obj?.state === 3) {
                 await showToast({
