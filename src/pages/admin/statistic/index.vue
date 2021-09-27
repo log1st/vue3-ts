@@ -22,9 +22,7 @@
     </div>
 </template>
 <script>
-import { mapActions, mapGetters } from 'vuex'
 import AdminAdressError from './components/AdminAdressError'
-import cloneDeep from 'lodash/cloneDeep';
 
 export default {
     name: 'AdminStatistic',

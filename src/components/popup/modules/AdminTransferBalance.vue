@@ -11,7 +11,7 @@
                     </div>
                 </div>
             </div>
-            <div class="compib__row">
+            <!-- <div class="compib__row">
                     <div class="compib__row-label">
                         <span>Организация (От куда)</span>
                     </div>
@@ -20,7 +20,7 @@
                             <v-select label="name_short" :options="getAdminUserListArray" v-model="transfer.from" @change="checkOrganizationType()"></v-select>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="compib__row">
                     <div class="compib__row-label">
                         <span>Организация (Куда)</span>
@@ -90,11 +90,11 @@ export default {
             .then( res => {
                 if ( res.validation === true ) {
                     this.$http({
-                        command: '/api/finance/transfer/',
+                        command: `/api/finance/balance/${this.params.company.id}/transfer/`,
+                        method: 'POST',
                         data: {
-                            amount: this.balance,
-                            company_from: this.transfer.from,
-                            company_to: this.transfer.to
+                            amount: parseInt(this.balance),
+                            transfer_to: this.transfer.to.id
                         }
                     })
                     .then( resp => {
@@ -153,12 +153,12 @@ export default {
                     reject('Выберите разные организации')
                 }
 
-                else if (this.params.company.balance <= 0) {
-                    reject(`Баланс равен ${this.params.company.balance}, баланс компании должен быть больше 0 для совершения перевода!`)
+                else if (this.params.company.balance <= 100) {
+                    reject(`Баланс равен ${this.params.company.balance}, баланс компании должен быть больше 100 для совершения перевода!`)
                 }
 
-                else if (this.balance <= 0) {
-                    reject('Введите сумму перевода большую 0')
+                else if (this.balance <= 100) {
+                    reject('Введите сумму перевода большую 100')
                 }
                 // На этот счет нужно уточнить потому что скорее всего нужно будет проверять именно ющера
                 // else if (this.balance > from) {
@@ -171,16 +171,6 @@ export default {
             })
         }
     },
-
-    // created () {    
-    //     this.$http({
-    //         command: `/api/account/user/companies/${this.params.company.owner}/`,
-    //         method: 'GET'
-    //     })
-    //     .then ( res => {
-    //         this.companies = res
-    //     }) 
-    // }
 }
 </script>
 <style lang="scss">

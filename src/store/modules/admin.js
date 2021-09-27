@@ -21,11 +21,35 @@ export default {
         documents: [],
         allColumnTemplate: [],
         selectedCompanySettings: false,
+        licens: {
+          baseURL: 'https://ls.urrobot.net',
+          token: 'urrobot_license_center-token'
+        },
+        fsspArray: [],
+
+        types: {
+          byName: false,
+          byType: false,
+          byAuthor: false
+        },
 
         statisticURL: 'https://stand.api-asj-test.urrobot.net',
         parsingFiles: []
     }),
     mutations:{
+        updateLicensData (state, payload) {
+            state.licens = payload
+        },
+        updateTypesForSort (state, payload) {
+          const { typeName, value } = payload 
+          if (typeName === 'name') {
+            state.types.byName = value
+          } else if (typeName === 'type') {
+            state.types.byType = value
+          } else if ( typeName === 'author') {
+            state.types.byAuthor = value
+          }
+        },
         checkCompany (state, payload) {
           state.checkedCompany = payload
         },
@@ -106,6 +130,9 @@ export default {
         },
         setAdressFileLists (state, payload) {
           state.parsingFiles = payload 
+        },
+        setFSSP (state, payload) {
+          state.fsspArray = payload
         }
     },
     actions:{
@@ -493,12 +520,12 @@ export default {
         getCompanyBalance ({ state, commit }, payload) {
           return new Promise ((res, rej) => {
             if (!!!payload) {
-              rej({status: false})
+              rej({status: false, msg: 'payload is undefined'})
             } else {
               const { company_id } = payload
             let checkedCompany = state.UsersList.find( c => c.checked === true) 
             $http({
-              command: `/api/finance/balance/${checkedCompany.owner}/`,
+              command: `/api/finance/balance/${checkedCompany.id}/`,
               method: 'GET',
               requestCode: 'none'
             })
@@ -523,26 +550,15 @@ export default {
          */
         getBalanceByUserId ( { state }, payload) {
           return new Promise ((resolve, reject) => {
-            const { owner } = payload
+            const { id } = payload
             $http({
-              command: `/api/finance/balance/${owner}/`,
+              command: `/api/finance/balance/${id}/`,
               method: 'GET',
               requestCode: 'none',
             })
             .then (res => {
-              // if (res.RequestStatusCode === 200 || res.RequestStatusCode === 201) {
-                let calc = [];
-                // let company = result.find( c => c.id === company_id)
-                // calc = company.income - company.outcome
-                // let calc = res[0].income - res[0].outcome
-                res.forEach( company => {
-                  calc.push(company.income - company.outcome)
-                })
                 let result = 0;
-                calc.forEach( sum => {
-                  result +=  sum
-                })
-                // console.log(result)
+                result = res.income - res.outcome
                 resolve(result)
             })
           })
@@ -843,7 +859,6 @@ export default {
               method: 'DELETE'
             })
             .then( resp => {
-                console.log(resp)
                 this._vm.$toast.open({
                   message: `Шаблон удален`,
                   type: 'success',
@@ -867,7 +882,6 @@ export default {
             })
             .finally ( () => {
               resolve(true)
-              dispatch("getAllTemplate")
             })
 
           })
@@ -892,14 +906,76 @@ export default {
               })
               .catch( err => {
                 console.log(err)
-                if (err.response.status === 403) {
-                    // dispatch('logout')
-                }
                 dispatch('appLoadingChange', false, { root: true });
                 reject()
               })
                 dispatch('appLoadingChange', false, { root: true });
               })
+          },
+          
+          /**
+          * Сортировка
+          * @description По имени и типу шаблона
+          * @param { Int } payload тип сортировки 
+          */
+          sortByType ({commit, state}, payload) {
+            const { type } = payload
+            let clonedArr = cloneDeep(state.allTemplates) 
+            if (type === 1) {
+                if (!state.types.byName) {
+                    clonedArr.sort((a, b) => {
+                      if(a.name < b.name) { return 1; }
+                      if(a.name > b.name) { return -1; }
+                      return 0;
+                    })
+                    commit('setAllTemplate', clonedArr)
+                    commit('updateTypesForSort', {value: true, typeName: 'name'})
+                } else {
+                    clonedArr.sort((a, b) => {
+                      if(a.id < b.id) { return 1; }
+                      if(a.id > b.id) { return -1; }
+                      return 0;
+                    })
+                    commit('setAllTemplate', clonedArr)
+                    commit('updateTypesForSort', {value: false, typeName: 'name'})
+                }
+            } else if (type === 2) {
+                if (!state.types.byType) {
+                    clonedArr.sort((a, b) => {
+                      if(a.template_type_obj.name < b.template_type_obj.name) { return 1; }
+                      if(a.template_type_obj.name > b.template_type_obj.name) { return -1; }
+                      return 0;
+                    })
+                    commit('setAllTemplate', clonedArr)
+                    commit('updateTypesForSort', {value: true, typeName: 'type'})
+                } else {
+                    clonedArr.sort((a, b) => {
+                      if(a.template_type_obj.name < b.template_type_obj.name) { return -1; }
+                      if(a.template_type_obj.name > b.template_type_obj.name) { return 1; }
+                      return 0;
+                    })
+                    commit('setAllTemplate', clonedArr)
+                    commit('updateTypesForSort', {value: false, typeName: 'type'})
+                }
+            } else if ( type === 3 ) {
+              if (!state.types.byAuthor) {
+                clonedArr.sort((a, b) => {
+                  if(a.author < b.author) { return 1; }
+                  if(a.author > b.author) { return -1; }
+                  return 0;
+                })
+                commit('setAllTemplate', clonedArr)
+                commit('updateTypesForSort', {value: true, typeName: 'author'})
+            } else {
+                clonedArr.sort((a, b) => {
+                  if(a.author < b.author) { return -1; }
+                  if(a.author > b.author) { return 1; }
+                  return 0;
+                })
+                commit('setAllTemplate', clonedArr)
+                commit('updateTypesForSort', {value: false, typeName: 'author'})
+            }
+            }
           },
 
           createDocumentType ({dispatch}, payload) {
@@ -946,6 +1022,7 @@ export default {
          */
 
          getAdressFileLists ( {state, commit} ) {
+           return new Promise ((res, rej) => {
             axios({
               url: `${state.statisticURL}​/datafile/list`,
               method: 'GET',
@@ -954,9 +1031,41 @@ export default {
               },
             })
             .then ( resp => {
-              // console.log(resp)
               commit('setAdressFileLists', resp.data.packs)
+              res({items: resp.data.packs, status: true})
             })
+            .catch( err => {
+              rej({items: false, status: false})
+            })
+           })
+         },
+
+         /**
+          * Получение судебных приставов
+          * @param {Object} state 
+          * @returns 
+          *            let userJSON = localStorage.getItem('user')
+          * let user = JSON.parse(userJSON)
+          */
+        async getFSSP ({state, commit}, payload) {
+          const { regionCode } = payload
+           return new Promise ((res, rej) => {
+             axios({
+               url: `${state.statisticURL}/fssp/list`,
+               method: 'GET',
+               headers: {
+                Authorization: 'Bearer dar5byv3avE3UpBy'  //Токен всегда один ...
+              },
+              params: {
+                region_code: regionCode
+              }
+             })
+             .then( resp => {
+              commit('setFSSP', resp.data.bailiff)
+              res({status: true})
+            })
+           })
+           
          }
 
     },
@@ -1028,6 +1137,23 @@ export default {
         adminCompanySettings: state => state.selectedCompanySettings,
         allColumnTemplate: state => state.allColumnTemplate,
 
-        adressFileList: state => state.parsingFiles
+        adressFileList: state => state.parsingFiles,
+        
+        /**
+         * Тип сортировки
+         * @param {*} state 
+         * @returns 
+         */
+        types: state => state.types,
+
+        /**
+         * Список приставов
+         * @param {*} state 
+         * @returns 
+         */
+        fsspList: state => state.fsspArray,
+
+        licens: state => state.licens
+        
     }
 }

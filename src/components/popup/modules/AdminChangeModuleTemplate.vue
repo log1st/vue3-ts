@@ -101,15 +101,15 @@ export default {
         acceptAll () {
             let data = cloneDeep(this.params.templates)
             let item;
-            let exist;
+            let exist = false;
             data.forEach( d => {
                 item = this.templates.find( i => i.id === d.id )
                 exist = this.params.alreadyIsntall.find( t => {
-                        if (t.template === d.id) return t
-                        else return false
+                        if (t.id === d.existId) { return t }
+                        else { return false }
                     })
                 d.template_type = item.template_title
-                console.log(exist)
+                // console.log(exist)
                 if (exist) {
                     d.existId = exist.id
                     this.patchCompanyDocumentTemplate({template: d})

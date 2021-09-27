@@ -52,6 +52,7 @@ export default {
         { name: 'Конструктор документов', route: '/admin/editor', iconname: 'pen-nib', width: 30, height: 20, viewbox: '0 0 480 480'},
         { name: 'Список организаций', route: '/admin/admin-panel', iconname: 'company-list', width: 30, height: 30, viewbox: '0 0 74 74' },
         { name: 'Статистика', route: '/admin/stats', iconname: 'pie-chart', width: 30, height: 30, viewbox: '0 0 512 512' },
+        { name: 'Лицензии', route: '/admin/admin-license', iconname: 'license-key', width: 30, height: 30, viewbox: '0 0 512 512' },
         { name: 'Настройки', route: '/admin/admin-settings', iconname: 'setting-admin', width: 30, height: 30, viewbox: '0 0 456 456' }
       ]
     }

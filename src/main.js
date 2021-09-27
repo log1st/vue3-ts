@@ -150,8 +150,10 @@ import IconPieChart 	from '@/components/icons-svg/icons/IconPieChart'
 import IconAdminSettings from '@/components/icons-svg/icons/IconAdminSettingsBar'
 import IconAccept from '@/components/icons-svg/icons/IconAccept'
 import IconDecline from '@/components/icons-svg/icons/IconDecline'
+import IconLicenseKey from '@/components/icons-svg/icons/IconLicensKey'
 
 Vue.component('icon-accept', IconAccept)
+Vue.component('icon-license-key', IconLicenseKey)
 Vue.component('icon-decline', IconDecline)
 Vue.component('icon-setting-admin', IconAdminSettings)
 Vue.component('icon-company-list', IconCompanyList)
@@ -324,7 +326,7 @@ export function createApp() {
 		window.axios.interceptors.response.use(response => {
 			// Если пользователь не авторизован
 			if (response.data[0] && response.data[0].Errors && response.data[0].Errors[1007]) {
-				router.push('/sign/in').catch(err => { err });
+				router.push('/login').catch(err => { err });
 			}
 			return response
 			// return { ...response, cancelToken: source.token };

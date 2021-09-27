@@ -255,6 +255,11 @@ const routes = [
         name: 'AdminSettings',
         component: () => import('@/pages/admin/settings'),
       },
+      {
+        path: 'admin-license',
+        name: 'AdminLicense',
+        component: () => import('@/pages/admin/license')
+      }
     ]
   },
   {

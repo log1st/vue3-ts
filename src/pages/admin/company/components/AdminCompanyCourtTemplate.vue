@@ -240,7 +240,7 @@ export default {
          * @param {Int} courtId id суда на который будет происходить назначение
          */
         setCourtTemplate ( event, type, courtId, templateType ) {
-            console.log([event, type, courtId])
+            // console.log([event, type, courtId])
             let data = {
                 ...event,
                 company: this.company.id,
@@ -342,16 +342,5 @@ export default {
         width: 80%;
         align-items: center;
         font-weight: bold;
-    }
-    .delete__template-btn {
-        border-radius: 20%;
-        border: none;
-        background-color: rgb(209, 29, 29);
-        color: white;
-        transition: .4s all ease-in-out;
-        cursor: pointer;
-    }
-    .delete__template-btn:hover {
-        background-color: rgb(245, 53, 53);
     }
 </style>

@@ -105,7 +105,7 @@ export default {
         ...mapActions(['setPopupState']),
         validation () {
           if ( this.status != null ) {
-          let commandApi = this.status ? '/api/finance/income/' : '/api/finance/outcome/'
+          let commandApi = this.status ? '/api/finance/admin/income/' : '/api/finance/admin/outcome/'
           this.disabled = true
           this.loading = true
           let codeSymbols = '';

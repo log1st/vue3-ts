@@ -45,6 +45,8 @@ import NotifyModal               from '@/components/popup/modules/NotifyModal'
 import AddCompanyApplication     from '@/components/popup/modules/AddCompanyApplication'
 import PrintTemplatePopup        from '@/components/popup/modules/PrintTemplatePopup'
 import AdminSetErrorAdress       from '@/components/popup/modules/AdminSetErrorAdress'
+import AdminAdressGetCourt       from '@/components/popup/modules/AdminAdressGetCourt'
+import AdminLicenseServerConnect from '@/components/popup/modules/AdminLicenseServerConnect'
 
 export default {
   props:{
@@ -86,6 +88,8 @@ export default {
     AdminAddDocumentType,
     AddCompanyApplication,
     AdminSetErrorAdress,
+    AdminAdressGetCourt,
+    AdminLicenseServerConnect,
     'notify-modal': NotifyModal,
     'debtor-documents-print-modal': debtorDocumentsPrintModal,
     'debtor-set-of-charges-print-modal': debtorSetOfChargesPrintModal,

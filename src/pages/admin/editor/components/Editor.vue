@@ -319,6 +319,8 @@ export default {
           templateParse = `${resp.result}`
           if (templateParse.includes('zerotemplate!=0') == true) {  // Обрезаем дубль в конструкторе (если он есть)
             templateParse = templateParse.split('zerotemplate!=0')[0]
+          } else {
+            // 
           }
           this.template = templateParse
             axios({
