@@ -1,4 +1,5 @@
 export const apiUrl = process.env.VUE_APP_API_URL;
+
 export const socketURL = process.env.VUE_APP_WS_URL;
 
 export const tinyApiKey = process.env.VUE_APP_TINY_API_KEY;
