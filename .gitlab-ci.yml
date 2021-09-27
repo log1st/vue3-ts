@@ -17,6 +17,6 @@ step-deploy-prod:
       - dist
     expire_in: 1 week
   only:
-    - dev
+    - master
   tags:
-    - dev
+    - master

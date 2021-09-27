@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   app:
-    container_name: front-end-dev
+    container_name: front-end-prod
     image: node:12-alpine
     command: sh -c "yarn install && yarn build && yarn add @sentry/vue @sentry/tracing"
     working_dir: /app
