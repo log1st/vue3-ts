@@ -4,6 +4,7 @@ import { DataTypeKey } from '@/hooks/useExchange';
 import { Company, CompanySettings } from '@/hooks/useCompanies';
 import { useSocket } from '@/hooks/useSocket';
 import { SocketSubscriber } from '@/store/modules/socket';
+import { IToastLevel, useToast } from '@/hooks/useToast';
 
 export enum ExchangeImportPeriod {
   monthly = 'monthly',
@@ -74,6 +75,10 @@ export const useExchangeImport = () => {
     subscribe,
   } = useSocket();
 
+  const {
+    showToast,
+  } = useToast();
+
   const unsubs: Array<() => void> = [];
   onBeforeUnmount(() => {
     unsubs.forEach((unsub) => unsub());
@@ -130,16 +135,23 @@ export const useExchangeImport = () => {
           async handler(payload: any) {
             if ([3, 4].includes(payload.data.obj.state)) {
               uploadMetrics.value.checked += 1;
+              await showToast({
+                label: 'pureLabel',
+                message: 'pure',
+                params: {
+                  label: file.name,
+                  message: payload.data.obj.status_text,
+                },
+                level: {
+                  3: IToastLevel.success,
+                  4: IToastLevel.danger,
+                }[Number(payload.data.obj.state) as 3 | 4],
+              });
               unsub();
               unsubs.splice(
                 unsubs.findIndex((i) => i === unsub),
                 1,
               );
-            }
-            if (payload.data.obj.state === 3) {
-              // @TODO success
-            } else if (payload.data.obj.state === 4) {
-              // @TODO error
             }
           },
         } as SocketSubscriber);
