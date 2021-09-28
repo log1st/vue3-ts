@@ -32,6 +32,9 @@
 
 .tabs {
   margin-left: auto;
+
+  position: relative;
+  z-index: 1;
 }
 
 .container {
