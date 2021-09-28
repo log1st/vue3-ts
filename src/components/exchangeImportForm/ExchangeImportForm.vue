@@ -28,6 +28,7 @@
         </div>
         <template v-if="isCustom">
           <Tabs
+            v-if="dataType !== 'executive'"
             v-model="model.mode"
             :tabs="modes"
             :class="$style.modes"
@@ -255,6 +256,9 @@ export default defineComponent({
     watch(dataType, (type) => {
       model.value.dataType = type;
       model.value.files = [];
+      if (type === DataTypeKey.executive) {
+        model.value.mode = ExchangeImportMode.linear;
+      }
     }, {
       immediate: true,
     });
