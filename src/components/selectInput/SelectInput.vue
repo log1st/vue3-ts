@@ -73,7 +73,7 @@
           :option="option"
           :index="index"
         >
-          {{ option[displayField] }}
+          {{ arrayFrom(displayField).map(i => option[i]).join(' ') }}
         </slot>
       </div>
     </div>
@@ -135,7 +135,7 @@ export default defineComponent({
       default: 'value',
     },
     displayField: {
-      type: String as PropType<ISelectInput['displayField']>,
+      type: [String, Array] as PropType<ISelectInput['displayField']>,
       default: 'label',
     },
     multiple: Boolean as PropType<ISelectInput['multiple']>,
@@ -215,9 +215,13 @@ export default defineComponent({
       arrayFrom(
         value.value,
       ).map(
-        (val) => props.options?.find(
-          (option) => option[props.valueField] === val,
-        )?.[props.displayField!],
+        (val) => {
+          const option = props.options?.find(
+            (option) => option[props.valueField] === val,
+          );
+
+          return arrayFrom(props.displayField!).map((i) => option?.[i]).join(' ').trim();
+        },
       ).filter(Boolean).join(', ')
     ));
 

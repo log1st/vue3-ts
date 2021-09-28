@@ -1,5 +1,8 @@
-import { computed, ref, Ref } from 'vue';
+import {
+  computed, ref, Ref, watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { ProductionType, useConstructor } from '@/hooks/useConstructor';
 import { Court, useCourts } from '@/hooks/useCourts';
 import { Company } from '@/hooks/useCompanies';
@@ -722,6 +725,14 @@ export const useDebtorsQuery = ({
   };
 
   const isSettingsDialogVisible = ref(false);
+
+  const router = useRouter();
+  watch(router.currentRoute, () => {
+    isSettingsDialogVisible.value = false;
+  }, {
+    deep: true,
+  });
+
   const actions = computed<Array<ActiveTableAction<DebtorQuery, 'pk'>>>(() => (
     (
       [
@@ -943,9 +954,9 @@ export const useDebtorsQuery = ({
             await showNotificationDialog('email', payload);
           },
         },
-        false && (module.value !== ProductionType.executive) && {
+        (module.value !== ProductionType.executive) && {
           key: 'settings',
-          label: t('action.settings'),
+          hint: t('action.settings'),
           types: [ActionType.default],
           icon: 'gears',
           active: isSettingsDialogVisible.value,
@@ -993,5 +1004,6 @@ export const useDebtorsQuery = ({
     filters,
     actions,
     summaries,
+    isSettingsDialogVisible,
   };
 };

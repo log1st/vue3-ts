@@ -96,6 +96,9 @@ export default {
     dateFromTo: 'с {from} по {to}',
     dateFromNow: 'с {from} по настоящее время',
     edit: 'Редактировать',
+    choose: 'Выберите',
+    monthPlural: 'Каждый {n} месяц',
+    perMonthPlural: '{n} раз в месяц',
   },
   header: {
     stat: {
@@ -787,6 +790,40 @@ export default {
   },
   debtor: {
     title: 'Данные должника {name}',
+    automatizing: {
+      field: {
+        amount_from: 'Сумма для автоматической отправки или',
+        amount_to: 'формирования судебного приказа в суд',
+        auto_filing_claim: 'Подача судебного приказа\\иска в суд',
+        auto_transfer: 'Автоматически переводить должника в Исполнительное производство при получении судебного приказа?',
+        need_rosreestr_discharge: 'Требуется заказ выписки из ЕГРН?',
+        auto_discharge: 'Заказ автоматически выписки из ЕГРН?',
+        rosreestr_characteristics: 'Выписка о характеристиках',
+        rosreestr_movement: 'Выписка о переходе прав',
+        discharge_periodic_month: 'Период автоматического обновления выписки',
+        employees: 'Выбор сотрудника',
+        notify_emails: 'Введите e-mail ответственного сотрудника при оплате госпошлины',
+        debt_threshold: 'Сумма для отправки SMS-уведомления должнику',
+        notification_period: 'Период рассылки*',
+        priority: 'Приоритетное уведомление',
+        court_threshold: 'Сумма для перевода в Судебное производство',
+        wait_days_before_court: 'Для юр. лиц',
+        sms_enabled: 'Отправка SMS, если занят/недоступен',
+        automation_enabled: 'Автоматическое формирование досубного требования',
+      },
+      autoFilingClaim: {
+        automatic: 'Автоматически (с использованием ЭЦП)',
+        manual: 'Вручную',
+      },
+      priority: {
+        sms: 'SMS',
+        voice: 'Голосовое',
+        email: 'Email',
+        messengers: 'Мессенджеры',
+      },
+      reset: 'Сбросить',
+      submit: 'Сохранить',
+    },
     common: {
       tab: 'Общая информация',
       main: {

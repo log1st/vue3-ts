@@ -458,7 +458,16 @@
         width: rem(40px);
       }
 
+      .actionContent {
+        position: absolute;
+        top: calc(100% + #{rem(10px)});
+        left: 0;
+        z-index: 1;
+      }
+
       .actionWrapper {
+        position: relative;
+
         display: flex;
         [data-role="action"] {
           flex-grow: 1;

@@ -1,0 +1,144 @@
+.dialog {
+  padding: 11px 25px 18px;
+  background: #FFFFFF;
+  box-shadow: 0px 9px 18px rgba(0, 0, 0, 0.18), 0px 5.5px 5px rgba(0, 0, 0, 0.237602);
+  border-radius: 10px;
+
+  display: grid;
+  grid-template-columns: 3fr 3fr 3fr 2fr;
+  grid-template-areas: (
+    'smsAmount voiceAmount priority smsIfNoVoice'
+    'smsPeriod voicePeriod claimAmount autoPretrial'
+    'smsTime voiceTime claimAmount actions'
+    'footer footer claimAmount actions'
+  );
+
+  grid-gap: 20px 20px;
+
+  width: 1070px;
+}
+
+.label {
+  padding-left: 3px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+  color: #4F4F4F;
+}
+
+.smsAmount {
+  grid-area: smsAmount;
+}
+.smsParams {
+  grid-area: smsParams;
+}
+.smsPeriod {
+  grid-area: smsPeriod;
+}
+.smsTime {
+  grid-area: smsTime;
+}
+.smsNumber {
+  grid-area: smsNumber;
+}
+.footer {
+  grid-area: footer;
+}
+.voiceAmount {
+  grid-area: voiceAmount;
+}
+.voiceParams {
+  grid-area: voiceParams;
+}
+.voicePeriod {
+  grid-area: voicePeriod;
+}
+.voiceTime {
+  grid-area: voiceTime;
+}
+.voiceNumber {
+  grid-area: voiceNumber;
+}
+
+.priority {
+  grid-area: priority;
+}
+.claimPeriod {
+  grid-area: claimPeriod;
+}
+.claimAmount {
+  grid-area: claimAmount;
+
+  display: flex;
+  flex-direction: column;
+}
+.smsIfNoVoice {
+  grid-area: smsIfNoVoice;
+}
+.autoPretrial {
+  grid-area: autoPretrial;
+}
+.autoPretrialAmount {
+  grid-area: autoPretrialAmount;
+}
+
+.allParams {
+  margin-top: 17px;
+}
+
+.params {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 20px;
+  margin-top: 20px;
+}
+
+.times {
+  margin-top: 5px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 10px;
+}
+
+.footerLine {
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 12px;
+  letter-spacing: 0.04em;
+  color: #4F4F4F;
+
+  &:not(:first-child) {
+    margin-top: 14px;
+  }
+
+  a {
+    color: #495CFF;
+    text-decoration: none;
+  }
+}
+
+.checkable {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  grid-gap: 14px;
+  margin-top: 22px;
+
+  .label + & {
+    margin-top: auto;
+  }
+}
+
+.actions {
+  grid-area: actions;
+
+  display: flex;
+  align-items: flex-end;
+  margin: 0 -10px;
+}
+
+.action {
+  margin: 0 10px;
+  width: calc(50% - 20px);
+  height: 40px;
+}

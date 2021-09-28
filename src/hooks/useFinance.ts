@@ -26,7 +26,14 @@ export type FetchAvailableServicesModel = ListingRequestSource<{
   id: number;
 }>
 
-export type FetchAvailableServicesResponse = ApiResponse<ListingResponse<FinanceService>>
+export type FetchAvailableServicesResponse = ApiResponse<ListingResponse<FinanceService>>;
+
+export type FetchActiveServicesModel = ListingRequestSource<{
+  company_id: Company['id'];
+  id: number;
+}>
+
+export type FetchActiveServicesResponse = ApiResponse<ListingResponse<FinanceService>>
 
 export const useFinance = () => {
   const store = useStore();
@@ -53,8 +60,20 @@ export const useFinance = () => {
     };
   };
 
+  const fetchActiveServices = async (
+    payload: FetchActiveServicesModel,
+  ): Promise<FetchActiveServicesResponse> => {
+    const { status, response } = await store.dispatch('finance/fetchActiveServices', payload);
+
+    return {
+      status,
+      response,
+    };
+  };
+
   return {
     fetchCompanyBalance,
     fetchAvailableServices,
+    fetchActiveServices,
   };
 };

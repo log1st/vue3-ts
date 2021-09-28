@@ -29,6 +29,13 @@
       :summaries-fields="summariesFields"
       @rowClick="onRowClick"
     >
+      <template #action(settings)>
+        <Automatizing
+          v-outside-click="closeSettings"
+          :production-type="module"
+          @close="closeSettings"
+        />
+      </template>
       <template
         v-if="['pretrial', 'judicial'].includes(module)"
         #cell(status)="{record}"
@@ -84,10 +91,16 @@ import { SignalType, useSignal } from '@/hooks/useSignal';
 import { useLocalI18n } from '@/hooks/useLocalI18n';
 import DebtorIcons from '@/components/debtorIcons/DebtorIcons.vue';
 import { OrderDirection } from '@/store/modules/api';
+import Automatizing from '@/components/automatizing/Automatizing.vue';
 
 export default defineComponent({
   name: 'Index',
-  components: { DebtorIcons, DebtorStatus, ActiveTable },
+  components: {
+    Automatizing,
+    DebtorIcons,
+    DebtorStatus,
+    ActiveTable,
+  },
   props: {
     module: {
       type: String as PropType<ProductionType>,
@@ -98,7 +111,10 @@ export default defineComponent({
     const { t } = useLocalI18n('debtors');
     const { module } = toRefs(props);
     const { fetchDebtors } = useDebtors();
-    const query = useDebtorsQuery({
+    const {
+      isSettingsDialogVisible,
+      ...query
+    } = useDebtorsQuery({
       module,
     });
     const {
@@ -238,6 +254,10 @@ export default defineComponent({
       subscribeToSignal(SignalType.debtorsUpdated, refetchDebtors),
     );
 
+    const closeSettings = () => {
+      isSettingsDialogVisible.value = false;
+    };
+
     return {
       t,
       records,
@@ -255,6 +275,7 @@ export default defineComponent({
       showDebtorStatusDialog,
       summaries,
       summariesFields,
+      closeSettings,
     };
   },
 });

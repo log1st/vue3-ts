@@ -52,6 +52,7 @@ import NA from '@/components/na/NA.vue';
 import SelectInput from '@/components/selectInput/SelectInput.vue';
 import { formatPhone } from '@/utils/string';
 import DateInput from '@/components/dateInput/DateInput.vue';
+import Checkbox from '@/components/checkbox/Checkbox.vue';
 
 export default defineComponent({
   name: 'ActiveField',
@@ -76,6 +77,7 @@ export default defineComponent({
       [ActiveFormFieldType.input]: TextInput,
       [ActiveFormFieldType.select]: SelectInput,
       [ActiveFormFieldType.date]: DateInput,
+      [ActiveFormFieldType.checkbox]: Checkbox,
     }[props.type!]));
 
     const value = useLocalValue(props, 'modelValue', emit);

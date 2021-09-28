@@ -1,10 +1,12 @@
 import { ITextInput } from '@/components/textInput/useTextInput';
 import { ISelectInput } from '@/components/selectInput/useSelectInput';
+import { ICheckbox } from '@/components/checkbox/useCheckbox';
 
 export enum ActiveFormFieldType {
   input = 'input',
   select = 'select',
-  date = 'date'
+  date = 'date',
+  checkbox = 'checkbox',
 }
 
 export type ActiveFormField<T extends Record<any, any>> = {
@@ -31,6 +33,10 @@ export type ActiveFormField<T extends Record<any, any>> = {
   type: ActiveFormFieldType.date;
   options?: Partial<any>;
   defaultValue?: Date | [Date, Date];
+} | {
+  type: ActiveFormFieldType.checkbox;
+  options?: Partial<ICheckbox>;
+  defaultValue?: false;
 })
 
 export type IActiveForm<T extends Record<any, any>> = {

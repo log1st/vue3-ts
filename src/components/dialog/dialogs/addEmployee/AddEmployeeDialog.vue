@@ -35,7 +35,6 @@
           :label="t('employee.add.submit')"
           state="primary"
           type="submit"
-          :is-disabled="model.is_me"
         />
       </div>
     </form>

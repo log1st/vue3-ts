@@ -1,0 +1,68 @@
+@import "~@/assets/utils";
+
+.container {
+    background: rgba(var(--dialog-bg), 1);
+    box-shadow: 0 rem(9px) rem(18px) rgba(var(--black), 0.18), 0 rem(5.5px) rem(5px) rgba(var(--black), 0.237602);
+    border-radius: rem(10px);
+
+    padding: rem(11px) rem(25px);
+
+    &.judicial {
+        .fields {
+            grid-template-areas: (
+                'amount_from amount_from amount_to amount_to auto_filing_claim auto_filing_claim auto_filing_claim'
+                'need_rosreestr_discharge need_rosreestr_discharge auto_discharge auto_discharge auto_transfer auto_transfer auto_transfer'
+                'rosreestr_characteristics rosreestr_characteristics employees employees actions  actions actions'
+                'rosreestr_movement rosreestr_movement employees employees actions actions actions'
+                'discharge_periodic_month discharge_periodic_month notify_emails notify_emails actions actions actions'
+            );
+            grid-template-columns: 2fr 1fr 1fr 2fr 2fr 2fr;
+
+            width: rem(996px);
+        }
+        .field {
+            &.rosreestr_characteristics,
+            &.discharge_periodic_month,
+            &.notify_emails {
+                margin-top: rem(20px);
+            }
+            &.rosreestr_movement {
+                margin-top: rem(10px);
+            }
+        }
+    }
+
+    &.pretrial {
+        .fields {
+            grid-template-areas: (
+                'debt_threshold debt_threshold priority'
+                'notification_period notification_period notification_period'
+                'court_threshold wait_days_before_court actions'
+                'sms_enabled automation_enabled actions'
+            );
+            grid-template-columns: 2fr 2fr;
+
+            width: rem(996px);
+        }
+    }
+}
+
+.fields {
+    display: grid;
+    grid-gap: rem(12px);
+}
+
+.actions {
+    display: flex;
+    align-items: flex-end;
+    grid-area: actions;
+}
+
+.action {
+    height: rem(40px);
+    padding: 0 rem(20px);
+    flex-grow: 1;
+    &:not(:first-child) {
+        margin-left: rem(20px);
+    }
+}

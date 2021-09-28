@@ -32,6 +32,7 @@ export default defineComponent({
 
     const {
       fetchAvailableServices,
+      fetchActiveServices,
     } = useFinance();
 
     const {
@@ -57,9 +58,33 @@ export default defineComponent({
       ])),
     });
 
+    const {
+      records: activeServices,
+    } = useActiveTable<FinanceService, FinanceService, 'id'>({
+      defaultLimit: ref(1000),
+      keyField: 'id',
+      async fetch({ params, signal }) {
+        const { response } = await fetchActiveServices({
+          ...params,
+          signal,
+        });
+
+        return response;
+      },
+      filters: computed(() => ([
+        {
+          key: 'company_id',
+          field: 'company_id',
+          type: ActiveFormFieldType.input,
+          defaultValue: companyId.value,
+        },
+      ])),
+    });
+
     return {
       t,
       availableServices,
+      activeServices,
     };
   },
 });

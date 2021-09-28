@@ -44,6 +44,12 @@
             }[state]"
             @click="action.handler(actionPayload)"
           />
+          <div
+            v-if="action.active && `action(${action.key})` in $slots"
+            :class="$style.actionContent"
+          >
+            <slot :name="`action(${action.key})`" />
+          </div>
         </component>
       </div>
       <div

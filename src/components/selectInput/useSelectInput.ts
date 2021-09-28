@@ -13,7 +13,7 @@ export type ISelectInput<
   errors?: string[];
   options?: Array<T>;
   valueField?: KeyField;
-  displayField?: string;
+  displayField?: string | string[];
   allowEmpty?: boolean;
   emptyValue?: any;
   label?: string;

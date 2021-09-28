@@ -99,6 +99,11 @@ export type CompanySettings = {
   debtor_data_registry_columns_order: string[];
   company: number;
   default_region: number;
+
+  employees?: any[];
+  emails?: any[];
+  rosreestr_characteristics?: boolean;
+  rosreestr_movement?: boolean;
 }
 
 export type FetchCompaniesModel = {

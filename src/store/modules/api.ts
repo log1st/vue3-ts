@@ -155,6 +155,7 @@ export enum ApiCommand {
   setDefaultWritoe = 'setDefaultWritoe',
   fetchCompanyBalance = 'fetchCompanyBalance',
   fetchAvailableServices = 'fetchAvailableServices',
+  fetchActiveServices = 'fetchActiveServices',
 }
 
 export type ApiRequest<T extends Record<any, any> = Record<any, any>> = {
@@ -1333,6 +1334,14 @@ const apiCommands: ApiCommandsMap = {
   [ApiCommand.fetchAvailableServices]: {
     method: ApiMethod.get,
     url: '/api/finance/service/{company_id}/available/',
+    paramsMap: {
+      o: 'o',
+      limit: 'limit',
+    },
+  },
+  [ApiCommand.fetchActiveServices]: {
+    method: ApiMethod.get,
+    url: '/api/finance/service/{company_id}/active/',
     paramsMap: {
       o: 'o',
       limit: 'limit',
