@@ -22,7 +22,6 @@
         :type="field.type"
         :options="{
           ...(field.options || {}),
-          isDisabled: model.is_me
         }"
         state="primary"
         :style="{gridArea: field.key}"
@@ -91,6 +90,8 @@ export default defineComponent({
       is_me: false,
     });
 
+    const originalModel = ref<Partial<Employee>>();
+
     const { employeeId, companyId } = toRefs(props);
     watch(companyId, (id) => {
       if (!id) {
@@ -110,6 +111,7 @@ export default defineComponent({
       });
       if (status) {
         model.value = response;
+        originalModel.value = JSON.parse(JSON.stringify(response));
       }
     }, {
       immediate: true,
@@ -189,7 +191,7 @@ export default defineComponent({
         field: 'email',
         label: t('employee.add.email.label'),
         type: ActiveFormFieldType.input,
-        isReadonly: !!props.employeeId,
+        isReadonly: !!originalModel.value?.email,
         options: {
           placeholder: t('employee.add.email.placeholder'),
         },
@@ -199,7 +201,7 @@ export default defineComponent({
         field: 'user_phone',
         label: t('employee.add.user_phone.label'),
         type: ActiveFormFieldType.input,
-        isReadonly: !!props.employeeId,
+        isReadonly: !!originalModel.value?.user_phone,
         options: {
           placeholder: t('employee.add.user_phone.placeholder'),
         },
@@ -237,6 +239,7 @@ export default defineComponent({
         options: {
           placeholder: t('employee.add.employee_role.placeholder'),
           options: employeeRoles.value as ISelectInput<any>['options'],
+          isDisabled: model.value.is_me,
         },
       },
     ]));
