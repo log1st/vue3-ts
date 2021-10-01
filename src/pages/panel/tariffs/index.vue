@@ -20,6 +20,7 @@ import { FinanceService, useFinance } from '@/hooks/useFinance';
 import { useActiveTable } from '@/hooks/useActiveTable';
 import { useDefaultCompany } from '@/hooks/useDefaultCompany';
 import { ActiveFormFieldType } from '@/hooks/useActiveForm';
+import { ProductionType } from '@/hooks/useConstructor';
 
 export default defineComponent({
   name: 'Index',
@@ -81,10 +82,22 @@ export default defineComponent({
       ])),
     });
 
+    const servicesByModule = computed<{
+      [key in ProductionType]: Array<FinanceService>
+    }>(() => ([
+      ProductionType.pretrial,
+      ProductionType.judicial,
+      ProductionType.executive,
+    ].reduce((acc, productionType) => ({
+      ...acc,
+      [productionType]: availableServices.value.filter(
+        (service) => service.production_type === productionType,
+      ),
+    }), {} as any)));
+
     return {
       t,
-      availableServices,
-      activeServices,
+      servicesByModule,
     };
   },
 });

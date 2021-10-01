@@ -1,6 +1,7 @@
 import { useStore } from 'vuex';
 import { Company } from '@/hooks/useCompanies';
 import { ApiResponse, ListingRequestSource, ListingResponse } from '@/store/modules/api';
+import { ProductionType } from '@/hooks/useConstructor';
 
 export type CompanyBalance = {
   balance: number;
@@ -19,19 +20,14 @@ export type FetchCompanyBalanceResponse = ApiResponse<CompanyBalance>;
 export type FinanceService = {
   id: number;
   company_id: Company['id'];
+  production_type: ProductionType;
 }
 
-export type FetchAvailableServicesModel = ListingRequestSource<{
-  company_id: Company['id'];
-  id: number;
-}>
+export type FetchAvailableServicesModel = ListingRequestSource<FinanceService>
 
 export type FetchAvailableServicesResponse = ApiResponse<ListingResponse<FinanceService>>;
 
-export type FetchActiveServicesModel = ListingRequestSource<{
-  company_id: Company['id'];
-  id: number;
-}>
+export type FetchActiveServicesModel = ListingRequestSource<FinanceService>
 
 export type FetchActiveServicesResponse = ApiResponse<ListingResponse<FinanceService>>
 
